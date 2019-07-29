@@ -1,0 +1,19 @@
+language: python
+cache: pip
+dist: xenial
+python:
+  - 3.5
+  - 3.6
+  - 3.7
+install:
+  - pip install pip --upgrade
+  - pip install -e git+https://github.com/XanaduAI/pennylane.git#egg=pennylane
+  - pip install -e git+https://github.com/XanaduAI/targetframework.git#egg=targetframework
+  - pip install -r requirements.txt
+  - pip install pytest pytest-cov wheel codecov --upgrade
+  - python3 setup.py bdist_wheel
+  - pip install dist/Plugin_Name*.whl
+script:
+  - make coverage
+after_success:
+  - codecov

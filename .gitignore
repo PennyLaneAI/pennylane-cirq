@@ -1,0 +1,14 @@
+*~
+*.pyc
+doc/_build
+build
+dist
+plugin_name.egg-info
+.idea
+*.ipynb
+*.ipynb_checkpoints
+*.egg-info*
+.coverage
+coverage_html_report/*
+notebooks/*
+.pytest_cache/*
