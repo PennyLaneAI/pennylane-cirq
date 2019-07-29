@@ -25,6 +25,9 @@ PennyLane Plugin Template
 This template repository provides the boilerplate and file structure required to easily create your
 own PennyLane plugin.
 
+See the `PennyLane Developer API documentation <https://pennylane.readthedocs.io/en/latest/API/overview.html>`_
+for more details on developing a PennyLane plugin.
+
 `Target framework <https://targetframework.readthedocs.io>`_ is a full-stack Python library
 for doing things.
 
