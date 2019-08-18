@@ -1,1 +1,2 @@
 pennylane>=0.4
+cirq
