@@ -59,5 +59,3 @@ class SimulatorDevice(CirqDevice):
     """
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
-    
-

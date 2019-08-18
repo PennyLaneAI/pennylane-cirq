@@ -19,7 +19,7 @@ import pytest
 import pennylane as qml
 from pennylane import numpy as np
 
-import pennylane_cirq 
+import pennylane_cirq
 
 class TestDeviceIntegration:
 

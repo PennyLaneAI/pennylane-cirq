@@ -24,11 +24,11 @@ with open("plugin_name/_version.py") as f:
 # Requirements should be as minimal as possible.
 # Avoid pinning, and use minimum version numbers
 # only where required.
-requirements = ["pennylane"]
+requirements = ["pennylane", "cirq"]
 
 info = {
     # 'name' is the name that will be used by pip for installation
-    "name": "PennyLane-cirq",
+    "name": "PennyLane-Cirq",
     "version": version,
     "maintainer": "Xanadu Inc.",
     "maintainer_email": "software@xanadu.ai",
@@ -43,10 +43,10 @@ info = {
         ]
     },
     # Place a one line description here. This will be shown by pip
-    "description": "PennyLane plugin for cirq",
+    "description": "PennyLane plugin for Cirq",
     "long_description": open("README.rst").read(),
     # The name of the folder containing the plugin
-    "provides": ["plugin_name"],
+    "provides": ["pennylane_cirq"],
     "install_requires": requirements,
 }
 
