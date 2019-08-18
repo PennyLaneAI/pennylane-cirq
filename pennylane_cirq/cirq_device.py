@@ -15,9 +15,9 @@
 Base Cirq device class
 ===========================
 
-**Module name:** :mod:`plugin_name.device`
+**Module name:** :mod:`pennylane_cirq.device`
 
-.. currentmodule:: plugin_name.device
+.. currentmodule:: pennylane_cirq.device
 
 An abstract base class for constructing Cirq devices for PennyLane.
 
@@ -91,24 +91,33 @@ class CirqDevice(Device, abc.ABC):
         "Rot": rot3,
     }
 
-    _observable_map = {}
+    _observable_map = {
+        #'PauliX': X,
+        #'PauliY': Y,
+        #'PauliZ': Z,
+        #'Hadamard': H,
+        #'Hermitian': hermitian,
+        #'Identity': identity
+    }
+
+    def reset(self):
+        pass
+        
+    @property
+    def observables(self):
+        return set(self._observable_map.keys())
+
+    @property
+    def operations(self):
+        return set(self._operation_map.keys())
 
     def pre_apply(self):
         self.circuit = cirq.Circuit()
 
     def apply(self, operation, wires, par):
-        operation = _operation_map[operation](*par)
+        operation = self._operation_map[operation](*par)
 
         self.circuit.append(operation)
 
     def post_apply(self):
         print(self.circuit)
-
-    # _observable_map = {
-    #     'PauliX': X,
-    #     'PauliY': Y,
-    #     'PauliZ': Z,
-    #     'Hadamard': H,
-    #     'Hermitian': hermitian,
-    #     'Identity': identity
-    # }

@@ -1,6 +1,6 @@
 # .coveragerc to control coverage.py
 [run]
-source = plugin_name
+source = pennylane_cirq
 
 [report]
 # Regexes for lines to exclude from consideration

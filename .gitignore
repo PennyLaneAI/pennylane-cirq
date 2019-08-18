@@ -3,7 +3,7 @@
 doc/_build
 build
 dist
-plugin_name.egg-info
+PennyLane_Cirq.egg-info
 .idea
 *.ipynb
 *.ipynb_checkpoints

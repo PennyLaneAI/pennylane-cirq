@@ -44,15 +44,15 @@ Supported operations
 
 All devices support all PennyLane `operations and observables <https://pennylane.readthedocs.io/en/latest/code/ops/qubit.html>`_, with the exception of the PennyLane ``QubitStateVector`` state preparation operation.
 
-In addition, the plugin provides the following framework-specific operations for PennyLane. These are all importable from :mod:`plugin_name.ops <.ops>`.
+In addition, the plugin provides the following framework-specific operations for PennyLane. These are all importable from :mod:`pennylane_cirq.ops <.ops>`.
 
 These operations include:
 
 .. autosummary::
-    plugin_name.ops.S
-    plugin_name.ops.T
-    plugin_name.ops.CCNOT
-    plugin_name.ops.CPHASE
-    plugin_name.ops.CSWAP
-    plugin_name.ops.ISWAP
-    plugin_name.ops.PSWAP
+    pennylane_cirq.ops.S
+    pennylane_cirq.ops.T
+    pennylane_cirq.ops.CCNOT
+    pennylane_cirq.ops.CPHASE
+    pennylane_cirq.ops.CSWAP
+    pennylane_cirq.ops.ISWAP
+    pennylane_cirq.ops.PSWAP

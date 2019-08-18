@@ -11,7 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import sys
+import os 
+
 import pytest
+
+#sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+#import pennylane_cirq  # pylint: disable=wrong-import-position,unused-import
 
 
 TOLERANCE = 1e-3

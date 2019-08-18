@@ -30,7 +30,7 @@ The user would import them via
 
 .. code-block:: python
 
-    from plugin_name.ops import S, T, CCNOT
+    from pennylane_cirq.ops import S, T, CCNOT
 
 To see more details about defining custom PennyLane operations,
 including more advanced cases such as defining gradient rules,

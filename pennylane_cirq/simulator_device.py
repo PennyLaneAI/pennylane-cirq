@@ -37,7 +37,6 @@ Classes
 
 ----
 """
-
 # we always import NumPy directly
 import numpy as np
 
@@ -46,16 +45,34 @@ from .cirq_device import CirqDevice
 
 
 class SimulatorDevice(CirqDevice):
-    r"""SimulatorDevice for PennyLane.
+    r"""Cirq simulator device for PennyLane.
 
     Args:
         wires (int): the number of modes to initialize the device in
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables.
             For simulator devices, 0 means the exact EV is returned.
-        additional_option (float): as many additional arguments can be
-            added as needed
-        specific_option_for_device1 (int): another example
     """
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
+    
+    def __init__(self, wires, *, shots=0):
+        super().__init__(wires, shots)
+        
+        self.simulator = cirq.Simulator()
+
+    
+    def expval(self, observable, wires, par):
+        if self.shots == 0:
+            return self.simulator.simulate(self.circuit) # TODO
+        else:
+            return self.sample(observable, wires, par, n=self.shots).mean()
+            
+    def var(self, observable, wires, par):
+        if self.shots == 0:
+            return self.simulator.simulate(self.circuit) # TODO
+        else:
+            return self.sample(observable, wires, par, n=self.shots).var()
+
+    def sample(self, observable, wires, par, n=None):
+        sample = self.simulator.run(self.circuit, repetitions=n)

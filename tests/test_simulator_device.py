@@ -18,15 +18,16 @@ import pytest
 
 import pennylane as qml
 from pennylane import numpy as np
-
 import pennylane_cirq
 
 class TestDeviceIntegration:
+    """Tests that the SimulatorDevice integrates well with PennyLane"""
 
     def test_device_loading(self):
         """Tests that the cirq.simulator device is properly loaded"""
 
         dev = qml.device("cirq.simulator", wires=2)
+
         assert dev.num_wires == 2
         assert dev.shots == 0
         assert dev.short_name == "cirq.simulator"
