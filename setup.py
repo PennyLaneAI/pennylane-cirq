@@ -39,12 +39,7 @@ info = {
     ],
     "entry_points": {
         "pennylane.plugins": [
-            # List the short name of each device provided by
-            # the plugin, as well as the path to the Device class
-            # it corresponds to in the plugin. This allows
-            # the device to be imported automatically via the
-            # `pennylane.device` device loader.
-            "pluginname.devicename = plugin_name:DeviceClass"
+            "cirq.simulator = pennylane_cirq:SimulatorDevice"
         ]
     },
     # Place a one line description here. This will be shown by pip

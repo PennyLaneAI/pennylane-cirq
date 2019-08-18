@@ -63,10 +63,57 @@ class CirqDevice(Device):
         additional_option (float): as many additional arguments can be
             added as needed
     """
-    name = 'Cirq Simulator PennyLane plugin'
+    name = 'Cirq Abstract PennyLane plugin baseclass'
     pennylane_requires = '>=0.4.0'
     version = __version__
     author = 'Johannes Jakob Meyer'
 
     short_name = 'cirq.device'
-    _operation_map = {}
+
+    def rot3(a, b, c):        
+        return cirq.Rz(c), cirq.Ry(b), cirq.Rz(a)
+
+    _operation_map = {
+        'BasisState': None,
+        'QubitStateVector': None,
+
+        'QubitUnitary': cirq.SingleQubitMatrixGate,
+        'PauliX': cirq.X,
+        'PauliY': cirq.Y,
+        'PauliZ': cirq.Z,
+        'Hadamard': cirq.H,
+
+        'CNOT': cirq.CNOT,
+        'SWAP': cirq.SWAP,
+        'CZ': cirq.CZ,
+
+        'PhaseShift': cirq.S,
+        'RX': cirq.Rx,
+        'RY': cirq.Ry,
+        'RZ': cirq.Rz,
+        'Rot': rot3,
+    }
+
+    _observable_map = {}
+
+    def pre_apply(self):
+        self.circuit = cirq.Circuit()
+
+    def apply(self, operation, wires, par):
+        operation = _operation_map[operation](*par)
+
+        self.circuit.append(operation)
+
+    def post_apply(self):
+        print(self.circuit)
+
+
+
+    # _observable_map = {
+    #     'PauliX': X,
+    #     'PauliY': Y,
+    #     'PauliZ': Z,
+    #     'Hadamard': H,
+    #     'Hermitian': hermitian,
+    #     'Identity': identity
+    # }

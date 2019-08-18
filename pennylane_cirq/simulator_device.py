@@ -43,10 +43,10 @@ import numpy as np
 
 import cirq
 
-from .framework_device import FrameworkDevice
+from .cirq_device import CirqDevice
 
 
-class SimulatorDevice(FrameworkDevice):
+class SimulatorDevice(CirqDevice):
     r"""SimulatorDevice for PennyLane.
 
     Args:
@@ -58,34 +58,7 @@ class SimulatorDevice(FrameworkDevice):
             added as needed
         specific_option_for_device1 (int): another example
     """
-    name = "Target Framework SimulatorDevice for PennyLane"
-    short_name = "plugin_name.device1"
-
-    _operation_map = {
-        "PauliX": tf.X,
-        "PauliY": tf.Y,
-        "PauliZ": tf.Z,
-        "Hadamard": tf.H,
-        "CNOT": tf.CNOT,
-        "SWAP": tf.SWAP,
-    }
-
-    observables = {"PauliX", "PauliY", "PauliZ", "Identity", "Hadamard", "Hermitian"}
-
-    _circuits = {}
-
-    def __init__(self, wires, *, additional_option, shots=0, specific_option_for_device1=2):
-        super().__init__(wires, shots=shots, additional_option=additional_option)
-        self.specific_option_for_device1 = specific_option_for_device1
-
-    def apply(self, operation, wires, par):
-        pass
-
-    def expval(self, observable, wires, par):
-        pass
-
-    def var(self, observable, wires, par):
-        pass
-
-    def sample(self, observable, wires, par, n=None):
-        pass
+    name = "Cirq Simulator device for PennyLane"
+    short_name = "cirq.simulator"
+    
+    
