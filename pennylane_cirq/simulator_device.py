@@ -56,19 +56,23 @@ class SimulatorDevice(CirqDevice):
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
     
-    def __init__(self, wires, *, shots=0):
-        super().__init__(wires, shots)
+    def __init__(self, wires, shots=0, qubits=None):
+        super().__init__(wires, shots, qubits)
         
         self.simulator = cirq.Simulator()
 
     
     def expval(self, observable, wires, par):
+        return 1
+
         if self.shots == 0:
             return self.simulator.simulate(self.circuit) # TODO
         else:
             return self.sample(observable, wires, par, n=self.shots).mean()
             
     def var(self, observable, wires, par):
+        return 0
+
         if self.shots == 0:
             return self.simulator.simulate(self.circuit) # TODO
         else:

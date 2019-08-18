@@ -36,23 +36,60 @@ Classes
 -------
 
 .. autosummary::
+   CirqCommand
    CirqDevice
 
 Code details
 ~~~~~~~~~~~~
 """
-import abc
-
-# we always import NumPy directly
 import numpy as np
 import cirq
 
+import pennylane as qml
 from pennylane import Device
 
 from ._version import __version__
 
+class CirqCommand:
+    """A helper class that wraps the native Cirq commands and provides an 
+       interface for parametrization and application."""
 
-class CirqDevice(Device, abc.ABC):
+    def __init__(self, cirq_gate, is_parametrized=False):
+        """Initializes the CirqCommand.
+
+        Args:
+            cirq_gate (Cirq:Qid): the Cirq gate to be wrapped
+            is_parametrized (Bool): Indicates if the Cirq gate is parametrized
+        """
+
+        self.cirq_gate = cirq_gate
+        self.parametrized_cirq_gate = None
+        self.is_parametrized = is_parametrized
+    
+    def parametrize(self, *args):
+        """Parametrizes the CirqCommand.
+
+        Args:
+            *args: the Cirq arguments to be passed to the Cirq gate.
+        """
+        if self.is_parametrized:
+            self.parametrized_cirq_gate = self.cirq_gate(*args)
+
+    def apply(self, *qubits):
+        """Parametrizes the CirqCommand.
+
+        Args:
+            *qubits (Cirq:Qid): the qubits on which the Cirq gate should be performed.
+        """
+        if self.is_parametrized:
+            if not self.parametrized_cirq_gate:
+                raise qml.DeviceError("Gate must be parametrized before it can be applied.")
+            
+            return self.parametrized_cirq_gate(*qubits)
+        else:
+            return self.cirq_gate(*qubits)
+
+class CirqDevice(Device):
     r"""Abstract Cirq device for PennyLane.
 
     Args:
@@ -70,34 +107,46 @@ class CirqDevice(Device, abc.ABC):
 
     short_name = "cirq.device"
 
+    def __init__(self, wires, shots, qubits=None):
+        super().__init__(wires, shots)
+        
+        if qubits:
+            if wires != len(qubits):
+                raise qml.DeviceError("The number of given qubits and the specified number of wires have to match. Got {} wires and {} qubits.".format(wires, len(qubits)))
+
+            self.qubits = qubits
+        else:
+            self.qubits = [cirq.LineQubit(wire) for wire in range(wires)]
+
     def rot3(a, b, c):
-        return cirq.Rz(c), cirq.Ry(b), cirq.Rz(a)
+        return cirq.Rz(c) @ cirq.Ry(b) @ cirq.Rz(a)
+
 
     _operation_map = {
         "BasisState": None,
         "QubitStateVector": None,
-        "QubitUnitary": cirq.SingleQubitMatrixGate,
-        "PauliX": cirq.X,
-        "PauliY": cirq.Y,
-        "PauliZ": cirq.Z,
-        "Hadamard": cirq.H,
-        "CNOT": cirq.CNOT,
-        "SWAP": cirq.SWAP,
-        "CZ": cirq.CZ,
-        "PhaseShift": cirq.S,
-        "RX": cirq.Rx,
-        "RY": cirq.Ry,
-        "RZ": cirq.Rz,
-        "Rot": rot3,
+        "QubitUnitary": CirqCommand(cirq.SingleQubitMatrixGate, True),
+        "PauliX": CirqCommand(cirq.X),
+        "PauliY": CirqCommand(cirq.Y),
+        "PauliZ": CirqCommand(cirq.Z),
+        "Hadamard": CirqCommand(cirq.H),
+        "CNOT": CirqCommand(cirq.CNOT),
+        "SWAP": CirqCommand(cirq.SWAP),
+        "CZ": CirqCommand(cirq.CZ),
+        "PhaseShift": None,
+        "RX": CirqCommand(cirq.Rx, True),
+        "RY": CirqCommand(cirq.Ry, True),
+        "RZ": CirqCommand(cirq.Rz, True),
+        "Rot": None,
     }
 
     _observable_map = {
-        #'PauliX': X,
-        #'PauliY': Y,
-        #'PauliZ': Z,
-        #'Hadamard': H,
-        #'Hermitian': hermitian,
-        #'Identity': identity
+        'PauliX': None,
+        'PauliY': None,
+        'PauliZ': None,
+        'Hadamard': None,
+        'Hermitian': None,
+        'Identity': None
     }
 
     def reset(self):
@@ -115,9 +164,10 @@ class CirqDevice(Device, abc.ABC):
         self.circuit = cirq.Circuit()
 
     def apply(self, operation, wires, par):
-        operation = self._operation_map[operation](*par)
+        command = self._operation_map[operation]
+        command.parametrize(*par)
 
-        self.circuit.append(operation)
+        self.circuit.append(command.apply(*[self.qubits[wire] for wire in wires]))
 
     def post_apply(self):
         print(self.circuit)
