@@ -41,13 +41,13 @@ Classes
 # we always import NumPy directly
 import numpy as np
 
-import TargetFramework as tf
+import cirq
 
 from .framework_device import FrameworkDevice
 
 
-class Device1(FrameworkDevice):
-    r"""Device1 for PennyLane.
+class SimulatorDevice(FrameworkDevice):
+    r"""SimulatorDevice for PennyLane.
 
     Args:
         wires (int): the number of modes to initialize the device in
@@ -58,7 +58,7 @@ class Device1(FrameworkDevice):
             added as needed
         specific_option_for_device1 (int): another example
     """
-    name = "Target Framework Device1 for PennyLane"
+    name = "Target Framework SimulatorDevice for PennyLane"
     short_name = "plugin_name.device1"
 
     _operation_map = {

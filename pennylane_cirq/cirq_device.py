@@ -36,7 +36,7 @@ Classes
 -------
 
 .. autosummary::
-   FrameworkDevice
+   CirqDevice
 
 Code details
 ~~~~~~~~~~~~
@@ -45,14 +45,15 @@ import abc
 
 # we always import NumPy directly
 import numpy as np
+import cirq
 
 from pennylane import Device
 
 from ._version import __version__
 
 
-class FrameworkDevice(Device):
-    r"""Abstract Framework device for PennyLane.
+class CirqDevice(Device):
+    r"""Abstract Cirq device for PennyLane.
 
     Args:
         wires (int): the number of modes to initialize the device in
@@ -62,30 +63,10 @@ class FrameworkDevice(Device):
         additional_option (float): as many additional arguments can be
             added as needed
     """
-    name = 'Target Framework Simulator PennyLane plugin'
+    name = 'Cirq Simulator PennyLane plugin'
     pennylane_requires = '>=0.4.0'
     version = __version__
-    author = 'John Smith'
+    author = 'Johannes Jakob Meyer'
 
-    short_name = 'framework'
+    short_name = 'cirq.device'
     _operation_map = {}
-
-    def __init__(self, wires, *, shots=0, additional_option=2):
-        super().__init__(wires, shots)
-        self.additional_option = hbar
-        self.prog = None
-        self.state = None
-        self.samples = None
-
-    def reset(self):
-        """Reset the device"""
-        pass
-
-    @property
-    def operations(self):
-        """Get the supported set of operations.
-
-        Returns:
-            set[str]: the set of PennyLane operation names the device supports
-        """
-        return set(self._operation_map.keys())
