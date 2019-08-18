@@ -1,4 +1,4 @@
-# Copyright 2019 Xanadu Quantum Technologies Inc.
+# Copyright 2018 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Plugin overview
-===============
+Unit tests for the Simulator plugin
 """
-from .simulator_device import SimulatorDevice
-#from .ops import S, T, CCNOT, CPHASE, CSWAP, ISWAP, PSWAP
-from ._version import __version__
+import pytest
+
+import pennylane as qml
+from pennylane import numpy as np
+
+import pennylane_cirq 
+
+class TestDeviceIntegration:
+
+    def test_device_loading(self):
+        """Tests that the cirq.simulator device is properly loaded"""
+
+        dev = qml.device("cirq.simulator", wires=2)
+        assert dev.num_wires == 2
+        assert dev.shots == 0
+        assert dev.short_name == "cirq.simulator"
+
+
+    

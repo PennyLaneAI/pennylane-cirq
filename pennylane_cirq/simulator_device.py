@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Device 1
+SimulatorDevice
 ========
 
-**Module name:** :mod:`plugin_name.device1`
+**Module name:** :mod:`pennylane_cirq.simulator_device`
 
-.. currentmodule:: plugin_name.device1
+.. currentmodule:: pennylane_cirq.simulator_device
 
 This Device implements all the :class:`~pennylane.device.Device` methods,
 for using Target Framework device/simulator as a PennyLane device.
@@ -33,7 +33,7 @@ Classes
 -------
 
 .. autosummary::
-   Device1
+   SimulatorDevice
 
 ----
 """
@@ -42,7 +42,6 @@ Classes
 import numpy as np
 
 import cirq
-
 from .cirq_device import CirqDevice
 
 
@@ -61,4 +60,4 @@ class SimulatorDevice(CirqDevice):
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
     
-    
+

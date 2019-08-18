@@ -12,19 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Base Framework device class
+Base Cirq device class
 ===========================
 
 **Module name:** :mod:`plugin_name.device`
 
 .. currentmodule:: plugin_name.device
 
-An abstract base class for constructing Target Framework devices for PennyLane.
+An abstract base class for constructing Cirq devices for PennyLane.
 
 This should contain all the boilerplate for supporting PennyLane
-from the Target Framework, making it easier to create new devices.
+from Cirq, making it easier to create new devices.
 The abstract base class below should contain all common code required
-by the Target Framework.
+by Cirq.
 
 This abstract base class will not be used by the user. Add/delete
 methods and attributes below where needed.
