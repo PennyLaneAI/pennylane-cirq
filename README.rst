@@ -1,4 +1,4 @@
-PennyLane Plugin Template
+PennyLane Cirq Plugin
 #########################
 
 .. image:: https://img.shields.io/travis/com/XanaduAI/plugin-name/master.svg
@@ -22,17 +22,12 @@ PennyLane Plugin Template
     :target: https://pypi.org/project/plugin-name
 
 
-This template repository provides the boilerplate and file structure required to easily create your
-own PennyLane plugin.
+`PennyLane <https://pennylane.readthedocs.io>`_ is a cross-platform Python library for quantum machine
+learning, automatic differentiation, and optimization of hybrid quantum-classical computations.
 
-See the `PennyLane Developer API documentation <https://pennylane.readthedocs.io/en/latest/API/overview.html>`_
-for more details on developing a PennyLane plugin.
+`Cirq <https://github.com/quantumlib/Cirq>`_ is a Python library for writing, manipulating, and optimizing quantum circuits and running them against quantum computers and simulators.
 
-`Target framework <https://targetframework.readthedocs.io>`_ is a full-stack Python library
-for doing things.
-
-`PennyLane <https://pennylane.readthedocs.io>`_ is a machine learning library for optimization
-and automatic differentiation of hybrid quantum-classical computations.
+This PennyLane plugin allows to use both the software and hardware backends of Cirq as devices for PennyLane.
 
 
 Features
