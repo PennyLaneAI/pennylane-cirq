@@ -46,14 +46,22 @@ class TestApply:
         @qml.qnode(dev)
         def circuit():
             qml.PauliX(wires=0)
+            qml.CZ(wires=[0, 1])
             qml.CNOT(wires=[2, 0])
             qml.PauliY(wires=1)
             qml.RX(0.342, wires=1)
             qml.CNOT(wires=[0, 1])
             qml.RY(0.342, wires=1)
-            qml.CNOT(wires=[1, 2])
+            qml.Hadamard(wires=1)
+            qml.SWAP(wires=[1, 2])
             qml.RZ(0.342, wires=1)
+            qml.Rot(0.342, 0.2, 0.1, wires=0)
             qml.PauliX(wires=0)
+            qml.Hadamard(wires=2)
+            qml.SWAP(wires=[0, 1])
+            qml.CNOT(wires=[0, 1])
+            qml.CNOT(wires=[1, 2])
+            qml.CNOT(wires=[2, 0])
 
             return qml.expval(qml.PauliZ(0)), qml.expval(qml.PauliZ(1))
 
