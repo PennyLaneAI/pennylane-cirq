@@ -28,17 +28,14 @@ requirements = ["pennylane"]
 
 info = {
     # 'name' is the name that will be used by pip for installation
-    "name": "Plugin-Name",
+    "name": "PennyLane-cirq",
     "version": version,
     "maintainer": "Xanadu Inc.",
-    "maintainer_email": "name@xanadu.ai",
+    "maintainer_email": "software@xanadu.ai",
     "url": "http://xanadu.ai",
     "license": "Apache License 2.0",
     "packages": [
-        # The name of the folder containing the plugin.
-        # This is the name that will be used when importing
-        # the plugin in Python.
-        "plugin_name"
+        "pennylane_cirq"
     ],
     "entry_points": {
         "pennylane.plugins": [
@@ -51,7 +48,7 @@ info = {
         ]
     },
     # Place a one line description here. This will be shown by pip
-    "description": "Plugin description",
+    "description": "PennyLane plugin for cirq",
     "long_description": open("README.rst").read(),
     # The name of the folder containing the plugin
     "provides": ["plugin_name"],
