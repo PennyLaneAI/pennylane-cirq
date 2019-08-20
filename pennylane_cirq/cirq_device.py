@@ -108,7 +108,6 @@ class CirqCommand(CompositeCirqCommand):
 
         super().__init__([(cirq_gate, param_indices)])
 
-
 class CirqDevice(Device):
     r"""Abstract Cirq device for PennyLane.
 
@@ -129,6 +128,8 @@ class CirqDevice(Device):
 
     def __init__(self, wires, shots, qubits=None):
         super().__init__(wires, shots)
+
+        self._eigs = dict()
         
         if qubits:
             if wires != len(qubits):
@@ -147,6 +148,7 @@ class CirqDevice(Device):
         "PauliY": CirqCommand(cirq.Y),
         "PauliZ": CirqCommand(cirq.Z),
         "Hadamard": CirqCommand(cirq.H),
+        "S": CirqCommand(cirq.S),
         "CNOT": CirqCommand(cirq.CNOT),
         "SWAP": CirqCommand(cirq.SWAP),
         "CZ": CirqCommand(cirq.CZ),
@@ -182,9 +184,58 @@ class CirqDevice(Device):
 
     def apply(self, operation, wires, par):
         command = self._operation_map[operation]
-        command.parametrize(*par)
 
-        self.circuit.append(command.apply(*[self.qubits[wire] for wire in wires]))
+        # If command is None do nothing
+        if command:
+            command.parametrize(*par)
+
+            self.circuit.append(command.apply(*[self.qubits[wire] for wire in wires]))
 
     def post_apply(self):
+        pass
+
+    def pre_measure(self):
+        # Cirq only measures states in the computational basis, i.e. 0 and 1
+        # To measure different observables, we have to go to their eigenbases
+
+        # This code is adapted from the pennylane-qiskit plugin
+        for e in self.obs_queue:
+            wire = e.wires[0]
+            
+            # Identity and PauliZ need no changes
+            if e.name == "PauliX":
+                # X = H.Z.H
+                self.apply("Hadamard", wires=[wire], par=[])
+
+            elif e.name == "PauliY":
+                # Y = (HS^)^.Z.(HS^) and S^=SZ
+                self.apply("PauliZ", wires=[wire], par=[])
+                self.apply("S", wires=[wire], par=[])
+                self.apply("Hadamard", wires=[wire], par=[])
+
+            elif e.name == "Hadamard":
+                # H = Ry(-pi/4)^.Z.Ry(-pi/4)
+                self.apply("RY", [wire], [-np.pi / 4])
+
+            elif e.name == "Hermitian":
+                # For arbitrary Hermitian matrix H, let U be the unitary matrix
+                # that diagonalises it, and w_i be the eigenvalues.
+                Hmat = e.parameters[0]
+                Hkey = tuple(Hmat.flatten().tolist())
+
+                if Hkey in self._eigs:
+                    # retrieve eigenvectors
+                    U = self._eigs[Hkey]["eigvec"]
+                else:
+                    # store the eigenvalues corresponding to H
+                    # in a dictionary, so that they do not need to
+                    # be calculated later
+                    w, U = np.linalg.eigh(Hmat)
+                    self._eigs[Hkey] = {"eigval": w, "eigvec": U}
+
+                # Perform a change of basis before measuring by applying U^ to the circuit
+                self.apply("QubitUnitary", [wire], [U.conj().T])
+
+            self.circuit.append(cirq.measure(self.qubits[wire], key="{}".format(wire)))
+                
         print(self.circuit)

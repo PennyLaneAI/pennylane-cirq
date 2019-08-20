@@ -61,14 +61,19 @@ class SimulatorDevice(CirqDevice):
         
         self.simulator = cirq.Simulator()
 
+    def pre_measure(self):
+        super().pre_measure()
+                
+        if self.shots == 0:
+            self.result = self.simulator.simulate(self.circuit)
+        else:
+            num_shots = max([self.shots] + [e.num_samples for e in self.obs_queue if e.return_type == "sample"])
+
+            self.result = self.simulator.run(self.circuit, repetitions=num_shots)
     
     def expval(self, observable, wires, par):
+        print("Expval for {} on wire {} with par {}, result = {}".format(observable, wires, par, self.result))
         return 1
-
-        if self.shots == 0:
-            return self.simulator.simulate(self.circuit) # TODO
-        else:
-            return self.sample(observable, wires, par, n=self.shots).mean()
             
     def var(self, observable, wires, par):
         return 0
@@ -79,4 +84,4 @@ class SimulatorDevice(CirqDevice):
             return self.sample(observable, wires, par, n=self.shots).var()
 
     def sample(self, observable, wires, par, n=None):
-        sample = self.simulator.run(self.circuit, repetitions=n)
+        return [1]

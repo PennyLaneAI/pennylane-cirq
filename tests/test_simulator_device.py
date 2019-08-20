@@ -21,6 +21,10 @@ from pennylane import numpy as np
 import pennylane_cirq
 import cirq
 
+# TODO:
+# * Test the feature that qubits can be given + exception
+# * Test all gate adjustments before measurements
+
 class TestDeviceIntegration:
     """Tests that the SimulatorDevice integrates well with PennyLane"""
 
@@ -40,8 +44,8 @@ class TestApply:
     def test_simple_circuit(self):
         """Tests a simple circuit"""
 
-        qubits = [cirq.GridQubit(0, 0), cirq.GridQubit(0, 1), cirq.GridQubit(1, 0)]
-        dev = qml.device("cirq.simulator", wires=3, qubits=qubits)
+        qubits = [cirq.GridQubit(0, 0), cirq.GridQubit(0, 1), cirq.GridQubit(1, 0), cirq.GridQubit(1, 1)]
+        dev = qml.device("cirq.simulator", wires=4, qubits=qubits)
 
         @qml.qnode(dev)
         def circuit():
@@ -51,6 +55,9 @@ class TestApply:
             qml.PauliY(wires=1)
             qml.RX(0.342, wires=1)
             qml.CNOT(wires=[0, 1])
+            qml.CNOT(wires=[2, 3])
+            qml.CNOT(wires=[1, 3])
+            qml.CNOT(wires=[0, 3])
             qml.RY(0.342, wires=1)
             qml.Hadamard(wires=1)
             qml.SWAP(wires=[1, 2])
@@ -63,7 +70,7 @@ class TestApply:
             qml.CNOT(wires=[1, 2])
             qml.CNOT(wires=[2, 0])
 
-            return qml.expval(qml.PauliZ(0)), qml.expval(qml.PauliZ(1))
+            return qml.expval(qml.PauliX(0)), qml.expval(qml.PauliY(1)), qml.expval(qml.Hadamard(2)), qml.expval(qml.Hermitian(np.array([[2, 1j], [-1j, 2]]), 3))
 
         print(circuit())
 
