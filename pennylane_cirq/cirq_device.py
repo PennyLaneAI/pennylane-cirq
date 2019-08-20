@@ -126,6 +126,12 @@ class CirqDevice(Device):
 
     short_name = "cirq.device"
 
+    @staticmethod
+    def _convert_measurements(measurements, zero_value, one_value):
+        conversion = np.vectorize(lambda x: one_value if x else zero_value)
+
+        return conversion(measurements.flatten())
+
     def __init__(self, wires, shots, qubits=None):
         super().__init__(wires, shots)
 
@@ -236,6 +242,6 @@ class CirqDevice(Device):
                 # Perform a change of basis before measuring by applying U^ to the circuit
                 self.apply("QubitUnitary", [wire], [U.conj().T])
 
-            self.circuit.append(cirq.measure(self.qubits[wire], key="{}".format(wire)))
+            self.circuit.append(cirq.measure(self.qubits[wire], key=str(wire)))
                 
         print(self.circuit)

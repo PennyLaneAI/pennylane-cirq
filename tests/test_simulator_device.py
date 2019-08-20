@@ -24,6 +24,7 @@ import cirq
 # TODO:
 # * Test the feature that qubits can be given + exception
 # * Test all gate adjustments before measurements
+# * Test that more samples are used when n > shots for a requested sample
 
 class TestDeviceIntegration:
     """Tests that the SimulatorDevice integrates well with PennyLane"""
@@ -45,7 +46,7 @@ class TestApply:
         """Tests a simple circuit"""
 
         qubits = [cirq.GridQubit(0, 0), cirq.GridQubit(0, 1), cirq.GridQubit(1, 0), cirq.GridQubit(1, 1)]
-        dev = qml.device("cirq.simulator", wires=4, qubits=qubits)
+        dev = qml.device("cirq.simulator", wires=4, qubits=qubits, shots=10)
 
         @qml.qnode(dev)
         def circuit():
@@ -70,7 +71,7 @@ class TestApply:
             qml.CNOT(wires=[1, 2])
             qml.CNOT(wires=[2, 0])
 
-            return qml.expval(qml.PauliX(0)), qml.expval(qml.PauliY(1)), qml.expval(qml.Hadamard(2)), qml.expval(qml.Hermitian(np.array([[2, 1j], [-1j, 2]]), 3))
+            return qml.expval(qml.PauliX(0)), qml.var(qml.PauliY(1)), qml.sample(qml.Hadamard(2), n=20), qml.expval(qml.Hermitian(np.array([[2, 1j], [-1j, 2]]), 3))
 
         print(circuit())
 
