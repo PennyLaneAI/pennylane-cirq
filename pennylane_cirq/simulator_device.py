@@ -38,6 +38,9 @@ Classes
 ----
 """
 # we always import NumPy directly
+from collections import OrderedDict
+from collections.abc import Iterable
+import itertools
 import numpy as np
 
 import cirq
@@ -60,16 +63,22 @@ class SimulatorDevice(CirqDevice):
         super().__init__(wires, shots, qubits)
         
         self.simulator = cirq.Simulator()
+        self.result = None
+        self.measurements = None
+        self.state = None
 
     def pre_measure(self):
         super().pre_measure()
                 
         if self.shots == 0:
             self.result = self.simulator.simulate(self.circuit)
-            self.state = self.result.state
-
-            print("state = ", self.state)
+            self.state = np.array(self.result.state_vector())
         else:
+            for e in self.obs_queue:
+                wire = e.wires[0]
+                
+                self.circuit.append(cirq.measure(self.qubits[wire], key=str(wire)))
+
             num_shots = max([self.shots] + [e.num_samples for e in self.obs_queue if e.return_type == "sample"])
 
             self.result = self.simulator.run(self.circuit, repetitions=num_shots)
@@ -78,35 +87,86 @@ class SimulatorDevice(CirqDevice):
             # They will be changed in the measurement routines where the observable is available
             self.measurements = np.array([self.result.measurements[str(wire)].flatten() for wire in range(self.num_wires)])
     
-    def expval(self, observable, wires, par):        
+    def probability(self):
+        if self.state is None:
+            return None
+
+        states = itertools.product(range(2), repeat=self.num_wires)
+        probs = np.abs(self.state)**2
+
+        return OrderedDict(zip(states, probs))
+
+    def expval(self, observable, wires, par):  
+        if isinstance(wires, Iterable):
+            wire = wires[0]
+        else:
+            wire = wires
+  
+        zero_value = 1
+        one_value = -1
+
+        if observable == "Hermitian":
+            # Take the eigenvalues from the stored values
+            Hmat = par[0]
+            Hkey = tuple(Hmat.flatten().tolist())
+            zero_value = self._eigs[Hkey]["eigval"][0]
+            one_value = self._eigs[Hkey]["eigval"][1]
+
         if self.shots == 0:
-            # We have to use the state of the simulation to find the expectation value
-            return 1
+            # We have to use the state of the simulation to find the expectation value 
+            probabilities = self.probability()
+
+            zero_marginal_prob = np.sum([probabilities[state] for state in probabilities if state[wire] == 0])
+            one_marginal_prob = 1 - zero_marginal_prob
+
+            return zero_marginal_prob * zero_value + one_marginal_prob * one_value
         else:
             return self.sample(observable, wires, par).mean()
             
     def var(self, observable, wires, par):
+        if isinstance(wires, Iterable):
+            wire = wires[0]
+        else:
+            wire = wires
+
+        zero_value = 1
+        one_value = -1
+
+        if observable == "Hermitian":
+            # Take the eigenvalues from the stored values
+            Hmat = par[0]
+            Hkey = tuple(Hmat.flatten().tolist())
+            zero_value = self._eigs[Hkey]["eigvec"][0]
+            one_value = self._eigs[Hkey]["eigvec"][1]
+
         if self.shots == 0:
             # We have to use the state of the simulation to find the expectation value
-            return 1
+            probabilities = self.probability()
+
+            zero_marginal_prob = np.sum([probabilities[state] for state in probabilities if state[wire] == 0])
+            one_marginal_prob = 1 - zero_marginal_prob
+
+            # Var = <A^2> - <A>^2
+            return zero_marginal_prob * zero_value**2 + one_marginal_prob * one_value**2 - (zero_marginal_prob * zero_value + one_marginal_prob * one_value)**2
         else:
             return self.sample(observable, wires, par).var()
 
     def sample(self, observable, wires, par, n=None):
         if not n:
             n = self.shots
+            
+        zero_value = 1
+        one_value = -1
+
+        if observable == "Hermitian":
+            # Take the eigenvalues from the stored values
+            Hmat = par[0]
+            Hkey = tuple(Hmat.flatten().tolist())
+            zero_value = self._eigs[Hkey]["eigvec"][0]
+            one_value = self._eigs[Hkey]["eigvec"][1]
 
         if self.shots == 0:
             # We have to use the state of the simulation to find the expectation value
             return [1]*n
         else:
-            zero_value = 1
-            one_value = -1
-            # Take the eigenvalues from the stored values
-            if observable == "Hermitian":
-                Hmat = par[0]
-                Hkey = tuple(Hmat.flatten().tolist())
-                zero_value = self._eigs[Hkey]["eigvec"][0]
-                one_value = self._eigs[Hkey]["eigvec"][1]
-
             return CirqDevice._convert_measurements(self.measurements[wires[0]], zero_value, one_value)[:n]
