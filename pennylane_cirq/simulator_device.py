@@ -39,7 +39,6 @@ Classes
 """
 # we always import NumPy directly
 from collections import OrderedDict
-from collections.abc import Iterable
 import itertools
 import numpy as np
 
@@ -97,10 +96,7 @@ class SimulatorDevice(CirqDevice):
         return OrderedDict(zip(states, probs))
 
     def expval(self, observable, wires, par):  
-        if isinstance(wires, Iterable):
-            wire = wires[0]
-        else:
-            wire = wires
+        wire = wires[0]
   
         zero_value = 1
         one_value = -1
@@ -124,10 +120,7 @@ class SimulatorDevice(CirqDevice):
             return self.sample(observable, wires, par).mean()
             
     def var(self, observable, wires, par):
-        if isinstance(wires, Iterable):
-            wire = wires[0]
-        else:
-            wire = wires
+        wire = wires[0]
 
         zero_value = 1
         one_value = -1
@@ -154,6 +147,8 @@ class SimulatorDevice(CirqDevice):
     def sample(self, observable, wires, par, n=None):
         if not n:
             n = self.shots
+
+        wire = wires[0]
             
         zero_value = 1
         one_value = -1
@@ -167,6 +162,11 @@ class SimulatorDevice(CirqDevice):
 
         if self.shots == 0:
             # We have to use the state of the simulation to find the expectation value
-            return [1]*n
+            probabilities = self.probability()
+
+            zero_marginal_prob = np.sum([probabilities[state] for state in probabilities if state[wire] == 0])
+            one_marginal_prob = 1 - zero_marginal_prob
+
+            return np.random.choice([zero_value, one_value], size=n, p=[zero_marginal_prob, one_marginal_prob])
         else:
             return CirqDevice._convert_measurements(self.measurements[wires[0]], zero_value, one_value)[:n]
