@@ -85,6 +85,8 @@ class SimulatorDevice(CirqDevice):
             # Bring measurements to a more managable form, but keep True/False as values for now
             # They will be changed in the measurement routines where the observable is available
             self.measurements = np.array([self.result.measurements[str(wire)].flatten() for wire in range(self.num_wires)])
+        
+        print(self.circuit)
     
     def probability(self):
         if self.state is None:

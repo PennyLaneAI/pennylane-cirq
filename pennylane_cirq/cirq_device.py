@@ -36,7 +36,6 @@ Classes
 -------
 
 .. autosummary::
-   CirqCommand
    CirqDevice
 
 Code details
@@ -49,64 +48,7 @@ import pennylane as qml
 from pennylane import Device
 
 from ._version import __version__
-
-class CompositeCirqCommand:
-    """A helper class that wraps multiple native Cirq commands and provides an 
-       interface for parametrization and application."""
-
-    def __init__(self, cirq_gate_map):
-        """Initializes the CirqCommand.
-
-        Args:
-            cirq_gate (List[Tuple(Cirq:Qid, List[int])]): A list of tuples consisting of a Cirq gate and a list of 
-                indices indicating which parameters are used for the gate parameterization. The gates are applied in the
-                order given.
-        """
-        self.cirq_gate_map = cirq_gate_map
-        self.parametrized_cirq_gates = []
-
-    def parametrize(self, *args):
-        """Parametrizes the CompositeCirqCommand.
-
-        Args:
-            *qubits (Cirq:Qid): the qubits on which the Cirq gate should be performed.
-        """
-        self.parametrized_cirq_gates = []
-        
-        for gate, arg_indices in self.cirq_gate_map:
-            if arg_indices:
-                self.parametrized_cirq_gates.append(gate(*[args[idx] for idx in arg_indices]))
-            else:
-                self.parametrized_cirq_gates.append(gate)
-
-    def apply(self, *qubits):
-        """Parametrizes the CompositeCirqCommand.
-
-        Args:
-            *qubits (Cirq:Qid): the qubits on which the Cirq gate should be performed.
-        """
-        if not self.parametrized_cirq_gates:
-            raise qml.DeviceError("Command must be parametrized before it can be applied.")
-
-        return (parametrized_gate(*qubits) for parametrized_gate in self.parametrized_cirq_gates)
-
-class CirqCommand(CompositeCirqCommand):
-    """A helper class that wraps the native Cirq commands and provides an 
-       interface for parametrization and application."""
-
-    def __init__(self, cirq_gate, num_params=0):
-        """Initializes the CirqCommand.
-
-        Args:
-            cirq_gate (Cirq:Qid): the Cirq gate to be wrapped
-            is_parametrized (Bool): Indicates if the Cirq gate is parametrized
-        """
-        if num_params == 0:
-            param_indices = []
-        else:
-            param_indices = range(num_params)
-
-        super().__init__([(cirq_gate, param_indices)])
+from .cirq_interface import CirqOperation
 
 class CirqDevice(Device):
     r"""Abstract Cirq device for PennyLane.
@@ -149,20 +91,20 @@ class CirqDevice(Device):
     _operation_map = {
         "BasisState": None,
         "QubitStateVector": None,
-        "QubitUnitary": CirqCommand(cirq.SingleQubitMatrixGate, 1),
-        "PauliX": CirqCommand(cirq.X),
-        "PauliY": CirqCommand(cirq.Y),
-        "PauliZ": CirqCommand(cirq.Z),
-        "Hadamard": CirqCommand(cirq.H),
-        "S": CirqCommand(cirq.S),
-        "CNOT": CirqCommand(cirq.CNOT),
-        "SWAP": CirqCommand(cirq.SWAP),
-        "CZ": CirqCommand(cirq.CZ),
-        "PhaseShift": None,
-        "RX": CirqCommand(cirq.Rx, 1),
-        "RY": CirqCommand(cirq.Ry, 1),
-        "RZ": CirqCommand(cirq.Rz, 1),
-        "Rot": CompositeCirqCommand([(cirq.Rz, [0]), (cirq.Ry, [1]), (cirq.Rz, [2])]),
+        "QubitUnitary": CirqOperation(lambda U: cirq.SingleQubitMatrixGate(U)),
+        "PauliX": CirqOperation(lambda: cirq.X),
+        "PauliY": CirqOperation(lambda: cirq.Y),
+        "PauliZ": CirqOperation(lambda: cirq.Z),
+        "Hadamard": CirqOperation(lambda: cirq.H),
+        "S": CirqOperation(lambda: cirq.S),
+        "CNOT": CirqOperation(lambda: cirq.CNOT),
+        "SWAP": CirqOperation(lambda: cirq.SWAP),
+        "CZ": CirqOperation(lambda: cirq.CZ),
+        "PhaseShift": CirqOperation(lambda phi: cirq.ZPowGate(phi / math.pi)),
+        "RX": CirqOperation(lambda phi: cirq.Rx(phi)),
+        "RY": CirqOperation(lambda phi: cirq.Ry(phi)),
+        "RZ": CirqOperation(lambda phi: cirq.Rz(phi)),
+        "Rot": CirqOperation(lambda a, b, c: [cirq.Rz(a), cirq.Ry(b), cirq.Rz(c)]),
     }
 
     _observable_map = {
