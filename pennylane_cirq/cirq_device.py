@@ -100,7 +100,7 @@ class CirqDevice(Device):
         "CNOT": CirqOperation(lambda: cirq.CNOT),
         "SWAP": CirqOperation(lambda: cirq.SWAP),
         "CZ": CirqOperation(lambda: cirq.CZ),
-        "PhaseShift": CirqOperation(lambda phi: cirq.ZPowGate(phi / math.pi)),
+        "PhaseShift": CirqOperation(lambda phi: cirq.ZPowGate(exponent=phi / np.pi, global_shift=1.0)),
         "RX": CirqOperation(lambda phi: cirq.Rx(phi)),
         "RY": CirqOperation(lambda phi: cirq.Ry(phi)),
         "RZ": CirqOperation(lambda phi: cirq.Rz(phi)),
@@ -113,7 +113,7 @@ class CirqDevice(Device):
         'PauliZ': None,
         'Hadamard': None,
         'Hermitian': None,
-        'Identity': None
+        'Identity': None,
     }
 
     def reset(self):
@@ -131,13 +131,13 @@ class CirqDevice(Device):
         self.circuit = cirq.Circuit()
 
     def apply(self, operation, wires, par):
-        command = self._operation_map[operation]
+        operation = self._operation_map[operation]
 
         # If command is None do nothing
-        if command:
-            command.parametrize(*par)
+        if operation:
+            operation.parametrize(*par)
 
-            self.circuit.append(command.apply(*[self.qubits[wire] for wire in wires]))
+            self.circuit.append(operation.apply(*[self.qubits[wire] for wire in wires]))
 
     def post_apply(self):
         pass
@@ -149,6 +149,10 @@ class CirqDevice(Device):
         # This code is adapted from the pennylane-qiskit plugin
         for e in self.obs_queue:
             wire = e.wires[0]
+            operation = self._observable_map[e]
+
+            operation.parametrize(*e.parameters)
+            operation.diagonalize(self.qubits[wire])
             
             # Identity and PauliZ need no changes
             if e.name == "PauliX":

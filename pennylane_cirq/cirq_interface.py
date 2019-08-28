@@ -78,6 +78,6 @@ class CirqOperation():
             *qubits (Cirq:Qid): the qubits on which the Cirq gates should be performed.
         """
         if not self.parametrized_cirq_gates:
-            raise qml.DeviceError("Command must be parametrized before it can be applied.")
+            raise qml.DeviceError("CirqOperation must be parametrized before it can be applied.")
 
         return (parametrized_gate(*qubits) for parametrized_gate in self.parametrized_cirq_gates)
