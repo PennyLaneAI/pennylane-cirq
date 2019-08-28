@@ -37,12 +37,14 @@ Classes
 
 ----
 """
+import itertools
+
 # we always import NumPy directly
 from collections import OrderedDict
-import itertools
-import numpy as np
 
 import cirq
+import numpy as np
+
 from .cirq_device import CirqDevice
 
 
@@ -57,10 +59,10 @@ class SimulatorDevice(CirqDevice):
     """
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
-    
+
     def __init__(self, wires, shots=0, qubits=None):
         super().__init__(wires, shots, qubits)
-        
+
         self.simulator = cirq.Simulator()
         self.result = None
         self.measurements = None
@@ -68,38 +70,42 @@ class SimulatorDevice(CirqDevice):
 
     def pre_measure(self):
         super().pre_measure()
-                
+
         if self.shots == 0:
             self.result = self.simulator.simulate(self.circuit)
             self.state = np.array(self.result.state_vector())
         else:
             for e in self.obs_queue:
                 wire = e.wires[0]
-                
+
                 self.circuit.append(cirq.measure(self.qubits[wire], key=str(wire)))
 
-            num_shots = max([self.shots] + [e.num_samples for e in self.obs_queue if e.return_type == "sample"])
+            num_shots = max(
+                [self.shots] + [e.num_samples for e in self.obs_queue if e.return_type == "sample"]
+            )
 
             self.result = self.simulator.run(self.circuit, repetitions=num_shots)
 
             # Bring measurements to a more managable form, but keep True/False as values for now
             # They will be changed in the measurement routines where the observable is available
-            self.measurements = np.array([self.result.measurements[str(wire)].flatten() for wire in range(self.num_wires)])
-        
+            self.measurements = np.array(
+                [self.result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
+            )
+
         print(self.circuit)
-    
+
     def probability(self):
         if self.state is None:
             return None
 
         states = itertools.product(range(2), repeat=self.num_wires)
-        probs = np.abs(self.state)**2
+        probs = np.abs(self.state) ** 2
 
         return OrderedDict(zip(states, probs))
 
-    def expval(self, observable, wires, par):  
+    def expval(self, observable, wires, par):
         wire = wires[0]
-  
+
         zero_value = 1
         one_value = -1
 
@@ -111,16 +117,18 @@ class SimulatorDevice(CirqDevice):
             one_value = self._eigs[Hkey]["eigval"][1]
 
         if self.shots == 0:
-            # We have to use the state of the simulation to find the expectation value 
+            # We have to use the state of the simulation to find the expectation value
             probabilities = self.probability()
 
-            zero_marginal_prob = np.sum([probabilities[state] for state in probabilities if state[wire] == 0])
+            zero_marginal_prob = np.sum(
+                [probabilities[state] for state in probabilities if state[wire] == 0]
+            )
             one_marginal_prob = 1 - zero_marginal_prob
 
             return zero_marginal_prob * zero_value + one_marginal_prob * one_value
         else:
             return self.sample(observable, wires, par).mean()
-            
+
     def var(self, observable, wires, par):
         wire = wires[0]
 
@@ -138,11 +146,17 @@ class SimulatorDevice(CirqDevice):
             # We have to use the state of the simulation to find the expectation value
             probabilities = self.probability()
 
-            zero_marginal_prob = np.sum([probabilities[state] for state in probabilities if state[wire] == 0])
+            zero_marginal_prob = np.sum(
+                [probabilities[state] for state in probabilities if state[wire] == 0]
+            )
             one_marginal_prob = 1 - zero_marginal_prob
 
             # Var = <A^2> - <A>^2
-            return zero_marginal_prob * zero_value**2 + one_marginal_prob * one_value**2 - (zero_marginal_prob * zero_value + one_marginal_prob * one_value)**2
+            return (
+                zero_marginal_prob * zero_value ** 2
+                + one_marginal_prob * one_value ** 2
+                - (zero_marginal_prob * zero_value + one_marginal_prob * one_value) ** 2
+            )
         else:
             return self.sample(observable, wires, par).var()
 
@@ -151,7 +165,7 @@ class SimulatorDevice(CirqDevice):
             n = self.shots
 
         wire = wires[0]
-            
+
         zero_value = 1
         one_value = -1
 
@@ -166,9 +180,15 @@ class SimulatorDevice(CirqDevice):
             # We have to use the state of the simulation to find the expectation value
             probabilities = self.probability()
 
-            zero_marginal_prob = np.sum([probabilities[state] for state in probabilities if state[wire] == 0])
+            zero_marginal_prob = np.sum(
+                [probabilities[state] for state in probabilities if state[wire] == 0]
+            )
             one_marginal_prob = 1 - zero_marginal_prob
 
-            return np.random.choice([zero_value, one_value], size=n, p=[zero_marginal_prob, one_marginal_prob])
+            return np.random.choice(
+                [zero_value, one_value], size=n, p=[zero_marginal_prob, one_marginal_prob]
+            )
         else:
-            return CirqDevice._convert_measurements(self.measurements[wires[0]], zero_value, one_value)[:n]
+            return CirqDevice._convert_measurements(
+                self.measurements[wires[0]], zero_value, one_value
+            )[:n]

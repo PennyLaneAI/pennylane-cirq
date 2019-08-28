@@ -41,14 +41,14 @@ Classes
 Code details
 ~~~~~~~~~~~~
 """
-import numpy as np
 import cirq
-
+import numpy as np
 import pennylane as qml
 from pennylane import Device
 
 from ._version import __version__
 from .cirq_interface import CirqOperation
+
 
 class CirqDevice(Device):
     r"""Abstract Cirq device for PennyLane.
@@ -78,15 +78,19 @@ class CirqDevice(Device):
         super().__init__(wires, shots)
 
         self._eigs = dict()
-        
+        self.circuit = None
+
         if qubits:
             if wires != len(qubits):
-                raise qml.DeviceError("The number of given qubits and the specified number of wires have to match. Got {} wires and {} qubits.".format(wires, len(qubits)))
+                raise qml.DeviceError(
+                    "The number of given qubits and the specified number of wires have to match. Got {} wires and {} qubits.".format(
+                        wires, len(qubits)
+                    )
+                )
 
             self.qubits = qubits
         else:
             self.qubits = [cirq.LineQubit(wire) for wire in range(wires)]
-
 
     _operation_map = {
         "BasisState": None,
@@ -100,7 +104,9 @@ class CirqDevice(Device):
         "CNOT": CirqOperation(lambda: cirq.CNOT),
         "SWAP": CirqOperation(lambda: cirq.SWAP),
         "CZ": CirqOperation(lambda: cirq.CZ),
-        "PhaseShift": CirqOperation(lambda phi: cirq.ZPowGate(exponent=phi / np.pi, global_shift=1.0)),
+        "PhaseShift": CirqOperation(
+            lambda phi: cirq.ZPowGate(exponent=phi / np.pi, global_shift=1.0)
+        ),
         "RX": CirqOperation(lambda phi: cirq.Rx(phi)),
         "RY": CirqOperation(lambda phi: cirq.Ry(phi)),
         "RZ": CirqOperation(lambda phi: cirq.Rz(phi)),
@@ -108,17 +114,17 @@ class CirqDevice(Device):
     }
 
     _observable_map = {
-        'PauliX': None,
-        'PauliY': None,
-        'PauliZ': None,
-        'Hadamard': None,
-        'Hermitian': None,
-        'Identity': None,
+        "PauliX": None,
+        "PauliY": None,
+        "PauliZ": None,
+        "Hadamard": None,
+        "Hermitian": None,
+        "Identity": None,
     }
 
     def reset(self):
         pass
-        
+
     @property
     def observables(self):
         return set(self._observable_map.keys())
@@ -139,9 +145,6 @@ class CirqDevice(Device):
 
             self.circuit.append(operation.apply(*[self.qubits[wire] for wire in wires]))
 
-    def post_apply(self):
-        pass
-
     def pre_measure(self):
         # Cirq only measures states in the computational basis, i.e. 0 and 1
         # To measure different observables, we have to go to their eigenbases
@@ -153,7 +156,7 @@ class CirqDevice(Device):
 
             operation.parametrize(*e.parameters)
             operation.diagonalize(self.qubits[wire])
-            
+
             # Identity and PauliZ need no changes
             if e.name == "PauliX":
                 # X = H.Z.H
