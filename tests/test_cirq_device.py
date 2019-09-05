@@ -18,6 +18,7 @@ from unittest.mock import patch, MagicMock
 
 import cirq
 import pennylane as qml
+from pennylane import numpy as np
 import pytest
 
 from pennylane_cirq.cirq_device import CirqDevice
@@ -138,5 +139,26 @@ class TestOperations:
         cirq_device_1_wire.pre_apply()
 
         assert cirq_device_1_wire.reset.called
+
+    @pytest.mark.parametrize("measurement_gate,expected_diagonalization", 
+        [
+            (qml.PauliX(0, do_queue=False), [cirq.H]),
+            (qml.PauliY(0, do_queue=False), [cirq.Z, cirq.S, cirq.H]),
+            (qml.PauliZ(0, do_queue=False), []),
+            (qml.Hadamard(0, do_queue=False), [cirq.Ry(-np.pi / 4)]),
+        ])
+    def test_pre_measure_single_wire(self, cirq_device_1_wire, measurement_gate, expected_diagonalization):
+        """Tests that the correct pre-processing is applied in pre_measure."""
+
+        cirq_device_1_wire.reset()
+        cirq_device_1_wire._obs_queue = [measurement_gate]
+
+        cirq_device_1_wire.pre_measure()
+
+        ops = list(cirq_device_1_wire.circuit.all_operations())
+
+        for i in range(len(expected_diagonalization)):
+            assert ops[i] == expected_diagonalization[i].on(cirq_device_1_wire.qubits[0])
+
 
 
