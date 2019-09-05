@@ -111,6 +111,16 @@ class CirqDevice(Device):
         "RY": CirqOperation(lambda phi: cirq.Ry(phi)),
         "RZ": CirqOperation(lambda phi: cirq.Rz(phi)),
         "Rot": CirqOperation(lambda a, b, c: [cirq.Rz(a), cirq.Ry(b), cirq.Rz(c)]),
+        "CRX": CirqOperation(lambda phi: cirq.ControlledGate(cirq.Rx(phi))),
+        "CRY": CirqOperation(lambda phi: cirq.ControlledGate(cirq.Ry(phi))),
+        "CRZ": CirqOperation(lambda phi: cirq.ControlledGate(cirq.Rz(phi))),
+        "CRot": CirqOperation(
+            lambda a, b, c: [
+                cirq.ControlledGate(cirq.Rz(a)),
+                cirq.ControlledGate(cirq.Ry(b)),
+                cirq.ControlledGate(cirq.Rz(c)),
+            ]
+        ),
     }
 
     _observable_map = {
@@ -123,7 +133,7 @@ class CirqDevice(Device):
     }
 
     def reset(self):
-        pass
+        self.circuit = cirq.Circuit()
 
     @property
     def observables(self):
@@ -134,7 +144,7 @@ class CirqDevice(Device):
         return set(self._operation_map.keys())
 
     def pre_apply(self):
-        self.circuit = cirq.Circuit()
+        self.reset()
 
     def apply(self, operation, wires, par):
         operation = self._operation_map[operation]
@@ -152,10 +162,6 @@ class CirqDevice(Device):
         # This code is adapted from the pennylane-qiskit plugin
         for e in self.obs_queue:
             wire = e.wires[0]
-            operation = self._observable_map[e]
-
-            operation.parametrize(*e.parameters)
-            operation.diagonalize(self.qubits[wire])
 
             # Identity and PauliZ need no changes
             if e.name == "PauliX":

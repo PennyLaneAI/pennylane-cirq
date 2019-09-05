@@ -92,8 +92,6 @@ class SimulatorDevice(CirqDevice):
                 [self.result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
             )
 
-        print(self.circuit)
-
     def probability(self):
         if self.state is None:
             return None

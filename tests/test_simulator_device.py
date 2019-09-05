@@ -18,7 +18,7 @@ import pytest
 
 import pennylane as qml
 from pennylane import numpy as np
-import pennylane_cirq
+from pennylane_cirq import SimulatorDevice
 import cirq
 
 # TODO:
@@ -37,6 +37,8 @@ class TestDeviceIntegration:
         assert dev.num_wires == 2
         assert dev.shots == 0
         assert dev.short_name == "cirq.simulator"
+
+        assert isinstance(dev, SimulatorDevice)
 
 
 class TestApply:
