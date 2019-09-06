@@ -182,6 +182,9 @@ class CirqDevice(Device):
                 Hmat = e.parameters[0]
                 Hkey = tuple(Hmat.flatten().tolist())
 
+                if Hmat.shape not in [(2, 2), (4, 4)]:
+                    raise qml.DeviceError("Cirq only supports single-qubit and two-qubit unitary gates and thus only single-qubit and two-qubit Hermitian observables.")
+
                 if Hkey in self._eigs:
                     # retrieve eigenvectors
                     U = self._eigs[Hkey]["eigvec"]

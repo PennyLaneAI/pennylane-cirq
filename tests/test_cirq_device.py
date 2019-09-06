@@ -96,6 +96,13 @@ def cirq_device_2_wires():
     with patch.multiple(CirqDevice, __abstractmethods__=set()):
         yield CirqDevice(2, 0)
 
+@pytest.fixture(scope="function")
+def cirq_device_3_wires():
+    """A mock instance of the abstract Device class"""
+
+    with patch.multiple(CirqDevice, __abstractmethods__=set()):
+        yield CirqDevice(3, 0)
+
 
 class TestProperties:
     """Tests that the properties of the CirqDevice are correctly implemented."""
@@ -239,6 +246,14 @@ class TestOperations:
         print("Circuit:\n", cirq_device_2_wires.circuit)
 
         assert np.allclose(ops[0]._gate._matrix, np.array(U), atol=tol, rtol=0)
+
+    def test_hermitian_error(self, cirq_device_3_wires):
+        """Tests that an error is raised for a three-qubit hermitian observable."""
+        A = np.eye(6)
+        cirq_device_3_wires._obs_queue = [qml.Hermitian(np.array(A), [0, 1, 2], do_queue=False)]
+
+        with pytest.raises(qml.DeviceError, match="Cirq only supports single-qubit and two-qubit unitary gates and thus only single-qubit and two-qubit Hermitian observables."):
+            cirq_device_3_wires.pre_measure()
 
     def test_hermitian_matrix_caching(self, cirq_device_1_wire, tol):
         """Tests that the diagonalizations in pre_measure are properly cached."""
