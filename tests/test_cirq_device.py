@@ -89,12 +89,14 @@ def cirq_device_1_wire():
     with patch.multiple(CirqDevice, __abstractmethods__=set()):
         yield CirqDevice(1, 0)
 
+
 @pytest.fixture(scope="function")
 def cirq_device_2_wires():
     """A mock instance of the abstract Device class"""
 
     with patch.multiple(CirqDevice, __abstractmethods__=set()):
         yield CirqDevice(2, 0)
+
 
 @pytest.fixture(scope="function")
 def cirq_device_3_wires():
@@ -224,11 +226,13 @@ class TestOperations:
         [
             (
                 [[1, 1j, 0, 0], [-1j, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]],
-                [[0, 0, -1 / math.sqrt(2), 1 / math.sqrt(2)], 
-                [-1 / math.sqrt(2), 1j / math.sqrt(2), 0, 0],
-                [0, 0, 1 / math.sqrt(2), 1 / math.sqrt(2)], 
-                [1 / math.sqrt(2), 1j / math.sqrt(2), 0, 0]],
-            ),
+                [
+                    [0, 0, -1 / math.sqrt(2), 1 / math.sqrt(2)],
+                    [-1 / math.sqrt(2), 1j / math.sqrt(2), 0, 0],
+                    [0, 0, 1 / math.sqrt(2), 1 / math.sqrt(2)],
+                    [1 / math.sqrt(2), 1j / math.sqrt(2), 0, 0],
+                ],
+            )
         ],
     )
     def test_pre_measure_two_wire_hermitian(self, cirq_device_2_wires, tol, A, U):
@@ -252,7 +256,10 @@ class TestOperations:
         A = np.eye(6)
         cirq_device_3_wires._obs_queue = [qml.Hermitian(np.array(A), [0, 1, 2], do_queue=False)]
 
-        with pytest.raises(qml.DeviceError, match="Cirq only supports single-qubit and two-qubit unitary gates and thus only single-qubit and two-qubit Hermitian observables."):
+        with pytest.raises(
+            qml.DeviceError,
+            match="Cirq only supports single-qubit and two-qubit unitary gates and thus only single-qubit and two-qubit Hermitian observables.",
+        ):
             cirq_device_3_wires.pre_measure()
 
     def test_hermitian_matrix_caching(self, cirq_device_1_wire, tol):
@@ -279,3 +286,161 @@ class TestOperations:
             cirq_device_1_wire.pre_measure()
 
             assert not mock.called
+
+    @pytest.mark.parametrize(
+        "gate,par,expected_cirq_gates",
+        [
+            ("PauliX", [], [cirq.X]),
+            ("PauliY", [], [cirq.Y]),
+            ("PauliZ", [], [cirq.Z]),
+            ("Hadamard", [], [cirq.H]),
+            ("S", [], [cirq.S]),
+            ("PhaseShift", [1.4], [cirq.ZPowGate(exponent=1.4 / np.pi, global_shift=1.0)]),
+            ("PhaseShift", [-1.2], [cirq.ZPowGate(exponent=-1.2 / np.pi, global_shift=1.0)]),
+            ("PhaseShift", [2], [cirq.ZPowGate(exponent=2 / np.pi, global_shift=1.0)]),
+            ("RX", [1.4], [cirq.Rx(1.4)]),
+            ("RX", [-1.2], [cirq.Rx(-1.2)]),
+            ("RX", [2], [cirq.Rx(2)]),
+            ("RY", [1.4], [cirq.Ry(1.4)]),
+            ("RY", [0], [cirq.Ry(0)]),
+            ("RY", [-1.3], [cirq.Ry(-1.3)]),
+            ("RZ", [1.4], [cirq.Rz(1.4)]),
+            ("RZ", [-1.1], [cirq.Rz(-1.1)]),
+            ("RZ", [1], [cirq.Rz(1)]),
+            ("Rot", [1.4, 2.3, -1.2], [cirq.Rz(1.4), cirq.Ry(2.3), cirq.Rz(-1.2)]),
+            ("Rot", [1, 2, -1], [cirq.Rz(1), cirq.Ry(2), cirq.Rz(-1)]),
+            ("Rot", [-1.1, 0.2, -1], [cirq.Rz(-1.1), cirq.Ry(0.2), cirq.Rz(-1)]),
+            (
+                "QubitUnitary",
+                [np.array([[1, 0], [0, 1]])],
+                [cirq.SingleQubitMatrixGate(np.array([[1, 0], [0, 1]]))],
+            ),
+            (
+                "QubitUnitary",
+                [np.array([[1, 0], [0, -1]])],
+                [cirq.SingleQubitMatrixGate(np.array([[1, 0], [0, -1]]))],
+            ),
+            (
+                "QubitUnitary",
+                [np.array([[-1, 1], [1, 1]]) / math.sqrt(2)],
+                [cirq.SingleQubitMatrixGate(np.array([[-1, 1], [1, 1]]) / math.sqrt(2))],
+            ),
+        ],
+    )
+    def test_apply_single_wire(self, cirq_device_1_wire, gate, par, expected_cirq_gates):
+        """Tests that apply adds the correct gates to the circuit for single-qubit gates."""
+
+        cirq_device_1_wire.reset()
+
+        cirq_device_1_wire.apply(gate, wires=[0], par=par)
+
+        ops = list(cirq_device_1_wire.circuit.all_operations())
+
+        assert len(ops) == len(expected_cirq_gates)
+
+        for i in range(len(ops)):
+            assert ops[i]._gate == expected_cirq_gates[i]
+
+    @pytest.mark.parametrize(
+        "gate,par,expected_cirq_gates",
+        [
+            ("CNOT", [], [cirq.CNOT]),
+            ("SWAP", [], [cirq.SWAP]),
+            ("CZ", [], [cirq.CZ]),
+            ("CRX", [1.4], [cirq.ControlledGate(cirq.Rx(1.4))]),
+            ("CRX", [-1.2], [cirq.ControlledGate(cirq.Rx(-1.2))]),
+            ("CRX", [2], [cirq.ControlledGate(cirq.Rx(2))]),
+            ("CRY", [1.4], [cirq.ControlledGate(cirq.Ry(1.4))]),
+            ("CRY", [0], [cirq.ControlledGate(cirq.Ry(0))]),
+            ("CRY", [-1.3], [cirq.ControlledGate(cirq.Ry(-1.3))]),
+            ("CRZ", [1.4], [cirq.ControlledGate(cirq.Rz(1.4))]),
+            ("CRZ", [-1.1], [cirq.ControlledGate(cirq.Rz(-1.1))]),
+            ("CRZ", [1], [cirq.ControlledGate(cirq.Rz(1))]),
+            (
+                "CRot",
+                [1.4, 2.3, -1.2],
+                [
+                    cirq.ControlledGate(cirq.Rz(1.4)),
+                    cirq.ControlledGate(cirq.Ry(2.3)),
+                    cirq.ControlledGate(cirq.Rz(-1.2)),
+                ],
+            ),
+            (
+                "CRot",
+                [1, 2, -1],
+                [
+                    cirq.ControlledGate(cirq.Rz(1)),
+                    cirq.ControlledGate(cirq.Ry(2)),
+                    cirq.ControlledGate(cirq.Rz(-1)),
+                ],
+            ),
+            (
+                "CRot",
+                [-1.1, 0.2, -1],
+                [
+                    cirq.ControlledGate(cirq.Rz(-1.1)),
+                    cirq.ControlledGate(cirq.Ry(0.2)),
+                    cirq.ControlledGate(cirq.Rz(-1)),
+                ],
+            ),
+            ("QubitUnitary", [np.eye(4)], [cirq.TwoQubitMatrixGate(np.eye(4))]),
+            (
+                "QubitUnitary",
+                [np.array([[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]])],
+                [
+                    cirq.TwoQubitMatrixGate(
+                        np.array([[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]])
+                    )
+                ],
+            ),
+            (
+                "QubitUnitary",
+                [np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1]]) / 2],
+                [
+                    cirq.TwoQubitMatrixGate(
+                        np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1]]) / 2
+                    )
+                ],
+            ),
+        ],
+    )
+    def test_apply_two_wires(self, cirq_device_2_wires, gate, par, expected_cirq_gates):
+        """Tests that apply adds the correct gates to the circuit for two-qubit gates."""
+
+        cirq_device_2_wires.reset()
+
+        cirq_device_2_wires.apply(gate, wires=[0, 1], par=par)
+
+        ops = list(cirq_device_2_wires.circuit.all_operations())
+
+        assert len(ops) == len(expected_cirq_gates)
+
+        for i in range(len(ops)):
+            assert ops[i]._gate == expected_cirq_gates[i]
+
+    """
+        "BasisState": None,
+        "QubitStateVector": None,
+        ),
+    @pytest.mark.parametrize("operation,par,expected_cirq_gates", [
+        ("BasisState", [[0]]),
+        ("BasisState", [[1]]),        
+        ("QubitStateVector", [[1, 0]]),
+        ("QubitStateVector", [[0, 1]]),
+        ("QubitStateVector", [[1/math.sqrt(2), 1j/math.sqrt(2)]]),
+        ("QubitStateVector", [[1/2, math.sqrt(3)/2]]),
+    ])
+    def test_apply_state_preparations_single_wire(self, cirq_device_1_wire, operation, par, expected_cirq_gates):
+        """Tests that apply adds the correct gates to the circuit for state preparations."""
+
+        cirq_device_1_wire.reset()
+
+        cirq_device_1_wire.apply(operation, wires=[0], par=par)
+
+        ops = list(cirq_device_1_wire.circuit.all_operations())
+
+        assert len(ops) == len(expected_cirq_gates)
+
+        for i in range(len(ops)):
+            assert ops[i]._gate == expected_cirq_gates[i]
+    """
