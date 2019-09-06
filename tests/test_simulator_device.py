@@ -22,8 +22,6 @@ from pennylane_cirq import SimulatorDevice
 import cirq
 
 # TODO:
-# * Test the feature that qubits can be given + exception
-# * Test all gate adjustments before measurements
 # * Test that more samples are used when n > shots for a requested sample
 
 class TestDeviceIntegration:
@@ -41,43 +39,139 @@ class TestDeviceIntegration:
         assert isinstance(dev, SimulatorDevice)
 
 
+@pytest.fixture(scope="function")
+def simulator_device_1_wire():
+    """A mock instance of the abstract Device class"""
+    yield SimulatorDevice(1, 0)
+
+@pytest.fixture(scope="function")
+def simulator_device_2_wires():
+    """A mock instance of the abstract Device class"""
+    yield SimulatorDevice(2, 0)
+
+@pytest.fixture(scope="function")
+def simulator_device_3_wires():
+    """A mock instance of the abstract Device class"""
+    yield SimulatorDevice(3, 0)
+
 class TestApply:
     """Tests that gates are correctly applied"""
 
-    def test_simple_circuit(self):
-        """Tests a simple circuit"""
+    @pytest.mark.parametrize("name,input,expected_output", [
+        ("PauliX", [1, 0], np.array([0, 1])),
+        ("PauliX", [1/math.sqrt(2), 1/math.sqrt(2)], [1/math.sqrt(2), 1/math.sqrt(2)]),
+        ("PauliY", [1, 0], [0, 1j]),
+        ("PauliY", [1/math.sqrt(2), 1/math.sqrt(2)], [-1j/math.sqrt(2), 1j/math.sqrt(2)]),
+        ("PauliZ", [1, 0], [1, 0]),
+        ("PauliZ", [1/math.sqrt(2), 1/math.sqrt(2)], [1/math.sqrt(2), -1/math.sqrt(2)]),
+        ("Hadamard", [1, 0], [1/math.sqrt(2), 1/math.sqrt(2)]),
+        ("Hadamard", [1/math.sqrt(2), -1/math.sqrt(2)], [0, 1]),
+    ])
+    def test_apply_operation_single_wire_no_parameters(self, simulator_device_1_wire, tol, name, input, expected_output):
+        """Tests that applying an operation yields the expected output state for single wire
+           operations that have no parameters."""
 
-        qubits = [cirq.GridQubit(0, 0), cirq.GridQubit(0, 1), cirq.GridQubit(1, 0), cirq.GridQubit(1, 1)]
-        dev = qml.device("cirq.simulator", wires=4, qubits=qubits, shots=0)
+        simulator_device_1_wire._state = np.array(input)
+        simulator_device_1_wire.apply(name, wires=[0], par=[])
 
-        @qml.qnode(dev)
-        def circuit():
-            qml.PauliX(wires=0)
-            qml.CZ(wires=[0, 1])
-            qml.CNOT(wires=[2, 0])
-            qml.PauliY(wires=1)
-            qml.RX(0.342, wires=1)
-            qml.CNOT(wires=[0, 1])
-            qml.CNOT(wires=[2, 3])
-            qml.CNOT(wires=[1, 3])
-            qml.CNOT(wires=[0, 3])
-            qml.RY(0.342, wires=1)
-            qml.Hadamard(wires=1)
-            qml.SWAP(wires=[1, 2])
-            qml.RZ(0.342, wires=1)
-            qml.Rot(0.342, 0.2, 0.1, wires=0)
-            qml.PauliX(wires=0)
-            qml.Hadamard(wires=2)
-            qml.SWAP(wires=[0, 1])
-            qml.CNOT(wires=[0, 1])
-            qml.CNOT(wires=[1, 2])
-            qml.CNOT(wires=[2, 0])
+        assert np.allclose(simulator_device_1_wire._state, np.array(expected_output), atol=tol, rtol=0)
 
-            #return [qml.expval(qml.PauliZ(i)) for i in range(4)]
-            return qml.expval(qml.PauliX(0)), qml.var(qml.PauliY(1)), qml.sample(qml.PauliX(2), n=20), qml.expval(qml.Hermitian(np.array([[2, 1j], [-1j, 2]]), 3))
+    @pytest.mark.parametrize("name,input,expected_output", [
+        ("CNOT", [1, 0, 0, 0], [1, 0, 0, 0]),
+        ("CNOT", [0, 0, 1, 0], [0, 0, 0, 1]),
+        ("CNOT", [1/math.sqrt(2), 0, 0, 1/math.sqrt(2)], [1/math.sqrt(2), 0, 1/math.sqrt(2), 0]),
+        ("SWAP", [1, 0, 0, 0], [1, 0, 0, 0]),
+        ("SWAP", [0, 0, 1, 0], [0, 1, 0, 0]),
+        ("SWAP", [1/math.sqrt(2), 0, -1/math.sqrt(2), 0], [1/math.sqrt(2), -1/math.sqrt(2), 0, 0]),
+        ("CZ", [1, 0, 0, 0], [1, 0, 0, 0]),
+        ("CZ", [0, 0, 0, 1], [0, 0, 0, -1]),
+        ("CZ", [1/math.sqrt(2), 0, 0, -1/math.sqrt(2)], [1/math.sqrt(2), 0, 0, 1/math.sqrt(2)]),
+    ])
+    def test_apply_operation_two_wires_no_parameters(self, simulator_device_2_wires, tol, name, input, expected_output):
+        """Tests that applying an operation yields the expected output state for two wire
+           operations that have no parameters."""
 
-        print(circuit())
+        simulator_device_2_wires._state = np.array(input)
+        simulator_device_2_wires.apply(name, wires=[0, 1], par=[])
 
-        raise Exception()
+        assert np.allclose(simulator_device_2_wires._state, np.array(expected_output), atol=tol, rtol=0)
+
+    @pytest.mark.parametrize("name,input,expected_output,par", [
+        ("BasisState", [1, 0, 0, 0], [0, 0, 1, 0], [[1, 0]]),
+        ("BasisState", [1/math.sqrt(2), 0, 1/math.sqrt(2), 0], [0, 0, 1, 0], [[1, 0]]),
+        ("BasisState", [1/math.sqrt(2), 0, 1/math.sqrt(2), 0], [0, 0, 0, 1], [[1, 1]]),
+        ("QubitStateVector", [1, 0, 0, 0], [0, 0, 1, 0], [[0, 0, 1, 0]]),
+        ("QubitStateVector", [1/math.sqrt(2), 0, 1/math.sqrt(2), 0], [0, 0, 1, 0], [[0, 0, 1, 0]]),
+        ("QubitStateVector", [1/math.sqrt(2), 0, 1/math.sqrt(2), 0], [0, 0, 0, 1], [[0, 0, 0, 1]]),
+        ("QubitStateVector", [1, 0, 0, 0], [1/math.sqrt(3), 0, 1/math.sqrt(3), 1/math.sqrt(3)], [[1/math.sqrt(3), 0, 1/math.sqrt(3), 1/math.sqrt(3)]]),
+        ("QubitStateVector", [1, 0, 0, 0], [1/math.sqrt(3), 0, -1/math.sqrt(3), 1/math.sqrt(3)], [[1/math.sqrt(3), 0, -1/math.sqrt(3), 1/math.sqrt(3)]]),
+    ])
+    def test_apply_operation_state_preparation(self, simulator_device_2_wires, tol, name, input, expected_output, par):
+        """Tests that applying an operation yields the expected output state for single wire
+           operations that have no parameters."""
+
+        simulator_device_2_wires._state = np.array(input)
+        simulator_device_2_wires.apply(name, wires=[0, 1], par=par)
+
+        assert np.allclose(simulator_device_2_wires._state, np.array(expected_output), atol=tol, rtol=0)
+
+    @pytest.mark.parametrize("name,input,expected_output,par", [
+        ("PhaseShift", [1, 0], [1, 0], [math.pi/2]),
+        ("PhaseShift", [0, 1], [0, 1j], [math.pi/2]),
+        ("PhaseShift", [1/math.sqrt(2), 1/math.sqrt(2)], [1/math.sqrt(2), 1/2 + 1j/2], [math.pi/4]),
+        ("RX", [1, 0], [1/math.sqrt(2), -1j*1/math.sqrt(2)], [math.pi/2]),
+        ("RX", [1, 0], [0, -1j], [math.pi]),
+        ("RX", [1/math.sqrt(2), 1/math.sqrt(2)], [1/2 - 1j/2, 1/2 -1j/2], [math.pi/2]),
+        ("RY", [1, 0], [1/math.sqrt(2), 1/math.sqrt(2)], [math.pi/2]),
+        ("RY", [1, 0], [0, 1], [math.pi]),
+        ("RY", [1/math.sqrt(2), 1/math.sqrt(2)], [0, 1], [math.pi/2]),
+        ("RZ", [1, 0], [1/math.sqrt(2) - 1j/math.sqrt(2), 0], [math.pi/2]),
+        ("RZ", [0, 1], [0, 1j], [math.pi]),
+        ("RZ", [1/math.sqrt(2), 1/math.sqrt(2)], [1/2 - 1j/2, 1/2 + 1j/2], [math.pi/2]),
+        ("Rot", [1, 0], [1/math.sqrt(2) - 1j/math.sqrt(2), 0], [math.pi/2, 0, 0]),
+        ("Rot", [1, 0], [1/math.sqrt(2), 1/math.sqrt(2)], [0, math.pi/2, 0]),
+        ("Rot", [1/math.sqrt(2), 1/math.sqrt(2)], [1/2 - 1j/2, 1/2 + 1j/2], [0, 0, math.pi/2]),
+        ("Rot", [1, 0], [-1j/math.sqrt(2), -1/math.sqrt(2)], [math.pi/2, -math.pi/2, math.pi/2]),
+        ("Rot", [1/math.sqrt(2), 1/math.sqrt(2)], [1/2 + 1j/2, -1/2 + 1j/2], [-math.pi/2, math.pi, math.pi]),
+        ("QubitUnitary", [1, 0], [1j/math.sqrt(2), 1j/math.sqrt(2)], [np.array([[1j/math.sqrt(2), 1j/math.sqrt(2)], [1j/math.sqrt(2), -1j/math.sqrt(2)]])]),
+        ("QubitUnitary", [0, 1], [1j/math.sqrt(2), -1j/math.sqrt(2)], [np.array([[1j/math.sqrt(2), 1j/math.sqrt(2)], [1j/math.sqrt(2), -1j/math.sqrt(2)]])]),
+        ("QubitUnitary", [1/math.sqrt(2), -1/math.sqrt(2)], [0, 1j], [np.array([[1j/math.sqrt(2), 1j/math.sqrt(2)], [1j/math.sqrt(2), -1j/math.sqrt(2)]])]),
+    ])
+    def test_apply_operation_single_wire_with_parameters(self, simulator_device_1_wire, tol, name, input, expected_output, par):
+        """Tests that applying an operation yields the expected output state for single wire
+           operations that have no parameters."""
+
+        simulator_device_1_wire._state = np.array(input)
+        simulator_device_1_wire.apply(name, wires=[0], par=par)
+
+        assert np.allclose(simulator_device_1_wire._state, np.array(expected_output), atol=tol, rtol=0)
+
+    @pytest.mark.parametrize("name,input,expected_output,par", [
+        ("CRX", [0, 1, 0, 0], [0, 1, 0, 0], [math.pi/2]),
+        ("CRX", [0, 0, 0, 1], [0, 0, -1j, 0], [math.pi]),
+        ("CRX", [0, 1/math.sqrt(2), 1/math.sqrt(2), 0], [0, 1/math.sqrt(2), 1/2, -1j/2], [math.pi/2]),
+        ("CRY", [0, 0, 0, 1], [0, 0, -1/math.sqrt(2), 1/math.sqrt(2)], [math.pi/2]),
+        ("CRY", [0, 0, 0, 1], [0, 0, -1, 0], [math.pi]),
+        ("CRY", [1/math.sqrt(2), 1/math.sqrt(2), 0, 0], [1/math.sqrt(2), 1/math.sqrt(2), 0, 0], [math.pi/2]),
+        ("CRZ", [0, 0, 0, 1], [0, 0, 0, 1/math.sqrt(2) + 1j/math.sqrt(2)], [math.pi/2]),
+        ("CRZ", [0, 0, 0, 1], [0, 0, 0, 1j], [math.pi]),
+        ("CRZ", [1/math.sqrt(2), 1/math.sqrt(2), 0, 0], [1/math.sqrt(2), 1/math.sqrt(2), 0, 0], [math.pi/2]),
+        ("CRot", [0, 0, 0, 1], [0, 0, 0, 1/math.sqrt(2) + 1j/math.sqrt(2)], [math.pi/2, 0, 0]),
+        ("CRot", [0, 0, 0, 1], [0, 0, -1/math.sqrt(2), 1/math.sqrt(2)], [0, math.pi/2, 0]),
+        ("CRot", [0, 0, 1/math.sqrt(2), 1/math.sqrt(2)], [0, 0, 1/2 - 1j/2, 1/2 + 1j/2], [0, 0, math.pi/2]),
+        ("CRot", [0, 0, 0, 1], [0, 0, 1/math.sqrt(2), 1j/math.sqrt(2)], [math.pi/2, -math.pi/2, math.pi/2]),
+        ("CRot", [0, 1/math.sqrt(2), 1/math.sqrt(2), 0], [0, 1/math.sqrt(2), 0, -1/2 + 1j/2], [-math.pi/2, math.pi, math.pi]),
+        ("QubitUnitary", [1, 0, 0, 0], [1, 0, 0, 0], [np.array([[1, 0, 0, 0], [0, 1/math.sqrt(2), 1/math.sqrt(2), 0], [0, 1/math.sqrt(2), -1/math.sqrt(2), 0], [0, 0, 0, 1]])]),
+        ("QubitUnitary", [0, 1, 0, 0], [0, 1/math.sqrt(2), 1/math.sqrt(2), 0], [np.array([[1, 0, 0, 0], [0, 1/math.sqrt(2), 1/math.sqrt(2), 0], [0, 1/math.sqrt(2), -1/math.sqrt(2), 0], [0, 0, 0, 1]])]),
+        ("QubitUnitary", [1/2, 1/2, -1/2, 1/2], [1/2, 0, 1/math.sqrt(2), 1/2], [np.array([[1, 0, 0, 0], [0, 1/math.sqrt(2), 1/math.sqrt(2), 0], [0, 1/math.sqrt(2), -1/math.sqrt(2), 0], [0, 0, 0, 1]])]),
+    ])
+    def test_apply_operation_two_wires_with_parameters(self, simulator_device_2_wires, tol, name, input, expected_output, par):
+        """Tests that applying an operation yields the expected output state for single wire
+           operations that have no parameters."""
+
+        simulator_device_2_wires._state = np.array(input)
+        simulator_device_2_wires.apply(name, wires=[0, 1], par=par)
+
+        assert np.allclose(simulator_device_2_wires._state, np.array(expected_output), atol=tol, rtol=0)
         
 

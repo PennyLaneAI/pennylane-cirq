@@ -14,13 +14,13 @@
 """
 Unit tests for the CirqDevice class
 """
-from unittest.mock import patch, MagicMock
+import math
+from unittest.mock import MagicMock, patch
 
 import cirq
-import math
 import pennylane as qml
-from pennylane import numpy as np
 import pytest
+from pennylane import numpy as np
 
 from pennylane_cirq.cirq_device import CirqDevice
 

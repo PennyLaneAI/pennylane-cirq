@@ -39,7 +39,6 @@ Classes
 """
 import itertools
 
-# we always import NumPy directly
 from collections import OrderedDict
 
 import cirq
