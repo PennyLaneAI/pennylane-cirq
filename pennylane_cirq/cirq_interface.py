@@ -81,3 +81,16 @@ class CirqOperation():
             raise qml.DeviceError("CirqOperation must be parametrized before it can be applied.")
 
         return (parametrized_gate(*qubits) for parametrized_gate in self.parametrized_cirq_gates)
+
+def unitary_matrix_gate(U):
+    """Creates a Cirq unitary matrix gate from a given matrix.
+
+        Args:
+            U (numpy.ndarray): an array representing the gate matrix.
+    """
+    if U.shape == (2, 2):
+        return cirq.SingleQubitMatrixGate(U)
+    if U.shape == (4, 4):
+        return cirq.TwoQubitMatrixGate(U)
+    else:
+        raise qml.DeviceError("Cirq only supports single-qubit and two-qubit unitary matrix gates.")

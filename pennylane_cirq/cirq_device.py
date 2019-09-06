@@ -47,7 +47,7 @@ import pennylane as qml
 from pennylane import Device
 
 from ._version import __version__
-from .cirq_interface import CirqOperation
+from .cirq_interface import CirqOperation, unitary_matrix_gate
 
 
 class CirqDevice(Device):
@@ -95,7 +95,7 @@ class CirqDevice(Device):
     _operation_map = {
         "BasisState": None,
         "QubitStateVector": None,
-        "QubitUnitary": CirqOperation(lambda U: cirq.SingleQubitMatrixGate(U)),
+        "QubitUnitary": CirqOperation(unitary_matrix_gate),
         "PauliX": CirqOperation(lambda: cirq.X),
         "PauliY": CirqOperation(lambda: cirq.Y),
         "PauliZ": CirqOperation(lambda: cirq.Z),
@@ -161,22 +161,20 @@ class CirqDevice(Device):
 
         # This code is adapted from the pennylane-qiskit plugin
         for e in self.obs_queue:
-            wire = e.wires[0]
-
             # Identity and PauliZ need no changes
             if e.name == "PauliX":
                 # X = H.Z.H
-                self.apply("Hadamard", wires=[wire], par=[])
+                self.apply("Hadamard", wires=e.wires, par=[])
 
             elif e.name == "PauliY":
                 # Y = (HS^)^.Z.(HS^) and S^=SZ
-                self.apply("PauliZ", wires=[wire], par=[])
-                self.apply("S", wires=[wire], par=[])
-                self.apply("Hadamard", wires=[wire], par=[])
+                self.apply("PauliZ", wires=e.wires, par=[])
+                self.apply("S", wires=e.wires, par=[])
+                self.apply("Hadamard", wires=e.wires, par=[])
 
             elif e.name == "Hadamard":
                 # H = Ry(-pi/4)^.Z.Ry(-pi/4)
-                self.apply("RY", [wire], [-np.pi / 4])
+                self.apply("RY", e.wires, [-np.pi / 4])
 
             elif e.name == "Hermitian":
                 # For arbitrary Hermitian matrix H, let U be the unitary matrix
@@ -195,6 +193,6 @@ class CirqDevice(Device):
                     self._eigs[Hkey] = {"eigval": w, "eigvec": U}
 
                 # Perform a change of basis before measuring by applying U^ to the circuit
-                self.apply("QubitUnitary", [wire], [U.conj().T])
+                self.apply("QubitUnitary", e.wires, [U.conj().T])
 
             # No measurements are added here because they can't be added for simulations

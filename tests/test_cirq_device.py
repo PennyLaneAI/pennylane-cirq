@@ -89,6 +89,13 @@ def cirq_device_1_wire():
     with patch.multiple(CirqDevice, __abstractmethods__=set()):
         yield CirqDevice(1, 0)
 
+@pytest.fixture(scope="function")
+def cirq_device_2_wires():
+    """A mock instance of the abstract Device class"""
+
+    with patch.multiple(CirqDevice, __abstractmethods__=set()):
+        yield CirqDevice(2, 0)
+
 
 class TestProperties:
     """Tests that the properties of the CirqDevice are correctly implemented."""
@@ -104,6 +111,7 @@ class TestProperties:
         """Tests that the CirqDevice supports all expected observables"""
 
         assert cirq_device_1_wire.observables.issuperset(qml.ops.qubit.obs)
+
 
 class TestOperations:
     """Tests that the CirqDevice correctly handles the requested operations."""
@@ -141,14 +149,18 @@ class TestOperations:
 
         assert cirq_device_1_wire.reset.called
 
-    @pytest.mark.parametrize("measurement_gate,expected_diagonalization", 
+    @pytest.mark.parametrize(
+        "measurement_gate,expected_diagonalization",
         [
             (qml.PauliX(0, do_queue=False), [cirq.H]),
             (qml.PauliY(0, do_queue=False), [cirq.Z, cirq.S, cirq.H]),
             (qml.PauliZ(0, do_queue=False), []),
             (qml.Hadamard(0, do_queue=False), [cirq.Ry(-np.pi / 4)]),
-        ])
-    def test_pre_measure_single_wire(self, cirq_device_1_wire, measurement_gate, expected_diagonalization):
+        ],
+    )
+    def test_pre_measure_single_wire(
+        self, cirq_device_1_wire, measurement_gate, expected_diagonalization
+    ):
         """Tests that the correct pre-processing is applied in pre_measure."""
 
         cirq_device_1_wire.reset()
@@ -162,17 +174,28 @@ class TestOperations:
 
         for i in range(len(expected_diagonalization)):
             assert ops[i] == expected_diagonalization[i].on(cirq_device_1_wire.qubits[0])
-    
+
     # Note that we DO NOT expect the diagonalization matrices to be the same as you would expect
     # for the vanilla operators. This is due to the fact that the eigenvalues are listed in ascending
     # order in the backend. This means if one uses Hermitian(Z), it will actually measure -X.Z.X.
-    @pytest.mark.parametrize("A,U", 
+    @pytest.mark.parametrize(
+        "A,U",
         [
-            ([[1, 1j], [-1j, 1]], [[-1/math.sqrt(2), 1j/math.sqrt(2)], [1/math.sqrt(2), 1j/math.sqrt(2)]]),
-            ([[0, 1], [1, 0]], [[-1/math.sqrt(2), 1/math.sqrt(2)], [1/math.sqrt(2), 1/math.sqrt(2)]]),
-            ([[0, 1j], [-1j, 0]], [[-1/math.sqrt(2), 1j/math.sqrt(2)], [1/math.sqrt(2), 1j/math.sqrt(2)]]),
+            (
+                [[1, 1j], [-1j, 1]],
+                [[-1 / math.sqrt(2), 1j / math.sqrt(2)], [1 / math.sqrt(2), 1j / math.sqrt(2)]],
+            ),
+            (
+                [[0, 1], [1, 0]],
+                [[-1 / math.sqrt(2), 1 / math.sqrt(2)], [1 / math.sqrt(2), 1 / math.sqrt(2)]],
+            ),
+            (
+                [[0, 1j], [-1j, 0]],
+                [[-1 / math.sqrt(2), 1j / math.sqrt(2)], [1 / math.sqrt(2), 1j / math.sqrt(2)]],
+            ),
             ([[1, 0], [0, -1]], [[0, 1], [1, 0]]),
-        ])
+        ],
+    )
     def test_pre_measure_single_wire_hermitian(self, cirq_device_1_wire, tol, A, U):
         """Tests that the correct pre-processing is applied in pre_measure for single wire hermitian observables."""
 
@@ -184,18 +207,46 @@ class TestOperations:
         ops = list(cirq_device_1_wire.circuit.all_operations())
 
         assert len(ops) == 1
-        
+
         print("Circuit:\n", cirq_device_1_wire.circuit)
 
         assert np.allclose(ops[0]._gate._matrix, np.array(U), atol=tol, rtol=0)
-        
+
+    @pytest.mark.parametrize(
+        "A,U",
+        [
+            (
+                [[1, 1j, 0, 0], [-1j, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]],
+                [[0, 0, -1 / math.sqrt(2), 1 / math.sqrt(2)], 
+                [-1 / math.sqrt(2), 1j / math.sqrt(2), 0, 0],
+                [0, 0, 1 / math.sqrt(2), 1 / math.sqrt(2)], 
+                [1 / math.sqrt(2), 1j / math.sqrt(2), 0, 0]],
+            ),
+        ],
+    )
+    def test_pre_measure_two_wire_hermitian(self, cirq_device_2_wires, tol, A, U):
+        """Tests that the correct pre-processing is applied in pre_measure for two wire hermitian observables."""
+
+        cirq_device_2_wires.reset()
+        cirq_device_2_wires._obs_queue = [qml.Hermitian(np.array(A), [0, 1], do_queue=False)]
+
+        cirq_device_2_wires.pre_measure()
+
+        ops = list(cirq_device_2_wires.circuit.all_operations())
+
+        assert len(ops) == 1
+
+        print("Circuit:\n", cirq_device_2_wires.circuit)
+
+        assert np.allclose(ops[0]._gate._matrix, np.array(U), atol=tol, rtol=0)
+
     def test_hermitian_matrix_caching(self, cirq_device_1_wire, tol):
         """Tests that the diagonalizations in pre_measure are properly cached."""
 
         A = np.array([[0, 1], [-1, 0]])
-        U = np.array([[-1/math.sqrt(2), 1/math.sqrt(2)], [1/math.sqrt(2), 1/math.sqrt(2)]]).conj().T
+        U = np.array([[-1, 1], [1, 1]]) / math.sqrt(2)
         w = np.array([-1, 1])
-        
+
         cirq_device_1_wire.reset()
         cirq_device_1_wire._obs_queue = [qml.Hermitian(A, 0, do_queue=False)]
 
@@ -203,7 +254,7 @@ class TestOperations:
             cirq_device_1_wire.pre_measure()
 
             assert mock.called
-            
+
             Hkey = list(cirq_device_1_wire._eigs.keys())[0]
 
             assert np.allclose(cirq_device_1_wire._eigs[Hkey]["eigval"], w, atol=tol, rtol=0)
