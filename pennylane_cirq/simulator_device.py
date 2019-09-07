@@ -43,6 +43,7 @@ from collections import OrderedDict
 
 import cirq
 import numpy as np
+import pennylane as qml
 
 from .cirq_device import CirqDevice
 
@@ -59,26 +60,74 @@ class SimulatorDevice(CirqDevice):
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
 
-    def __init__(self, wires, shots=0, qubits=None, initial_state=None):
-        # Todo: docstring, initial_state only works if shots==0
+    def __init__(self, wires, shots=0, qubits=None):
+        # Todo: docstring
         super().__init__(wires, shots, qubits)
 
-        if not initial_state:
-            initial_state = np.zeros(2**len(self.qubits))
-            initial_state[0] = 1.0
-
-        self.initial_state = initial_state
-
+        self.initial_state = None
         self.simulator = cirq.Simulator()
         self.result = None
         self.measurements = None
         self.state = None
 
+    def reset(self):
+        super().reset()
+
+        self.initial_state = None
+
+    def pre_apply(self):
+        super().pre_apply()
+
+        self._first_apply = True
+
+    def apply(self, operation, wires, par):
+        super().apply(operation, wires, par)
+
+        if operation == "BasisState":
+            if not self._first_apply:                
+                raise qml.DeviceError(
+                    "The operation BasisState is only supported at the beginning of a circuit."
+                )
+
+            if self.shots > 0:                
+                raise qml.DeviceError(
+                    "The operation BasisState is only supported in analytic mode (shots=0)."
+                )
+
+            self.initial_state = np.zeros(2 ** len(self.qubits), dtype=np.complex64)
+            basis_state_idx = np.sum(2 ** np.argwhere(np.flip(np.array(par[0])) == 1))
+            self.initial_state[basis_state_idx] = 1.0
+
+        elif operation == "QubitStateVector":
+            if not self._first_apply:                
+                raise qml.DeviceError(
+                    "The operation QubitStateVector is only supported at the beginning of a circuit."
+                )
+
+            if self.shots > 0:                
+                raise qml.DeviceError(
+                    "The operation QubitStateVector is only supported in analytic mode (shots=0)."
+                )
+
+            self.initial_state = np.array(par[0], dtype=np.complex64)
+
+        if self._first_apply:
+            self._first_apply = False
+
+
     def pre_measure(self):
         super().pre_measure()
 
+        # We apply an identity gate to all wires, otherwise Cirq would ignore 
+        # wires that are not acted upon
+        self.circuit.append(cirq.IdentityGate(len(self.qubits))(*self.qubits))
+
         if self.shots == 0:
-            self.result = self.simulator.simulate(self.circuit, initial_state=self.initial_state)
+            if self.initial_state is None:
+                self.result = self.simulator.simulate(self.circuit)
+            else:
+                self.result = self.simulator.simulate(self.circuit, initial_state=self.initial_state)
+
             self.state = np.array(self.result.state_vector())
         else:
             for e in self.obs_queue:

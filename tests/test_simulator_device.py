@@ -72,10 +72,12 @@ class TestApply:
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
 
-        simulator_device_1_wire.initial_state = np.array(input, dtype=np.complex64)
-        simulator_device_1_wire.reset()
         simulator_device_1_wire._obs_queue = []
+
+        simulator_device_1_wire.pre_apply()
         simulator_device_1_wire.apply(name, wires=[0], par=[])
+
+        simulator_device_1_wire.initial_state = np.array(input, dtype=np.complex64)        
         simulator_device_1_wire.pre_measure()
 
         assert np.allclose(simulator_device_1_wire.state, np.array(expected_output), atol=tol, rtol=0)
@@ -95,34 +97,36 @@ class TestApply:
         """Tests that applying an operation yields the expected output state for two wire
            operations that have no parameters."""
 
-        simulator_device_2_wires.initial_state = np.array(input, dtype=np.complex64)
-        simulator_device_2_wires.reset()
         simulator_device_2_wires._obs_queue = []
+
+        simulator_device_2_wires.pre_apply()
         simulator_device_2_wires.apply(name, wires=[0, 1], par=[])
+
+        simulator_device_2_wires.initial_state = np.array(input, dtype=np.complex64)        
         simulator_device_2_wires.pre_measure()
 
         assert np.allclose(simulator_device_2_wires.state, np.array(expected_output), atol=tol, rtol=0)
 
-    @pytest.mark.parametrize("name,input,expected_output,par", [
-        ("BasisState", [1, 0, 0, 0], [0, 0, 1, 0], [[1, 0]]),
-        ("BasisState", [1/math.sqrt(2), 0, 1/math.sqrt(2), 0], [0, 0, 1, 0], [[1, 0]]),
-        ("BasisState", [1/math.sqrt(2), 0, 1/math.sqrt(2), 0], [0, 0, 0, 1], [[1, 1]]),
-        ("QubitStateVector", [1, 0, 0, 0], [0, 0, 1, 0], [[0, 0, 1, 0]]),
-        ("QubitStateVector", [1/math.sqrt(2), 0, 1/math.sqrt(2), 0], [0, 0, 1, 0], [[0, 0, 1, 0]]),
-        ("QubitStateVector", [1/math.sqrt(2), 0, 1/math.sqrt(2), 0], [0, 0, 0, 1], [[0, 0, 0, 1]]),
-        ("QubitStateVector", [1, 0, 0, 0], [1/math.sqrt(3), 0, 1/math.sqrt(3), 1/math.sqrt(3)], [[1/math.sqrt(3), 0, 1/math.sqrt(3), 1/math.sqrt(3)]]),
-        ("QubitStateVector", [1, 0, 0, 0], [1/math.sqrt(3), 0, -1/math.sqrt(3), 1/math.sqrt(3)], [[1/math.sqrt(3), 0, -1/math.sqrt(3), 1/math.sqrt(3)]]),
+    @pytest.mark.parametrize("name,expected_output,par", [
+        ("BasisState", [0, 0, 1, 0], [[1, 0]]),
+        ("BasisState", [0, 0, 1, 0], [[1, 0]]),
+        ("BasisState", [0, 0, 0, 1], [[1, 1]]),
+        ("QubitStateVector", [0, 0, 1, 0], [[0, 0, 1, 0]]),
+        ("QubitStateVector", [0, 0, 1, 0], [[0, 0, 1, 0]]),
+        ("QubitStateVector", [0, 0, 0, 1], [[0, 0, 0, 1]]),
+        ("QubitStateVector", [1/math.sqrt(3), 0, 1/math.sqrt(3), 1/math.sqrt(3)], [[1/math.sqrt(3), 0, 1/math.sqrt(3), 1/math.sqrt(3)]]),
+        ("QubitStateVector", [1/math.sqrt(3), 0, -1/math.sqrt(3), 1/math.sqrt(3)], [[1/math.sqrt(3), 0, -1/math.sqrt(3), 1/math.sqrt(3)]]),
     ])
-    def test_apply_operation_state_preparation(self, simulator_device_2_wires, tol, name, input, expected_output, par):
+    def test_apply_operation_state_preparation(self, simulator_device_2_wires, tol, name, expected_output, par):
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
 
-        simulator_device_2_wires.initial_state = np.array(input, dtype=np.complex64)
-        simulator_device_2_wires.reset()
         simulator_device_2_wires._obs_queue = []
-        simulator_device_2_wires.apply(name, wires=[0, 1], par=par)
-        simulator_device_2_wires.pre_measure()
 
+        simulator_device_2_wires.pre_apply()
+        simulator_device_2_wires.apply(name, wires=[0, 1], par=par)
+
+        simulator_device_2_wires.pre_measure()
         assert np.allclose(simulator_device_2_wires.state, np.array(expected_output), atol=tol, rtol=0)
 
     @pytest.mark.parametrize("name,input,expected_output,par", [
@@ -151,10 +155,12 @@ class TestApply:
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
 
-        simulator_device_1_wire.initial_state = np.array(input, dtype=np.complex64)
-        simulator_device_1_wire.reset()
         simulator_device_1_wire._obs_queue = []
+
+        simulator_device_1_wire.pre_apply()
         simulator_device_1_wire.apply(name, wires=[0], par=par)
+
+        simulator_device_1_wire.initial_state = np.array(input, dtype=np.complex64)        
         simulator_device_1_wire.pre_measure()
 
         assert np.allclose(simulator_device_1_wire.state, np.array(expected_output), atol=tol, rtol=0)
@@ -182,10 +188,12 @@ class TestApply:
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
 
-        simulator_device_2_wires.initial_state = np.array(input, dtype=np.complex64)
-        simulator_device_2_wires.reset()
         simulator_device_2_wires._obs_queue = []
+
+        simulator_device_2_wires.pre_apply()
         simulator_device_2_wires.apply(name, wires=[0, 1], par=par)
+
+        simulator_device_2_wires.initial_state = np.array(input, dtype=np.complex64)        
         simulator_device_2_wires.pre_measure()
 
         assert np.allclose(simulator_device_2_wires.state, np.array(expected_output), atol=tol, rtol=0)
