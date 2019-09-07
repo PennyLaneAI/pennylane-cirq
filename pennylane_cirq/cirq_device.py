@@ -104,9 +104,7 @@ class CirqDevice(Device):
         "CNOT": CirqOperation(lambda: cirq.CNOT),
         "SWAP": CirqOperation(lambda: cirq.SWAP),
         "CZ": CirqOperation(lambda: cirq.CZ),
-        "PhaseShift": CirqOperation(
-            lambda phi: cirq.ZPowGate(exponent=phi / np.pi)
-        ),
+        "PhaseShift": CirqOperation(lambda phi: cirq.ZPowGate(exponent=phi / np.pi)),
         "RX": CirqOperation(lambda phi: cirq.Rx(phi)),
         "RY": CirqOperation(lambda phi: cirq.Ry(phi)),
         "RZ": CirqOperation(lambda phi: cirq.Rz(phi)),
@@ -183,7 +181,9 @@ class CirqDevice(Device):
                 Hkey = tuple(Hmat.flatten().tolist())
 
                 if Hmat.shape not in [(2, 2), (4, 4)]:
-                    raise qml.DeviceError("Cirq only supports single-qubit and two-qubit unitary gates and thus only single-qubit and two-qubit Hermitian observables.")
+                    raise qml.DeviceError(
+                        "Cirq only supports single-qubit and two-qubit unitary gates and thus only single-qubit and two-qubit Hermitian observables."
+                    )
 
                 if Hkey in self._eigs:
                     # retrieve eigenvectors

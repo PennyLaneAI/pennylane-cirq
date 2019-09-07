@@ -84,12 +84,12 @@ class SimulatorDevice(CirqDevice):
         super().apply(operation, wires, par)
 
         if operation == "BasisState":
-            if not self._first_apply:                
+            if not self._first_apply:
                 raise qml.DeviceError(
                     "The operation BasisState is only supported at the beginning of a circuit."
                 )
 
-            if self.shots > 0:                
+            if self.shots > 0:
                 raise qml.DeviceError(
                     "The operation BasisState is only supported in analytic mode (shots=0)."
                 )
@@ -99,12 +99,12 @@ class SimulatorDevice(CirqDevice):
             self.initial_state[basis_state_idx] = 1.0
 
         elif operation == "QubitStateVector":
-            if not self._first_apply:                
+            if not self._first_apply:
                 raise qml.DeviceError(
                     "The operation QubitStateVector is only supported at the beginning of a circuit."
                 )
 
-            if self.shots > 0:                
+            if self.shots > 0:
                 raise qml.DeviceError(
                     "The operation QubitStateVector is only supported in analytic mode (shots=0)."
                 )
@@ -114,11 +114,10 @@ class SimulatorDevice(CirqDevice):
         if self._first_apply:
             self._first_apply = False
 
-
     def pre_measure(self):
         super().pre_measure()
 
-        # We apply an identity gate to all wires, otherwise Cirq would ignore 
+        # We apply an identity gate to all wires, otherwise Cirq would ignore
         # wires that are not acted upon
         self.circuit.append(cirq.IdentityGate(len(self.qubits))(*self.qubits))
 
@@ -126,7 +125,9 @@ class SimulatorDevice(CirqDevice):
             if self.initial_state is None:
                 self.result = self.simulator.simulate(self.circuit)
             else:
-                self.result = self.simulator.simulate(self.circuit, initial_state=self.initial_state)
+                self.result = self.simulator.simulate(
+                    self.circuit, initial_state=self.initial_state
+                )
 
             self.state = np.array(self.result.state_vector())
         else:
