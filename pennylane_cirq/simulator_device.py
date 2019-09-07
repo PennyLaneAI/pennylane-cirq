@@ -59,8 +59,15 @@ class SimulatorDevice(CirqDevice):
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
 
-    def __init__(self, wires, shots=0, qubits=None):
+    def __init__(self, wires, shots=0, qubits=None, initial_state=None):
+        # Todo: docstring, initial_state only works if shots==0
         super().__init__(wires, shots, qubits)
+
+        if not initial_state:
+            initial_state = np.zeros(2**len(self.qubits))
+            initial_state[0] = 1.0
+
+        self.initial_state = initial_state
 
         self.simulator = cirq.Simulator()
         self.result = None
@@ -71,7 +78,7 @@ class SimulatorDevice(CirqDevice):
         super().pre_measure()
 
         if self.shots == 0:
-            self.result = self.simulator.simulate(self.circuit)
+            self.result = self.simulator.simulate(self.circuit, initial_state=self.initial_state)
             self.state = np.array(self.result.state_vector())
         else:
             for e in self.obs_queue:

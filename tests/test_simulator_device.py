@@ -15,6 +15,7 @@
 Unit tests for the Simulator plugin
 """
 import pytest
+import math
 
 import pennylane as qml
 from pennylane import numpy as np
@@ -71,10 +72,13 @@ class TestApply:
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
 
-        simulator_device_1_wire._state = np.array(input)
+        simulator_device_1_wire.initial_state = np.array(input, dtype=np.complex64)
+        simulator_device_1_wire.reset()
+        simulator_device_1_wire._obs_queue = []
         simulator_device_1_wire.apply(name, wires=[0], par=[])
+        simulator_device_1_wire.pre_measure()
 
-        assert np.allclose(simulator_device_1_wire._state, np.array(expected_output), atol=tol, rtol=0)
+        assert np.allclose(simulator_device_1_wire.state, np.array(expected_output), atol=tol, rtol=0)
 
     @pytest.mark.parametrize("name,input,expected_output", [
         ("CNOT", [1, 0, 0, 0], [1, 0, 0, 0]),
@@ -91,10 +95,13 @@ class TestApply:
         """Tests that applying an operation yields the expected output state for two wire
            operations that have no parameters."""
 
-        simulator_device_2_wires._state = np.array(input)
+        simulator_device_2_wires.initial_state = np.array(input, dtype=np.complex64)
+        simulator_device_2_wires.reset()
+        simulator_device_2_wires._obs_queue = []
         simulator_device_2_wires.apply(name, wires=[0, 1], par=[])
+        simulator_device_2_wires.pre_measure()
 
-        assert np.allclose(simulator_device_2_wires._state, np.array(expected_output), atol=tol, rtol=0)
+        assert np.allclose(simulator_device_2_wires.state, np.array(expected_output), atol=tol, rtol=0)
 
     @pytest.mark.parametrize("name,input,expected_output,par", [
         ("BasisState", [1, 0, 0, 0], [0, 0, 1, 0], [[1, 0]]),
@@ -110,10 +117,13 @@ class TestApply:
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
 
-        simulator_device_2_wires._state = np.array(input)
+        simulator_device_2_wires.initial_state = np.array(input, dtype=np.complex64)
+        simulator_device_2_wires.reset()
+        simulator_device_2_wires._obs_queue = []
         simulator_device_2_wires.apply(name, wires=[0, 1], par=par)
+        simulator_device_2_wires.pre_measure()
 
-        assert np.allclose(simulator_device_2_wires._state, np.array(expected_output), atol=tol, rtol=0)
+        assert np.allclose(simulator_device_2_wires.state, np.array(expected_output), atol=tol, rtol=0)
 
     @pytest.mark.parametrize("name,input,expected_output,par", [
         ("PhaseShift", [1, 0], [1, 0], [math.pi/2]),
@@ -141,10 +151,13 @@ class TestApply:
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
 
-        simulator_device_1_wire._state = np.array(input)
+        simulator_device_1_wire.initial_state = np.array(input, dtype=np.complex64)
+        simulator_device_1_wire.reset()
+        simulator_device_1_wire._obs_queue = []
         simulator_device_1_wire.apply(name, wires=[0], par=par)
+        simulator_device_1_wire.pre_measure()
 
-        assert np.allclose(simulator_device_1_wire._state, np.array(expected_output), atol=tol, rtol=0)
+        assert np.allclose(simulator_device_1_wire.state, np.array(expected_output), atol=tol, rtol=0)
 
     @pytest.mark.parametrize("name,input,expected_output,par", [
         ("CRX", [0, 1, 0, 0], [0, 1, 0, 0], [math.pi/2]),
@@ -169,9 +182,12 @@ class TestApply:
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
 
-        simulator_device_2_wires._state = np.array(input)
+        simulator_device_2_wires.initial_state = np.array(input, dtype=np.complex64)
+        simulator_device_2_wires.reset()
+        simulator_device_2_wires._obs_queue = []
         simulator_device_2_wires.apply(name, wires=[0, 1], par=par)
+        simulator_device_2_wires.pre_measure()
 
-        assert np.allclose(simulator_device_2_wires._state, np.array(expected_output), atol=tol, rtol=0)
+        assert np.allclose(simulator_device_2_wires.state, np.array(expected_output), atol=tol, rtol=0)
         
 

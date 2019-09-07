@@ -105,7 +105,7 @@ class CirqDevice(Device):
         "SWAP": CirqOperation(lambda: cirq.SWAP),
         "CZ": CirqOperation(lambda: cirq.CZ),
         "PhaseShift": CirqOperation(
-            lambda phi: cirq.ZPowGate(exponent=phi / np.pi, global_shift=1.0)
+            lambda phi: cirq.ZPowGate(exponent=phi / np.pi)
         ),
         "RX": CirqOperation(lambda phi: cirq.Rx(phi)),
         "RY": CirqOperation(lambda phi: cirq.Ry(phi)),
