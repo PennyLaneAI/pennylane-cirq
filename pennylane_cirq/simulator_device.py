@@ -194,6 +194,9 @@ class SimulatorDevice(CirqDevice):
             zero_value = self._eigs[Hkey]["eigval"][0]
             one_value = self._eigs[Hkey]["eigval"][1]
 
+        elif observable == "Identity":
+            one_value = 1
+
         if self.shots == 0:
             # We have to use the state of the simulation to find the expectation value
             probabilities = self.probability()
@@ -219,6 +222,9 @@ class SimulatorDevice(CirqDevice):
             Hkey = tuple(Hmat.flatten().tolist())
             zero_value = self._eigs[Hkey]["eigvec"][0]
             one_value = self._eigs[Hkey]["eigvec"][1]
+
+        elif observable == "Identity":
+            one_value = 1
 
         if self.shots == 0:
             # We have to use the state of the simulation to find the expectation value
@@ -254,6 +260,9 @@ class SimulatorDevice(CirqDevice):
             zero_value = self._eigs[Hkey]["eigvec"][0]
             one_value = self._eigs[Hkey]["eigvec"][1]
 
+        elif observable == "Identity":
+            one_value = 1
+
         if self.shots == 0:
             # We have to use the state of the simulation to find the expectation value
             probabilities = self.probability()
@@ -270,3 +279,5 @@ class SimulatorDevice(CirqDevice):
             return CirqDevice._convert_measurements(
                 self.measurements[wires[0]], zero_value, one_value
             )[:n]
+
+

@@ -430,3 +430,91 @@ class TestApply:
         
         with pytest.raises(qml.DeviceError, match=match):
             simulator_device_1_wire.apply(operation, wires=[0], par=par)
+
+class TestExpval:
+    """Tests that expectation values are properly calculated or that the proper errors are raised."""
+
+    # fmt: off
+    @pytest.mark.parametrize("operation,input,expected_output", [
+        (qml.Identity, [1, 0], 1),
+        (qml.Identity, [0, 1], 1),
+        (qml.Identity, [1/math.sqrt(2), -1/math.sqrt(2)], 1),
+        (qml.PauliX, [1/math.sqrt(2), 1/math.sqrt(2)], 1),
+        (qml.PauliX, [1/math.sqrt(2), -1/math.sqrt(2)], -1),
+        (qml.PauliX, [1, 0], 0),
+        (qml.PauliY, [1/math.sqrt(2), 1j/math.sqrt(2)], 1),
+        (qml.PauliY, [1/math.sqrt(2), -1j/math.sqrt(2)], -1),
+        (qml.PauliY, [1, 0], 0),
+        (qml.PauliZ, [1, 0], 1),
+        (qml.PauliZ, [0, 1], -1),
+        (qml.PauliZ, [1/math.sqrt(2), 1/math.sqrt(2)], 0),
+        (qml.Hadamard, [1, 0], 1/math.sqrt(2)),
+        (qml.Hadamard, [0, 1], -1/math.sqrt(2)),
+        (qml.Hadamard, [1/math.sqrt(2), 1/math.sqrt(2)], 1/math.sqrt(2)),
+    ])
+    # fmt: on
+    def test_expval_single_wire_no_parameters(self, simulator_device_1_wire, tol, operation, input, expected_output):
+        """Tests that expectation values are properly calculated for single-wire observables without parameters."""
+
+        op = operation(0, do_queue=False)
+        simulator_device_1_wire._obs_queue = [op]
+
+        simulator_device_1_wire.pre_apply()
+        simulator_device_1_wire.apply("QubitStateVector", wires=[0], par=[input])
+        simulator_device_1_wire.post_apply()
+        
+        simulator_device_1_wire.pre_measure()        
+        res = simulator_device_1_wire.expval(op.name, wires=[0], par=[])
+
+        assert np.isclose(res, expected_output, atol=tol, rtol=0) 
+
+    # fmt: off
+    @pytest.mark.parametrize("operation,input,expected_output,par", [
+        (qml.Hermitian, [1, 0], 1, [np.array([[1, 1j], [-1j, 1]])]),
+        (qml.Hermitian, [0, 1], 1, [np.array([[1, 1j], [-1j, 1]])]),
+        (qml.Hermitian, [1/math.sqrt(2), -1/math.sqrt(2)], 1, [np.array([[1, 1j], [-1j, 1]])]),
+    ])
+    # fmt: on
+    def test_expval_single_wire_with_parameters(self, simulator_device_1_wire, tol, operation, input, expected_output, par):
+        """Tests that expectation values are properly calculated for single-wire observables with parameters."""
+
+        op = operation(par[0], 0, do_queue=False)
+        simulator_device_1_wire._obs_queue = [op]
+
+        simulator_device_1_wire.pre_apply()
+        simulator_device_1_wire.apply("QubitStateVector", wires=[0], par=[input])
+        simulator_device_1_wire.post_apply()
+        
+        simulator_device_1_wire.pre_measure()        
+        res = simulator_device_1_wire.expval(op.name, wires=[0], par=par)
+
+        assert np.isclose(res, expected_output, atol=tol, rtol=0) 
+
+    # fmt: off
+    """
+    @pytest.mark.parametrize("operation,input,expected_output,par", [
+        (qml.Hermitian, [1/math.sqrt(3), 0, 1/math.sqrt(3), 1/math.sqrt(3)], 5/3, [np.array([[1, 1j, 0, 1], [-1j, 1, 0, 0], [0, 0, 1, -1j], [1, 0, 1j, 1]])]),
+        (qml.Hermitian, [0, 0, 0, 1], 0, [np.array([[0, 1j, 0, 0], [-1j, 0, 0, 0], [0, 0, 0, -1j], [0, 0, 1j, 0]])]),
+        (qml.Hermitian, [1/math.sqrt(2), 0, -1/math.sqrt(2), 0], 1, [np.array([[1, 1j, 0, 0], [-1j, 1, 0, 0], [0, 0, 1, -1j], [0, 0, 1j, 1]])]),
+        (qml.Hermitian, [1/math.sqrt(3), -1/math.sqrt(3), 1/math.sqrt(6), 1/math.sqrt(6)], 1, [np.array([[1, 1j, 0, .5j], [-1j, 1, 0, 0], [0, 0, 1, -1j], [-.5j, 0, 1j, 1]])]),
+        (qml.Hermitian, [1/math.sqrt(2), 0, 0, 1/math.sqrt(2)], 1, [np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])]),
+        (qml.Hermitian, [0, 1/math.sqrt(2), -1/math.sqrt(2), 0], -1, [np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])]),
+    ])
+    """
+    # fmt: on
+    """
+    def test_expval_two_wires_with_parameters(self, simulator_device_2_wires, tol, operation, input, expected_output, par):
+        """Tests that expectation values are properly calculated for two-wire observables with parameters."""
+
+        op = operation(par[0], [0, 1], do_queue=False)
+        simulator_device_2_wires._obs_queue = [op]
+
+        simulator_device_2_wires.pre_apply()
+        simulator_device_2_wires.apply("QubitStateVector", wires=[0, 1], par=[input])
+        simulator_device_2_wires.post_apply()
+        
+        simulator_device_2_wires.pre_measure()
+        res = simulator_device_2_wires.expval(op.name, wires=[0, 1], par=par)
+
+        assert np.isclose(res, expected_output, atol=tol, rtol=0) 
+    """
