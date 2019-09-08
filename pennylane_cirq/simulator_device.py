@@ -42,6 +42,7 @@ import itertools
 from collections import OrderedDict
 
 import cirq
+import math
 import numpy as np
 import pennylane as qml
 
@@ -94,8 +95,18 @@ class SimulatorDevice(CirqDevice):
                     "The operation BasisState is only supported in analytic mode (shots=0)."
                 )
 
+            basis_state_array = np.array(par[0])
+
+            if len(basis_state_array) != len(self.qubits):
+                raise qml.DeviceError(
+                    "For BasisState, the state has to be specified for the correct number of qubits. Got a state for {} qubits, expected {}.".format(len(basis_state_array), len(self.qubits))
+                    )
+
+            if not np.all(np.isin(basis_state_array, np.array([0, 1]))):
+                raise qml.DeviceError("Argument for BasisState can only contain 0 and 1. Got {}".format(par[0]))
+
             self.initial_state = np.zeros(2 ** len(self.qubits), dtype=np.complex64)
-            basis_state_idx = np.sum(2 ** np.argwhere(np.flip(np.array(par[0])) == 1))
+            basis_state_idx = np.sum(2 ** np.argwhere(np.flip(basis_state_array) == 1))
             self.initial_state[basis_state_idx] = 1.0
 
         elif operation == "QubitStateVector":
@@ -109,7 +120,20 @@ class SimulatorDevice(CirqDevice):
                     "The operation QubitStateVector is only supported in analytic mode (shots=0)."
                 )
 
-            self.initial_state = np.array(par[0], dtype=np.complex64)
+            state_vector = np.array(par[0], dtype=np.complex64)
+
+            if len(state_vector) != 2**len(self.qubits):
+                raise qml.DeviceError(
+                    "For QubitStateVector, the state has to be specified for the correct number of qubits. Got a state of length {}, expected {}.".format(len(state_vector), 2**len(self.qubits))
+                    )
+
+            norm_squared = np.sum(np.abs(state_vector)**2)
+            if not np.isclose(norm_squared, 1.0, atol=1e-3, rtol=0):
+                raise qml.DeviceError(
+                    "The given state for QubitStateVector is not properly normalized to 1.0. Got norm {}".format(math.sqrt(norm_squared))
+                )
+
+            self.initial_state = state_vector
 
         if self._first_apply:
             self._first_apply = False
