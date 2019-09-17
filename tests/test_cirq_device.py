@@ -158,15 +158,14 @@ class TestOperations:
 
         assert cirq_device_1_wire.reset.called
 
-    @pytest.mark.parametrize(
-        "measurement_gate,expected_diagonalization",
-        [
-            (qml.PauliX(0, do_queue=False), [cirq.H]),
-            (qml.PauliY(0, do_queue=False), [cirq.Z, cirq.S, cirq.H]),
-            (qml.PauliZ(0, do_queue=False), []),
-            (qml.Hadamard(0, do_queue=False), [cirq.Ry(-np.pi / 4)]),
-        ],
-    )
+    # fmt: off
+    @pytest.mark.parametrize("measurement_gate,expected_diagonalization", [
+        (qml.PauliX(0, do_queue=False), [cirq.H]),
+        (qml.PauliY(0, do_queue=False), [cirq.Z, cirq.S, cirq.H]),
+        (qml.PauliZ(0, do_queue=False), []),
+        (qml.Hadamard(0, do_queue=False), [cirq.Ry(-np.pi / 4)]),
+    ])
+    # fmt: on
     def test_pre_measure_single_wire(
         self, cirq_device_1_wire, measurement_gate, expected_diagonalization
     ):
@@ -187,24 +186,26 @@ class TestOperations:
     # Note that we DO NOT expect the diagonalization matrices to be the same as you would expect
     # for the vanilla operators. This is due to the fact that the eigenvalues are listed in ascending
     # order in the backend. This means if one uses Hermitian(Z), it will actually measure -X.Z.X.
-    @pytest.mark.parametrize(
-        "A,U",
-        [
-            (
-                [[1, 1j], [-1j, 1]],
-                [[-1 / math.sqrt(2), 1j / math.sqrt(2)], [1 / math.sqrt(2), 1j / math.sqrt(2)]],
-            ),
-            (
-                [[0, 1], [1, 0]],
-                [[-1 / math.sqrt(2), 1 / math.sqrt(2)], [1 / math.sqrt(2), 1 / math.sqrt(2)]],
-            ),
-            (
-                [[0, 1j], [-1j, 0]],
-                [[-1 / math.sqrt(2), 1j / math.sqrt(2)], [1 / math.sqrt(2), 1j / math.sqrt(2)]],
-            ),
-            ([[1, 0], [0, -1]], [[0, 1], [1, 0]]),
-        ],
-    )
+    # fmt: off
+    @pytest.mark.parametrize("A,U", [
+        (
+            [[1, 1j], [-1j, 1]],
+            [[-1 / math.sqrt(2), 1j / math.sqrt(2)], 
+                [1 / math.sqrt(2), 1j / math.sqrt(2)]],
+        ),
+        (
+            [[0, 1], [1, 0]],
+            [[-1 / math.sqrt(2), 1 / math.sqrt(2)], 
+                [1 / math.sqrt(2), 1 / math.sqrt(2)]],
+        ),
+        (
+            [[0, 1j], [-1j, 0]],
+            [[-1 / math.sqrt(2), 1j / math.sqrt(2)], 
+                [1 / math.sqrt(2), 1j / math.sqrt(2)]],
+        ),
+        ([[1, 0], [0, -1]], [[0, 1], [1, 0]]),
+    ])
+    # fmt: on
     def test_pre_measure_single_wire_hermitian(self, cirq_device_1_wire, tol, A, U):
         """Tests that the correct pre-processing is applied in pre_measure for single wire hermitian observables."""
 
@@ -221,20 +222,17 @@ class TestOperations:
 
         assert np.allclose(ops[0]._gate._matrix, np.array(U), atol=tol, rtol=0)
 
-    @pytest.mark.parametrize(
-        "A,U",
+    # fmt: off
+    @pytest.mark.parametrize("A,U", [
+        ([[1, 1j, 0, 0], [-1j, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]],
         [
-            (
-                [[1, 1j, 0, 0], [-1j, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]],
-                [
-                    [0, 0, -1 / math.sqrt(2), 1 / math.sqrt(2)],
-                    [-1 / math.sqrt(2), 1j / math.sqrt(2), 0, 0],
-                    [0, 0, 1 / math.sqrt(2), 1 / math.sqrt(2)],
-                    [1 / math.sqrt(2), 1j / math.sqrt(2), 0, 0],
-                ],
-            )
-        ],
-    )
+            [0, 0, -1 / math.sqrt(2), 1 / math.sqrt(2)],
+            [-1 / math.sqrt(2), 1j / math.sqrt(2), 0, 0],
+            [0, 0, 1 / math.sqrt(2), 1 / math.sqrt(2)],
+            [1 / math.sqrt(2), 1j / math.sqrt(2), 0, 0],
+        ])
+    ])
+    # fmt: on
     def test_pre_measure_two_wire_hermitian(self, cirq_device_2_wires, tol, A, U):
         """Tests that the correct pre-processing is applied in pre_measure for two wire hermitian observables."""
 
@@ -287,6 +285,7 @@ class TestOperations:
 
             assert not mock.called
 
+    # fmt: off
     @pytest.mark.parametrize(
         "gate,par,expected_cirq_gates",
         [
@@ -295,9 +294,9 @@ class TestOperations:
             ("PauliZ", [], [cirq.Z]),
             ("Hadamard", [], [cirq.H]),
             ("S", [], [cirq.S]),
-            ("PhaseShift", [1.4], [cirq.ZPowGate(exponent=1.4 / np.pi, global_shift=1.0)]),
-            ("PhaseShift", [-1.2], [cirq.ZPowGate(exponent=-1.2 / np.pi, global_shift=1.0)]),
-            ("PhaseShift", [2], [cirq.ZPowGate(exponent=2 / np.pi, global_shift=1.0)]),
+            ("PhaseShift", [1.4], [cirq.ZPowGate(exponent=1.4 / np.pi)]),
+            ("PhaseShift", [-1.2], [cirq.ZPowGate(exponent=-1.2 / np.pi)]),
+            ("PhaseShift", [2], [cirq.ZPowGate(exponent=2 / np.pi)]),
             ("RX", [1.4], [cirq.Rx(1.4)]),
             ("RX", [-1.2], [cirq.Rx(-1.2)]),
             ("RX", [2], [cirq.Rx(2)]),
@@ -327,6 +326,7 @@ class TestOperations:
             ),
         ],
     )
+    # fmt: on
     def test_apply_single_wire(self, cirq_device_1_wire, gate, par, expected_cirq_gates):
         """Tests that apply adds the correct gates to the circuit for single-qubit gates."""
 
@@ -341,69 +341,62 @@ class TestOperations:
         for i in range(len(ops)):
             assert ops[i]._gate == expected_cirq_gates[i]
 
-    @pytest.mark.parametrize(
-        "gate,par,expected_cirq_gates",
-        [
-            ("CNOT", [], [cirq.CNOT]),
-            ("SWAP", [], [cirq.SWAP]),
-            ("CZ", [], [cirq.CZ]),
-            ("CRX", [1.4], [cirq.ControlledGate(cirq.Rx(1.4))]),
-            ("CRX", [-1.2], [cirq.ControlledGate(cirq.Rx(-1.2))]),
-            ("CRX", [2], [cirq.ControlledGate(cirq.Rx(2))]),
-            ("CRY", [1.4], [cirq.ControlledGate(cirq.Ry(1.4))]),
-            ("CRY", [0], [cirq.ControlledGate(cirq.Ry(0))]),
-            ("CRY", [-1.3], [cirq.ControlledGate(cirq.Ry(-1.3))]),
-            ("CRZ", [1.4], [cirq.ControlledGate(cirq.Rz(1.4))]),
-            ("CRZ", [-1.1], [cirq.ControlledGate(cirq.Rz(-1.1))]),
-            ("CRZ", [1], [cirq.ControlledGate(cirq.Rz(1))]),
-            (
-                "CRot",
-                [1.4, 2.3, -1.2],
-                [
-                    cirq.ControlledGate(cirq.Rz(1.4)),
-                    cirq.ControlledGate(cirq.Ry(2.3)),
-                    cirq.ControlledGate(cirq.Rz(-1.2)),
-                ],
-            ),
-            (
-                "CRot",
-                [1, 2, -1],
-                [
-                    cirq.ControlledGate(cirq.Rz(1)),
-                    cirq.ControlledGate(cirq.Ry(2)),
-                    cirq.ControlledGate(cirq.Rz(-1)),
-                ],
-            ),
-            (
-                "CRot",
-                [-1.1, 0.2, -1],
-                [
-                    cirq.ControlledGate(cirq.Rz(-1.1)),
-                    cirq.ControlledGate(cirq.Ry(0.2)),
-                    cirq.ControlledGate(cirq.Rz(-1)),
-                ],
-            ),
-            ("QubitUnitary", [np.eye(4)], [cirq.TwoQubitMatrixGate(np.eye(4))]),
-            (
-                "QubitUnitary",
-                [np.array([[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]])],
-                [
-                    cirq.TwoQubitMatrixGate(
-                        np.array([[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]])
-                    )
-                ],
-            ),
-            (
-                "QubitUnitary",
-                [np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1]]) / 2],
-                [
-                    cirq.TwoQubitMatrixGate(
-                        np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1]]) / 2
-                    )
-                ],
-            ),
-        ],
-    )
+    # fmt: off
+    @pytest.mark.parametrize("gate,par,expected_cirq_gates", [
+        ("CNOT", [], [cirq.CNOT]),
+        ("SWAP", [], [cirq.SWAP]),
+        ("CZ", [], [cirq.CZ]),
+        ("CRX", [1.4], [cirq.ControlledGate(cirq.Rx(1.4))]),
+        ("CRX", [-1.2], [cirq.ControlledGate(cirq.Rx(-1.2))]),
+        ("CRX", [2], [cirq.ControlledGate(cirq.Rx(2))]),
+        ("CRY", [1.4], [cirq.ControlledGate(cirq.Ry(1.4))]),
+        ("CRY", [0], [cirq.ControlledGate(cirq.Ry(0))]),
+        ("CRY", [-1.3], [cirq.ControlledGate(cirq.Ry(-1.3))]),
+        ("CRZ", [1.4], [cirq.ControlledGate(cirq.Rz(1.4))]),
+        ("CRZ", [-1.1], [cirq.ControlledGate(cirq.Rz(-1.1))]),
+        ("CRZ", [1], [cirq.ControlledGate(cirq.Rz(1))]),
+        ("CRot", [1.4, 2.3, -1.2],
+            [
+                cirq.ControlledGate(cirq.Rz(1.4)),
+                cirq.ControlledGate(cirq.Ry(2.3)),
+                cirq.ControlledGate(cirq.Rz(-1.2)),
+            ],
+        ),
+        ("CRot", [1, 2, -1],
+            [
+                cirq.ControlledGate(cirq.Rz(1)),
+                cirq.ControlledGate(cirq.Ry(2)),
+                cirq.ControlledGate(cirq.Rz(-1)),
+            ],
+        ),
+        ("CRot", [-1.1, 0.2, -1],
+            [
+                cirq.ControlledGate(cirq.Rz(-1.1)),
+                cirq.ControlledGate(cirq.Ry(0.2)),
+                cirq.ControlledGate(cirq.Rz(-1)),
+            ],
+        ),
+        ("QubitUnitary", [np.eye(4)], [cirq.TwoQubitMatrixGate(np.eye(4))]),
+        (
+            "QubitUnitary",
+            [np.array([[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]])],
+            [
+                cirq.TwoQubitMatrixGate(
+                    np.array([[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]])
+                )
+            ],
+        ),
+        (
+            "QubitUnitary",
+            [np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1]]) / 2],
+            [
+                cirq.TwoQubitMatrixGate(
+                    np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1]]) / 2
+                )
+            ],
+        ),
+    ])
+    # fmt: on
     def test_apply_two_wires(self, cirq_device_2_wires, gate, par, expected_cirq_gates):
         """Tests that apply adds the correct gates to the circuit for two-qubit gates."""
 
@@ -418,29 +411,25 @@ class TestOperations:
         for i in range(len(ops)):
             assert ops[i]._gate == expected_cirq_gates[i]
 
-    """
-        "BasisState": None,
-        "QubitStateVector": None,
-        ),
-    @pytest.mark.parametrize("operation,par,expected_cirq_gates", [
-        ("BasisState", [[0]]),
-        ("BasisState", [[1]]),        
-        ("QubitStateVector", [[1, 0]]),
-        ("QubitStateVector", [[0, 1]]),
-        ("QubitStateVector", [[1/math.sqrt(2), 1j/math.sqrt(2)]]),
-        ("QubitStateVector", [[1/2, math.sqrt(3)/2]]),
-    ])
-    def test_apply_state_preparations_single_wire(self, cirq_device_1_wire, operation, par, expected_cirq_gates):
-        """Tests that apply adds the correct gates to the circuit for state preparations."""
+    
+    # @pytest.mark.parametrize("operation,par,expected_cirq_gates", [
+    #     ("BasisState", [[0]]),
+    #     ("BasisState", [[1]]),        
+    #     ("QubitStateVector", [[1, 0]]),
+    #     ("QubitStateVector", [[0, 1]]),
+    #     ("QubitStateVector", [[1/math.sqrt(2), 1j/math.sqrt(2)]]),
+    #     ("QubitStateVector", [[1/2, math.sqrt(3)/2]]),
+    # ])
+    # def test_apply_state_preparations_single_wire(self, cirq_device_1_wire, operation, par, expected_cirq_gates):
+    #     """Tests that apply adds the correct gates to the circuit for state preparations."""
 
-        cirq_device_1_wire.reset()
+    #     cirq_device_1_wire.reset()
 
-        cirq_device_1_wire.apply(operation, wires=[0], par=par)
+    #     cirq_device_1_wire.apply(operation, wires=[0], par=par)
 
-        ops = list(cirq_device_1_wire.circuit.all_operations())
+    #     ops = list(cirq_device_1_wire.circuit.all_operations())
 
-        assert len(ops) == len(expected_cirq_gates)
+    #     assert len(ops) == len(expected_cirq_gates)
 
-        for i in range(len(ops)):
-            assert ops[i]._gate == expected_cirq_gates[i]
-    """
+    #     for i in range(len(ops)):
+    #         assert ops[i]._gate == expected_cirq_gates[i]

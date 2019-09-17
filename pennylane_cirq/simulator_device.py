@@ -181,32 +181,47 @@ class SimulatorDevice(CirqDevice):
 
         return OrderedDict(zip(states, probs))
 
-    def expval(self, observable, wires, par):
-        wire = wires[0]
+    def marginal_probability(self, wires):
+        """The marginal probability over the given wires.
 
-        zero_value = 1
-        one_value = -1
+        Args:
+            wires (Array[int]): the wires with respect to which the marginal probabilities 
+                are calculated
+        
+        """
+        num_wires = len(wires)
+        probabilities = self.probability()
+        marginal_states = itertools.product(range(2), repeat=num_wires)
+
+        marginal_probabilities = OrderedDict()
+
+        for marginal_state in enumerate(marginal_states):
+            marginal_probabilities[marginal_state] = np.sum(
+                [probabilities[state] for state in probabilities if tuple(state[wire] for wire in wires) == marginal_state]
+            )
+
+        return marginal_probabilities
+
+
+    def expval(self, observable, wires, par):
+        num_wires = len(wires)
+
+        eigenvalues = np.ones(2**num_wires)
 
         if observable == "Hermitian":
             # Take the eigenvalues from the stored values
             Hmat = par[0]
             Hkey = tuple(Hmat.flatten().tolist())
-            zero_value = self._eigs[Hkey]["eigval"][0]
-            one_value = self._eigs[Hkey]["eigval"][1]
-
-        elif observable == "Identity":
-            one_value = 1
+            eigenvalues = self._eigs[Hkey]["eigval"]
+        elif observable != "Identity":
+            # TODO: Add support for Tensor observables after it is merged in PL
+            eigenvalues[1] = -1
 
         if self.shots == 0:
             # We have to use the state of the simulation to find the expectation value
-            probabilities = self.probability()
+            marginal_probability = np.fromiter(self.marginal_probability(wires).values(), dtype=np.float)
 
-            zero_marginal_prob = np.sum(
-                [probabilities[state] for state in probabilities if state[wire] == 0]
-            )
-            one_marginal_prob = 1 - zero_marginal_prob
-
-            return zero_marginal_prob * zero_value + one_marginal_prob * one_value
+            return np.dot(eigenvalues, marginal_probability)
         else:
             return self.sample(observable, wires, par).mean()
 
