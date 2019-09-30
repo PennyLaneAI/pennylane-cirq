@@ -220,7 +220,7 @@ class TestOperations:
 
         print("Circuit:\n", cirq_device_1_wire.circuit)
 
-        assert np.allclose(ops[0]._gate._matrix, np.array(U), atol=tol, rtol=0)
+        assert np.allclose(ops[0]._gate._matrix, np.array(U), **tol)
 
     # fmt: off
     @pytest.mark.parametrize("A,U", [
@@ -247,7 +247,7 @@ class TestOperations:
 
         print("Circuit:\n", cirq_device_2_wires.circuit)
 
-        assert np.allclose(ops[0]._gate._matrix, np.array(U), atol=tol, rtol=0)
+        assert np.allclose(ops[0]._gate._matrix, np.array(U), **tol)
 
     def test_hermitian_error(self, cirq_device_3_wires):
         """Tests that an error is raised for a three-qubit hermitian observable."""
@@ -277,8 +277,8 @@ class TestOperations:
 
             Hkey = list(cirq_device_1_wire._eigs.keys())[0]
 
-            assert np.allclose(cirq_device_1_wire._eigs[Hkey]["eigval"], w, atol=tol, rtol=0)
-            assert np.allclose(cirq_device_1_wire._eigs[Hkey]["eigvec"], U, atol=tol, rtol=0)
+            assert np.allclose(cirq_device_1_wire._eigs[Hkey]["eigval"], w, **tol)
+            assert np.allclose(cirq_device_1_wire._eigs[Hkey]["eigvec"], U, **tol)
 
         with patch("numpy.linalg.eigh", return_value=(w, U)) as mock:
             cirq_device_1_wire.pre_measure()

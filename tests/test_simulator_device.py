@@ -89,7 +89,7 @@ class TestApply:
         simulator_device_1_wire.pre_measure()
 
         assert np.allclose(
-            simulator_device_1_wire.state, np.array(expected_output), atol=tol, rtol=0
+            simulator_device_1_wire.state, np.array(expected_output), **tol
         )
 
     # fmt: off
@@ -120,7 +120,7 @@ class TestApply:
         simulator_device_2_wires.pre_measure()
 
         assert np.allclose(
-            simulator_device_2_wires.state, np.array(expected_output), atol=tol, rtol=0
+            simulator_device_2_wires.state, np.array(expected_output), **tol
         )
 
     # fmt: off
@@ -148,7 +148,7 @@ class TestApply:
 
         simulator_device_2_wires.pre_measure()
         assert np.allclose(
-            simulator_device_2_wires.state, np.array(expected_output), atol=tol, rtol=0
+            simulator_device_2_wires.state, np.array(expected_output), **tol
         )
 
     # fmt: off
@@ -205,7 +205,7 @@ class TestApply:
         simulator_device_1_wire.pre_measure()
 
         assert np.allclose(
-            simulator_device_1_wire.state, np.array(expected_output), atol=tol, rtol=0
+            simulator_device_1_wire.state, np.array(expected_output), **tol
         )
 
     # fmt: off
@@ -265,7 +265,7 @@ class TestApply:
         simulator_device_2_wires.pre_measure()
 
         assert np.allclose(
-            simulator_device_2_wires.state, np.array(expected_output), atol=tol, rtol=0
+            simulator_device_2_wires.state, np.array(expected_output), **tol
         )
 
     # fmt: off
@@ -328,7 +328,7 @@ class TestExpval:
         simulator_device_1_wire.pre_measure()        
         res = simulator_device_1_wire.expval(op.name, wires=[0], par=[])
 
-        assert np.isclose(res, expected_output, atol=tol, rtol=0) 
+        assert np.isclose(res, expected_output, **tol) 
 
     # fmt: off
     @pytest.mark.parametrize("operation,input,expected_output,par", [
@@ -350,7 +350,7 @@ class TestExpval:
         simulator_device_1_wire.pre_measure()        
         res = simulator_device_1_wire.expval(op.name, wires=[0], par=par)
 
-        assert np.isclose(res, expected_output, atol=tol, rtol=0) 
+        assert np.isclose(res, expected_output, **tol) 
 
     # fmt: off
     @pytest.mark.parametrize("operation,input,expected_output,par", [
@@ -410,7 +410,7 @@ class TestExpval:
                 [0, 0, 0, 1]
             ])
         ]),
-    ], ids=[str(i) for i in range(7)])
+    ])
     # fmt: on
     def test_expval_two_wires_with_parameters(self, simulator_device_2_wires, tol, operation, input, expected_output, par):
         """Tests that expectation values are properly calculated for two-wire observables with parameters."""
@@ -425,4 +425,4 @@ class TestExpval:
         simulator_device_2_wires.pre_measure()
         res = simulator_device_2_wires.expval(op.name, wires=[0, 1], par=par)
 
-        assert np.isclose(res, expected_output, atol=tol, rtol=0) 
+        assert np.isclose(res, expected_output, **tol) 
