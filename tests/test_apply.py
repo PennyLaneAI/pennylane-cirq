@@ -65,9 +65,7 @@ single_qubit = [
     ("PauliZ", Z),
     ("Hadamard", H),
     ("S", S),
-    ("Sdg", S.conj().T),
     ("T", T),
-    ("Tdg", T.conj().T),
 ]
 
 # list of all parametrized single-qubit gates
@@ -128,9 +126,8 @@ class TestStateApply:
         dev = device(1)
         state = init_state(1)
 
-        dev.apply("QubitStateVector", [0], [state])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0], [state])
 
         res = np.abs(dev.state) ** 2
         expected = np.abs(state) ** 2
@@ -142,19 +139,19 @@ class TestStateApply:
         dev = device(2)
         state = np.array([0, 123.432])
 
-        with pytest.raises(ValueError, match=r"State vector must be of length 2\*\*wires"):
-            dev.apply("QubitStateVector", [0, 1], [state])
+        with pytest.raises(qml.DeviceError, match=r"For QubitStateVector, the state has to be specified for the correct number of qubits"):            
+            with mimic_execution_for_apply(dev):
+                dev.apply("QubitStateVector", [0, 1], [state])
 
     @pytest.mark.parametrize("name,mat", single_qubit)
     def test_single_qubit_no_parameters(self, init_state, device, name, mat, tol):
-        """Test PauliX application"""
+        """Test application of single qubit gates without parameters"""
         dev = device(1)
         state = init_state(1)
 
-        dev.apply("QubitStateVector", [0], [state])
-        dev.apply(name, [0], [])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0], [state])
+            dev.apply(name, [0], [])
 
         res = np.abs(dev.state) ** 2
         expected = np.abs(mat @ state) ** 2
@@ -167,10 +164,9 @@ class TestStateApply:
         dev = device(1)
         state = init_state(1)
 
-        dev.apply("QubitStateVector", [0], [state])
-        dev.apply(name, [0], [theta])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0], [state])
+            dev.apply(name, [0], [theta])
 
         res = np.abs(dev.state) ** 2
         expected = np.abs(func(theta) @ state) ** 2
@@ -185,10 +181,9 @@ class TestStateApply:
         b = 1.3432
         c = -0.654
 
-        dev.apply("QubitStateVector", [0], [state])
-        dev.apply("Rot", [0], [a, b, c])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0], [state])
+            dev.apply("Rot", [0], [a, b, c])
 
         res = np.abs(dev.state) ** 2
         expected = np.abs(rot(a, b, c) @ state) ** 2
@@ -200,10 +195,9 @@ class TestStateApply:
         dev = device(2)
         state = init_state(2)
 
-        dev.apply("QubitStateVector", [0, 1], [state])
-        dev.apply(name, [0, 1], [])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0, 1], [state])
+            dev.apply(name, [0, 1], [])
 
         res = np.abs(dev.state) ** 2
         expected = np.abs(mat @ state) ** 2
@@ -215,10 +209,9 @@ class TestStateApply:
         dev = device(N)
         state = init_state(N)
 
-        dev.apply("QubitStateVector", list(range(N)), [state])
-        dev.apply("QubitUnitary", list(range(N)), [mat])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", list(range(N)), [state])
+            dev.apply("QubitUnitary", list(range(N)), [mat])
 
         res = np.abs(dev.state) ** 2
         expected = np.abs(mat @ state) ** 2
@@ -230,18 +223,18 @@ class TestStateApply:
         dev = device(2)
         state = np.array([[0, 123.432], [-0.432, 023.4]])
 
-        with pytest.raises(ValueError, match=r"Unitary matrix must be of shape"):
-            dev.apply("QubitUnitary", [0, 1], [state])
+        with pytest.raises(ValueError, match=r"Not a 2x2 unitary matrix"):
+            with mimic_execution_for_apply(dev):
+                dev.apply("QubitUnitary", [0, 1], [state])
 
     @pytest.mark.parametrize("name, mat", three_qubit)
     def test_three_qubit_no_parameters(self, init_state, device, name, mat, tol):
         dev = device(3)
         state = init_state(3)
 
-        dev.apply("QubitStateVector", [0, 1, 2], [state])
-        dev.apply("QubitUnitary", [0, 1, 2], [mat])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0, 1, 2], [state])
+            dev.apply(name, [0, 1, 2], [])
 
         res = np.abs(dev.state) ** 2
         expected = np.abs(mat @ state) ** 2
@@ -254,10 +247,9 @@ class TestStateApply:
         dev = device(2)
         state = init_state(2)
 
-        dev.apply("QubitStateVector", [0, 1], [state])
-        dev.apply(name, [0, 1], [theta])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0, 1], [state])
+            dev.apply(name, [0, 1], [theta])
 
         res = np.abs(dev.state) ** 2
         expected = np.abs(func(theta) @ state) ** 2
@@ -265,7 +257,7 @@ class TestStateApply:
 
 
 @pytest.mark.parametrize("shots", [8192])
-class TestHardwareApply:
+class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
     """Test application of PennyLane operations on hardware simulators."""
 
     def test_basis_state(self, device, tol):
@@ -273,10 +265,9 @@ class TestHardwareApply:
         dev = device(4)
         state = np.array([0, 0, 1, 0])
 
-        dev.apply("BasisState", [0, 1, 2, 3], [state])
-        dev._obs_queue = []
-        dev.pre_measure()
-
+        with mimic_execution_for_apply(dev):
+            dev.apply("BasisState", [0, 1, 2, 3], [state])
+        
         res = np.fromiter(dev.probabilities(wires=range(4)).values(), dtype=np.float64)
 
         expected = np.zeros([2 ** 4])
@@ -289,21 +280,21 @@ class TestHardwareApply:
         dev = device(4)
         state = np.array([0, 0, 1, 0])
 
-        dev.apply("Hadamard", [0], [])
+        with mimic_execution_for_apply(dev):
+            dev.apply("Hadamard", [0], [])
 
-        with pytest.raises(
-            qml.DeviceError, match="annot be used after other Operations have already been applied"
-        ):
-            dev.apply("BasisState", [0, 1, 2, 3], [state])
+            with pytest.raises(
+                qml.DeviceError, match="is only supported at the beginning of a circuit"
+            ):
+                dev.apply("BasisState", [0, 1, 2, 3], [state])
 
     def test_qubit_state_vector(self, init_state, device, tol):
         """Test PauliX application"""
         dev = device(1)
         state = init_state(1)
 
-        dev.apply("QubitStateVector", [0], [state])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0], [state])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(state) ** 2
@@ -316,7 +307,8 @@ class TestHardwareApply:
         state = np.array([0, 123.432])
 
         with pytest.raises(ValueError, match=r"State vector must be of length 2\*\*wires"):
-            dev.apply("QubitStateVector", [0, 1], [state])
+            with mimic_execution_for_apply(dev):
+                dev.apply("QubitStateVector", [0, 1], [state])
 
     @pytest.mark.parametrize("name,mat", single_qubit)
     def test_single_qubit_no_parameters(self, init_state, device, name, mat, tol):
@@ -324,10 +316,9 @@ class TestHardwareApply:
         dev = device(1)
         state = init_state(1)
 
-        dev.apply("QubitStateVector", [0], [state])
-        dev.apply(name, [0], [])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0], [state])
+            dev.apply(name, [0], [])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(mat @ state) ** 2
@@ -340,11 +331,10 @@ class TestHardwareApply:
         dev = device(1)
         state = init_state(1)
 
-        dev.apply("QubitStateVector", [0], [state])
-        dev.apply(name, [0], [theta])
-        dev._obs_queue = []
-        dev.pre_measure()
-
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0], [state])
+            dev.apply(name, [0], [theta])
+        
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(func(theta) @ state) ** 2
         assert np.allclose(res, expected, **tol)
@@ -358,10 +348,9 @@ class TestHardwareApply:
         b = 1.3432
         c = -0.654
 
-        dev.apply("QubitStateVector", [0], [state])
-        dev.apply("Rot", [0], [a, b, c])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0], [state])
+            dev.apply("Rot", [0], [a, b, c])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(rot(a, b, c) @ state) ** 2
@@ -373,10 +362,9 @@ class TestHardwareApply:
         dev = device(2)
         state = init_state(2)
 
-        dev.apply("QubitStateVector", [0, 1], [state])
-        dev.apply(name, [0, 1], [])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0, 1], [state])
+            dev.apply(name, [0, 1], [])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(mat @ state) ** 2
@@ -388,10 +376,9 @@ class TestHardwareApply:
         dev = device(N)
         state = init_state(N)
 
-        dev.apply("QubitStateVector", list(range(N)), [state])
-        dev.apply("QubitUnitary", list(range(N)), [mat])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", list(range(N)), [state])
+            dev.apply("QubitUnitary", list(range(N)), [mat])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(mat @ state) ** 2
@@ -404,17 +391,17 @@ class TestHardwareApply:
         state = np.array([[0, 123.432], [-0.432, 023.4]])
 
         with pytest.raises(ValueError, match=r"Unitary matrix must be of shape"):
-            dev.apply("QubitUnitary", [0, 1], [state])
+            with mimic_execution_for_apply(dev):
+                dev.apply("QubitUnitary", [0, 1], [state])
 
     @pytest.mark.parametrize("name, mat", three_qubit)
     def test_three_qubit_no_parameters(self, init_state, device, name, mat, tol):
         dev = device(3)
         state = init_state(3)
 
-        dev.apply("QubitStateVector", [0, 1, 2], [state])
-        dev.apply("QubitUnitary", [0, 1, 2], [mat])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0, 1, 2], [state])
+            dev.apply("QubitUnitary", [0, 1, 2], [mat])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(mat @ state) ** 2
@@ -427,10 +414,9 @@ class TestHardwareApply:
         dev = device(2)
         state = init_state(2)
 
-        dev.apply("QubitStateVector", [0, 1], [state])
-        dev.apply(name, [0, 1], [theta])
-        dev._obs_queue = []
-        dev.pre_measure()
+        with mimic_execution_for_apply(dev):
+            dev.apply("QubitStateVector", [0, 1], [state])
+            dev.apply(name, [0, 1], [theta])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(func(theta) @ state) ** 2

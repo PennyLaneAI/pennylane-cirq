@@ -154,7 +154,8 @@ class SimulatorDevice(CirqDevice):
                 )
 
             self.state = np.array(self.result.state_vector())
-        else:
+        # Do nothing if there is nothing to measure
+        elif self.obs_queue:
             for e in self.obs_queue:
                 wire = e.wires[0]
 

@@ -101,6 +101,7 @@ class CirqDevice(Device):
         "PauliZ": CirqOperation(lambda: cirq.Z),
         "Hadamard": CirqOperation(lambda: cirq.H),
         "S": CirqOperation(lambda: cirq.S),
+        "T": CirqOperation(lambda: cirq.T),
         "CNOT": CirqOperation(lambda: cirq.CNOT),
         "SWAP": CirqOperation(lambda: cirq.SWAP),
         "CZ": CirqOperation(lambda: cirq.CZ),
@@ -119,6 +120,8 @@ class CirqDevice(Device):
                 cirq.ControlledGate(cirq.Rz(c)),
             ]
         ),
+        "CSWAP": CirqOperation(lambda: cirq.CSWAP),
+        "Toffoli": CirqOperation(lambda: cirq.TOFFOLI),
     }
 
     _observable_map = {
