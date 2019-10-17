@@ -157,15 +157,14 @@ class SimulatorDevice(CirqDevice):
             self.state = np.array(self.result.state_vector())
         # Do nothing if there is nothing to measure
         elif self.obs_queue:
-            for e in self.obs_queue:
-                wire = e.wires[0]
-
+            for wire in range(self.num_wires):
                 self.circuit.append(cirq.measure(self.qubits[wire], key=str(wire)))
 
             self.result = self.simulator.run(self.circuit, repetitions=self.shots)
 
             # Bring measurements to a more managable form, but keep True/False as values for now
             # They will be changed in the measurement routines where the observable is available
+
             self.measurements = np.array(
                 [self.result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
             )
@@ -217,14 +216,9 @@ class SimulatorDevice(CirqDevice):
             # TODO: Add support for Tensor observables after it is merged in PL
             eigenvalues[1] = -1
 
-        print("analytic: ", self.analytic)
-        print("eigenvalues: ", eigenvalues)
-
         if self.analytic:
             # We have to use the state of the simulation to find the expectation value
             marginal_probability = np.fromiter(self.marginal_probability(wires).values(), dtype=np.float)
-
-            print("marginal prob: ", marginal_probability)
 
             return np.dot(eigenvalues, marginal_probability)
         else:
@@ -240,8 +234,8 @@ class SimulatorDevice(CirqDevice):
             # Take the eigenvalues from the stored values
             Hmat = par[0]
             Hkey = tuple(Hmat.flatten().tolist())
-            zero_value = self._eigs[Hkey]["eigvec"][0]
-            one_value = self._eigs[Hkey]["eigvec"][1]
+            zero_value = self._eigs[Hkey]["eigval"][0]
+            one_value = self._eigs[Hkey]["eigval"][1]
 
         elif observable == "Identity":
             one_value = 1
@@ -274,8 +268,8 @@ class SimulatorDevice(CirqDevice):
             # Take the eigenvalues from the stored values
             Hmat = par[0]
             Hkey = tuple(Hmat.flatten().tolist())
-            zero_value = self._eigs[Hkey]["eigvec"][0]
-            one_value = self._eigs[Hkey]["eigvec"][1]
+            zero_value = self._eigs[Hkey]["eigval"][0]
+            one_value = self._eigs[Hkey]["eigval"][1]
 
         elif observable == "Identity":
             one_value = 1
