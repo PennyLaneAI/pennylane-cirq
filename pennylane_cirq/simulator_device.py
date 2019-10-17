@@ -192,10 +192,12 @@ class SimulatorDevice(CirqDevice):
 
         marginal_probabilities = OrderedDict()
 
-        for marginal_state in enumerate(marginal_states):
-            marginal_probabilities[marginal_state] = np.sum(
-                [probabilities[state] for state in probabilities if tuple(state[wire] for wire in wires) == marginal_state]
-            )
+        for marginal_state in marginal_states:
+            marginal_probabilities[marginal_state] = 0.0
+
+        for state in probabilities:
+            marginal_state = tuple(state[wire] for wire in wires)
+            marginal_probabilities[marginal_state] += probabilities[state]
 
         return marginal_probabilities
 
@@ -210,13 +212,19 @@ class SimulatorDevice(CirqDevice):
             Hmat = par[0]
             Hkey = tuple(Hmat.flatten().tolist())
             eigenvalues = self._eigs[Hkey]["eigval"]
+
         elif observable != "Identity":
             # TODO: Add support for Tensor observables after it is merged in PL
             eigenvalues[1] = -1
 
+        print("analytic: ", self.analytic)
+        print("eigenvalues: ", eigenvalues)
+
         if self.analytic:
             # We have to use the state of the simulation to find the expectation value
             marginal_probability = np.fromiter(self.marginal_probability(wires).values(), dtype=np.float)
+
+            print("marginal prob: ", marginal_probability)
 
             return np.dot(eigenvalues, marginal_probability)
         else:
