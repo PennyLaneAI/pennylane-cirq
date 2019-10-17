@@ -12,3 +12,4 @@ PennyLane_Cirq.egg-info
 coverage_html_report/*
 notebooks/*
 .pytest_cache/*
+.vscode/*
