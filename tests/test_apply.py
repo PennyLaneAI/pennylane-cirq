@@ -89,7 +89,7 @@ def mimic_execution_for_apply(device):
         device._obs_queue = []
         device.pre_measure()
 
-@pytest.mark.parametrize("shots", [0])
+@pytest.mark.parametrize("shots,analytic", [(1000, True)])
 class TestStateApply:
     """Test application of PennyLane operations to state simulators."""
 
@@ -256,7 +256,7 @@ class TestStateApply:
         assert np.allclose(res, expected, **tol)
 
 
-@pytest.mark.parametrize("shots", [8192])
+@pytest.mark.parametrize("shots,analytic", [(8192, True)])
 class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
     """Test application of PennyLane operations on hardware simulators."""
 
