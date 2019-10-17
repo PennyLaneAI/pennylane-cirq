@@ -16,14 +16,23 @@ import pytest
 
 import numpy as np
 import pennylane as qml
+from contextlib import contextmanager
 
 from conftest import U, U2, A
 
 
 np.random.seed(42)
 
+@contextmanager
+def mimic_execution_for_expval(device):
+    with device.execution_context():
+        device.pre_apply()
 
-@pytest.mark.parametrize("shots", [0, 8192])
+        yield
+
+        device.post_apply()
+
+@pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
 class TestExpval:
     """Test expectation values"""
 
@@ -33,9 +42,11 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        dev.apply("RX", wires=[0], par=[theta])
-        dev.apply("RX", wires=[1], par=[phi])
-        dev.apply("CNOT", wires=[0, 1], par=[])
+
+        with mimic_execution_for_expval(dev):
+            dev.apply("RX", wires=[0], par=[theta])
+            dev.apply("RX", wires=[1], par=[phi])
+            dev.apply("CNOT", wires=[0, 1], par=[])
 
         O = qml.Identity
         name = "Identity"
@@ -53,9 +64,11 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        dev.apply("RX", wires=[0], par=[theta])
-        dev.apply("RX", wires=[1], par=[phi])
-        dev.apply("CNOT", wires=[0, 1], par=[])
+
+        with mimic_execution_for_expval(dev):
+            dev.apply("RX", wires=[0], par=[theta])
+            dev.apply("RX", wires=[1], par=[phi])
+            dev.apply("CNOT", wires=[0, 1], par=[])
 
         O = qml.PauliZ
         name = "PauliZ"
@@ -73,9 +86,11 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        dev.apply("RY", wires=[0], par=[theta])
-        dev.apply("RY", wires=[1], par=[phi])
-        dev.apply("CNOT", wires=[0, 1], par=[])
+
+        with mimic_execution_for_expval(dev):
+            dev.apply("RY", wires=[0], par=[theta])
+            dev.apply("RY", wires=[1], par=[phi])
+            dev.apply("CNOT", wires=[0, 1], par=[])
 
         O = qml.PauliX
         name = "PauliX"
@@ -92,9 +107,11 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        dev.apply("RX", wires=[0], par=[theta])
-        dev.apply("RX", wires=[1], par=[phi])
-        dev.apply("CNOT", wires=[0, 1], par=[])
+        
+        with mimic_execution_for_expval(dev):
+            dev.apply("RX", wires=[0], par=[theta])
+            dev.apply("RX", wires=[1], par=[phi])
+            dev.apply("CNOT", wires=[0, 1], par=[])
 
         O = qml.PauliY
         name = "PauliY"
@@ -111,9 +128,11 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        dev.apply("RY", wires=[0], par=[theta])
-        dev.apply("RY", wires=[1], par=[phi])
-        dev.apply("CNOT", wires=[0, 1], par=[])
+        
+        with mimic_execution_for_expval(dev):
+            dev.apply("RY", wires=[0], par=[theta])
+            dev.apply("RY", wires=[1], par=[phi])
+            dev.apply("CNOT", wires=[0, 1], par=[])
 
         O = qml.Hadamard
         name = "Hadamard"
@@ -133,9 +152,11 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        dev.apply("RY", wires=[0], par=[theta])
-        dev.apply("RY", wires=[1], par=[phi])
-        dev.apply("CNOT", wires=[0, 1], par=[])
+        
+        with mimic_execution_for_expval(dev):
+            dev.apply("RY", wires=[0], par=[theta])
+            dev.apply("RY", wires=[1], par=[phi])
+            dev.apply("CNOT", wires=[0, 1], par=[])
 
         O = qml.Hermitian
         name = "Hermitian"
@@ -154,15 +175,17 @@ class TestExpval:
 
         assert np.allclose(res, expected, **tol)
 
-    def test_multi_mode_hermitian_expectation(self, device, shots, tol):
+    def remove_when_implemented_test_multi_mode_hermitian_expectation(self, device, shots, tol):
         """Test that arbitrary multi-mode Hermitian expectation values are correct"""
         theta = 0.432
         phi = 0.123
 
         dev = device(2)
-        dev.apply("RY", wires=[0], par=[theta])
-        dev.apply("RY", wires=[1], par=[phi])
-        dev.apply("CNOT", wires=[0, 1], par=[])
+        
+        with mimic_execution_for_expval(dev):
+            dev.apply("RY", wires=[0], par=[theta])
+            dev.apply("RY", wires=[1], par=[phi])
+            dev.apply("CNOT", wires=[0, 1], par=[])
 
         O = qml.Hermitian
         name = "Hermitian"
@@ -194,8 +217,8 @@ class TestExpval:
         assert np.allclose(res, expected, **tol)
 
 
-@pytest.mark.parametrize("shots", [0, 8192])
-class TestTensorExpval:
+@pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
+class RemoveThisWhenTensorsAreImplementedTestTensorExpval:
     """Test tensor expectation values"""
 
     def test_paulix_pauliy(self, device, shots, tol):
