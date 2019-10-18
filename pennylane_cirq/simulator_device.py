@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-SimulatorDevice
+Cirq Simulator Device
 ========
 
 **Module name:** :mod:`pennylane_cirq.simulator_device`
@@ -20,14 +20,7 @@ SimulatorDevice
 .. currentmodule:: pennylane_cirq.simulator_device
 
 This Device implements all the :class:`~pennylane.device.Device` methods,
-for using Target Framework device/simulator as a PennyLane device.
-
-It can inherit from the abstract FrameworkDevice to reduce
-code duplication if needed.
-
-
-See https://pennylane.readthedocs.io/en/latest/API/overview.html
-for an overview of Device methods available.
+for using Cirq simulator as a PennyLane device.
 
 Classes
 -------
@@ -55,14 +48,19 @@ class SimulatorDevice(CirqDevice):
     Args:
         wires (int): the number of modes to initialize the device in
         shots (int): Number of circuit evaluations/random samples used
-            to estimate expectation values of observables.
-            For simulator devices, 0 means the exact EV is returned.
+            to estimate expectation values of observables. Shots need 
+            to >= 1. In analytic mode, shots indicates the number of entries
+            that are returned by device.sample.
+        analytic (bool): Indicates that expectation values and variances should
+            be calculated analytically. Defaults to `True`. 
+        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used 
+            as wires. The wire number corresponds to the index in the list.
+            By default, an array of `cirq.LineQubit` instances is created.
     """
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
 
     def __init__(self, wires, shots=1000, analytic=True, qubits=None):
-        # Todo: docstring
         super().__init__(wires, shots, qubits)
 
         self.initial_state = None
