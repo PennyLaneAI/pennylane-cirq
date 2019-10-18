@@ -17,6 +17,7 @@ You can instantiate the device in PennyLane as follows:
 
 >>> import pennylane as qml
 >>> from pennylane import numpy as np
+>>>      
 >>> dev = qml.device('cirq.simulator', wires=2, shots=100, analytic=False)
 
 The device can then be used just like other devices for the definition and evaluation of QNodes within PennyLane.
@@ -32,18 +33,19 @@ The Cirq devices accept additional arguments beyond the PennyLane default device
     qubits and give them to the device as a list. 
     
     >>> import cirq
-    >>>
+    >>>     
     >>> qubits = [
     >>>     cirq.GridQubit(0, 0),
     >>>     cirq.GridQubit(0, 1),
     >>>     cirq.GridQubit(1, 0),
     >>>     cirq.GridQubit(1, 1),
     >>> ]
-    >>> 
+    >>>     
     >>> dev = qml.device("cirq.simulator", wires=4, shots=100, qubits=qubits)
 
 	The wire of each qubit corresponds to its index in the `qubit` list. In the above example, 
-    the wire 2 corresponds to `cirq.GridQubit(1, 0)`.
+    the wire 2 corresponds to `cirq.GridQubit(1, 0)`. If no qubits are given, the plugin will
+    create an array of `LineQubit` instances.
 
 
 Supported operations
