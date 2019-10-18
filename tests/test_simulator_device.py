@@ -22,10 +22,6 @@ import numpy as np
 from pennylane_cirq import SimulatorDevice
 import cirq
 
-# TODO:
-# * Test that more samples are used when n > shots for a requested sample
-
-
 class TestDeviceIntegration:
     """Tests that the SimulatorDevice integrates well with PennyLane"""
 
@@ -35,30 +31,31 @@ class TestDeviceIntegration:
         dev = qml.device("cirq.simulator", wires=2)
 
         assert dev.num_wires == 2
-        assert dev.shots == 0
+        assert dev.shots == 1000
         assert dev.short_name == "cirq.simulator"
 
         assert isinstance(dev, SimulatorDevice)
 
 
 @pytest.fixture(scope="function")
-def simulator_device_1_wire():
+def simulator_device_1_wire(shots, analytic):
     """A mock instance of the abstract Device class"""
-    yield SimulatorDevice(1, 0)
+    yield SimulatorDevice(1, shots=shots, analytic=analytic)
 
 
 @pytest.fixture(scope="function")
-def simulator_device_2_wires():
+def simulator_device_2_wires(shots, analytic):
     """A mock instance of the abstract Device class"""
-    yield SimulatorDevice(2, 0)
+    yield SimulatorDevice(2, shots=shots, analytic=analytic)
 
 
 @pytest.fixture(scope="function")
-def simulator_device_3_wires():
+def simulator_device_3_wires(shots, analytic):
     """A mock instance of the abstract Device class"""
-    yield SimulatorDevice(3, 0)
+    yield SimulatorDevice(3, shots=shots, analytic=analytic)
 
 
+@pytest.mark.parametrize("shots,analytic", [(100, True)])
 class TestApply:
     """Tests that gates are correctly applied"""
 
@@ -293,6 +290,7 @@ class TestApply:
             simulator_device_1_wire.apply(operation, wires=[0], par=par)
 
 
+@pytest.mark.parametrize("shots,analytic", [(100, True)])
 class TestExpval:
     """Tests that expectation values are properly calculated or that the proper errors are raised."""
 

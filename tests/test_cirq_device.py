@@ -20,7 +20,7 @@ from unittest.mock import MagicMock, patch
 import cirq
 import pennylane as qml
 import pytest
-from pennylane import numpy as np
+import numpy as np
 
 from pennylane_cirq.cirq_device import CirqDevice
 
@@ -58,7 +58,6 @@ class TestCirqDeviceInit:
         ]
 
         dev = CirqDevice(4, 100, qubits=qubits)
-
         assert len(dev.qubits) == 4
         assert dev.qubits[0] == cirq.GridQubit(0, 0)
         assert dev.qubits[1] == cirq.GridQubit(0, 1)
@@ -83,29 +82,30 @@ class TestCirqDeviceInit:
 
 
 @pytest.fixture(scope="function")
-def cirq_device_1_wire():
+def cirq_device_1_wire(shots):
     """A mock instance of the abstract Device class"""
 
     with patch.multiple(CirqDevice, __abstractmethods__=set()):
-        yield CirqDevice(1, 0)
+        yield CirqDevice(1, shots=shots)
 
 
 @pytest.fixture(scope="function")
-def cirq_device_2_wires():
+def cirq_device_2_wires(shots):
     """A mock instance of the abstract Device class"""
 
     with patch.multiple(CirqDevice, __abstractmethods__=set()):
-        yield CirqDevice(2, 0)
+        yield CirqDevice(2, shots=shots)
 
 
 @pytest.fixture(scope="function")
-def cirq_device_3_wires():
+def cirq_device_3_wires(shots):
     """A mock instance of the abstract Device class"""
 
     with patch.multiple(CirqDevice, __abstractmethods__=set()):
-        yield CirqDevice(3, 0)
+        yield CirqDevice(3, shots=shots)
 
 
+@pytest.mark.parametrize("shots", [100])
 class TestProperties:
     """Tests that the properties of the CirqDevice are correctly implemented."""
 
@@ -122,6 +122,7 @@ class TestProperties:
         assert cirq_device_1_wire.observables.issuperset(qml.ops.qubit.obs)
 
 
+@pytest.mark.parametrize("shots", [100])
 class TestOperations:
     """Tests that the CirqDevice correctly handles the requested operations."""
 
