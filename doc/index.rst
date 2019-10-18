@@ -1,15 +1,15 @@
-PennyLane Target Framework Plugin
+PennyLane Cirq Plugin
 #################################
 
 :Release: |release|
 :Date: |today|
 
 
-This PennyLane plugin allows the Target Framework simulators/hardware to be used as PennyLane devices.
+This PennyLane plugin allows the Cirq simulators/hardware to be used as PennyLane devices.
 
 
-`Target framework <https://targetframework.readthedocs.io>`_ is a full-stack Python library
-for doing things.
+`Cirq <https://targetframework.readthedocs.io>`_ is a Python library for writing, manipulating,
+and optimizing quantum circuits and running them against quantum computers and simulators.
 
 `PennyLane <https://pennylane.readthedocs.io>`_ is a machine learning library for optimization
 and automatic differentiation of hybrid quantum-classical computations.
@@ -19,22 +19,18 @@ and automatic differentiation of hybrid quantum-classical computations.
 Features
 ========
 
-* List the features provided by the plugin here. This can include:
+* Access to Cirq's simulator backend via the `cirq.simulator` device
 
-* The devices made available to PennyLane, as well as any special features of the devices
-
-* The core PennyLane operations and observables supported
-
-* Any additional operations and observables provided by the plugin
+* Support for all PennyLane core functionality
 
 
-To get started with the PennyLane Strawberry Fields plugin, follow the :ref:`installation steps <installation>`, then see the :ref:`usage <usage>` page.
+To get started with the PennyLane Cirq plugin, follow the :ref:`installation steps <installation>`, then see the :ref:`usage <usage>` page.
 
 
 Authors
 =======
 
-John Smith.
+Johannes Jakob Meyer
 
 If you are doing research using PennyLane, please cite our papers:
 
@@ -66,7 +62,6 @@ Contents
    :maxdepth: 2
    :caption: Tutorials (external links)
 
-   Photon redirection <https://pennylane.readthedocs.io/en/latest/tutorials/plugins_hybrid.html>
    Notebook downloads <https://pennylane.readthedocs.io/en/latest/tutorials/notebooks.html>
 
 .. rst-class:: contents local topic
@@ -76,6 +71,5 @@ Contents
    :caption: Code details
 
    code/ops
-   code/framework_device
-   code/device1
-   code/device2
+   code/cirq_device
+   code/simulator_device
