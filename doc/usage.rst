@@ -5,54 +5,50 @@ Plugin usage
 
 PennyLane-Plugin provides two Target Framework devices for PennyLane:
 
-* :class:`name.device1 <~Device1>`: provides an PennyLane device for the Target Framework Device1
-
-* :class:`name.device2 <~Device2>`: provides an PennyLane device for the Target Framework Device2
+* :class:`pennylane_cirq.SimulatorDevice <~SimulatorDevice>`: provides a PennyLane device for the Cirq simulator backend
 
 
 Using the devices
 =================
 
-Once Target Framework and the plugin are installed, the two Target Framework devices
-can be accessed straight away in PennyLane.
+Once Cirq and the PennyLane-Cirq plugin are installed, the device can be accessed straight away in PennyLane.
 
-You can instantiate these devices in PennyLane as follows:
+You can instantiate the device in PennyLane as follows:
 
 >>> import pennylane as qml
 >>> from pennylane import numpy as np
->>> dev1 = qml.device('name.device1', wires=2, specific_option_for_device1=10)
->>> dev2 = qml.device('name.device2', wires=2)
+>>> dev = qml.device('cirq.simulator', wires=2, shots=100, analytic=False)
 
-These devices can then be used just like other devices for the definition and evaluation of QNodes within PennyLane.
+The device can then be used just like other devices for the definition and evaluation of QNodes within PennyLane.
 
 
 Device options
 ==============
 
-The Target Framework simulators accept additional arguments beyond the PennyLane default device arguments.
+The Cirq devices accept additional arguments beyond the PennyLane default device arguments.
 
-List available device options here.
+``qubits=None``
+    Cirq has different ways of defining qubits, e.g. `LineQubit` or `GridQubit`. You can define your own
+    qubits and give them to the device as a list. 
+    
+    >>> import cirq
+    >>>
+    >>> qubits = [
+    >>>     cirq.GridQubit(0, 0),
+    >>>     cirq.GridQubit(0, 1),
+    >>>     cirq.GridQubit(1, 0),
+    >>>     cirq.GridQubit(1, 1),
+    >>> ]
+    >>> 
+    >>> dev = qml.device("cirq.simulator", wires=4, shots=100, qubits=qubits)
 
-``shots=0``
-	The number of circuit evaluations/random samples used to estimate expectation values of observables.
-	The default value of 0 means that the exact expectation value is returned.
-
+	The wire of each qubit corresponds to its index in the `qubit` list. In the above example, 
+    the wire 2 corresponds to `cirq.GridQubit(1, 0)`.
 
 
 Supported operations
 ====================
 
-All devices support all PennyLane `operations and observables <https://pennylane.readthedocs.io/en/latest/code/ops/qubit.html>`_, with the exception of the PennyLane ``QubitStateVector`` state preparation operation.
+All devices support all PennyLane `operations and observables <https://pennylane.readthedocs.io/en/latest/code/ops/qubit.html>`_.
 
-In addition, the plugin provides the following framework-specific operations for PennyLane. These are all importable from :mod:`pennylane_cirq.ops <.ops>`.
-
-These operations include:
-
-.. autosummary::
-    pennylane_cirq.ops.S
-    pennylane_cirq.ops.T
-    pennylane_cirq.ops.CCNOT
-    pennylane_cirq.ops.CPHASE
-    pennylane_cirq.ops.CSWAP
-    pennylane_cirq.ops.ISWAP
-    pennylane_cirq.ops.PSWAP
+In the future, the devices will also support all Cirq operations.
