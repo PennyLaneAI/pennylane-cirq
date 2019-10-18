@@ -23,6 +23,7 @@ from conftest import U, U2, A
 
 np.random.seed(42)
 
+
 @contextmanager
 def mimic_execution_for_expval(device):
     with device.execution_context():
@@ -31,6 +32,7 @@ def mimic_execution_for_expval(device):
         yield
 
         device.post_apply()
+
 
 @pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
 class TestExpval:
@@ -107,7 +109,7 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        
+
         with mimic_execution_for_expval(dev):
             dev.apply("RX", wires=[0], par=[theta])
             dev.apply("RX", wires=[1], par=[phi])
@@ -128,7 +130,7 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        
+
         with mimic_execution_for_expval(dev):
             dev.apply("RY", wires=[0], par=[theta])
             dev.apply("RY", wires=[1], par=[phi])
@@ -152,7 +154,7 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        
+
         with mimic_execution_for_expval(dev):
             dev.apply("RY", wires=[0], par=[theta])
             dev.apply("RY", wires=[1], par=[phi])
@@ -181,7 +183,7 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        
+
         with mimic_execution_for_expval(dev):
             dev.apply("RY", wires=[0], par=[theta])
             dev.apply("RY", wires=[1], par=[phi])

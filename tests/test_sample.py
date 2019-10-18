@@ -23,6 +23,7 @@ from contextlib import contextmanager
 
 np.random.seed(42)
 
+
 @contextmanager
 def mimic_execution_for_sample(device):
     with device.execution_context():
@@ -106,7 +107,7 @@ class TestSample:
             ]
         )
 
-        with mimic_execution_for_sample(dev):            
+        with mimic_execution_for_sample(dev):
             dev.apply("RX", wires=[0], par=[theta])
             dev.apply("RY", wires=[1], par=[2 * theta])
             dev.apply("CNOT", wires=[0, 1], par=[])
@@ -150,7 +151,7 @@ class RemoveWhenImplementedTestTensorSample:
 
         dev = device(3)
 
-        with mimic_execution_for_sample(dev):     
+        with mimic_execution_for_sample(dev):
             dev.apply("RX", wires=[0], par=[theta])
             dev.apply("RX", wires=[1], par=[phi])
             dev.apply("RX", wires=[2], par=[varphi])

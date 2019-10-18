@@ -59,14 +59,7 @@ crz = lambda theta: np.array(
 
 # list of all non-parametrized single-qubit gates,
 # along with the PennyLane operation name
-single_qubit = [
-    ("PauliX", X),
-    ("PauliY", Y),
-    ("PauliZ", Z),
-    ("Hadamard", H),
-    ("S", S),
-    ("T", T),
-]
+single_qubit = [("PauliX", X), ("PauliY", Y), ("PauliZ", Z), ("Hadamard", H), ("S", S), ("T", T)]
 
 # list of all parametrized single-qubit gates
 single_qubit_param = [("PhaseShift", phase_shift), ("RX", rx), ("RY", ry), ("RZ", rz)]
@@ -76,6 +69,7 @@ two_qubit = [("CNOT", CNOT), ("SWAP", SWAP), ("CZ", CZ)]
 two_qubit_param = [("CRZ", crz)]
 # list of all three-qubit gates
 three_qubit = [("Toffoli", toffoli), ("CSWAP", CSWAP)]
+
 
 @contextmanager
 def mimic_execution_for_apply(device):
@@ -89,6 +83,7 @@ def mimic_execution_for_apply(device):
         device._obs_queue = []
         device.pre_measure()
 
+
 @pytest.mark.parametrize("shots,analytic", [(1000, True)])
 class TestStateApply:
     """Test application of PennyLane operations to state simulators."""
@@ -100,7 +95,7 @@ class TestStateApply:
 
         with mimic_execution_for_apply(dev):
             dev.apply("BasisState", [0, 1, 2, 3], [state])
-            
+
         res = np.abs(dev.state) ** 2
 
         expected = np.zeros([2 ** 4])
@@ -139,7 +134,10 @@ class TestStateApply:
         dev = device(2)
         state = np.array([0, 123.432])
 
-        with pytest.raises(qml.DeviceError, match=r"For QubitStateVector, the state has to be specified for the correct number of qubits"):            
+        with pytest.raises(
+            qml.DeviceError,
+            match=r"For QubitStateVector, the state has to be specified for the correct number of qubits",
+        ):
             with mimic_execution_for_apply(dev):
                 dev.apply("QubitStateVector", [0, 1], [state])
 
@@ -267,7 +265,7 @@ class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
 
         with mimic_execution_for_apply(dev):
             dev.apply("BasisState", [0, 1, 2, 3], [state])
-        
+
         res = np.fromiter(dev.probabilities(wires=range(4)).values(), dtype=np.float64)
 
         expected = np.zeros([2 ** 4])
@@ -334,7 +332,7 @@ class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
         with mimic_execution_for_apply(dev):
             dev.apply("QubitStateVector", [0], [state])
             dev.apply(name, [0], [theta])
-        
+
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(func(theta) @ state) ** 2
         assert np.allclose(res, expected, **tol)

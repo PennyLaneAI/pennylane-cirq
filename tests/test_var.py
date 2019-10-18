@@ -20,6 +20,7 @@ import pennylane as qml
 from conftest import U, U2, A
 from contextlib import contextmanager
 
+
 @contextmanager
 def mimic_execution_for_var(device):
     with device.execution_context():
@@ -28,6 +29,7 @@ def mimic_execution_for_var(device):
         yield
 
         device.post_apply()
+
 
 np.random.seed(42)
 
@@ -130,7 +132,7 @@ class RemoveWhenImplementedTestTensorVar:
         varphi = -0.543
 
         dev = device(3)
-        
+
         with mimic_execution_for_var(dev):
             dev.apply("RX", wires=[0], par=[theta])
             dev.apply("RX", wires=[1], par=[phi])
@@ -163,7 +165,7 @@ class RemoveWhenImplementedTestTensorVar:
         varphi = -0.543
 
         dev = device(3)
-        
+
         with mimic_execution_for_var(dev):
             dev.apply("RX", wires=[0], par=[theta])
             dev.apply("RX", wires=[1], par=[phi])
