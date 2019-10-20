@@ -208,6 +208,16 @@ class SimulatorDevice(CirqDevice):
         return marginal_probabilities
 
     def _get_eigenvalues(self, observable, wires, par):
+        """Return the eigenvalues of the given observable.
+
+        Args:
+            observable (str or list[str]): name of the observable(s)
+            wires (List[int] or List[List[int]]): subsystems the observable(s) is to be measured on
+            par (tuple or list[tuple]]): parameters for the observable(s)
+
+        Returns:
+            array[float]: eigenvalues of the observable
+        """
         num_wires = len(wires)
 
         # All ones corresponds to the Identity observable
