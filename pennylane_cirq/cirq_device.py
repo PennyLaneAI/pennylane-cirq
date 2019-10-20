@@ -41,7 +41,7 @@ from .cirq_interface import CirqOperation, unitary_matrix_gate
 
 
 class CirqDevice(Device):
-    r"""Abstract base device for PennyLane-Cirq.
+    """Abstract base device for PennyLane-Cirq.
 
     Args:
         wires (int): the number of modes to initialize the device in
