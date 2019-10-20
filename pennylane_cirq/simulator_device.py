@@ -43,6 +43,14 @@ import pennylane as qml
 from .cirq_device import CirqDevice
 
 
+@functools.lru_cache() 
+def z_eigs(n): 
+    """Return the eigenvalues of an n-fold tensor product of Pauli Z operators."""
+    if n == 1: 
+        return np.array([1, -1]) 
+
+    return np.concatenate([z_eigs(n-1), -z_eigs(n-1)])
+
 class SimulatorDevice(CirqDevice):
     r"""Cirq simulator device for PennyLane.
 
@@ -199,21 +207,27 @@ class SimulatorDevice(CirqDevice):
 
         return marginal_probabilities
 
-
-    def expval(self, observable, wires, par):
+    def _get_eigenvalues(self, observable, wires, par):
         num_wires = len(wires)
 
+        # All ones corresponds to the Identity observable
         eigenvalues = np.ones(2**num_wires)
 
         if observable == "Hermitian":
             # Take the eigenvalues from the stored values
             Hmat = par[0]
             Hkey = tuple(Hmat.flatten().tolist())
-            eigenvalues = self._eigs[Hkey]["eigval"]
 
+            eigenvalues = self._eigs[Hkey]["eigval"]
         elif observable != "Identity":
-            # TODO: Add support for Tensor observables after it is merged in PL
-            eigenvalues[1] = -1
+            # If we don't have an Hermitian observable we use
+            # a diagonalization to tensors of Z observables
+            eigenvalues = z_eigs(num_wires)
+
+        return eigenvalues
+
+    def expval(self, observable, wires, par):
+        eigenvalues = self._get_eigenvalues(observable, wires, par)
 
         if self.analytic:
             # We have to use the state of the simulation to find the expectation value
@@ -224,69 +238,22 @@ class SimulatorDevice(CirqDevice):
             return self.sample(observable, wires, par).mean()
 
     def var(self, observable, wires, par):
-        wire = wires[0]
-
-        zero_value = 1
-        one_value = -1
-
-        if observable == "Hermitian":
-            # Take the eigenvalues from the stored values
-            Hmat = par[0]
-            Hkey = tuple(Hmat.flatten().tolist())
-            zero_value = self._eigs[Hkey]["eigval"][0]
-            one_value = self._eigs[Hkey]["eigval"][1]
-
-        elif observable == "Identity":
-            one_value = 1
+        eigenvalues = self._get_eigenvalues(observable, wires, par)
 
         if self.analytic:
             # We have to use the state of the simulation to find the expectation value
-            probabilities = self.probability()
+            marginal_probability = np.fromiter(self.marginal_probability(wires).values(), dtype=np.float)
 
-            zero_marginal_prob = np.sum(
-                [probabilities[state] for state in probabilities if state[wire] == 0]
-            )
-            one_marginal_prob = 1 - zero_marginal_prob
-
-            # Var = <A^2> - <A>^2
-            return (
-                zero_marginal_prob * zero_value ** 2
-                + one_marginal_prob * one_value ** 2
-                - (zero_marginal_prob * zero_value + one_marginal_prob * one_value) ** 2
-            )
+            return np.dot(eigenvalues**2, marginal_probability) - np.dot(eigenvalues, marginal_probability)**2
         else:
             return self.sample(observable, wires, par).var()
 
-    @functools.lru_cache() 
-    def z_eigs(n): 
-        """Return the eigenvalues of an n-fold tensor product of Pauli Z operators."""
-        if n == 1: 
-            return np.array([1, -1]) 
-
-        return np.concatenate([z_eigs(n-1), -z_eigs(n-1)])
-
     def sample(self, observable, wires, par):
-        num_wires = len(wires)
-        
-        # All ones corresponds to the Identity observable
-        eigenvalues = np.ones(2**num_wires)
-
-        if observable == "Hermitian":
-            # Take the eigenvalues from the stored values
-            Hmat = par[0]
-            Hkey = tuple(Hmat.flatten().tolist())
-
-            eigenvalues = self._eigs[Hkey]["eigval"]
-        else:
-            # If we don't have an Hermitian observable we use
-            # a diagonalization to tensors of Z observables
-            eigenvalues = z_eigs(num_wires)
+        eigenvalues = self._get_eigenvalues(observable, wires, par)
 
         if self.analytic:
             # We have to use the state of the simulation to find the expectation value
-            marginal_probabilities = np.array(list(self.marginal_probability(wires).values()))
-            print("eigenvalues: ", eigenvalues)
-            print("marginal_probabilities: ", marginal_probabilities)
+            marginal_probabilities = np.fromiter(self.marginal_probability(wires).values(), dtype=np.float)
 
             probability_sum = np.sum(marginal_probabilities)
 
