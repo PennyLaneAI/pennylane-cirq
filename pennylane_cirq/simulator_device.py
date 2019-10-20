@@ -33,6 +33,7 @@ Classes
 import itertools
 
 from collections import OrderedDict
+import functools
 
 import cirq
 import math
@@ -256,37 +257,52 @@ class SimulatorDevice(CirqDevice):
         else:
             return self.sample(observable, wires, par).var()
 
-    def sample(self, observable, wires, par):
-        wire = wires[0]
+    @functools.lru_cache() 
+    def z_eigs(n): 
+        """Return the eigenvalues of an n-fold tensor product of Pauli Z operators."""
+        if n == 1: 
+            return np.array([1, -1]) 
 
-        zero_value = 1
-        one_value = -1
+        return np.concatenate([z_eigs(n-1), -z_eigs(n-1)])
+
+    def sample(self, observable, wires, par):
+        num_wires = len(wires)
+        
+        # All ones corresponds to the Identity observable
+        eigenvalues = np.ones(2**num_wires)
 
         if observable == "Hermitian":
             # Take the eigenvalues from the stored values
             Hmat = par[0]
             Hkey = tuple(Hmat.flatten().tolist())
-            zero_value = self._eigs[Hkey]["eigval"][0]
-            one_value = self._eigs[Hkey]["eigval"][1]
 
-        elif observable == "Identity":
-            one_value = 1
+            eigenvalues = self._eigs[Hkey]["eigval"]
+        else:
+            # If we don't have an Hermitian observable we use
+            # a diagonalization to tensors of Z observables
+            eigenvalues = z_eigs(num_wires)
 
         if self.analytic:
             # We have to use the state of the simulation to find the expectation value
-            probabilities = self.probability()
+            marginal_probabilities = np.array(list(self.marginal_probability(wires).values()))
+            print("eigenvalues: ", eigenvalues)
+            print("marginal_probabilities: ", marginal_probabilities)
 
-            zero_marginal_prob = np.sum(
-                [probabilities[state] for state in probabilities if state[wire] == 0]
-            )
-            one_marginal_prob = 1 - zero_marginal_prob
+            probability_sum = np.sum(marginal_probabilities)
+
+            if not np.isclose(probability_sum, 1, atol=1e-5, rtol=0):
+                raise ValueError("Probabilites in sampling must sum up to 1. Got {}".format(probability_sum))
+
+            # np.random.choice does not even tolerate small deviations 
+            # from 1, so we have to adjust the probabilities here
+            marginal_probabilities /= probability_sum
 
             return np.random.choice(
-                [zero_value, one_value], size=self.shots, p=[zero_marginal_prob, one_marginal_prob]
+                eigenvalues, size=self.shots, p=marginal_probabilities
             )
         else:
             return CirqDevice._convert_measurements(
-                self.measurements[wires[0]], zero_value, one_value
+                self.measurements[wires], eigenvalues
             )
 
 

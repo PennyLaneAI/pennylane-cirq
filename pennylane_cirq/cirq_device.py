@@ -60,20 +60,41 @@ class CirqDevice(Device):
     short_name = "cirq.base_device"
 
     @staticmethod
-    def _convert_measurements(measurements, zero_value, one_value):
+    def _convert_measurements(measurements, eigenvalues):
         r"""Convert measurements from boolean to numeric values.
 
         Args:
             measurements (np.array[bool]): the measurements as boolean values
-            zero_value (float): measurement value correponding to the state :math:`|0 \rangle`
-            one_value (float): measurement value correponding to the state :math:`|1 \rangle`
+            eigenvalues (np.array[float]): eigenvalues corresponding to the observed basis states
         
         Returns:
             (np.array[float]): the converted measurements
         """
-        conversion = np.vectorize(lambda x: one_value if x else zero_value)
+        converted_measurements = np.zeros(measurements.shape[1])
+        print("_convert_measurements/measurements.shape ", measurements.shape)
+        print("_convert_measurements/measurements ", measurements)
+        print("_convert_measurements/eigenvalues ", eigenvalues)
 
-        return conversion(measurements.flatten())
+        for i in range(measurements.shape[1]):
+            basis_state = measurements[:, i]
+            max_index = len(basis_state)-1
+
+            eigenvalue_index = 0
+            for j in range(basis_state.shape[0]):
+                if basis_state[max_index - j]:
+                    eigenvalue_index += 2**j
+
+            converted_measurements[i] = eigenvalues[eigenvalue_index]
+
+            if i < 5:
+                print(i, ": basis_state = ", basis_state)
+                print(i, ": eigenvalue_index = ", eigenvalue_index)
+
+        print("_convert_measurements/converted_measurements ", converted_measurements)
+        
+        return converted_measurements
+                
+
 
     def __init__(self, wires, shots, qubits=None):
         super().__init__(wires, shots)

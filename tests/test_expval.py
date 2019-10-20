@@ -177,7 +177,7 @@ class TestExpval:
 
         assert np.allclose(res, expected, **tol)
 
-    def remove_when_implemented_test_multi_mode_hermitian_expectation(self, device, shots, tol):
+    def test_multi_mode_hermitian_expectation(self, device, shots, tol):
         """Test that arbitrary multi-mode Hermitian expectation values are correct"""
         theta = 0.432
         phi = 0.123

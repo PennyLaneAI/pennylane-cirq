@@ -91,7 +91,7 @@ class TestSample:
         # the analytic variance is 0.25*(sin(theta)-4*cos(theta))^2
         assert np.allclose(np.var(s1), 0.25 * (np.sin(theta) - 4 * np.cos(theta)) ** 2, **tol)
 
-    def _remove_when_implemented_test_sample_values_hermitian_multi_qubit(self, device, shots, tol):
+    def test_sample_values_hermitian_multi_qubit(self, device, shots, tol):
         """Tests if the samples of a multi-qubit Hermitian observable returned by sample have
         the correct values
         """
