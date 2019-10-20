@@ -424,3 +424,108 @@ class TestExpval:
         res = simulator_device_2_wires.expval(op.name, wires=[0, 1], par=par)
 
         assert np.isclose(res, expected_output, **tol) 
+
+
+@pytest.mark.parametrize("shots,analytic", [(100, True)])
+class TestVar:
+    """Tests that variances are properly calculated."""
+
+    @pytest.mark.parametrize("operation,input,expected_output", [
+        (qml.PauliX, [1/math.sqrt(2), 1/math.sqrt(2)], 0),
+        (qml.PauliX, [1/math.sqrt(2), -1/math.sqrt(2)], 0),
+        (qml.PauliX, [1, 0], 1),
+        (qml.PauliY, [1/math.sqrt(2), 1j/math.sqrt(2)], 0),
+        (qml.PauliY, [1/math.sqrt(2), -1j/math.sqrt(2)], 0),
+        (qml.PauliY, [1, 0], 1),
+        (qml.PauliZ, [1, 0], 0),
+        (qml.PauliZ, [0, 1], 0),
+        (qml.PauliZ, [1/math.sqrt(2), 1/math.sqrt(2)], 1),
+        (qml.Hadamard, [1, 0], 1/2),
+        (qml.Hadamard, [0, 1], 1/2),
+        (qml.Hadamard, [1/math.sqrt(2), 1/math.sqrt(2)], 1/2),
+    ])
+    def test_var_single_wire_no_parameters(self, simulator_device_1_wire, tol, operation, input, expected_output):
+        """Tests that variances are properly calculated for single-wire observables without parameters."""
+
+        op = operation(0, do_queue=False)
+        simulator_device_1_wire._obs_queue = [op]
+
+        simulator_device_1_wire.pre_apply()
+        simulator_device_1_wire.apply("QubitStateVector", wires=[0], par=[input])
+        simulator_device_1_wire.post_apply()
+        
+        simulator_device_1_wire.pre_measure()        
+        res = simulator_device_1_wire.var(op.name, wires=[0], par=[])
+
+        assert np.isclose(res, expected_output, **tol)
+
+    @pytest.mark.parametrize("operation,input,expected_output,par", [
+        (qml.Identity, [1, 0], 0, []),
+        (qml.Identity, [0, 1], 0, []),
+        (qml.Identity, [1/math.sqrt(2), -1/math.sqrt(2)], 0, []),
+        (qml.Hermitian, [1, 0], 1, [[[1, 1j], [-1j, 1]]]),
+        (qml.Hermitian, [0, 1], 1, [[[1, 1j], [-1j, 1]]]),
+        (qml.Hermitian, [1/math.sqrt(2), -1/math.sqrt(2)], 1, [[[1, 1j], [-1j, 1]]]),
+    ])
+    def test_var_single_wire_with_parameters(self, simulator_device_1_wire, tol, operation, input, expected_output, par):
+        """Tests that expectation values are properly calculated for single-wire observables with parameters."""
+
+        if par:
+            op = operation(np.array(*par), 0, do_queue=False)
+        else:
+            op = operation(0, do_queue=False)
+
+        simulator_device_1_wire._obs_queue = [op]
+
+        simulator_device_1_wire.pre_apply()
+        simulator_device_1_wire.apply("QubitStateVector", wires=[0], par=[input])
+        simulator_device_1_wire.post_apply()
+        
+        simulator_device_1_wire.pre_measure()   
+        if par:
+            res = simulator_device_1_wire.var(op.name, wires=[0], par=[np.array(*par)])
+        else:
+            res = simulator_device_1_wire.var(op.name, wires=[0], par=[])
+        
+
+        assert np.isclose(res, expected_output, **tol)
+
+    @pytest.mark.parametrize("operation,input,expected_output,par", [
+        (qml.Hermitian, [1/math.sqrt(3), 0, 1/math.sqrt(3), 1/math.sqrt(3)], 11/9, [[[1, 1j, 0, 1], [-1j, 1, 0, 0], [0, 0, 1, -1j], [1, 0, 1j, 1]]]),
+        (qml.Hermitian, [0, 0, 0, 1], 1, [[[0, 1j, 0, 0], [-1j, 0, 0, 0], [0, 0, 0, -1j], [0, 0, 1j, 0]]]),
+        (qml.Hermitian, [1/math.sqrt(2), 0, -1/math.sqrt(2), 0], 1, [[[1, 1j, 0, 0], [-1j, 1, 0, 0], [0, 0, 1, -1j], [0, 0, 1j, 1]]]),
+        (qml.Hermitian, [1/math.sqrt(2), 0, 0, 1/math.sqrt(2)], 0, [[[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]]]),
+        (qml.Hermitian, [0, 1/math.sqrt(2), -1/math.sqrt(2), 0], 0, [[[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]]]),
+    ])
+    def test_var_two_wires_with_parameters(self, simulator_device_2_wires, tol, operation, input, expected_output, par):
+        """Tests that variances are properly calculated for two-wire observables with parameters."""
+
+        op = operation(np.array(*par), [0, 1], do_queue=False)
+        simulator_device_2_wires._obs_queue = [op]
+
+        simulator_device_2_wires.pre_apply()
+        simulator_device_2_wires.apply("QubitStateVector", wires=[0, 1], par=[input])
+        simulator_device_2_wires.post_apply()
+        
+        simulator_device_2_wires.pre_measure()        
+        res = simulator_device_2_wires.var(op.name, wires=[0, 1], par=[np.array(*par)])
+        
+        assert np.isclose(res, expected_output, **tol)
+
+class TestVarEstimate:
+    """Test the estimation of variances."""
+
+    def test_var_estimate(self):
+        """Test that the variance is not analytically calculated"""
+
+        dev = qml.device("cirq.simulator", wires=1, shots=3, analytic=False)
+
+        @qml.qnode(dev)
+        def circuit():
+            return qml.var(qml.PauliX(0))
+
+        var = circuit()
+
+        # With 3 samples we are guaranteed to see a difference between
+        # an estimated variance an an analytically calculated one
+        assert var != 1.0
