@@ -27,7 +27,6 @@ with open("pennylane_cirq/_version.py") as f:
 requirements = ["pennylane", "cirq"]
 
 info = {
-    # 'name' is the name that will be used by pip for installation
     "name": "PennyLane-Cirq",
     "version": version,
     "maintainer": "Xanadu Inc.",

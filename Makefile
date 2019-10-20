@@ -7,8 +7,8 @@ TESTRUNNER := -m pytest tests
 .PHONY: help
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
-	@echo "  install            to install Plugin-Name"
-	@echo "  wheel              to build the Plugin-Name wheel"
+	@echo "  install            to install PennyLane-Cirq"
+	@echo "  wheel              to build the PennyLane-Cirq wheel"
 	@echo "  dist               to package the source distribution"
 	@echo "  clean              to delete all temporary, cache, and build files"
 	@echo "  clean-docs         to delete all built documentation"
@@ -18,7 +18,7 @@ help:
 .PHONY: install
 install:
 ifndef PYTHON3
-	@echo "To install Plugin-Name you need to have Python 3 installed"
+	@echo "To install PennyLane-Cirq you need to have Python 3 installed"
 endif
 	$(PYTHON) setup.py install
 

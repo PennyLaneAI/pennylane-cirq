@@ -1,25 +1,25 @@
 PennyLane Cirq Plugin
 #########################
 
-.. image:: https://img.shields.io/travis/com/XanaduAI/plugin-name/master.svg
+.. image:: https://img.shields.io/travis/com/XanaduAI/pennylane-cirq/master.svg
     :alt: Travis
-    :target: https://travis-ci.com/XanaduAI/plugin-name
+    :target: https://travis-ci.com/XanaduAI/pennylane-cirq
 
-.. image:: https://img.shields.io/codecov/c/github/xanaduai/plugin-name/master.svg
+.. image:: https://img.shields.io/codecov/c/github/xanaduai/pennylane-cirq/master.svg
     :alt: Codecov coverage
-    :target: https://codecov.io/gh/XanaduAI/plugin-name
+    :target: https://codecov.io/gh/XanaduAI/pennylane-cirq
 
 .. image:: https://img.shields.io/codacy/grade/33d12f7d2d0644968087e33966ed904e.svg
     :alt: Codacy grade
-    :target: https://app.codacy.com/app/XanaduAI/plugin-name
+    :target: https://app.codacy.com/app/XanaduAI/pennylane-cirq
 
-.. image:: https://img.shields.io/readthedocs/plugin-name.svg
+.. image:: https://img.shields.io/readthedocs/pennylane-cirq.svg
     :alt: Read the Docs
-    :target: https://plugin-name.readthedocs.io
+    :target: https://pennylane-cirq.readthedocs.io
 
-.. image:: https://img.shields.io/pypi/v/plugin-name.svg
+.. image:: https://img.shields.io/pypi/v/pennylane-cirq.svg
     :alt: PyPI
-    :target: https://pypi.org/project/plugin-name
+    :target: https://pypi.org/project/pennylane-cirq
 
 
 `PennyLane <https://pennylane.readthedocs.io>`_ is a cross-platform Python library for quantum machine
@@ -33,29 +33,25 @@ This PennyLane plugin allows to use both the software and hardware backends of C
 Features
 ========
 
-* List the features provided by the plugin here. This can include:
+* Access to Cirq's simulator backend via the `cirq.simulator` device
 
-* The devices made available to PennyLane, as well as any special features of the devices
-
-* The core PennyLane operations and observables supported
-
-* Any additional operations and observables provided by the plugin
+* Support for all PennyLane core functionality
 
 
 Installation
 ============
 
-Plugin Name requires both PennyLane and Target framework. It can be installed via ``pip``:
+Plugin Name requires both PennyLane and Cirq. It can be installed via ``pip``:
 
 .. code-block:: bash
 
-    $ python -m pip install plugin-name
+    $ python -m pip install pennylane-cirq
 
 
 Getting started
 ===============
 
-Once Plugin Name is installed, the provided Target Framework devices can be accessed straight
+Once Pennylane Cirq is installed, the provided Cirq devices can be accessed straight
 away in PennyLane.
 
 You can instantiate these devices for PennyLane as follows:
@@ -63,11 +59,11 @@ You can instantiate these devices for PennyLane as follows:
 .. code-block:: python
 
     import pennylane as qml
-    dev1 = qml.device('pluginname.devicename', wires=2, additional_options=10)
+    dev = qml.device('cirq.simulator', wires=2, shots=100, analytic=True)
 
 These devices can then be used just like other devices for the definition and evaluation of
 QNodes within PennyLane. For more details, see the
-`plugin usage guide <https://plugin-name.readthedocs.io/en/latest/usage.html>`_ and refer
+`plugin usage guide <https://pennylane-cirq.readthedocs.io/en/latest/usage.html>`_ and refer
 to the PennyLane documentation.
 
 
@@ -76,7 +72,7 @@ Contributing
 
 We welcome contributions - simply fork the Plugin Name repository, and then make a
 `pull request <https://help.github.com/articles/about-pull-requests/>`_ containing your contribution.
-All contributers to PennyLane-SF will be listed as authors on the releases.
+All contributors to PennyLane-Cirq will be listed as authors on the releases.
 
 We also encourage bug reports, suggestions for new features and enhancements, and even links to cool
 projects or applications built on PennyLane and Target Framework.
@@ -85,7 +81,7 @@ projects or applications built on PennyLane and Target Framework.
 Authors
 =======
 
-John Smith.
+Johannes Jakob Meyer
 
 If you are doing research using PennyLane, please cite our papers:
 
@@ -101,8 +97,8 @@ If you are doing research using PennyLane, please cite our papers:
 Support
 =======
 
-- **Source Code:** https://github.com/XanaduAI/plugin-name
-- **Issue Tracker:** https://github.com/XanaduAI/plugin-namesf/issues
+- **Source Code:** https://github.com/XanaduAI/pennylane-cirq
+- **Issue Tracker:** https://github.com/XanaduAI/pennylane-cirq/issues
 
 If you are having issues, please let us know by posting the issue on our GitHub issue tracker.
 

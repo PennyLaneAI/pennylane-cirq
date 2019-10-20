@@ -1,4 +1,4 @@
-.. automodule:: pennylane_cirq.framework_device
+.. automodule:: pennylane_cirq.cirq_device
    :members:
    :private-members:
    :special-members:
