@@ -71,9 +71,6 @@ class CirqDevice(Device):
             (np.array[float]): the converted measurements
         """
         converted_measurements = np.zeros(measurements.shape[1])
-        print("_convert_measurements/measurements.shape ", measurements.shape)
-        print("_convert_measurements/measurements ", measurements)
-        print("_convert_measurements/eigenvalues ", eigenvalues)
 
         for i in range(measurements.shape[1]):
             basis_state = measurements[:, i]
@@ -85,12 +82,6 @@ class CirqDevice(Device):
                     eigenvalue_index += 2**j
 
             converted_measurements[i] = eigenvalues[eigenvalue_index]
-
-            if i < 5:
-                print(i, ": basis_state = ", basis_state)
-                print(i, ": eigenvalue_index = ", eigenvalue_index)
-
-        print("_convert_measurements/converted_measurements ", converted_measurements)
         
         return converted_measurements
                 
