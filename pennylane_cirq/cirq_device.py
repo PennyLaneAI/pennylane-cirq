@@ -12,25 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Base Cirq device class
+Base device class for PennyLane-Cirq
 ===========================
 
-**Module name:** :mod:`pennylane_cirq.device`
+**Module name:** :mod:`pennylane_cirq.cirq_device`
 
-.. currentmodule:: pennylane_cirq.device
+.. currentmodule:: pennylane_cirq.cirq_device
 
 An abstract base class for constructing Cirq devices for PennyLane.
-
-This should contain all the boilerplate for supporting PennyLane
-from Cirq, making it easier to create new devices.
-The abstract base class below should contain all common code required
-by Cirq.
-
-This abstract base class will not be used by the user. Add/delete
-methods and attributes below where needed.
-
-See https://pennylane.readthedocs.io/en/latest/API/overview.html
-for an overview of how the Device class works.
+This abstract base class will not be used by the user.
 
 Classes
 -------
@@ -51,25 +41,36 @@ from .cirq_interface import CirqOperation, unitary_matrix_gate
 
 
 class CirqDevice(Device):
-    r"""Abstract Cirq device for PennyLane.
+    """Abstract base device for PennyLane-Cirq.
 
     Args:
         wires (int): the number of modes to initialize the device in
         shots (int): Number of circuit evaluations/random samples used
-            to estimate expectation values of observables.
-            For simulator devices, 0 means the exact EV is returned.
-        additional_option (float): as many additional arguments can be
-            added as needed
+            to estimate expectation values of observables. Shots need 
+            to >= 1.
+        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used 
+            as wires. The wire number corresponds to the index in the list.
+            By default, an array of `cirq.LineQubit` instances is created.
     """
     name = "Cirq Abstract PennyLane plugin baseclass"
-    pennylane_requires = ">=0.4.0"
+    pennylane_requires = ">=0.5.0"
     version = __version__
     author = "Johannes Jakob Meyer"
 
-    short_name = "cirq.device"
+    short_name = "cirq.base_device"
 
     @staticmethod
     def _convert_measurements(measurements, zero_value, one_value):
+        r"""Convert measurements from boolean to numeric values.
+
+        Args:
+            measurements (np.array[bool]): the measurements as boolean values
+            zero_value (float): measurement value correponding to the state :math:`|0 \rangle`
+            one_value (float): measurement value correponding to the state :math:`|1 \rangle`
+        
+        Returns:
+            (np.array[float]): the converted measurements
+        """
         conversion = np.vectorize(lambda x: one_value if x else zero_value)
 
         return conversion(measurements.flatten())
@@ -101,6 +102,7 @@ class CirqDevice(Device):
         "PauliZ": CirqOperation(lambda: cirq.Z),
         "Hadamard": CirqOperation(lambda: cirq.H),
         "S": CirqOperation(lambda: cirq.S),
+        "T": CirqOperation(lambda: cirq.T),
         "CNOT": CirqOperation(lambda: cirq.CNOT),
         "SWAP": CirqOperation(lambda: cirq.SWAP),
         "CZ": CirqOperation(lambda: cirq.CZ),
@@ -119,6 +121,8 @@ class CirqDevice(Device):
                 cirq.ControlledGate(cirq.Rz(c)),
             ]
         ),
+        "CSWAP": CirqOperation(lambda: cirq.CSWAP),
+        "Toffoli": CirqOperation(lambda: cirq.TOFFOLI),
     }
 
     _observable_map = {

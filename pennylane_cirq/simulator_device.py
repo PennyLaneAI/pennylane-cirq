@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-SimulatorDevice
+Cirq Simulator Device
 ========
 
 **Module name:** :mod:`pennylane_cirq.simulator_device`
@@ -20,14 +20,7 @@ SimulatorDevice
 .. currentmodule:: pennylane_cirq.simulator_device
 
 This Device implements all the :class:`~pennylane.device.Device` methods,
-for using Target Framework device/simulator as a PennyLane device.
-
-It can inherit from the abstract FrameworkDevice to reduce
-code duplication if needed.
-
-
-See https://pennylane.readthedocs.io/en/latest/API/overview.html
-for an overview of Device methods available.
+for using Cirq simulator as a PennyLane device.
 
 Classes
 -------
@@ -55,14 +48,19 @@ class SimulatorDevice(CirqDevice):
     Args:
         wires (int): the number of modes to initialize the device in
         shots (int): Number of circuit evaluations/random samples used
-            to estimate expectation values of observables.
-            For simulator devices, 0 means the exact EV is returned.
+            to estimate expectation values of observables. Shots need 
+            to >= 1. In analytic mode, shots indicates the number of entries
+            that are returned by device.sample.
+        analytic (bool): Indicates that expectation values and variances should
+            be calculated analytically. Defaults to `True`. 
+        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used 
+            as wires. The wire number corresponds to the index in the list.
+            By default, an array of `cirq.LineQubit` instances is created.
     """
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
 
-    def __init__(self, wires, shots=0, qubits=None):
-        # Todo: docstring
+    def __init__(self, wires, shots=1000, analytic=True, qubits=None):
         super().__init__(wires, shots, qubits)
 
         self.initial_state = None
@@ -70,6 +68,7 @@ class SimulatorDevice(CirqDevice):
         self.result = None
         self.measurements = None
         self.state = None
+        self.analytic = analytic
 
     def reset(self):
         super().reset()
@@ -90,9 +89,9 @@ class SimulatorDevice(CirqDevice):
                     "The operation BasisState is only supported at the beginning of a circuit."
                 )
 
-            if self.shots > 0:
+            if not self.analytic:
                 raise qml.DeviceError(
-                    "The operation BasisState is only supported in analytic mode (shots=0)."
+                    "The operation BasisState is only supported in analytic mode."
                 )
 
             basis_state_array = np.array(par[0])
@@ -115,9 +114,9 @@ class SimulatorDevice(CirqDevice):
                     "The operation QubitStateVector is only supported at the beginning of a circuit."
                 )
 
-            if self.shots > 0:
+            if not self.analytic:
                 raise qml.DeviceError(
-                    "The operation QubitStateVector is only supported in analytic mode (shots=0)."
+                    "The operation QubitStateVector is only supported in analytic mode."
                 )
 
             state_vector = np.array(par[0], dtype=np.complex64)
@@ -145,7 +144,7 @@ class SimulatorDevice(CirqDevice):
         # wires that are not acted upon
         self.circuit.append(cirq.IdentityGate(len(self.qubits))(*self.qubits))
 
-        if self.shots == 0:
+        if self.analytic:
             if self.initial_state is None:
                 self.result = self.simulator.simulate(self.circuit)
             else:
@@ -154,20 +153,16 @@ class SimulatorDevice(CirqDevice):
                 )
 
             self.state = np.array(self.result.state_vector())
-        else:
-            for e in self.obs_queue:
-                wire = e.wires[0]
-
+        # Do nothing if there is nothing to measure
+        elif self.obs_queue:
+            for wire in range(self.num_wires):
                 self.circuit.append(cirq.measure(self.qubits[wire], key=str(wire)))
 
-            num_shots = max(
-                [self.shots] + [e.num_samples for e in self.obs_queue if e.return_type == "sample"]
-            )
-
-            self.result = self.simulator.run(self.circuit, repetitions=num_shots)
+            self.result = self.simulator.run(self.circuit, repetitions=self.shots)
 
             # Bring measurements to a more managable form, but keep True/False as values for now
             # They will be changed in the measurement routines where the observable is available
+
             self.measurements = np.array(
                 [self.result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
             )
@@ -187,7 +182,6 @@ class SimulatorDevice(CirqDevice):
         Args:
             wires (Array[int]): the wires with respect to which the marginal probabilities 
                 are calculated
-        
         """
         num_wires = len(wires)
         probabilities = self.probability()
@@ -195,10 +189,12 @@ class SimulatorDevice(CirqDevice):
 
         marginal_probabilities = OrderedDict()
 
-        for marginal_state in enumerate(marginal_states):
-            marginal_probabilities[marginal_state] = np.sum(
-                [probabilities[state] for state in probabilities if tuple(state[wire] for wire in wires) == marginal_state]
-            )
+        for marginal_state in marginal_states:
+            marginal_probabilities[marginal_state] = 0.0
+
+        for state in probabilities:
+            marginal_state = tuple(state[wire] for wire in wires)
+            marginal_probabilities[marginal_state] += probabilities[state]
 
         return marginal_probabilities
 
@@ -213,11 +209,12 @@ class SimulatorDevice(CirqDevice):
             Hmat = par[0]
             Hkey = tuple(Hmat.flatten().tolist())
             eigenvalues = self._eigs[Hkey]["eigval"]
+
         elif observable != "Identity":
             # TODO: Add support for Tensor observables after it is merged in PL
             eigenvalues[1] = -1
 
-        if self.shots == 0:
+        if self.analytic:
             # We have to use the state of the simulation to find the expectation value
             marginal_probability = np.fromiter(self.marginal_probability(wires).values(), dtype=np.float)
 
@@ -235,13 +232,13 @@ class SimulatorDevice(CirqDevice):
             # Take the eigenvalues from the stored values
             Hmat = par[0]
             Hkey = tuple(Hmat.flatten().tolist())
-            zero_value = self._eigs[Hkey]["eigvec"][0]
-            one_value = self._eigs[Hkey]["eigvec"][1]
+            zero_value = self._eigs[Hkey]["eigval"][0]
+            one_value = self._eigs[Hkey]["eigval"][1]
 
         elif observable == "Identity":
             one_value = 1
 
-        if self.shots == 0:
+        if self.analytic:
             # We have to use the state of the simulation to find the expectation value
             probabilities = self.probability()
 
@@ -259,10 +256,7 @@ class SimulatorDevice(CirqDevice):
         else:
             return self.sample(observable, wires, par).var()
 
-    def sample(self, observable, wires, par, n=None):
-        if not n:
-            n = self.shots
-
+    def sample(self, observable, wires, par):
         wire = wires[0]
 
         zero_value = 1
@@ -272,13 +266,13 @@ class SimulatorDevice(CirqDevice):
             # Take the eigenvalues from the stored values
             Hmat = par[0]
             Hkey = tuple(Hmat.flatten().tolist())
-            zero_value = self._eigs[Hkey]["eigvec"][0]
-            one_value = self._eigs[Hkey]["eigvec"][1]
+            zero_value = self._eigs[Hkey]["eigval"][0]
+            one_value = self._eigs[Hkey]["eigval"][1]
 
         elif observable == "Identity":
             one_value = 1
 
-        if self.shots == 0:
+        if self.analytic:
             # We have to use the state of the simulation to find the expectation value
             probabilities = self.probability()
 
@@ -288,11 +282,11 @@ class SimulatorDevice(CirqDevice):
             one_marginal_prob = 1 - zero_marginal_prob
 
             return np.random.choice(
-                [zero_value, one_value], size=n, p=[zero_marginal_prob, one_marginal_prob]
+                [zero_value, one_value], size=self.shots, p=[zero_marginal_prob, one_marginal_prob]
             )
         else:
             return CirqDevice._convert_measurements(
                 self.measurements[wires[0]], zero_value, one_value
-            )[:n]
+            )
 
 
