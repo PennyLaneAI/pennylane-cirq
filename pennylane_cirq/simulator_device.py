@@ -43,13 +43,14 @@ import pennylane as qml
 from .cirq_device import CirqDevice
 
 
-@functools.lru_cache() 
-def z_eigs(n): 
+@functools.lru_cache()
+def z_eigs(n):
     """Return the eigenvalues of an n-fold tensor product of Pauli Z operators."""
-    if n == 1: 
-        return np.array([1, -1]) 
+    if n == 1:
+        return np.array([1, -1])
 
-    return np.concatenate([z_eigs(n-1), -z_eigs(n-1)])
+    return np.concatenate([z_eigs(n - 1), -z_eigs(n - 1)])
+
 
 class SimulatorDevice(CirqDevice):
     r"""Cirq simulator device for PennyLane.
@@ -107,11 +108,15 @@ class SimulatorDevice(CirqDevice):
 
             if len(basis_state_array) != len(self.qubits):
                 raise qml.DeviceError(
-                    "For BasisState, the state has to be specified for the correct number of qubits. Got a state for {} qubits, expected {}.".format(len(basis_state_array), len(self.qubits))
+                    "For BasisState, the state has to be specified for the correct number of qubits. Got a state for {} qubits, expected {}.".format(
+                        len(basis_state_array), len(self.qubits)
                     )
+                )
 
             if not np.all(np.isin(basis_state_array, np.array([0, 1]))):
-                raise qml.DeviceError("Argument for BasisState can only contain 0 and 1. Got {}".format(par[0]))
+                raise qml.DeviceError(
+                    "Argument for BasisState can only contain 0 and 1. Got {}".format(par[0])
+                )
 
             self.initial_state = np.zeros(2 ** len(self.qubits), dtype=np.complex64)
             basis_state_idx = np.sum(2 ** np.argwhere(np.flip(basis_state_array) == 1))
@@ -130,15 +135,19 @@ class SimulatorDevice(CirqDevice):
 
             state_vector = np.array(par[0], dtype=np.complex64)
 
-            if len(state_vector) != 2**len(self.qubits):
+            if len(state_vector) != 2 ** len(self.qubits):
                 raise qml.DeviceError(
-                    "For QubitStateVector, the state has to be specified for the correct number of qubits. Got a state of length {}, expected {}.".format(len(state_vector), 2**len(self.qubits))
+                    "For QubitStateVector, the state has to be specified for the correct number of qubits. Got a state of length {}, expected {}.".format(
+                        len(state_vector), 2 ** len(self.qubits)
                     )
+                )
 
-            norm_squared = np.sum(np.abs(state_vector)**2)
+            norm_squared = np.sum(np.abs(state_vector) ** 2)
             if not np.isclose(norm_squared, 1.0, atol=1e-3, rtol=0):
                 raise qml.DeviceError(
-                    "The given state for QubitStateVector is not properly normalized to 1.0. Got norm {}".format(math.sqrt(norm_squared))
+                    "The given state for QubitStateVector is not properly normalized to 1.0. Got norm {}".format(
+                        math.sqrt(norm_squared)
+                    )
                 )
 
             self.initial_state = state_vector
@@ -221,7 +230,7 @@ class SimulatorDevice(CirqDevice):
         num_wires = len(wires)
 
         # All ones corresponds to the Identity observable
-        eigenvalues = np.ones(2**num_wires)
+        eigenvalues = np.ones(2 ** num_wires)
 
         if observable == "Hermitian":
             # Take the eigenvalues from the stored values
@@ -241,7 +250,9 @@ class SimulatorDevice(CirqDevice):
 
         if self.analytic:
             # We have to use the state of the simulation to find the expectation value
-            marginal_probability = np.fromiter(self.marginal_probability(wires).values(), dtype=np.float)
+            marginal_probability = np.fromiter(
+                self.marginal_probability(wires).values(), dtype=np.float
+            )
 
             return np.dot(eigenvalues, marginal_probability)
         else:
@@ -252,9 +263,14 @@ class SimulatorDevice(CirqDevice):
 
         if self.analytic:
             # We have to use the state of the simulation to find the expectation value
-            marginal_probability = np.fromiter(self.marginal_probability(wires).values(), dtype=np.float)
+            marginal_probability = np.fromiter(
+                self.marginal_probability(wires).values(), dtype=np.float
+            )
 
-            return np.dot(eigenvalues**2, marginal_probability) - np.dot(eigenvalues, marginal_probability)**2
+            return (
+                np.dot(eigenvalues ** 2, marginal_probability)
+                - np.dot(eigenvalues, marginal_probability) ** 2
+            )
         else:
             return self.sample(observable, wires, par).var()
 
@@ -263,23 +279,21 @@ class SimulatorDevice(CirqDevice):
 
         if self.analytic:
             # We have to use the state of the simulation to find the expectation value
-            marginal_probabilities = np.fromiter(self.marginal_probability(wires).values(), dtype=np.float)
+            marginal_probabilities = np.fromiter(
+                self.marginal_probability(wires).values(), dtype=np.float
+            )
 
             probability_sum = np.sum(marginal_probabilities)
 
             if not np.isclose(probability_sum, 1, atol=1e-5, rtol=0):
-                raise ValueError("Probabilites in sampling must sum up to 1. Got {}".format(probability_sum))
+                raise ValueError(
+                    "Probabilites in sampling must sum up to 1. Got {}".format(probability_sum)
+                )
 
-            # np.random.choice does not even tolerate small deviations 
+            # np.random.choice does not even tolerate small deviations
             # from 1, so we have to adjust the probabilities here
             marginal_probabilities /= probability_sum
 
-            return np.random.choice(
-                eigenvalues, size=self.shots, p=marginal_probabilities
-            )
+            return np.random.choice(eigenvalues, size=self.shots, p=marginal_probabilities)
         else:
-            return CirqDevice._convert_measurements(
-                self.measurements[wires], eigenvalues
-            )
-
-
+            return CirqDevice._convert_measurements(self.measurements[wires], eigenvalues)

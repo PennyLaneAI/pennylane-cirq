@@ -52,6 +52,7 @@ class CirqDevice(Device):
             as wires. The wire number corresponds to the index in the list.
             By default, an array of `cirq.LineQubit` instances is created.
     """
+
     name = "Cirq Abstract PennyLane plugin baseclass"
     pennylane_requires = ">=0.5.0"
     version = __version__
@@ -74,18 +75,16 @@ class CirqDevice(Device):
 
         for i in range(measurements.shape[1]):
             basis_state = measurements[:, i]
-            max_index = len(basis_state)-1
+            max_index = len(basis_state) - 1
 
             eigenvalue_index = 0
             for j in range(basis_state.shape[0]):
                 if basis_state[max_index - j]:
-                    eigenvalue_index += 2**j
+                    eigenvalue_index += 2 ** j
 
             converted_measurements[i] = eigenvalues[eigenvalue_index]
-        
-        return converted_measurements
-                
 
+        return converted_measurements
 
     def __init__(self, wires, shots, qubits=None):
         super().__init__(wires, shots)
