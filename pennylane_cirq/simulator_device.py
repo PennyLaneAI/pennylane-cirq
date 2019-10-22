@@ -171,7 +171,7 @@ class SimulatorDevice(CirqDevice):
                 )
 
             self.state = np.array(self.result.state_vector())
-        # Do nothing if there is nothing to measure
+            
         elif self.obs_queue:
             for wire in range(self.num_wires):
                 self.circuit.append(cirq.measure(self.qubits[wire], key=str(wire)))
