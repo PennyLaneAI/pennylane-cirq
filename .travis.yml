@@ -11,7 +11,7 @@ install:
   - pip install -r requirements.txt
   - pip install pytest pytest-cov wheel codecov --upgrade
   - python3 setup.py bdist_wheel
-  - pip install dist/Pennylane-Cirq*.whl
+  - pip install dist/PennyLane_Cirq*.whl
 script:
   - make coverage
 after_success:
