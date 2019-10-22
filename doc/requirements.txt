@@ -1,2 +1,4 @@
 sphinxcontrib-bibtex
 pygments-github-lexers
+cirq
+pennylane
