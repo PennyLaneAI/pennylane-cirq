@@ -71,7 +71,7 @@ class CirqDevice(Device):
         Returns:
             (np.array[float]): the converted measurements
         """
-        N = measurements.shape[0]     
+        N = measurements.shape[0]
 
         indices = np.ravel_multi_index(measurements, [2] * N)
         converted_measurements = eigenvalues[indices]
