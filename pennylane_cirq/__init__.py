@@ -16,5 +16,6 @@ Plugin overview
 ===============
 """
 from .simulator_device import SimulatorDevice
-#from .ops import S, T, CCNOT, CPHASE, CSWAP, ISWAP, PSWAP
+
+# from .ops import S, T, CCNOT, CPHASE, CSWAP, ISWAP, PSWAP
 from ._version import __version__

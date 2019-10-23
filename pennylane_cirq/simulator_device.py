@@ -115,9 +115,7 @@ class SimulatorDevice(CirqDevice):
 
             if not np.all(np.isin(basis_state_array, np.array([0, 1]))):
                 raise qml.DeviceError(
-                    "Argument for BasisState can only contain 0 and 1. Got {}".format(
-                        par[0]
-                    )
+                    "Argument for BasisState can only contain 0 and 1. Got {}".format(par[0])
                 )
 
             self.initial_state = np.zeros(2 ** len(self.qubits), dtype=np.complex64)
@@ -184,10 +182,7 @@ class SimulatorDevice(CirqDevice):
             # They will be changed in the measurement routines where the observable is available
 
             self.measurements = np.array(
-                [
-                    self.result.measurements[str(wire)].flatten()
-                    for wire in range(self.num_wires)
-                ]
+                [self.result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
             )
 
     def probability(self):
@@ -292,19 +287,13 @@ class SimulatorDevice(CirqDevice):
 
             if not np.isclose(probability_sum, 1, atol=1e-5, rtol=0):
                 raise ValueError(
-                    "Probabilites in sampling must sum up to 1. Got {}".format(
-                        probability_sum
-                    )
+                    "Probabilites in sampling must sum up to 1. Got {}".format(probability_sum)
                 )
 
             # np.random.choice does not even tolerate small deviations
             # from 1, so we have to adjust the probabilities here
             marginal_probabilities /= probability_sum
 
-            return np.random.choice(
-                eigenvalues, size=self.shots, p=marginal_probabilities
-            )
+            return np.random.choice(eigenvalues, size=self.shots, p=marginal_probabilities)
         else:
-            return CirqDevice._convert_measurements(
-                self.measurements[wires], eigenvalues
-            )
+            return CirqDevice._convert_measurements(self.measurements[wires], eigenvalues)

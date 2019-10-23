@@ -122,7 +122,7 @@ class TestExpval:
         dev.pre_measure()
 
         res = np.array([dev.expval(name, [0], []), dev.expval(name, [1], [])])
-        assert np.allclose(res, np.array([0, -np.cos(theta) * np.sin(phi)]), **tol)
+        assert np.allclose(res, np.array([0, -(np.cos(theta)) * np.sin(phi)]), **tol)
 
     def test_hadamard_expectation(self, device, shots, tol):
         """Test that Hadamard expectation value is correct"""
@@ -144,7 +144,10 @@ class TestExpval:
 
         res = np.array([dev.expval(name, [0], []), dev.expval(name, [1], [])])
         expected = np.array(
-            [np.sin(theta) * np.sin(phi) + np.cos(theta), np.cos(theta) * np.cos(phi) + np.sin(phi)]
+            [
+                np.sin(theta) * np.sin(phi) + np.cos(theta),
+                np.cos(theta) * np.cos(phi) + np.sin(phi),
+            ]
         ) / np.sqrt(2)
         assert np.allclose(res, expected, **tol)
 
@@ -163,7 +166,10 @@ class TestExpval:
         O = qml.Hermitian
         name = "Hermitian"
 
-        dev._obs_queue = [O(A, wires=[0], do_queue=False), O(A, wires=[1], do_queue=False)]
+        dev._obs_queue = [
+            O(A, wires=[0], do_queue=False),
+            O(A, wires=[1], do_queue=False),
+        ]
         dev.pre_measure()
 
         res = np.array([dev.expval(name, [0], [A]), dev.expval(name, [1], [A])])
