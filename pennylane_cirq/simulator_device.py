@@ -33,6 +33,7 @@ Classes
 import itertools
 
 from collections import OrderedDict
+import functools
 
 import cirq
 import math
@@ -40,6 +41,15 @@ import numpy as np
 import pennylane as qml
 
 from .cirq_device import CirqDevice
+
+
+@functools.lru_cache()
+def z_eigs(n):
+    """Return the eigenvalues of an n-fold tensor product of Pauli Z operators."""
+    if n == 1:
+        return np.array([1, -1])
+
+    return np.concatenate([z_eigs(n - 1), -z_eigs(n - 1)])
 
 
 class SimulatorDevice(CirqDevice):
@@ -98,11 +108,15 @@ class SimulatorDevice(CirqDevice):
 
             if len(basis_state_array) != len(self.qubits):
                 raise qml.DeviceError(
-                    "For BasisState, the state has to be specified for the correct number of qubits. Got a state for {} qubits, expected {}.".format(len(basis_state_array), len(self.qubits))
+                    "For BasisState, the state has to be specified for the correct number of qubits. Got a state for {} qubits, expected {}.".format(
+                        len(basis_state_array), len(self.qubits)
                     )
+                )
 
             if not np.all(np.isin(basis_state_array, np.array([0, 1]))):
-                raise qml.DeviceError("Argument for BasisState can only contain 0 and 1. Got {}".format(par[0]))
+                raise qml.DeviceError(
+                    "Argument for BasisState can only contain 0 and 1. Got {}".format(par[0])
+                )
 
             self.initial_state = np.zeros(2 ** len(self.qubits), dtype=np.complex64)
             basis_state_idx = np.sum(2 ** np.argwhere(np.flip(basis_state_array) == 1))
@@ -121,15 +135,19 @@ class SimulatorDevice(CirqDevice):
 
             state_vector = np.array(par[0], dtype=np.complex64)
 
-            if len(state_vector) != 2**len(self.qubits):
+            if len(state_vector) != 2 ** len(self.qubits):
                 raise qml.DeviceError(
-                    "For QubitStateVector, the state has to be specified for the correct number of qubits. Got a state of length {}, expected {}.".format(len(state_vector), 2**len(self.qubits))
+                    "For QubitStateVector, the state has to be specified for the correct number of qubits. Got a state of length {}, expected {}.".format(
+                        len(state_vector), 2 ** len(self.qubits)
                     )
+                )
 
-            norm_squared = np.sum(np.abs(state_vector)**2)
+            norm_squared = np.sum(np.abs(state_vector) ** 2)
             if not np.isclose(norm_squared, 1.0, atol=1e-3, rtol=0):
                 raise qml.DeviceError(
-                    "The given state for QubitStateVector is not properly normalized to 1.0. Got norm {}".format(math.sqrt(norm_squared))
+                    "The given state for QubitStateVector is not properly normalized to 1.0. Got norm {}".format(
+                        math.sqrt(norm_squared)
+                    )
                 )
 
             self.initial_state = state_vector
@@ -153,7 +171,7 @@ class SimulatorDevice(CirqDevice):
                 )
 
             self.state = np.array(self.result.state_vector())
-        # Do nothing if there is nothing to measure
+
         elif self.obs_queue:
             for wire in range(self.num_wires):
                 self.circuit.append(cirq.measure(self.qubits[wire], key=str(wire)))
@@ -198,95 +216,84 @@ class SimulatorDevice(CirqDevice):
 
         return marginal_probabilities
 
+    def _get_eigenvalues(self, observable, wires, par):
+        """Return the eigenvalues of the given observable.
 
-    def expval(self, observable, wires, par):
+        Args:
+            observable (str or list[str]): name of the observable(s)
+            wires (List[int] or List[List[int]]): subsystems the observable(s) is to be measured on
+            par (tuple or list[tuple]]): parameters for the observable(s)
+
+        Returns:
+            array[float]: eigenvalues of the observable
+        """
         num_wires = len(wires)
 
-        eigenvalues = np.ones(2**num_wires)
+        # All ones corresponds to the Identity observable
+        eigenvalues = np.ones(2 ** num_wires)
 
         if observable == "Hermitian":
             # Take the eigenvalues from the stored values
             Hmat = par[0]
             Hkey = tuple(Hmat.flatten().tolist())
-            eigenvalues = self._eigs[Hkey]["eigval"]
 
+            eigenvalues = self._eigs[Hkey]["eigval"]
         elif observable != "Identity":
-            # TODO: Add support for Tensor observables after it is merged in PL
-            eigenvalues[1] = -1
+            # If we don't have an Hermitian observable we use
+            # a diagonalization to tensors of Z observables
+            eigenvalues = z_eigs(num_wires)
+
+        return eigenvalues
+
+    def expval(self, observable, wires, par):
+        eigenvalues = self._get_eigenvalues(observable, wires, par)
 
         if self.analytic:
             # We have to use the state of the simulation to find the expectation value
-            marginal_probability = np.fromiter(self.marginal_probability(wires).values(), dtype=np.float)
+            marginal_probability = np.fromiter(
+                self.marginal_probability(wires).values(), dtype=np.float
+            )
 
             return np.dot(eigenvalues, marginal_probability)
         else:
             return self.sample(observable, wires, par).mean()
 
     def var(self, observable, wires, par):
-        wire = wires[0]
-
-        zero_value = 1
-        one_value = -1
-
-        if observable == "Hermitian":
-            # Take the eigenvalues from the stored values
-            Hmat = par[0]
-            Hkey = tuple(Hmat.flatten().tolist())
-            zero_value = self._eigs[Hkey]["eigval"][0]
-            one_value = self._eigs[Hkey]["eigval"][1]
-
-        elif observable == "Identity":
-            one_value = 1
+        eigenvalues = self._get_eigenvalues(observable, wires, par)
 
         if self.analytic:
             # We have to use the state of the simulation to find the expectation value
-            probabilities = self.probability()
-
-            zero_marginal_prob = np.sum(
-                [probabilities[state] for state in probabilities if state[wire] == 0]
+            marginal_probability = np.fromiter(
+                self.marginal_probability(wires).values(), dtype=np.float
             )
-            one_marginal_prob = 1 - zero_marginal_prob
 
-            # Var = <A^2> - <A>^2
             return (
-                zero_marginal_prob * zero_value ** 2
-                + one_marginal_prob * one_value ** 2
-                - (zero_marginal_prob * zero_value + one_marginal_prob * one_value) ** 2
+                np.dot(eigenvalues ** 2, marginal_probability)
+                - np.dot(eigenvalues, marginal_probability) ** 2
             )
         else:
             return self.sample(observable, wires, par).var()
 
     def sample(self, observable, wires, par):
-        wire = wires[0]
-
-        zero_value = 1
-        one_value = -1
-
-        if observable == "Hermitian":
-            # Take the eigenvalues from the stored values
-            Hmat = par[0]
-            Hkey = tuple(Hmat.flatten().tolist())
-            zero_value = self._eigs[Hkey]["eigval"][0]
-            one_value = self._eigs[Hkey]["eigval"][1]
-
-        elif observable == "Identity":
-            one_value = 1
+        eigenvalues = self._get_eigenvalues(observable, wires, par)
 
         if self.analytic:
             # We have to use the state of the simulation to find the expectation value
-            probabilities = self.probability()
-
-            zero_marginal_prob = np.sum(
-                [probabilities[state] for state in probabilities if state[wire] == 0]
+            marginal_probabilities = np.fromiter(
+                self.marginal_probability(wires).values(), dtype=np.float
             )
-            one_marginal_prob = 1 - zero_marginal_prob
 
-            return np.random.choice(
-                [zero_value, one_value], size=self.shots, p=[zero_marginal_prob, one_marginal_prob]
-            )
+            probability_sum = np.sum(marginal_probabilities)
+
+            if not np.isclose(probability_sum, 1, atol=1e-5, rtol=0):
+                raise ValueError(
+                    "Probabilites in sampling must sum up to 1. Got {}".format(probability_sum)
+                )
+
+            # np.random.choice does not even tolerate small deviations
+            # from 1, so we have to adjust the probabilities here
+            marginal_probabilities /= probability_sum
+
+            return np.random.choice(eigenvalues, size=self.shots, p=marginal_probabilities)
         else:
-            return CirqDevice._convert_measurements(
-                self.measurements[wires[0]], zero_value, one_value
-            )
-
-
+            return CirqDevice._convert_measurements(self.measurements[wires], eigenvalues)

@@ -73,8 +73,8 @@ class TestMethods:
     @pytest.mark.parametrize(
         "U,expected_cirq_operation",
         [
-            ([[1, 0], [0, -1]], cirq.SingleQubitMatrixGate(np.array([[1, 0], [0, -1]]))),
-            ([[0, 1j], [-1j, 0]], cirq.SingleQubitMatrixGate(np.array([[0, 1j], [-1j, 0]]))),
+            ([[1, 0], [0, -1]], cirq.SingleQubitMatrixGate(np.array([[1, 0], [0, -1]])),),
+            ([[0, 1j], [-1j, 0]], cirq.SingleQubitMatrixGate(np.array([[0, 1j], [-1j, 0]])),),
             (
                 [[0, 1j, 0, 0], [-1j, 0, 0, 0], [0, 0, 0, 1j], [0, 0, -1j, 0]],
                 cirq.TwoQubitMatrixGate(

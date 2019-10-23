@@ -59,7 +59,14 @@ crz = lambda theta: np.array(
 
 # list of all non-parametrized single-qubit gates,
 # along with the PennyLane operation name
-single_qubit = [("PauliX", X), ("PauliY", Y), ("PauliZ", Z), ("Hadamard", H), ("S", S), ("T", T)]
+single_qubit = [
+    ("PauliX", X),
+    ("PauliY", Y),
+    ("PauliZ", Z),
+    ("Hadamard", H),
+    ("S", S),
+    ("T", T),
+]
 
 # list of all parametrized single-qubit gates
 single_qubit_param = [("PhaseShift", phase_shift), ("RX", rx), ("RY", ry), ("RZ", rz)]

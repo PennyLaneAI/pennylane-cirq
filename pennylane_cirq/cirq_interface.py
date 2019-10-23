@@ -45,7 +45,8 @@ from collections.abc import Sequence
 import cirq
 import pennylane as qml
 
-class CirqOperation():
+
+class CirqOperation:
     """A helper class that wraps the native Cirq operations and provides an 
        interface for parametrization and application."""
 
@@ -82,6 +83,7 @@ class CirqOperation():
 
         return (parametrized_gate(*qubits) for parametrized_gate in self.parametrized_cirq_gates)
 
+
 def unitary_matrix_gate(U):
     """Creates a Cirq unitary matrix gate from a given matrix.
 
@@ -93,4 +95,8 @@ def unitary_matrix_gate(U):
     if U.shape == (4, 4):
         return cirq.TwoQubitMatrixGate(U)
     else:
-        raise qml.DeviceError("Cirq only supports single-qubit and two-qubit unitary matrix gates. The given matrix had shape {}".format(U.shape))
+        raise qml.DeviceError(
+            "Cirq only supports single-qubit and two-qubit unitary matrix gates. The given matrix had shape {}".format(
+                U.shape
+            )
+        )

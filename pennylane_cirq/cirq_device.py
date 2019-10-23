@@ -52,6 +52,7 @@ class CirqDevice(Device):
             as wires. The wire number corresponds to the index in the list.
             By default, an array of `cirq.LineQubit` instances is created.
     """
+
     name = "Cirq Abstract PennyLane plugin baseclass"
     pennylane_requires = ">=0.5.0"
     version = __version__
@@ -60,20 +61,22 @@ class CirqDevice(Device):
     short_name = "cirq.base_device"
 
     @staticmethod
-    def _convert_measurements(measurements, zero_value, one_value):
+    def _convert_measurements(measurements, eigenvalues):
         r"""Convert measurements from boolean to numeric values.
 
         Args:
             measurements (np.array[bool]): the measurements as boolean values
-            zero_value (float): measurement value correponding to the state :math:`|0 \rangle`
-            one_value (float): measurement value correponding to the state :math:`|1 \rangle`
+            eigenvalues (np.array[float]): eigenvalues corresponding to the observed basis states
         
         Returns:
             (np.array[float]): the converted measurements
         """
-        conversion = np.vectorize(lambda x: one_value if x else zero_value)
+        N = measurements.shape[0]
 
-        return conversion(measurements.flatten())
+        indices = np.ravel_multi_index(measurements, [2] * N)
+        converted_measurements = eigenvalues[indices]
+
+        return converted_measurements
 
     def __init__(self, wires, shots, qubits=None):
         super().__init__(wires, shots)
