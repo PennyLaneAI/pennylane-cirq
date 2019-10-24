@@ -501,6 +501,7 @@ class TestExpval:
 class TestVar:
     """Tests that variances are properly calculated."""
 
+    # fmt: off
     @pytest.mark.parametrize("operation,input,expected_output", [
         (qml.PauliX, [1/math.sqrt(2), 1/math.sqrt(2)], 0),
         (qml.PauliX, [1/math.sqrt(2), -1/math.sqrt(2)], 0),
@@ -515,6 +516,7 @@ class TestVar:
         (qml.Hadamard, [0, 1], 1/2),
         (qml.Hadamard, [1/math.sqrt(2), 1/math.sqrt(2)], 1/2),
     ])
+    # fmt: on
     def test_var_single_wire_no_parameters(self, simulator_device_1_wire, tol, operation, input, expected_output):
         """Tests that variances are properly calculated for single-wire observables without parameters."""
 
@@ -530,6 +532,7 @@ class TestVar:
 
         assert np.isclose(res, expected_output, **tol)
 
+    # fmt: off
     @pytest.mark.parametrize("operation,input,expected_output,par", [
         (qml.Identity, [1, 0], 0, []),
         (qml.Identity, [0, 1], 0, []),
@@ -538,6 +541,7 @@ class TestVar:
         (qml.Hermitian, [0, 1], 1, [[[1, 1j], [-1j, 1]]]),
         (qml.Hermitian, [1/math.sqrt(2), -1/math.sqrt(2)], 1, [[[1, 1j], [-1j, 1]]]),
     ])
+    # fmt: on
     def test_var_single_wire_with_parameters(self, simulator_device_1_wire, tol, operation, input, expected_output, par):
         """Tests that expectation values are properly calculated for single-wire observables with parameters."""
 
@@ -560,6 +564,7 @@ class TestVar:
 
         assert np.isclose(res, expected_output, **tol)
 
+    # fmt: off
     @pytest.mark.parametrize("operation,input,expected_output,par", [
         (qml.Hermitian, [1/math.sqrt(3), 0, 1/math.sqrt(3), 1/math.sqrt(3)], 11/9, [[[1, 1j, 0, 1], [-1j, 1, 0, 0], [0, 0, 1, -1j], [1, 0, 1j, 1]]]),
         (qml.Hermitian, [0, 0, 0, 1], 1, [[[0, 1j, 0, 0], [-1j, 0, 0, 0], [0, 0, 0, -1j], [0, 0, 1j, 0]]]),
@@ -567,6 +572,7 @@ class TestVar:
         (qml.Hermitian, [1/math.sqrt(2), 0, 0, 1/math.sqrt(2)], 0, [[[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]]]),
         (qml.Hermitian, [0, 1/math.sqrt(2), -1/math.sqrt(2), 0], 0, [[[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]]]),
     ])
+    # fmt: on
     def test_var_two_wires_with_parameters(self, simulator_device_2_wires, tol, operation, input, expected_output, par):
         """Tests that variances are properly calculated for two-wire observables with parameters."""
 
