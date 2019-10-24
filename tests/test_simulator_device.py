@@ -551,13 +551,12 @@ class TestVar:
         simulator_device_1_wire.pre_apply()
         simulator_device_1_wire.apply("QubitStateVector", wires=[0], par=[input])
         simulator_device_1_wire.post_apply()
-        
+
         simulator_device_1_wire.pre_measure()   
         if par:
             res = simulator_device_1_wire.var(op.name, wires=[0], par=[np.array(*par)])
         else:
             res = simulator_device_1_wire.var(op.name, wires=[0], par=[])
-        
 
         assert np.isclose(res, expected_output, **tol)
 
@@ -600,3 +599,15 @@ class TestVarEstimate:
         # With 3 samples we are guaranteed to see a difference between
         # an estimated variance an an analytically calculated one
         assert var != 1.0
+
+@pytest.mark.parametrize("shots,analytic", [(100, True)])
+class TestSample:
+    """Test sampling."""
+
+    def test_probability_sum_error(self, simulator_device_1_wire):
+        """Test that an error is raised if the probabilites in the 
+        internal state do not sum up to 1."""
+
+        simulator_device_1_wire.state = np.array([1, 1])
+        with pytest.raises(ValueError, match="Probabilites in sampling must sum up to 1."):
+            simulator_device_1_wire.sample("PauliZ", wires=[0], par=[])
