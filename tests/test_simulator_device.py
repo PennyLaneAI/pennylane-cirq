@@ -298,13 +298,55 @@ class TestApply:
     # fmt: on
     def test_state_preparation_error(self, simulator_device_1_wire, operation, par, match):
         """Tests that the state preparation routines raise proper errors for wrong parameter values."""
-        
+
         simulator_device_1_wire._obs_queue = []
 
         simulator_device_1_wire.pre_apply()
 
         with pytest.raises(qml.DeviceError, match=match):
             simulator_device_1_wire.apply(operation, wires=[0], par=par)
+
+    def test_basis_state_not_at_beginning_error(self, simulator_device_1_wire):
+        """Tests that application of BasisState raises an error if is not
+        the first operation."""
+
+        simulator_device_1_wire.pre_apply()
+        simulator_device_1_wire.apply("PauliX", wires=[0], par=[])
+
+        with pytest.raises(qml.DeviceError, match="The operation BasisState is only supported at the beginning of a circuit."):
+            simulator_device_1_wire.apply("BasisState", wires=[0], par=[[0]])
+
+    def test_qubit_state_vector_not_at_beginning_error(self, simulator_device_1_wire):
+        """Tests that application of QubitStateVector raises an error if is not
+        the first operation."""
+
+        simulator_device_1_wire.pre_apply()
+        simulator_device_1_wire.apply("PauliX", wires=[0], par=[])
+
+        with pytest.raises(qml.DeviceError, match="The operation QubitStateVector is only supported at the beginning of a circuit."):
+            simulator_device_1_wire.apply("QubitStateVector", wires=[0], par=[[0, 1]])
+
+@pytest.mark.parametrize("shots,analytic", [(100, False)])
+class TestStatePreparationErrorsNonAnalytic:
+    """Tests state preparation errors that occur for non-analytic devices."""
+
+    def test_basis_state_not_analytic_error(self, simulator_device_1_wire):
+        """Tests that application of BasisState raises an error if the device
+        is not in analytic mode."""
+
+        simulator_device_1_wire.pre_apply()
+        with pytest.raises(qml.DeviceError, match="The operation BasisState is only supported in analytic mode."):
+            simulator_device_1_wire.apply("BasisState", wires=[0], par=[[0]])
+
+    def test_qubit_state_vector_not_analytic_error(self, simulator_device_1_wire):
+        """Tests that application of QubitStateVector raises an error if the device
+        is not in analytic mode."""
+
+        dev = qml.device("cirq.simulator", wires=1, shots=1000, analytic=False)
+
+        simulator_device_1_wire.pre_apply()
+        with pytest.raises(qml.DeviceError, match="The operation QubitStateVector is only supported in analytic mode."):
+            simulator_device_1_wire.apply("QubitStateVector", wires=[0], par=[[0, 1]])
 
 
 @pytest.mark.parametrize("shots,analytic", [(100, True)])
