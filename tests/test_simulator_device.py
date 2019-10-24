@@ -20,7 +20,24 @@ import math
 import pennylane as qml
 import numpy as np
 from pennylane_cirq import SimulatorDevice
+from pennylane_cirq.simulator_device import z_eigs
 import cirq
+
+class TestHelperFunctions:
+    """Test the helper functions needed for SimulatorDevice."""
+
+    # fmt: off
+    @pytest.mark.parametrize("n,expected_output", [
+        (1, [1, -1]),
+        (2, [1, -1, -1, 1]),
+        (3, [1, -1, -1, 1, -1, 1, 1, -1]),
+    ])
+    # fmt: on
+    def test_z_eigs(self, n, expected_output):
+        """Tests that z_eigs returns the proper eigenvalues of an
+        n-fold tensor product of Pauli Z operators."""
+
+        assert np.array_equal(z_eigs(n), expected_output)
 
 class TestDeviceIntegration:
     """Tests that the SimulatorDevice integrates well with PennyLane"""
