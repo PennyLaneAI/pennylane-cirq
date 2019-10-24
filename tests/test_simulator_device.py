@@ -56,19 +56,19 @@ class TestDeviceIntegration:
 
 @pytest.fixture(scope="function")
 def simulator_device_1_wire(shots, analytic):
-    """A mock instance of the abstract Device class"""
+    """Return a single wire instance of the SimulatorDevice class."""
     yield SimulatorDevice(1, shots=shots, analytic=analytic)
 
 
 @pytest.fixture(scope="function")
 def simulator_device_2_wires(shots, analytic):
-    """A mock instance of the abstract Device class"""
+    """Return a two wire instance of the SimulatorDevice class."""
     yield SimulatorDevice(2, shots=shots, analytic=analytic)
 
 
 @pytest.fixture(scope="function")
 def simulator_device_3_wires(shots, analytic):
-    """A mock instance of the abstract Device class"""
+    """Return a three wire instance of the SimulatorDevice class."""
     yield SimulatorDevice(3, shots=shots, analytic=analytic)
 
 
