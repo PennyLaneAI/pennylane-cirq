@@ -617,3 +617,46 @@ class TestSample:
         simulator_device_1_wire.state = np.array([1, 1])
         with pytest.raises(ValueError, match="Probabilites in sampling must sum up to 1."):
             simulator_device_1_wire.sample("PauliZ", wires=[0], par=[])
+
+    def test_sample_dimensions(self, simulator_device_2_wires):
+        """Tests if the samples returned by the sample function have
+        the correct dimensions
+        """
+        simulator_device_2_wires.pre_apply()
+        simulator_device_2_wires._obs_queue = []
+
+        simulator_device_2_wires.apply('RX', wires=[0], par=[1.5708])
+        simulator_device_2_wires.apply('RX', wires=[1], par=[1.5708])
+
+        simulator_device_2_wires.post_apply()
+        simulator_device_2_wires.pre_measure()
+
+        simulator_device_2_wires.shots = 10
+        s1 = simulator_device_2_wires.sample('PauliZ', [0], [])
+        assert np.array_equal(s1.shape, (10,))
+
+        simulator_device_2_wires.shots = 12
+        s2 = simulator_device_2_wires.sample('PauliZ', [1], [])
+        assert np.array_equal(s2.shape, (12,))
+
+        simulator_device_2_wires.shots = 17
+        s3 = simulator_device_2_wires.sample('CZ', [0, 1], [])
+        assert np.array_equal(s3.shape, (17,))
+
+    def test_sample_values(self, simulator_device_2_wires, tol):
+        """Tests if the samples returned by sample have
+        the correct values
+        """
+        simulator_device_2_wires.pre_apply()
+        simulator_device_2_wires._obs_queue = []
+
+        simulator_device_2_wires.apply('RX', wires=[0], par=[1.5708])
+
+        simulator_device_2_wires.post_apply()
+        simulator_device_2_wires.pre_measure()
+
+        s1 = simulator_device_2_wires.sample('PauliZ', [0], [])
+
+        # s1 should only contain 1 and -1, which is guaranteed if
+        # they square to 1
+        assert np.allclose(s1**2, 1, **tol)
