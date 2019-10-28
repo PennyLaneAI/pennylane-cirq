@@ -3,7 +3,7 @@
 Plugin usage
 ############
 
-PennyLane-Plugin provides two Target Framework devices for PennyLane:
+PennyLane-Cirq provides one Cirq device for PennyLane:
 
 * :class:`pennylane_cirq.SimulatorDevice <~SimulatorDevice>`: provides a PennyLane device for the Cirq simulator backend
 

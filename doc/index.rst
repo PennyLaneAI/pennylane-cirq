@@ -8,7 +8,7 @@ PennyLane Cirq Plugin
 This PennyLane plugin allows the Cirq simulators/hardware to be used as PennyLane devices.
 
 
-`Cirq <https://targetframework.readthedocs.io>`_ is a Python library for writing, manipulating,
+`Cirq <https://cirq.readthedocs.io>`_ is a Python library for writing, manipulating,
 and optimizing quantum circuits and running them against quantum computers and simulators.
 
 `PennyLane <https://pennylane.readthedocs.io>`_ is a machine learning library for optimization

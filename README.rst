@@ -75,7 +75,7 @@ We welcome contributions - simply fork the Plugin Name repository, and then make
 All contributors to PennyLane-Cirq will be listed as authors on the releases.
 
 We also encourage bug reports, suggestions for new features and enhancements, and even links to cool
-projects or applications built on PennyLane and Target Framework.
+projects or applications built on PennyLane and Cirq.
 
 
 Authors
