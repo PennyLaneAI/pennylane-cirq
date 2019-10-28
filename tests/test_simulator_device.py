@@ -610,14 +610,6 @@ class TestVarEstimate:
 class TestSample:
     """Test sampling."""
 
-    def test_probability_sum_error(self, simulator_device_1_wire):
-        """Test that an error is raised if the probabilites in the 
-        internal state do not sum up to 1."""
-
-        simulator_device_1_wire.state = np.array([1, 1])
-        with pytest.raises(ValueError, match="Probabilites in sampling must sum up to 1."):
-            simulator_device_1_wire.sample("PauliZ", wires=[0], par=[])
-
     def test_sample_dimensions(self, simulator_device_2_wires):
         """Tests if the samples returned by the sample function have
         the correct dimensions
