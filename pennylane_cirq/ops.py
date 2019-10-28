@@ -49,102 +49,103 @@ Operations
 Code details
 ~~~~~~~~~~~~
 """
-from pennylane.operation import Operation
+# TODO[CUSTOM OPS]: Uncomment and replace with Cirq-specific ops
+# from pennylane.operation import Operation
 
 
-class S(Operation):
-    r"""S(wires)
-    S gate.
+# class S(Operation):
+#     r"""S(wires)
+#     S gate.
 
-    .. math:: S = \begin{bmatrix} 1 & 0 \\ 0 & i \end{bmatrix}
+#     .. math:: S = \begin{bmatrix} 1 & 0 \\ 0 & i \end{bmatrix}
 
-    **Details:**
+#     **Details:**
 
-    * Number of wires: 1
-    * Number of parameters: 0
+#     * Number of wires: 1
+#     * Number of parameters: 0
 
-    Args:
-        wires (int): the subsystem the gate acts on
-    """
-    num_params = 0
-    num_wires = 1
-    par_domain = None
-
-
-class T(Operation):
-    r"""T(wires)
-    T gate.
-
-    .. math:: T = \begin{bmatrix}1&0\\0&e^{i \pi / 4}\end{bmatrix}
-
-    **Details:**
-
-    * Number of wires: 1
-    * Number of parameters: 0
-
-    Args:
-        wires (int): the subsystem the gate acts on
-    """
-    num_params = 0
-    num_wires = 1
-    par_domain = None
+#     Args:
+#         wires (int): the subsystem the gate acts on
+#     """
+#     num_params = 0
+#     num_wires = 1
+#     par_domain = None
 
 
-class CCNOT(Operation):
-    r"""CCNOT(wires)
-    Controlled-controlled-not gate.
+# class T(Operation):
+#     r"""T(wires)
+#     T gate.
 
-    .. math::
+#     .. math:: T = \begin{bmatrix}1&0\\0&e^{i \pi / 4}\end{bmatrix}
 
-        CCNOT = \begin{bmatrix}
-            1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-            0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
-            0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
-            0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
-            0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
-            0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
-            0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
-            0 & 0 & 0 & 0 & 0 & 0 & 1 & 0
-        \end{bmatrix}
+#     **Details:**
 
-    **Details:**
+#     * Number of wires: 1
+#     * Number of parameters: 0
 
-    * Number of wires: 3
-    * Number of parameters: 0
-
-    Args:
-        wires (int): the subsystem the gate acts on
-    """
-    num_params = 0
-    num_wires = 3
-    par_domain = None
+#     Args:
+#         wires (int): the subsystem the gate acts on
+#     """
+#     num_params = 0
+#     num_wires = 1
+#     par_domain = None
 
 
-class CSWAP(Operation):
-    r"""CSWAP(wires)
-    Controlled-swap gate.
+# class CCNOT(Operation):
+#     r"""CCNOT(wires)
+#     Controlled-controlled-not gate.
 
-    .. math::
+#     .. math::
 
-        CSWAP = \begin{bmatrix}
-            1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-             0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
-             0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
-             0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
-             0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
-             0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
-             0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
-             0 & 0 & 0 & 0 & 0 & 0 & 0 & 1
-        \end{bmatrix}
+#         CCNOT = \begin{bmatrix}
+#             1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+#             0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+#             0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+#             0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+#             0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+#             0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+#             0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+#             0 & 0 & 0 & 0 & 0 & 0 & 1 & 0
+#         \end{bmatrix}
 
-    **Details:**
+#     **Details:**
 
-    * Number of wires: 3
-    * Number of parameters: 0
+#     * Number of wires: 3
+#     * Number of parameters: 0
 
-    Args:
-        wires (int): the subsystem the gate acts on
-    """
-    num_params = 0
-    num_wires = 3
-    par_domain = None
+#     Args:
+#         wires (int): the subsystem the gate acts on
+#     """
+#     num_params = 0
+#     num_wires = 3
+#     par_domain = None
+
+
+# class CSWAP(Operation):
+#     r"""CSWAP(wires)
+#     Controlled-swap gate.
+
+#     .. math::
+
+#         CSWAP = \begin{bmatrix}
+#             1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+#              0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+#              0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+#              0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+#              0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+#              0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+#              0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+#              0 & 0 & 0 & 0 & 0 & 0 & 0 & 1
+#         \end{bmatrix}
+
+#     **Details:**
+
+#     * Number of wires: 3
+#     * Number of parameters: 0
+
+#     Args:
+#         wires (int): the subsystem the gate acts on
+#     """
+#     num_params = 0
+#     num_wires = 3
+#     par_domain = None

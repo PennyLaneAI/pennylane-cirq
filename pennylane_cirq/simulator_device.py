@@ -187,7 +187,7 @@ class SimulatorDevice(CirqDevice):
 
     def probability(self):
         if self.state is None:
-            return None
+            raise qml.DeviceError("Probability can not be computed because the internal state is None.")
 
         states = itertools.product(range(2), repeat=self.num_wires)
         probs = np.abs(self.state) ** 2
@@ -280,18 +280,12 @@ class SimulatorDevice(CirqDevice):
         if self.analytic:
             # We have to use the state of the simulation to find the expectation value
             marginal_probabilities = np.fromiter(
-                self.marginal_probability(wires).values(), dtype=np.float
+                self.marginal_probability(wires).values(), dtype=np.float64
             )
-
-            probability_sum = np.sum(marginal_probabilities)
-
-            if not np.isclose(probability_sum, 1, atol=1e-5, rtol=0):
-                raise ValueError(
-                    "Probabilites in sampling must sum up to 1. Got {}".format(probability_sum)
-                )
 
             # np.random.choice does not even tolerate small deviations
             # from 1, so we have to adjust the probabilities here
+            probability_sum = np.sum(marginal_probabilities)
             marginal_probabilities /= probability_sum
 
             return np.random.choice(eigenvalues, size=self.shots, p=marginal_probabilities)

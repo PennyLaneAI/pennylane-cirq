@@ -17,5 +17,6 @@ Plugin overview
 """
 from .simulator_device import SimulatorDevice
 
+# TODO[CUSTOM OPS]: Uncomment and import all custom gates
 # from .ops import S, T, CCNOT, CPHASE, CSWAP, ISWAP, PSWAP
 from ._version import __version__

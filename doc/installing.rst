@@ -15,7 +15,7 @@ PennyLane-Cirq requires the following libraries be installed:
 
 as well as the following Python packages:
 
-* `PennyLane <http://pennylane.readthedocs.io/>`_ >=0.5
+* `PennyLane <http://pennylane.readthedocs.io/>`_ >=0.6
 * `Cirq <https://cirq.readthedocs.io/>`_
 
 

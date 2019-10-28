@@ -54,9 +54,3 @@ Supported operations
 All devices support all PennyLane `operations and observables <https://pennylane.readthedocs.io/en/latest/code/ops/qubit.html>`_.
 
 In the future, the devices will also support all Cirq operations.
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Further operations
-
-   code/ops
