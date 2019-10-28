@@ -66,6 +66,19 @@ class TestCirqOperation:
         assert gate_applications[3] == cirq.Z.on(qubit)
         assert gate_applications[4] == cirq.Rz(0.3).on(qubit)
 
+    def test_apply_not_parametrized(self):
+        """Tests that the proper error is raised if an Operation is applied
+        that was not parametrized before."""
+        operation = CirqOperation(
+            lambda a, b, c: [cirq.X, cirq.Ry(a), cirq.Rx(b), cirq.Z, cirq.Rz(c)]
+        )
+        qubit = cirq.LineQubit(1)
+
+        with pytest.raises(
+            qml.DeviceError, match="CirqOperation must be parametrized before it can be applied."
+        ):
+            operation.apply(qubit)
+
 
 class TestMethods:
     """Tests the independent methods in the Cirq interface."""

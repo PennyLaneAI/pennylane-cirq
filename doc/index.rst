@@ -70,6 +70,5 @@ Contents
    :maxdepth: 1
    :caption: Code details
 
-   code/ops
    code/cirq_device
    code/simulator_device
