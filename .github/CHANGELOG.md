@@ -10,15 +10,8 @@
 
 ### Bug fixes
 
-### Contributors
-
-This release contains contributions from (in alphabetical order):
-
----
-
-# Release 0.1.1
-
-### Bug fixes
+* Fix bugs introduces into the test suite by the release of Cirq 0.6.0
+  [#13](https://github.com/XanaduAI/pennylane-cirq/pull/13)
 
 ### Contributors
 
