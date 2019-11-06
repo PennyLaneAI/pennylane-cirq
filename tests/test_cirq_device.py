@@ -415,7 +415,7 @@ class TestOperations:
         assert len(ops) == len(expected_cirq_gates)
 
         for i in range(len(ops)):
-            assert ops[i]._gate == expected_cirq_gates[i]
+            assert ops[i].gate == expected_cirq_gates[i]
 
     
     # @pytest.mark.parametrize("operation,par,expected_cirq_gates", [
