@@ -92,8 +92,9 @@ class CirqOperation:
         """Inverses the CirqOperation."""
         # We can also support inversion after parametrization, but this is not necessary for the
         # PennyLane-Cirq codebase at the moment.
+        
         if self.parametrized_cirq_gates:
-            raise qml.DeviceError("CirqOperation must be inverted before it is parametrized.")
+            raise qml.DeviceError("CirqOperation can't be inverted after it was parametrized.")
 
         self.is_inverse = not self.is_inverse
 
