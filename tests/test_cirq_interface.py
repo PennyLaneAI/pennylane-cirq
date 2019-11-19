@@ -33,6 +33,7 @@ class TestCirqOperation:
 
         assert operation.parametrized_cirq_gates is None
         assert operation.parametrization == fun
+        assert not operation.is_inverse
 
     def test_parametrize(self):
         """Tests that parametrize yields the correct queue of operations."""
@@ -78,6 +79,23 @@ class TestCirqOperation:
             qml.DeviceError, match="CirqOperation must be parametrized before it can be applied."
         ):
             operation.apply(qubit)
+
+    def test_inv(self):
+        """Test that inv inverts the gate and applying inv twice yields the initial state."""
+
+        operation = CirqOperation(
+            lambda a, b, c: [cirq.X, cirq.Ry(a), cirq.Rx(b), cirq.Z, cirq.Rz(c)]
+        )
+
+        assert not operation.is_inverse
+
+        operation.inv()
+
+        assert operation.is_inverse
+
+        operation.inv()
+
+        assert not operation.is_inverse
 
 
 class TestMethods:
