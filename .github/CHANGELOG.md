@@ -1,12 +1,10 @@
-# Release 0.2.0-dev
+# Release 0.2.0
 
 ### New features since last release
 
-### Breaking changes
-
-### Improvements
-
-### Documentation
+* Adds support for inverse operations specified via the PennyLane
+  frontend UI.
+  [#14](https://github.com/XanaduAI/pennylane-cirq/pull/14)
 
 ### Bug fixes
 
