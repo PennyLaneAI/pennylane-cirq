@@ -187,7 +187,9 @@ class SimulatorDevice(CirqDevice):
 
     def probability(self):
         if self.state is None:
-            raise qml.DeviceError("Probability can not be computed because the internal state is None.")
+            raise qml.DeviceError(
+                "Probability can not be computed because the internal state is None."
+            )
 
         states = itertools.product(range(2), repeat=self.num_wires)
         probs = np.abs(self.state) ** 2
