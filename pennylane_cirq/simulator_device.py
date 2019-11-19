@@ -69,7 +69,6 @@ class SimulatorDevice(CirqDevice):
     """
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
-    _capabilities = {"model": "qubit", "tensor_observables": False}
 
     def __init__(self, wires, shots=1000, analytic=True, qubits=None):
         super().__init__(wires, shots, qubits)

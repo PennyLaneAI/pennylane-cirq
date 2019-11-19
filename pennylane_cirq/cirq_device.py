@@ -57,6 +57,7 @@ class CirqDevice(Device):
     pennylane_requires = ">=0.6.0"
     version = __version__
     author = "Johannes Jakob Meyer"
+    _capabilities = {"model": "qubit", "tensor_observables": False, "inverse_operations": True}
 
     short_name = "cirq.base_device"
 
