@@ -219,8 +219,6 @@ class TestOperations:
 
         assert len(ops) == 1
 
-        print("Circuit:\n", cirq_device_1_wire.circuit)
-
         assert np.allclose(ops[0]._gate._matrix, np.array(U), **tol)
 
     # fmt: off
@@ -250,8 +248,6 @@ class TestOperations:
         ops = list(cirq_device_2_wires.circuit.all_operations())
 
         assert len(ops) == 1
-
-        print("Circuit:\n", cirq_device_2_wires.circuit)
 
         assert np.allclose(ops[0]._gate._matrix, np.array(U), **tol)
 
@@ -298,23 +294,43 @@ class TestOperations:
             ("PauliX", [], [cirq.X]),
             ("PauliY", [], [cirq.Y]),
             ("PauliZ", [], [cirq.Z]),
+            ("PauliX.inv", [], [cirq.X ** -1]),
+            ("PauliY.inv", [], [cirq.Y ** -1]),
+            ("PauliZ.inv", [], [cirq.Z ** -1]),
             ("Hadamard", [], [cirq.H]),
+            ("Hadamard.inv", [], [cirq.H ** -1]),
             ("S", [], [cirq.S]),
+            ("S.inv", [], [cirq.S ** -1]),
             ("PhaseShift", [1.4], [cirq.ZPowGate(exponent=1.4 / np.pi)]),
             ("PhaseShift", [-1.2], [cirq.ZPowGate(exponent=-1.2 / np.pi)]),
             ("PhaseShift", [2], [cirq.ZPowGate(exponent=2 / np.pi)]),
+            ("PhaseShift.inv", [1.4], [cirq.ZPowGate(exponent=-1.4 / np.pi)]),
+            ("PhaseShift.inv", [-1.2], [cirq.ZPowGate(exponent=1.2 / np.pi)]),
+            ("PhaseShift.inv", [2], [cirq.ZPowGate(exponent=-2 / np.pi)]),
             ("RX", [1.4], [cirq.Rx(1.4)]),
             ("RX", [-1.2], [cirq.Rx(-1.2)]),
             ("RX", [2], [cirq.Rx(2)]),
+            ("RX.inv", [1.4], [cirq.Rx(-1.4)]),
+            ("RX.inv", [-1.2], [cirq.Rx(1.2)]),
+            ("RX.inv", [2], [cirq.Rx(-2)]),
             ("RY", [1.4], [cirq.Ry(1.4)]),
             ("RY", [0], [cirq.Ry(0)]),
             ("RY", [-1.3], [cirq.Ry(-1.3)]),
+            ("RY.inv", [1.4], [cirq.Ry(-1.4)]),
+            ("RY.inv", [0], [cirq.Ry(0)]),
+            ("RY.inv", [-1.3], [cirq.Ry(+1.3)]),
             ("RZ", [1.4], [cirq.Rz(1.4)]),
             ("RZ", [-1.1], [cirq.Rz(-1.1)]),
             ("RZ", [1], [cirq.Rz(1)]),
+            ("RZ.inv", [1.4], [cirq.Rz(-1.4)]),
+            ("RZ.inv", [-1.1], [cirq.Rz(1.1)]),
+            ("RZ.inv", [1], [cirq.Rz(-1)]),
             ("Rot", [1.4, 2.3, -1.2], [cirq.Rz(1.4), cirq.Ry(2.3), cirq.Rz(-1.2)]),
             ("Rot", [1, 2, -1], [cirq.Rz(1), cirq.Ry(2), cirq.Rz(-1)]),
             ("Rot", [-1.1, 0.2, -1], [cirq.Rz(-1.1), cirq.Ry(0.2), cirq.Rz(-1)]),
+            ("Rot.inv", [1.4, 2.3, -1.2], [cirq.Rz(1.2), cirq.Ry(-2.3), cirq.Rz(-1.4)]),
+            ("Rot.inv", [1, 2, -1], [cirq.Rz(1), cirq.Ry(-2), cirq.Rz(-1)]),
+            ("Rot.inv", [-1.1, 0.2, -1], [cirq.Rz(1), cirq.Ry(-0.2), cirq.Rz(1.1)]),
             (
                 "QubitUnitary",
                 [np.array([[1, 0], [0, 1]])],
