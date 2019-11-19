@@ -35,6 +35,7 @@ import cirq
 import numpy as np
 import pennylane as qml
 from pennylane import Device
+from pennylane.operation import Operation
 
 from ._version import __version__
 from .cirq_interface import CirqOperation, unitary_matrix_gate
@@ -97,6 +98,20 @@ class CirqDevice(Device):
         else:
             self.qubits = [cirq.LineQubit(wire) for wire in range(wires)]
 
+        # Add inverse operations
+        self._inverse_operation_map = {}
+        for key in self._operation_map:
+            if not self._operation_map[key]:
+                continue
+
+            # We have to use a new CirqOperation instance because .inv() acts in-place
+            inverted_operation = CirqOperation(self._operation_map[key].parametrization)
+            inverted_operation.inv()
+
+            self._inverse_operation_map[key + Operation.string_for_inverse] = inverted_operation
+
+        self._complete_operation_map = {**self._operation_map, **self._inverse_operation_map}
+
     _operation_map = {
         "BasisState": None,
         "QubitStateVector": None,
@@ -153,17 +168,7 @@ class CirqDevice(Device):
         self.reset()
 
     def apply(self, operation, wires, par):
-        operation_name = operation
-        inverse = False
-
-        if operation.endswith(qml.Operation.string_for_inverse):
-            operation_name = operation[: -len(qml.Operation.string_for_inverse)]
-            inverse = True
-
-        operation = self._operation_map[operation_name]
-
-        if inverse:
-            operation.inv()
+        operation = self._complete_operation_map[operation]
 
         # If command is None do nothing
         if operation:
