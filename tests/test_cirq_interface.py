@@ -97,6 +97,27 @@ class TestCirqOperation:
 
         assert not operation.is_inverse
 
+    def test_inv_apply(self):
+        """Tests that the operations in the queue are correctly applied if the 
+        CirqOperation is inverted."""
+
+        operation = CirqOperation(
+            lambda a, b, c: [cirq.X, cirq.Ry(a), cirq.Rx(b), cirq.Z, cirq.Rz(c)]
+        )
+        operation.inv()
+
+        operation.parametrize(0.1, 0.2, 0.3)
+
+        qubit = cirq.LineQubit(1)
+
+        gate_applications = list(operation.apply(qubit))
+
+        assert gate_applications[0] == cirq.Rz(-0.3).on(qubit)
+        assert gate_applications[1] == (cirq.Z**-1).on(qubit)
+        assert gate_applications[2] == cirq.Rx(-0.2).on(qubit)
+        assert gate_applications[3] == cirq.Ry(-0.1).on(qubit)
+        assert gate_applications[4] == (cirq.X**-1).on(qubit)
+
 
 class TestMethods:
     """Tests the independent methods in the Cirq interface."""
