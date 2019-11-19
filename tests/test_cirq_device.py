@@ -346,6 +346,21 @@ class TestOperations:
                 [np.array([[-1, 1], [1, 1]]) / math.sqrt(2)],
                 [cirq.SingleQubitMatrixGate(np.array([[-1, 1], [1, 1]]) / math.sqrt(2))],
             ),
+            (
+                "QubitUnitary.inv",
+                [np.array([[1, 0], [0, 1]])],
+                [cirq.SingleQubitMatrixGate(np.array([[1, 0], [0, 1]])) ** -1],
+            ),
+            (
+                "QubitUnitary.inv",
+                [np.array([[1, 0], [0, -1]])],
+                [cirq.SingleQubitMatrixGate(np.array([[1, 0], [0, -1]])) ** -1],
+            ),
+            (
+                "QubitUnitary.inv",
+                [np.array([[-1, 1], [1, 1]]) / math.sqrt(2)],
+                [cirq.SingleQubitMatrixGate(np.array([[-1, 1], [1, 1]]) / math.sqrt(2)) ** -1],
+            ),
         ],
     )
     # fmt: on
