@@ -113,10 +113,10 @@ class TestCirqOperation:
         gate_applications = list(operation.apply(qubit))
 
         assert gate_applications[0] == cirq.Rz(-0.3).on(qubit)
-        assert gate_applications[1] == (cirq.Z**-1).on(qubit)
+        assert gate_applications[1] == (cirq.Z ** -1).on(qubit)
         assert gate_applications[2] == cirq.Rx(-0.2).on(qubit)
         assert gate_applications[3] == cirq.Ry(-0.1).on(qubit)
-        assert gate_applications[4] == (cirq.X**-1).on(qubit)
+        assert gate_applications[4] == (cirq.X ** -1).on(qubit)
 
     def test_inv_error(self):
         """Test that inv raises an error if the CirqOperation was already parametrized."""
@@ -126,7 +126,9 @@ class TestCirqOperation:
         )
         operation.parametrize(0.1, 0.2, 0.3)
 
-        with pytest.raises(qml.DeviceError, match="CirqOperation must be inverted before it is parametrized"):
+        with pytest.raises(
+            qml.DeviceError, match="CirqOperation must be inverted before it is parametrized"
+        ):
             operation.inv()
 
 
