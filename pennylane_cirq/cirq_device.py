@@ -163,7 +163,7 @@ class CirqDevice(Device):
         operation = self._operation_map[operation_name]
 
         if inverse:
-            operation = operation.inv()
+            operation.inv()
 
         # If command is None do nothing
         if operation:
