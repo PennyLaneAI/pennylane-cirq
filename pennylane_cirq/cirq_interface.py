@@ -89,7 +89,10 @@ class CirqOperation:
         return (parametrized_gate(*qubits) for parametrized_gate in self.parametrized_cirq_gates)
 
     def inv(self):
-        """Inverses the CirqOperation."""        
+        """Inverses the CirqOperation."""
+        if self.parametrized_cirq_gates:
+            raise qml.DeviceError("CirqOperation must be inverted before it is parametrized.")
+
         self.is_inverse = not self.is_inverse
 
 
