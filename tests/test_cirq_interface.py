@@ -118,6 +118,17 @@ class TestCirqOperation:
         assert gate_applications[3] == cirq.Ry(-0.1).on(qubit)
         assert gate_applications[4] == (cirq.X**-1).on(qubit)
 
+    def test_inv_error(self):
+        """Test that inv raises an error if the CirqOperation was already parametrized."""
+
+        operation = CirqOperation(
+            lambda a, b, c: [cirq.X, cirq.Ry(a), cirq.Rx(b), cirq.Z, cirq.Rz(c)]
+        )
+        operation.parametrize(0.1, 0.2, 0.3)
+
+        with pytest.raises(qml.DeviceError, match="CirqOperation must be inverted before it is parametrized"):
+            operation.inv()
+
 
 class TestMethods:
     """Tests the independent methods in the Cirq interface."""
