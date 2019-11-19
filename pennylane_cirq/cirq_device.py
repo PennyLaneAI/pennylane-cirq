@@ -156,10 +156,10 @@ class CirqDevice(Device):
         operation_name = operation
         inverse = False
 
-        if (operation.endswith(qml.Operation.string_for_inverse)):
-            operation_name = operation[:-len(qml.Operation.string_for_inverse)]
+        if operation.endswith(qml.Operation.string_for_inverse):
+            operation_name = operation[: -len(qml.Operation.string_for_inverse)]
             inverse = True
-            
+
         operation = self._operation_map[operation_name]
 
         if inverse:
