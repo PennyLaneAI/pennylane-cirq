@@ -88,7 +88,7 @@ class CirqOperation:
 
         return (parametrized_gate(*qubits) for parametrized_gate in self.parametrized_cirq_gates)
 
-    def inv():
+    def inv(self):
         """Inverses the CirqOperation."""        
         self.is_inverse = not self.is_inverse
 
