@@ -381,17 +381,29 @@ class TestOperations:
     # fmt: off
     @pytest.mark.parametrize("gate,par,expected_cirq_gates", [
         ("CNOT", [], [cirq.CNOT]),
+        ("CNOT.inv", [], [cirq.CNOT ** -1]),
         ("SWAP", [], [cirq.SWAP]),
+        ("SWAP.inv", [], [cirq.SWAP ** -1]),
         ("CZ", [], [cirq.CZ]),
+        ("CZ.inv", [], [cirq.CZ ** -1]),
         ("CRX", [1.4], [cirq.ControlledGate(cirq.Rx(1.4))]),
         ("CRX", [-1.2], [cirq.ControlledGate(cirq.Rx(-1.2))]),
         ("CRX", [2], [cirq.ControlledGate(cirq.Rx(2))]),
+        ("CRX.inv", [1.4], [cirq.ControlledGate(cirq.Rx(-1.4))]),
+        ("CRX.inv", [-1.2], [cirq.ControlledGate(cirq.Rx(1.2))]),
+        ("CRX.inv", [2], [cirq.ControlledGate(cirq.Rx(-2))]),
         ("CRY", [1.4], [cirq.ControlledGate(cirq.Ry(1.4))]),
         ("CRY", [0], [cirq.ControlledGate(cirq.Ry(0))]),
         ("CRY", [-1.3], [cirq.ControlledGate(cirq.Ry(-1.3))]),
+        ("CRY.inv", [1.4], [cirq.ControlledGate(cirq.Ry(-1.4))]),
+        ("CRY.inv", [0], [cirq.ControlledGate(cirq.Ry(0))]),
+        ("CRY.inv", [-1.3], [cirq.ControlledGate(cirq.Ry(1.3))]),
         ("CRZ", [1.4], [cirq.ControlledGate(cirq.Rz(1.4))]),
         ("CRZ", [-1.1], [cirq.ControlledGate(cirq.Rz(-1.1))]),
         ("CRZ", [1], [cirq.ControlledGate(cirq.Rz(1))]),
+        ("CRZ.inv", [1.4], [cirq.ControlledGate(cirq.Rz(-1.4))]),
+        ("CRZ.inv", [-1.1], [cirq.ControlledGate(cirq.Rz(1.1))]),
+        ("CRZ.inv", [1], [cirq.ControlledGate(cirq.Rz(-1))]),
         ("CRot", [1.4, 2.3, -1.2],
             [
                 cirq.ControlledGate(cirq.Rz(1.4)),
@@ -413,6 +425,27 @@ class TestOperations:
                 cirq.ControlledGate(cirq.Rz(-1)),
             ],
         ),
+        ("CRot.inv", [1.4, 2.3, -1.2],
+            [
+                cirq.ControlledGate(cirq.Rz(1.2)),
+                cirq.ControlledGate(cirq.Ry(-2.3)),
+                cirq.ControlledGate(cirq.Rz(-1.4)),
+            ],
+        ),
+        ("CRot.inv", [1, 2, -1],
+            [
+                cirq.ControlledGate(cirq.Rz(1)),
+                cirq.ControlledGate(cirq.Ry(-2)),
+                cirq.ControlledGate(cirq.Rz(-1)),
+            ],
+        ),
+        ("CRot.inv", [-1.1, 0.2, -1],
+            [
+                cirq.ControlledGate(cirq.Rz(1)),
+                cirq.ControlledGate(cirq.Ry(-0.2)),
+                cirq.ControlledGate(cirq.Rz(1.1)),
+            ],
+        ),
         ("QubitUnitary", [np.eye(4)], [cirq.TwoQubitMatrixGate(np.eye(4))]),
         (
             "QubitUnitary",
@@ -430,6 +463,25 @@ class TestOperations:
                 cirq.TwoQubitMatrixGate(
                     np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1]]) / 2
                 )
+            ],
+        ),
+        ("QubitUnitary.inv", [np.eye(4)], [cirq.TwoQubitMatrixGate(np.eye(4)) ** -1]),
+        (
+            "QubitUnitary.inv",
+            [np.array([[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]])],
+            [
+                cirq.TwoQubitMatrixGate(
+                    np.array([[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]])
+                ) ** -1
+            ],
+        ),
+        (
+            "QubitUnitary.inv",
+            [np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1]]) / 2],
+            [
+                cirq.TwoQubitMatrixGate(
+                    np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1]]) / 2
+                ) ** -1
             ],
         ),
     ])
