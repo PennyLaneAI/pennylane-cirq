@@ -106,23 +106,6 @@ def cirq_device_3_wires(shots):
 
 
 @pytest.mark.parametrize("shots", [100])
-class TestProperties:
-    """Tests that the properties of the CirqDevice are correctly implemented."""
-
-    def test_operations(self, cirq_device_1_wire):
-        """Tests that the CirqDevice supports all expected operations"""
-
-        assert cirq_device_1_wire.operations.issuperset(qml.ops.qubit.ops)
-
-        # TODO add cirq specific operations here.
-
-    def test_observables(self, cirq_device_1_wire):
-        """Tests that the CirqDevice supports all expected observables"""
-
-        assert cirq_device_1_wire.observables.issuperset(qml.ops.qubit.obs)
-
-
-@pytest.mark.parametrize("shots", [100])
 class TestOperations:
     """Tests that the CirqDevice correctly handles the requested operations."""
 
