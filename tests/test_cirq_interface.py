@@ -33,6 +33,7 @@ class TestCirqOperation:
 
         assert operation.parametrized_cirq_gates is None
         assert operation.parametrization == fun
+        assert not operation.is_inverse
 
     def test_parametrize(self):
         """Tests that parametrize yields the correct queue of operations."""
@@ -78,6 +79,57 @@ class TestCirqOperation:
             qml.DeviceError, match="CirqOperation must be parametrized before it can be applied."
         ):
             operation.apply(qubit)
+
+    def test_inv(self):
+        """Test that inv inverts the gate and applying inv twice yields the initial state."""
+
+        operation = CirqOperation(
+            lambda a, b, c: [cirq.X, cirq.Ry(a), cirq.Rx(b), cirq.Z, cirq.Rz(c)]
+        )
+
+        assert not operation.is_inverse
+
+        operation.inv()
+
+        assert operation.is_inverse
+
+        operation.inv()
+
+        assert not operation.is_inverse
+
+    def test_inv_apply(self):
+        """Tests that the operations in the queue are correctly applied if the 
+        CirqOperation is inverted."""
+
+        operation = CirqOperation(
+            lambda a, b, c: [cirq.X, cirq.Ry(a), cirq.Rx(b), cirq.Z, cirq.Rz(c)]
+        )
+        operation.inv()
+
+        operation.parametrize(0.1, 0.2, 0.3)
+
+        qubit = cirq.LineQubit(1)
+
+        gate_applications = list(operation.apply(qubit))
+
+        assert gate_applications[0] == cirq.Rz(-0.3).on(qubit)
+        assert gate_applications[1] == (cirq.Z ** -1).on(qubit)
+        assert gate_applications[2] == cirq.Rx(-0.2).on(qubit)
+        assert gate_applications[3] == cirq.Ry(-0.1).on(qubit)
+        assert gate_applications[4] == (cirq.X ** -1).on(qubit)
+
+    def test_inv_error(self):
+        """Test that inv raises an error if the CirqOperation was already parametrized."""
+
+        operation = CirqOperation(
+            lambda a, b, c: [cirq.X, cirq.Ry(a), cirq.Rx(b), cirq.Z, cirq.Rz(c)]
+        )
+        operation.parametrize(0.1, 0.2, 0.3)
+
+        with pytest.raises(
+            qml.DeviceError, match="CirqOperation can't be inverted after it was parametrized"
+        ):
+            operation.inv()
 
 
 class TestMethods:

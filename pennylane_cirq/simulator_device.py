@@ -69,7 +69,6 @@ class SimulatorDevice(CirqDevice):
     """
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
-    _capabilities = {"model": "qubit", "tensor_observables": False}
 
     def __init__(self, wires, shots=1000, analytic=True, qubits=None):
         super().__init__(wires, shots, qubits)
@@ -188,7 +187,9 @@ class SimulatorDevice(CirqDevice):
 
     def probability(self):
         if self.state is None:
-            raise qml.DeviceError("Probability can not be computed because the internal state is None.")
+            raise qml.DeviceError(
+                "Probability can not be computed because the internal state is None."
+            )
 
         states = itertools.product(range(2), repeat=self.num_wires)
         probs = np.abs(self.state) ** 2
