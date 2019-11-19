@@ -127,7 +127,7 @@ class TestCirqOperation:
         operation.parametrize(0.1, 0.2, 0.3)
 
         with pytest.raises(
-            qml.DeviceError, match="CirqOperation must be inverted before it is parametrized"
+            qml.DeviceError, match="CirqOperation can't be inverted after it was parametrized"
         ):
             operation.inv()
 
