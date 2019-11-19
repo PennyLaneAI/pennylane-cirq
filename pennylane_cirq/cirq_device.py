@@ -153,7 +153,17 @@ class CirqDevice(Device):
         self.reset()
 
     def apply(self, operation, wires, par):
-        operation = self._operation_map[operation]
+        operation_name = operation
+        inverse = False
+
+        if (operation.endswith(qml.Operation.string_for_inverse)):
+            operation_name = operation[:-len(qml.Operation.string_for_inverse)]
+            inverse = True
+            
+        operation = self._operation_map[operation_name]
+
+        if inverse:
+            operation = operation.inv()
 
         # If command is None do nothing
         if operation:
