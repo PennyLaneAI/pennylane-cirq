@@ -150,8 +150,7 @@ class TestStateApply:
         state = init_state(1)
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0])])
-            dev.apply([qml.__getattribute__(name)(wires=[0])])
+            dev.apply([qml.QubitStateVector(state, wires=[0]), qml.__getattribute__(name)(wires=[0])])
 
         res = np.abs(dev._state) ** 2
         expected = np.abs(mat @ state) ** 2
@@ -165,8 +164,7 @@ class TestStateApply:
         state = init_state(1)
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0])])
-            dev.apply([qml.__getattribute__(name)(theta, wires=[0])])
+            dev.apply([qml.QubitStateVector(state, wires=[0]), qml.__getattribute__(name)(theta, wires=[0])])
 
         res = np.abs(dev._state) ** 2
         expected = np.abs(func(theta) @ state) ** 2
@@ -182,8 +180,7 @@ class TestStateApply:
         c = -0.654
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0])])
-            dev.apply([qml.Rot(a, b, c, wires=[0])])
+            dev.apply([qml.QubitStateVector(state, wires=[0]), qml.Rot(a, b, c, wires=[0])])
 
         res = np.abs(dev._state) ** 2
         expected = np.abs(rot(a, b, c) @ state) ** 2
@@ -196,8 +193,7 @@ class TestStateApply:
         state = init_state(2)
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0, 1])])
-            dev.apply([qml.__getattribute__(name)(wires=[0, 1])])
+            dev.apply([qml.QubitStateVector(state, wires=[0, 1]), qml.__getattribute__(name)(wires=[0, 1])])
 
         res = np.abs(dev._state) ** 2
         expected = np.abs(mat @ state) ** 2
@@ -210,8 +206,9 @@ class TestStateApply:
         state = init_state(N)
 
         with mimic_execution_for_apply(dev):
-            dev.apply("QubitStateVector", list(range(N)), [state])
-            dev.apply("QubitUnitary", list(range(N)), [mat])
+            dev.apply([
+                qml.QubitStateVector(state, wires=list(range(N))), 
+                qml.QubitUnitary(mat, wires=list(range(N)))])
 
         res = np.abs(dev._state) ** 2
         expected = np.abs(mat @ state) ** 2
@@ -233,8 +230,7 @@ class TestStateApply:
         state = init_state(3)
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0, 1, 2])])
-            dev.apply([qml.__getattribute__(name)(wires=[0, 1, 2])])
+            dev.apply([qml.QubitStateVector(state, wires=[0, 1, 2]), qml.__getattribute__(name)(wires=[0, 1, 2])])
 
         res = np.abs(dev._state) ** 2
         expected = np.abs(mat @ state) ** 2
@@ -248,8 +244,7 @@ class TestStateApply:
         state = init_state(2)
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0, 1])])
-            dev.apply([qml.__getattribute__(name)(theta, wires=[0, 1])])
+            dev.apply([qml.QubitStateVector(state, wires=[0, 1]), qml.__getattribute__(name)(theta, wires=[0, 1])])
 
         res = np.abs(dev._state) ** 2
         expected = np.abs(func(theta) @ state) ** 2
@@ -317,8 +312,7 @@ class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
         state = init_state(1)
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0])])
-            dev.apply([qml.__getattribute__(name)(wires=[0])])
+            dev.apply([qml.QubitStateVector(state, wires=[0]), qml.__getattribute__(name)(wires=[0])])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(mat @ state) ** 2
@@ -332,8 +326,7 @@ class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
         state = init_state(1)
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0])])
-            dev.apply([qml.__getattribute__(name)(theta, wires=[0])])
+            dev.apply([qml.QubitStateVector(state, wires=[0]), qml.__getattribute__(name)(theta, wires=[0])])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(func(theta) @ state) ** 2
@@ -349,8 +342,7 @@ class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
         c = -0.654
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0])])
-            dev.apply([qml.Rot(a, b, c, wires=[0])])
+            dev.apply([qml.QubitStateVector(state, wires=[0]), qml.Rot(a, b, c, wires=[0])])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(rot(a, b, c) @ state) ** 2
@@ -363,8 +355,7 @@ class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
         state = init_state(2)
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0, 1])])
-            dev.apply([qml.__getattribute__(name)(wires=[0, 1])])
+            dev.apply([qml.QubitStateVector(state, wires=[0, 1]), qml.__getattribute__(name)(wires=[0, 1])])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(mat @ state) ** 2
@@ -377,8 +368,9 @@ class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
         state = init_state(N)
 
         with mimic_execution_for_apply(dev):
-            dev.apply("QubitStateVector", list(range(N)), [state])
-            dev.apply("QubitUnitary", list(range(N)), [mat])
+            dev.apply([
+                qml.QubitStateVector(state, wires=list(range(N))), 
+                qml.QubitUnitary(mat, wires=list(range(N)))])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(mat @ state) ** 2
@@ -400,8 +392,7 @@ class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
         state = init_state(3)
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0, 1, 2])])
-            dev.apply([qml.QubitUnitary(mat, wires=[0, 1, 2])])
+            dev.apply([qml.QubitStateVector(state, wires=[0, 1, 2]), qml.QubitUnitary(mat, wires=[0, 1, 2])])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(mat @ state) ** 2
@@ -415,8 +406,7 @@ class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
         state = init_state(2)
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0, 1])])
-            dev.apply([qml.__getattribute__(name)(theta, wires=[0, 1])])
+            dev.apply([qml.QubitStateVector(state, wires=[0, 1]), qml.__getattribute__(name)(theta, wires=[0, 1])])
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(func(theta) @ state) ** 2

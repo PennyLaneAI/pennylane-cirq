@@ -135,7 +135,7 @@ class CirqDevice(QubitDevice):
 
     def reset(self):
         super().reset()
-        
+
         self.circuit = cirq.Circuit()
 
     @property
@@ -174,7 +174,7 @@ class CirqDevice(QubitDevice):
 
                 self.apply_qubit_state_vector(operation)
             else:
-                cirq_operation = self._complete_operation_map[operation]
+                cirq_operation = self._complete_operation_map[operation.name]
 
                 # If command is None do nothing
                 if cirq_operation:
