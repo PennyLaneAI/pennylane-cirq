@@ -135,6 +135,7 @@ class CirqDevice(QubitDevice):
 
     def reset(self):
         super().reset()
+        
         self.circuit = cirq.Circuit()
 
     @property
