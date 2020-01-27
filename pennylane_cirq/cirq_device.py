@@ -34,22 +34,21 @@ Code details
 import cirq
 import numpy as np
 import pennylane as qml
-from pennylane import Device
+from pennylane import QubitDevice
 from pennylane.operation import Operation
 
 from ._version import __version__
 from .cirq_interface import CirqOperation, unitary_matrix_gate
 
 
-class CirqDevice(Device):
+class CirqDevice(QubitDevice):
     """Abstract base device for PennyLane-Cirq.
 
     Args:
         wires (int): the number of modes to initialize the device in
         shots (int): Number of circuit evaluations/random samples used
-            to estimate expectation values of observables. Shots need 
-            to >= 1.
-        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used 
+            to estimate expectation values of observables. Shots need to be >= 1.
+        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of `cirq.LineQubit` instances is created.
     """
@@ -62,28 +61,9 @@ class CirqDevice(Device):
 
     short_name = "cirq.base_device"
 
-    @staticmethod
-    def _convert_measurements(measurements, eigenvalues):
-        r"""Convert measurements from boolean to numeric values.
+    def __init__(self, wires, shots, analytic, qubits=None):
+        super().__init__(wires, shots, analytic)
 
-        Args:
-            measurements (np.array[bool]): the measurements as boolean values
-            eigenvalues (np.array[float]): eigenvalues corresponding to the observed basis states
-        
-        Returns:
-            (np.array[float]): the converted measurements
-        """
-        N = measurements.shape[0]
-
-        indices = np.ravel_multi_index(measurements, [2] * N)
-        converted_measurements = eigenvalues[indices]
-
-        return converted_measurements
-
-    def __init__(self, wires, shots, qubits=None):
-        super().__init__(wires, shots)
-
-        self._eigs = dict()
         self.circuit = None
 
         if qubits:
@@ -154,6 +134,7 @@ class CirqDevice(Device):
     }
 
     def reset(self):
+        super().reset()
         self.circuit = cirq.Circuit()
 
     @property
@@ -167,58 +148,48 @@ class CirqDevice(Device):
     def pre_apply(self):
         self.reset()
 
-    def apply(self, operation, wires, par):
-        operation = self._complete_operation_map[operation]
+    def apply_basis_state(self, basis_state_operation):
+        pass
 
-        # If command is None do nothing
-        if operation:
-            operation.parametrize(*par)
+    def apply_qubit_state_vector(self, qubit_state_vector_operation):
+        pass
 
-            self.circuit.append(operation.apply(*[self.qubits[wire] for wire in wires]))
+    def apply(self, operations, rotations=None, **kwargs):
+        rotations = rotations or []
 
-    def pre_measure(self):
-        # Cirq only measures states in the computational basis, i.e. 0 and 1
-        # To measure different observables, we have to go to their eigenbases
-
-        # This code is adapted from the pennylane-qiskit plugin
-        for e in self.obs_queue:
-            # Identity and PauliZ need no changes
-            if e.name == "PauliX":
-                # X = H.Z.H
-                self.apply("Hadamard", wires=e.wires, par=[])
-
-            elif e.name == "PauliY":
-                # Y = (HS^)^.Z.(HS^) and S^=SZ
-                self.apply("PauliZ", wires=e.wires, par=[])
-                self.apply("S", wires=e.wires, par=[])
-                self.apply("Hadamard", wires=e.wires, par=[])
-
-            elif e.name == "Hadamard":
-                # H = Ry(-pi/4)^.Z.Ry(-pi/4)
-                self.apply("RY", e.wires, [-np.pi / 4])
-
-            elif e.name == "Hermitian":
-                # For arbitrary Hermitian matrix H, let U be the unitary matrix
-                # that diagonalises it, and w_i be the eigenvalues.
-                Hmat = e.parameters[0]
-                Hkey = tuple(Hmat.flatten().tolist())
-
-                if Hmat.shape not in [(2, 2), (4, 4)]:
+        for i, operation in enumerate(operations):
+            if operation.name == "BasisState":
+                if i > 0:
                     raise qml.DeviceError(
-                        "Cirq only supports single-qubit and two-qubit unitary gates and thus only single-qubit and two-qubit Hermitian observables."
+                        "The operation BasisState is only supported at the beginning of a circuit."
                     )
 
-                if Hkey in self._eigs:
-                    # retrieve eigenvectors
-                    U = self._eigs[Hkey]["eigvec"]
-                else:
-                    # store the eigenvalues corresponding to H
-                    # in a dictionary, so that they do not need to
-                    # be calculated later
-                    w, U = np.linalg.eigh(Hmat)
-                    self._eigs[Hkey] = {"eigval": w, "eigvec": U}
+                self.apply_basis_state(operation)
+            elif operation.name == "QubitStateVector":
+                if i > 0:
+                    raise qml.DeviceError(
+                        "The operation QubitStateVector is only supported at the beginning of a circuit."
+                    )
 
-                # Perform a change of basis before measuring by applying U^ to the circuit
-                self.apply("QubitUnitary", e.wires, [U.conj().T])
+                self.apply_qubit_state_vector(operation)
+            else:
+                cirq_operation = self._complete_operation_map[operation]
 
-            # No measurements are added here because they can't be added for simulations
+                # If command is None do nothing
+                if cirq_operation:
+                    cirq_operation.parametrize(*operation.parameters)
+
+                    self.circuit.append(cirq_operation.apply(*[self.qubits[wire] for wire in operation.wires]))
+
+        # TODO: get pre rotated state here
+
+        # TODO: Remove duplicate code
+        # Diagonalize the given observables
+        for operation in rotations:
+            cirq_operation = self._complete_operation_map[operation]
+
+            # If command is None do nothing
+            if cirq_operation:
+                cirq_operation.parametrize(*operation.parameters)
+
+                self.circuit.append(cirq_operation.apply(*[self.qubits[wire] for wire in operation.wires]))
