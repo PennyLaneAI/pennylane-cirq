@@ -50,8 +50,6 @@ class TestSample:
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.operation.Sample
 
-        dev.pre_measure()
-
         s1 = dev.sample("PauliZ", [0], [])
 
         # s1 should only contain 1 and -1
@@ -73,8 +71,6 @@ class TestSample:
 
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.operation.Sample
-
-        dev.pre_measure()
 
         s1 = dev.sample("Hermitian", [0], [A])
 
@@ -106,16 +102,14 @@ class TestSample:
         )
 
         with mimic_execution_for_sample(dev):
-            dev.apply([qml.RX(theta, wires=[0])])
-            dev.apply([qml.RY(2 * theta, wires=[1])])
-            dev.apply([qml.CNOT(wires=[0, 1])])
+            dev.apply(
+                [qml.RX(theta, wires=[0]), qml.RY(2 * theta, wires=[1]), qml.CNOT(wires=[0, 1])]
+            )
 
         dev._obs_queue = [qml.Hermitian(A, wires=[0, 1], do_queue=False)]
 
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.operation.Sample
-
-        dev.pre_measure()
 
         s1 = dev.sample("Hermitian", [0, 1], [A])
 
@@ -150,11 +144,15 @@ class RemoveWhenImplementedTestTensorSample:
         dev = device(3)
 
         with mimic_execution_for_sample(dev):
-            dev.apply([qml.RX(theta, wires=[0])])
-            dev.apply([qml.RX(phi, wires=[1])])
-            dev.apply([qml.RX(varphi, wires=[2])])
-            dev.apply([qml.CNOT(wires=[0, 1])])
-            dev.apply([qml.CNOT(wires=[1, 2])])
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RX(phi, wires=[1]),
+                    qml.RX(varphi, wires=[2]),
+                    qml.CNOT(wires=[0, 1]),
+                    qml.CNOT(wires=[1, 2]),
+                ]
+            )
 
         dev._obs_queue = [
             qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
@@ -162,8 +160,6 @@ class RemoveWhenImplementedTestTensorSample:
 
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.operation.Sample
-
-        res = dev.pre_measure()
 
         s1 = dev.sample(["PauliX", "PauliY"], [[0], [2]], [[], [], []])
 
@@ -194,11 +190,15 @@ class RemoveWhenImplementedTestTensorSample:
         dev = device(3)
 
         with mimic_execution_for_sample(dev):
-            dev.apply([qml.RX(theta, wires=[0])])
-            dev.apply([qml.RX(phi, wires=[1])])
-            dev.apply([qml.RX(varphi, wires=[2])])
-            dev.apply([qml.CNOT(wires=[0, 1])])
-            dev.apply([qml.CNOT(wires=[1, 2])])
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RX(phi, wires=[1]),
+                    qml.RX(varphi, wires=[2]),
+                    qml.CNOT(wires=[0, 1]),
+                    qml.CNOT(wires=[1, 2]),
+                ]
+            )
 
         dev._obs_queue = [
             qml.PauliZ(wires=[0], do_queue=False)
@@ -208,8 +208,6 @@ class RemoveWhenImplementedTestTensorSample:
 
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.operation.Sample
-
-        res = dev.pre_measure()
 
         s1 = dev.sample(["PauliZ", "Hadamard", "PauliY"], [[0], [1], [2]], [[], [], []])
 
@@ -238,11 +236,15 @@ class RemoveWhenImplementedTestTensorSample:
         dev = device(3)
 
         with mimic_execution_for_sample(dev):
-            dev.apply([qml.RX(theta, wires=[0])])
-            dev.apply([qml.RX(phi, wires=[1])])
-            dev.apply([qml.RX(varphi, wires=[2])])
-            dev.apply([qml.CNOT(wires=[0, 1])])
-            dev.apply([qml.CNOT(wires=[1, 2])])
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RX(phi, wires=[1]),
+                    qml.RX(varphi, wires=[2]),
+                    qml.CNOT(wires=[0, 1]),
+                    qml.CNOT(wires=[1, 2]),
+                ]
+            )
 
         A = np.array(
             [
@@ -259,8 +261,6 @@ class RemoveWhenImplementedTestTensorSample:
 
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.operation.Sample
-
-        res = dev.pre_measure()
 
         s1 = dev.sample(["PauliZ", "Hermitian"], [[0], [1, 2]], [[], [A]])
 

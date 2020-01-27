@@ -180,17 +180,21 @@ class CirqDevice(QubitDevice):
                 if cirq_operation:
                     cirq_operation.parametrize(*operation.parameters)
 
-                    self.circuit.append(cirq_operation.apply(*[self.qubits[wire] for wire in operation.wires]))
+                    self.circuit.append(
+                        cirq_operation.apply(*[self.qubits[wire] for wire in operation.wires])
+                    )
 
         # TODO: get pre rotated state here
 
         # TODO: Remove duplicate code
         # Diagonalize the given observables
         for operation in rotations:
-            cirq_operation = self._complete_operation_map[operation]
+            cirq_operation = self._complete_operation_map[operation.name]
 
             # If command is None do nothing
             if cirq_operation:
                 cirq_operation.parametrize(*operation.parameters)
 
-                self.circuit.append(cirq_operation.apply(*[self.qubits[wire] for wire in operation.wires]))
+                self.circuit.append(
+                    cirq_operation.apply(*[self.qubits[wire] for wire in operation.wires])
+                )

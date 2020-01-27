@@ -79,9 +79,7 @@ class SimulatorDevice(CirqDevice):
 
     def apply_basis_state(self, basis_state_operation):
         if not self.analytic:
-            raise qml.DeviceError(
-                "The operation BasisState is only supported in analytic mode."
-            )
+            raise qml.DeviceError("The operation BasisState is only supported in analytic mode.")
 
         basis_state_array = np.array(basis_state_operation.parameters[0])
 
@@ -94,7 +92,9 @@ class SimulatorDevice(CirqDevice):
 
         if not np.all(np.isin(basis_state_array, np.array([0, 1]))):
             raise qml.DeviceError(
-                "Argument for BasisState can only contain 0 and 1. Got {}".format(basis_state_operation.parameters[0])
+                "Argument for BasisState can only contain 0 and 1. Got {}".format(
+                    basis_state_operation.parameters[0]
+                )
             )
 
         self._initial_state = np.zeros(2 ** len(self.qubits), dtype=np.complex64)
@@ -134,9 +134,7 @@ class SimulatorDevice(CirqDevice):
         self.circuit.append(cirq.IdentityGate(len(self.qubits))(*self.qubits))
 
         if self.analytic:
-            self._result = self._simulator.simulate(
-                self.circuit, initial_state=self._initial_state
-            )
+            self._result = self._simulator.simulate(self.circuit, initial_state=self._initial_state)
 
             self._state = np.array(self._result.state_vector())
 

@@ -27,7 +27,7 @@ np.random.seed(42)
 @contextmanager
 def mimic_execution_for_expval(device):
     device.reset()
-    
+
     with device.execution_context():
         yield
 
@@ -44,17 +44,16 @@ class TestExpval:
         dev = device(2)
 
         with mimic_execution_for_expval(dev):
-            dev.apply([qml.RX(theta, wires=[0])])
-            dev.apply([qml.RX(phi, wires=[1])])
-            dev.apply([qml.CNOT(wires=[0, 1])])
+            dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.CNOT(wires=[0, 1])])
 
         O = qml.Identity
         name = "Identity"
 
         dev._obs_queue = [O(wires=[0], do_queue=False), O(wires=[1], do_queue=False)]
-        res = dev.pre_measure()
 
-        res = np.array([dev.expval(name, [0], []), dev.expval(name, [1], [])])
+        res = np.array(
+            [dev.expval(O(wires=[0], do_queue=False)), dev.expval(O(wires=[1], do_queue=False))]
+        )
 
         assert np.allclose(res, np.array([1, 1]), **tol)
 
@@ -66,17 +65,16 @@ class TestExpval:
         dev = device(2)
 
         with mimic_execution_for_expval(dev):
-            dev.apply([qml.RX(theta, wires=[0])])
-            dev.apply([qml.RX(phi, wires=[1])])
-            dev.apply([qml.CNOT(wires=[0, 1])])
+            dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.CNOT(wires=[0, 1])])
 
         O = qml.PauliZ
         name = "PauliZ"
 
         dev._obs_queue = [O(wires=[0], do_queue=False), O(wires=[1], do_queue=False)]
-        res = dev.pre_measure()
 
-        res = np.array([dev.expval(name, [0], []), dev.expval(name, [1], [])])
+        res = np.array(
+            [dev.expval(O(wires=[0], do_queue=False)), dev.expval(O(wires=[1], do_queue=False))]
+        )
 
         assert np.allclose(res, np.array([np.cos(theta), np.cos(theta) * np.cos(phi)]), **tol)
 
@@ -86,19 +84,21 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-
-        with mimic_execution_for_expval(dev):
-            dev.apply([qml.RY(theta, wires=[0])])
-            dev.apply([qml.RY(phi, wires=[1])])
-            dev.apply([qml.CNOT(wires=[0, 1])])
-
         O = qml.PauliX
         name = "PauliX"
 
-        dev._obs_queue = [O(wires=[0], do_queue=False), O(wires=[1], do_queue=False)]
-        dev.pre_measure()
+        with mimic_execution_for_expval(dev):
+            dev.apply(
+                [qml.RY(theta, wires=[0]), qml.RY(phi, wires=[1]), qml.CNOT(wires=[0, 1])],
+                O(wires=[0], do_queue=False).diagonalizing_gates()
+                + O(wires=[1], do_queue=False).diagonalizing_gates(),
+            )
 
-        res = np.array([dev.expval(name, [0], []), dev.expval(name, [1], [])])
+        dev._obs_queue = [O(wires=[0], do_queue=False), O(wires=[1], do_queue=False)]
+
+        res = np.array(
+            [dev.expval(O(wires=[0], do_queue=False)), dev.expval(O(wires=[1], do_queue=False))]
+        )
         assert np.allclose(res, np.array([np.sin(theta) * np.sin(phi), np.sin(phi)]), **tol)
 
     def test_pauliy_expectation(self, device, shots, tol):
@@ -109,17 +109,16 @@ class TestExpval:
         dev = device(2)
 
         with mimic_execution_for_expval(dev):
-            dev.apply([qml.RX(theta, wires=[0])])
-            dev.apply([qml.RX(phi, wires=[1])])
-            dev.apply([qml.CNOT(wires=[0, 1])])
+            dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.CNOT(wires=[0, 1])])
 
         O = qml.PauliY
         name = "PauliY"
 
         dev._obs_queue = [O(wires=[0], do_queue=False), O(wires=[1], do_queue=False)]
-        dev.pre_measure()
 
-        res = np.array([dev.expval(name, [0], []), dev.expval(name, [1], [])])
+        res = np.array(
+            [dev.expval(O(wires=[0], do_queue=False)), dev.expval(O(wires=[1], do_queue=False))]
+        )
         assert np.allclose(res, np.array([0, -(np.cos(theta)) * np.sin(phi)]), **tol)
 
     def test_hadamard_expectation(self, device, shots, tol):
@@ -130,17 +129,16 @@ class TestExpval:
         dev = device(2)
 
         with mimic_execution_for_expval(dev):
-            dev.apply([qml.RY(theta, wires=[0])])
-            dev.apply([qml.RY(phi, wires=[1])])
-            dev.apply([qml.CNOT(wires=[0, 1])])
+            dev.apply([qml.RY(theta, wires=[0]), qml.RY(phi, wires=[1]), qml.CNOT(wires=[0, 1])])
 
         O = qml.Hadamard
         name = "Hadamard"
 
         dev._obs_queue = [O(wires=[0], do_queue=False), O(wires=[1], do_queue=False)]
-        dev.pre_measure()
 
-        res = np.array([dev.expval(name, [0], []), dev.expval(name, [1], [])])
+        res = np.array(
+            [dev.expval(O(wires=[0], do_queue=False)), dev.expval(O(wires=[1], do_queue=False))]
+        )
         expected = np.array(
             [
                 np.sin(theta) * np.sin(phi) + np.cos(theta),
@@ -157,9 +155,7 @@ class TestExpval:
         dev = device(2)
 
         with mimic_execution_for_expval(dev):
-            dev.apply([qml.RY(theta, wires=[0])])
-            dev.apply([qml.RY(phi, wires=[1])])
-            dev.apply([qml.CNOT(wires=[0, 1])])
+            dev.apply([qml.RY(theta, wires=[0]), qml.RY(phi, wires=[1]), qml.CNOT(wires=[0, 1])])
 
         O = qml.Hermitian
         name = "Hermitian"
@@ -168,7 +164,6 @@ class TestExpval:
             O(A, wires=[0], do_queue=False),
             O(A, wires=[1], do_queue=False),
         ]
-        dev.pre_measure()
 
         res = np.array([dev.expval(name, [0], [A]), dev.expval(name, [1], [A])])
 
@@ -189,9 +184,7 @@ class TestExpval:
         dev = device(2)
 
         with mimic_execution_for_expval(dev):
-            dev.apply([qml.RY(theta, wires=[0])])
-            dev.apply([qml.RY(phi, wires=[1])])
-            dev.apply([qml.CNOT(wires=[0, 1])])
+            dev.apply([qml.RY(theta, wires=[0]), qml.RY(phi, wires=[1]), qml.CNOT(wires=[0, 1])])
 
         O = qml.Hermitian
         name = "Hermitian"
@@ -206,7 +199,6 @@ class TestExpval:
         )
 
         dev._obs_queue = [O(A, wires=[0, 1], do_queue=False)]
-        dev.pre_measure()
 
         res = np.array([dev.expval(name, [0, 1], [A])])
 
@@ -243,7 +235,6 @@ class RemoveThisWhenTensorsAreImplementedTestTensorExpval:
         dev._obs_queue = [
             qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
         ]
-        res = dev.pre_measure()
 
         res = dev.expval(["PauliX", "PauliY"], [[0], [2]], [[], [], []])
         expected = np.sin(theta) * np.sin(phi) * np.sin(varphi)
@@ -268,7 +259,6 @@ class RemoveThisWhenTensorsAreImplementedTestTensorExpval:
             @ qml.Hadamard(wires=[1], do_queue=False)
             @ qml.PauliY(wires=[2], do_queue=False)
         ]
-        res = dev.pre_measure()
 
         res = dev.expval(["PauliZ", "Hadamard", "PauliY"], [[0], [1], [2]], [[], [], []])
         expected = -(np.cos(varphi) * np.sin(phi) + np.sin(varphi) * np.cos(theta)) / np.sqrt(2)
@@ -300,7 +290,6 @@ class RemoveThisWhenTensorsAreImplementedTestTensorExpval:
         dev._obs_queue = [
             qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(A, wires=[1, 2], do_queue=False)
         ]
-        res = dev.pre_measure()
 
         res = dev.expval(["PauliZ", "Hermitian"], [[0], [1, 2]], [[], [A]])
         expected = 0.5 * (
