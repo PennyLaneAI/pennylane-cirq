@@ -23,12 +23,10 @@ from contextlib import contextmanager
 
 @contextmanager
 def mimic_execution_for_var(device):
+    device.reset()
+
     with device.execution_context():
-        device.pre_apply()
-
         yield
-
-        device.post_apply()
 
 
 np.random.seed(42)
@@ -48,8 +46,8 @@ class TestVar:
 
         # test correct variance for <Z> of a rotated state
         with mimic_execution_for_var(dev):
-            dev.apply("RX", wires=[0], par=[phi])
-            dev.apply("RY", wires=[0], par=[theta])
+            dev.apply([qml.RX(phi, wires=[0])])
+            dev.apply([qml.RY(theta, wires=[0])])
 
         dev._obs_queue = [qml.PauliZ(wires=[0], do_queue=False)]
         dev.pre_measure()
@@ -71,8 +69,8 @@ class TestVar:
         H = np.array([[4, -1 + 6j], [-1 - 6j, 2]])
 
         with mimic_execution_for_var(dev):
-            dev.apply("RX", wires=[0], par=[phi])
-            dev.apply("RY", wires=[0], par=[theta])
+            dev.apply([qml.RX(phi, wires=[0])])
+            dev.apply([qml.RY(theta, wires=[0])])
 
         dev._obs_queue = [qml.Hermitian(H, wires=[0], do_queue=False)]
         dev.pre_measure()
@@ -101,11 +99,11 @@ class RemoveWhenImplementedTestTensorVar:
         dev = device(3)
 
         with mimic_execution_for_var(dev):
-            dev.apply("RX", wires=[0], par=[theta])
-            dev.apply("RX", wires=[1], par=[phi])
-            dev.apply("RX", wires=[2], par=[varphi])
-            dev.apply("CNOT", wires=[0, 1], par=[])
-            dev.apply("CNOT", wires=[1, 2], par=[])
+            dev.apply([qml.RX(theta, wires=[0])])
+            dev.apply([qml.RX(phi, wires=[1])])
+            dev.apply([qml.RX(varphi, wires=[2])])
+            dev.apply([qml.CNOT(wires=[0, 1])])
+            dev.apply([qml.CNOT(wires=[1, 2])])
 
         dev._obs_queue = [
             qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
@@ -134,11 +132,11 @@ class RemoveWhenImplementedTestTensorVar:
         dev = device(3)
 
         with mimic_execution_for_var(dev):
-            dev.apply("RX", wires=[0], par=[theta])
-            dev.apply("RX", wires=[1], par=[phi])
-            dev.apply("RX", wires=[2], par=[varphi])
-            dev.apply("CNOT", wires=[0, 1], par=[])
-            dev.apply("CNOT", wires=[1, 2], par=[])
+            dev.apply([qml.RX(theta, wires=[0])])
+            dev.apply([qml.RX(phi, wires=[1])])
+            dev.apply([qml.RX(varphi, wires=[2])])
+            dev.apply([qml.CNOT(wires=[0, 1])])
+            dev.apply([qml.CNOT(wires=[1, 2])])
 
         dev._obs_queue = [
             qml.PauliZ(wires=[0], do_queue=False)
@@ -167,11 +165,11 @@ class RemoveWhenImplementedTestTensorVar:
         dev = device(3)
 
         with mimic_execution_for_var(dev):
-            dev.apply("RX", wires=[0], par=[theta])
-            dev.apply("RX", wires=[1], par=[phi])
-            dev.apply("RX", wires=[2], par=[varphi])
-            dev.apply("CNOT", wires=[0, 1], par=[])
-            dev.apply("CNOT", wires=[1, 2], par=[])
+            dev.apply([qml.RX(theta, wires=[0])])
+            dev.apply([qml.RX(phi, wires=[1])])
+            dev.apply([qml.RX(varphi, wires=[2])])
+            dev.apply([qml.CNOT(wires=[0, 1])])
+            dev.apply([qml.CNOT(wires=[1, 2])])
 
         A = np.array(
             [
