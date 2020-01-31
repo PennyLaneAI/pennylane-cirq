@@ -228,7 +228,7 @@ class TestStateApply:
         dev = device(2)
         state = np.array([[0, 123.432], [-0.432, 023.4]])
 
-        with pytest.raises(ValueError, match=r"Not a 2x2 .* unitary matrix"):
+        with pytest.raises(ValueError, match=f'Not a unitary matrix:'):
             with mimic_execution_for_apply(dev):
                 dev.apply("QubitUnitary", [0, 1], [state])
 
