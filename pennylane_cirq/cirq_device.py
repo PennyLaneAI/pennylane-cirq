@@ -200,11 +200,6 @@ class CirqDevice(QubitDevice, abc.ABC):
                 )
             )
 
-    @abc.abstractmethod
-    def _pre_rotation(self):
-        """Provides a callback before observable rotations take place."""
-        pass
-
     def apply(self, operations, **kwargs):
         # pylint: disable=missing-function-docstring
         rotations = kwargs.pop("rotations", [])
@@ -222,7 +217,7 @@ class CirqDevice(QubitDevice, abc.ABC):
             else:
                 self._apply_operation(operation)
 
-        self._pre_rotation()
+        # TODO: get pre rotated state here
 
         # Diagonalize the given observables
         for operation in rotations:
