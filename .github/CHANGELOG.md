@@ -2,6 +2,10 @@
 
 ### Improvements
 
+* Ported the `CirqDevice` class to use the new `QubitDevice` base class,
+  enabling the use of tensor observables.
+  [#19](https://github.com/XanaduAI/pennylane-cirq/pull/19)
+
 * Added support for inverse operations by defining the `.inv()` method
   of the `CirqOperation` class which uses the `cirq.inverse` function.
   [#15](https://github.com/XanaduAI/pennylane-cirq/pull/15)
@@ -18,7 +22,7 @@
 
 This release contains contributions from (in alphabetical order):
 
-Johannes Jakob Meyer
+Johannes Jakob Meyer, Antal Száva
 
 ---
 
