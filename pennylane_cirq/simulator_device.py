@@ -79,7 +79,9 @@ class SimulatorDevice(CirqDevice):
 
     def apply_basis_state(self, basis_state_operation):
         if not self.analytic:
-            raise qml.DeviceError("The operation BasisState is only supported in analytic mode.")
+            raise qml.DeviceError(
+                "The operation BasisState is only supported in analytic mode."
+            )
 
         basis_state_array = np.array(basis_state_operation.parameters[0])
 
@@ -107,7 +109,9 @@ class SimulatorDevice(CirqDevice):
                 "The operation QubitStateVector is only supported in analytic mode."
             )
 
-        state_vector = np.array(qubit_state_vector_operation.parameters[0], dtype=np.complex64)
+        state_vector = np.array(
+            qubit_state_vector_operation.parameters[0], dtype=np.complex64
+        )
 
         if len(state_vector) != 2 ** len(self.qubits):
             raise qml.DeviceError(
@@ -134,7 +138,9 @@ class SimulatorDevice(CirqDevice):
         self.circuit.append(cirq.IdentityGate(len(self.qubits))(*self.qubits))
 
         if self.analytic:
-            self._result = self._simulator.simulate(self.circuit, initial_state=self._initial_state)
+            self._result = self._simulator.simulate(
+                self.circuit, initial_state=self._initial_state
+            )
 
             self._state = np.array(self._result.state_vector())
 
@@ -163,5 +169,8 @@ class SimulatorDevice(CirqDevice):
         # Bring measurements to a more managable form, but keep True/False as values for now
         # They will be changed in the measurement routines where the observable is available
         return np.array(
-            [self._result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
+            [
+                self._result.measurements[str(wire)].flatten()
+                for wire in range(self.num_wires)
+            ]
         ).T.astype(int)

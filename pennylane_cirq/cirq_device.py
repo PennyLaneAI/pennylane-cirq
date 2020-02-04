@@ -57,7 +57,11 @@ class CirqDevice(QubitDevice):
     pennylane_requires = ">=0.6.0"
     version = __version__
     author = "Johannes Jakob Meyer"
-    _capabilities = {"model": "qubit", "tensor_observables": False, "inverse_operations": True}
+    _capabilities = {
+        "model": "qubit",
+        "tensor_observables": False,
+        "inverse_operations": True,
+    }
 
     short_name = "cirq.base_device"
 
@@ -88,9 +92,14 @@ class CirqDevice(QubitDevice):
             inverted_operation = CirqOperation(self._operation_map[key].parametrization)
             inverted_operation.inv()
 
-            self._inverse_operation_map[key + Operation.string_for_inverse] = inverted_operation
+            self._inverse_operation_map[
+                key + Operation.string_for_inverse
+            ] = inverted_operation
 
-        self._complete_operation_map = {**self._operation_map, **self._inverse_operation_map}
+        self._complete_operation_map = {
+            **self._operation_map,
+            **self._inverse_operation_map,
+        }
 
     _operation_map = {
         "BasisState": None,
@@ -181,7 +190,9 @@ class CirqDevice(QubitDevice):
                     cirq_operation.parametrize(*operation.parameters)
 
                     self.circuit.append(
-                        cirq_operation.apply(*[self.qubits[wire] for wire in operation.wires])
+                        cirq_operation.apply(
+                            *[self.qubits[wire] for wire in operation.wires]
+                        )
                     )
 
         # TODO: get pre rotated state here
@@ -196,5 +207,7 @@ class CirqDevice(QubitDevice):
                 cirq_operation.parametrize(*operation.parameters)
 
                 self.circuit.append(
-                    cirq_operation.apply(*[self.qubits[wire] for wire in operation.wires])
+                    cirq_operation.apply(
+                        *[self.qubits[wire] for wire in operation.wires]
+                    )
                 )
