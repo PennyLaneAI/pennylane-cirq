@@ -154,6 +154,14 @@ class SimulatorDevice(CirqDevice):
 
     @property
     def state(self):
+        """Returns the state vector of the circuit prior to measurement.
+
+        .. note::
+
+            The state includes possible basis rotations for non-diagonal 
+            observables. Note that this behaviour is differs from PennyLane's
+            default.qubit plugin.
+        """
         # pylint: disable=missing-function-docstring
         return self._state
 
