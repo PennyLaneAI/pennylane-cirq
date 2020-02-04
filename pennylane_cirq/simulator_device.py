@@ -147,6 +147,10 @@ class SimulatorDevice(CirqDevice):
 
         return self.marginal_prob(probs, wires)
 
+    @property
+    def state(self):
+        return self._state
+
     def generate_samples(self):
         if self.analytic:
             return super().generate_samples()

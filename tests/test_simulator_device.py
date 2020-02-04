@@ -59,30 +59,27 @@ class TestApply:
     """Tests that gates are correctly applied"""
 
     # fmt: off
-    @pytest.mark.parametrize("name,input,expected_output", [
-        ("PauliX", [1, 0], np.array([0, 1])),
-        ("PauliX", [1 / math.sqrt(2), 1 / math.sqrt(2)], [1 / math.sqrt(2), 1 / math.sqrt(2)]),
-        ("PauliY", [1, 0], [0, 1j]),
-        ("PauliY", [1 / math.sqrt(2), 1 / math.sqrt(2)], [-1j / math.sqrt(2), 1j / math.sqrt(2)]),
-        ("PauliZ", [1, 0], [1, 0]),
-        ("PauliZ", [1 / math.sqrt(2), 1 / math.sqrt(2)], [1 / math.sqrt(2), -1 / math.sqrt(2)]),
-        ("Hadamard", [1, 0], [1 / math.sqrt(2), 1 / math.sqrt(2)]),
-        ("Hadamard", [1 / math.sqrt(2), -1 / math.sqrt(2)], [0, 1]),
+    @pytest.mark.parametrize("op,input,expected_output", [
+        (qml.PauliX, [1, 0], np.array([0, 1])),
+        (qml.PauliX, [1 / math.sqrt(2), 1 / math.sqrt(2)], [1 / math.sqrt(2), 1 / math.sqrt(2)]),
+        (qml.PauliY, [1, 0], [0, 1j]),
+        (qml.PauliY, [1 / math.sqrt(2), 1 / math.sqrt(2)], [-1j / math.sqrt(2), 1j / math.sqrt(2)]),
+        (qml.PauliZ, [1, 0], [1, 0]),
+        (qml.PauliZ, [1 / math.sqrt(2), 1 / math.sqrt(2)], [1 / math.sqrt(2), -1 / math.sqrt(2)]),
+        (qml.Hadamard, [1, 0], [1 / math.sqrt(2), 1 / math.sqrt(2)]),
+        (qml.Hadamard, [1 / math.sqrt(2), -1 / math.sqrt(2)], [0, 1]),
     ])
     # fmt: on
     def test_apply_operation_single_wire_no_parameters(
-        self, simulator_device_1_wire, tol, name, input, expected_output
+        self, simulator_device_1_wire, tol, op, input, expected_output
     ):
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
 
-        simulator_device_1_wire._obs_queue = []
+        simulator_device_1_wire.reset()
+        simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
+        simulator_device_1_wire.apply([op(wires=[0])])
 
-        simulator_device_1_wire.pre_apply()
-        simulator_device_1_wire.apply(name, wires=[0], par=[])
-
-        simulator_device_1_wire.initial_state = np.array(input, dtype=np.complex64)
-        simulator_device_1_wire.pre_measure()
 
         assert np.allclose(
             simulator_device_1_wire.state, np.array(expected_output), **tol
