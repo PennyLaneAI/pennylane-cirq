@@ -298,14 +298,14 @@ class TestStatePreparationErrorsNonAnalytic:
 
         with pytest.raises(qml.DeviceError, match="The operation BasisState is only supported in analytic mode."):
             simulator_device_1_wire.apply([qml.BasisState(np.array([0]), wires=[0])])
-            
+
 
     def test_qubit_state_vector_not_analytic_error(self, simulator_device_1_wire):
         """Tests that application of QubitStateVector raises an error if the device
         is not in analytic mode."""
 
         simulator_device_1_wire.reset()
-        
+
         with pytest.raises(qml.DeviceError, match="The operation QubitStateVector is only supported in analytic mode."):
             simulator_device_1_wire.apply([qml.QubitStateVector(np.array([0, 1]), wires=[0])])
 
@@ -337,14 +337,11 @@ class TestExpval:
         """Tests that expectation values are properly calculated for single-wire observables without parameters."""
 
         op = operation(0, do_queue=False)
-        simulator_device_1_wire._obs_queue = [op]
 
-        simulator_device_1_wire.pre_apply()
-        simulator_device_1_wire.apply("QubitStateVector", wires=[0], par=[input])
-        simulator_device_1_wire.post_apply()
-        
-        simulator_device_1_wire.pre_measure()        
-        res = simulator_device_1_wire.expval(op.name, wires=[0], par=[])
+        simulator_device_1_wire.reset()
+        simulator_device_1_wire.apply([qml.QubitStateVector(np.array(input), wires=[0])], op.diagonalizing_gates())
+      
+        res = simulator_device_1_wire.expval(op)
 
         assert np.isclose(res, expected_output, **tol) 
 
@@ -359,14 +356,11 @@ class TestExpval:
         """Tests that expectation values are properly calculated for single-wire observables with parameters."""
 
         op = operation(par[0], 0, do_queue=False)
-        simulator_device_1_wire._obs_queue = [op]
 
-        simulator_device_1_wire.pre_apply()
-        simulator_device_1_wire.apply("QubitStateVector", wires=[0], par=[input])
-        simulator_device_1_wire.post_apply()
-        
-        simulator_device_1_wire.pre_measure()        
-        res = simulator_device_1_wire.expval(op.name, wires=[0], par=par)
+        simulator_device_1_wire.reset()
+        simulator_device_1_wire.apply([qml.QubitStateVector(np.array(input), wires=[0])], op.diagonalizing_gates())
+      
+        res = simulator_device_1_wire.expval(op)
 
         assert np.isclose(res, expected_output, **tol) 
 
@@ -434,14 +428,11 @@ class TestExpval:
         """Tests that expectation values are properly calculated for two-wire observables with parameters."""
 
         op = operation(par[0], [0, 1], do_queue=False)
-        simulator_device_2_wires._obs_queue = [op]
 
-        simulator_device_2_wires.pre_apply()
-        simulator_device_2_wires.apply("QubitStateVector", wires=[0, 1], par=[input])
-        simulator_device_2_wires.post_apply()
+        simulator_device_2_wires.reset()
+        simulator_device_2_wires.apply([qml.QubitStateVector(np.array(input), wires=[0, 1])], op.diagonalizing_gates())
       
-        simulator_device_2_wires.pre_measure()
-        res = simulator_device_2_wires.expval(op.name, wires=[0, 1], par=par)
+        res = simulator_device_2_wires.expval(op)
 
         assert np.isclose(res, expected_output, **tol) 
 
@@ -470,16 +461,13 @@ class TestVar:
         """Tests that variances are properly calculated for single-wire observables without parameters."""
 
         op = operation(0, do_queue=False)
-        simulator_device_1_wire._obs_queue = [op]
 
-        simulator_device_1_wire.pre_apply()
-        simulator_device_1_wire.apply("QubitStateVector", wires=[0], par=[input])
-        simulator_device_1_wire.post_apply()
-        
-        simulator_device_1_wire.pre_measure()        
-        res = simulator_device_1_wire.var(op.name, wires=[0], par=[])
+        simulator_device_1_wire.reset()
+        simulator_device_1_wire.apply([qml.QubitStateVector(np.array(input), wires=[0, 1])], op.diagonalizing_gates())
+      
+        res = simulator_device_1_wire.var(op)
 
-        assert np.isclose(res, expected_output, **tol)
+        assert np.isclose(res, expected_output, **tol) 
 
     # fmt: off
     @pytest.mark.parametrize("operation,input,expected_output,par", [
@@ -499,17 +487,13 @@ class TestVar:
         else:
             op = operation(0, do_queue=False)
 
-        simulator_device_1_wire._obs_queue = [op]
+        simulator_device_1_wire.reset()
+        simulator_device_1_wire.apply([qml.QubitStateVector(np.array(input), wires=[0, 1])], op.diagonalizing_gates()) 
 
-        simulator_device_1_wire.pre_apply()
-        simulator_device_1_wire.apply("QubitStateVector", wires=[0], par=[input])
-        simulator_device_1_wire.post_apply()
-
-        simulator_device_1_wire.pre_measure()   
         if par:
-            res = simulator_device_1_wire.var(op.name, wires=[0], par=[np.array(*par)])
+            res = simulator_device_1_wire.var(op)
         else:
-            res = simulator_device_1_wire.var(op.name, wires=[0], par=[])
+            res = simulator_device_1_wire.var(op)
 
         assert np.isclose(res, expected_output, **tol)
 
@@ -526,16 +510,13 @@ class TestVar:
         """Tests that variances are properly calculated for two-wire observables with parameters."""
 
         op = operation(np.array(*par), [0, 1], do_queue=False)
-        simulator_device_2_wires._obs_queue = [op]
 
-        simulator_device_2_wires.pre_apply()
-        simulator_device_2_wires.apply("QubitStateVector", wires=[0, 1], par=[input])
-        simulator_device_2_wires.post_apply()
-        
-        simulator_device_2_wires.pre_measure()        
-        res = simulator_device_2_wires.var(op.name, wires=[0, 1], par=[np.array(*par)])
-        
-        assert np.isclose(res, expected_output, **tol)
+        simulator_device_2_wires.reset()
+        simulator_device_2_wires.apply([qml.QubitStateVector(np.array(input), wires=[0, 1])], op.diagonalizing_gates())
+      
+        res = simulator_device_2_wires.var(op)
+
+        assert np.isclose(res, expected_output, **tol) 
 
 class TestVarEstimate:
     """Test the estimation of variances."""
@@ -563,40 +544,35 @@ class TestSample:
         """Tests if the samples returned by the sample function have
         the correct dimensions
         """
-        simulator_device_2_wires.pre_apply()
-        simulator_device_2_wires._obs_queue = []
-
-        simulator_device_2_wires.apply('RX', wires=[0], par=[1.5708])
-        simulator_device_2_wires.apply('RX', wires=[1], par=[1.5708])
-
-        simulator_device_2_wires.post_apply()
-        simulator_device_2_wires.pre_measure()
+        simulator_device_2_wires.reset()
+        simulator_device_2_wires.apply([qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])])
 
         simulator_device_2_wires.shots = 10
-        s1 = simulator_device_2_wires.sample('PauliZ', [0], [])
+        simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
+        s1 = simulator_device_2_wires.sample(qml.PauliZ(0))
         assert np.array_equal(s1.shape, (10,))
 
         simulator_device_2_wires.shots = 12
-        s2 = simulator_device_2_wires.sample('PauliZ', [1], [])
+        simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
+        s2 = simulator_device_2_wires.sample(qml.PauliZ(1))
         assert np.array_equal(s2.shape, (12,))
 
         simulator_device_2_wires.shots = 17
-        s3 = simulator_device_2_wires.sample('CZ', [0, 1], [])
+        simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
+        s3 = simulator_device_2_wires.sample(qml.Hermitian(np.diag([1,1,1,-1]), wires=[0, 1]))
         assert np.array_equal(s3.shape, (17,))
 
     def test_sample_values(self, simulator_device_2_wires, tol):
         """Tests if the samples returned by sample have
         the correct values
         """
-        simulator_device_2_wires.pre_apply()
-        simulator_device_2_wires._obs_queue = []
+        
+        simulator_device_2_wires.reset()
 
-        simulator_device_2_wires.apply('RX', wires=[0], par=[1.5708])
+        simulator_device_2_wires.apply([qml.RX(1.5708, wires=[0])])
+        simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
 
-        simulator_device_2_wires.post_apply()
-        simulator_device_2_wires.pre_measure()
-
-        s1 = simulator_device_2_wires.sample('PauliZ', [0], [])
+        s1 = simulator_device_2_wires.sample(qml.PauliZ(0))
 
         # s1 should only contain 1 and -1, which is guaranteed if
         # they square to 1
