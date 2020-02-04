@@ -127,8 +127,8 @@ class SimulatorDevice(CirqDevice):
 
         self._initial_state = state_vector
 
-    def apply(self, operations, rotations=None, **kwargs):
-        super().apply(operations, rotations, **kwargs)
+    def apply(self, operations, **kwargs):
+        super().apply(operations, **kwargs)
 
         # We apply an identity gate to all wires, otherwise Cirq would ignore
         # wires that are not acted upon

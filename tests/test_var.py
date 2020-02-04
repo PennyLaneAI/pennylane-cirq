@@ -74,7 +74,7 @@ class TestVar:
         with mimic_execution_for_var(dev):
             dev.apply(
                 [qml.RX(phi, wires=[0]), qml.RY(theta, wires=[0])],
-                obs.diagonalizing_gates(),
+                rotations=obs.diagonalizing_gates(),
             )
 
         var = dev.var(obs)
@@ -112,7 +112,7 @@ class TestTensorVar:
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
                 ],
-                obs.diagonalizing_gates(),
+                rotations=obs.diagonalizing_gates(),
             )
 
         res = dev.var(obs)
@@ -151,7 +151,7 @@ class TestTensorVar:
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
                 ],
-                obs.diagonalizing_gates(),
+                rotations=obs.diagonalizing_gates(),
             )
 
         res = dev.var(obs)
@@ -194,7 +194,7 @@ class TestTensorVar:
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
                 ],
-                obs.diagonalizing_gates(),
+                rotations=obs.diagonalizing_gates(),
             )
 
         res = dev.var(obs)

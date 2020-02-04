@@ -116,7 +116,7 @@ class TestExpval:
                     qml.RY(phi, wires=[1]),
                     qml.CNOT(wires=[0, 1]),
                 ],
-                O(wires=[0], do_queue=False).diagonalizing_gates()
+                rotations=O(wires=[0], do_queue=False).diagonalizing_gates()
                 + O(wires=[1], do_queue=False).diagonalizing_gates(),
             )
 
@@ -147,7 +147,7 @@ class TestExpval:
                     qml.RX(phi, wires=[1]),
                     qml.CNOT(wires=[0, 1]),
                 ],
-                O(wires=[0], do_queue=False).diagonalizing_gates()
+                rotations=O(wires=[0], do_queue=False).diagonalizing_gates()
                 + O(wires=[1], do_queue=False).diagonalizing_gates(),
             )
 
@@ -176,7 +176,7 @@ class TestExpval:
                     qml.RY(phi, wires=[1]),
                     qml.CNOT(wires=[0, 1]),
                 ],
-                O(wires=[0], do_queue=False).diagonalizing_gates()
+                rotations=O(wires=[0], do_queue=False).diagonalizing_gates()
                 + O(wires=[1], do_queue=False).diagonalizing_gates(),
             )
 
@@ -211,7 +211,7 @@ class TestExpval:
                     qml.RY(phi, wires=[1]),
                     qml.CNOT(wires=[0, 1]),
                 ],
-                O(A, wires=[0], do_queue=False).diagonalizing_gates()
+                rotations=O(A, wires=[0], do_queue=False).diagonalizing_gates()
                 + O(A, wires=[1], do_queue=False).diagonalizing_gates(),
             )
 
@@ -255,7 +255,7 @@ class TestExpval:
                     qml.RY(phi, wires=[1]),
                     qml.CNOT(wires=[0, 1]),
                 ],
-                O(B, wires=[0, 1], do_queue=False).diagonalizing_gates(),
+                rotations=O(B, wires=[0, 1], do_queue=False).diagonalizing_gates(),
             )
 
         dev._obs_queue = [O(B, wires=[0, 1], do_queue=False)]
@@ -300,7 +300,7 @@ class TestTensorExpval:
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
                 ],
-                obs.diagonalizing_gates(),
+                rotations=obs.diagonalizing_gates(),
             )
 
         res = dev.expval(obs)
@@ -331,7 +331,7 @@ class TestTensorExpval:
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
                 ],
-                obs.diagonalizing_gates(),
+                rotations=obs.diagonalizing_gates(),
             )
 
         res = dev.expval(obs)
@@ -370,7 +370,7 @@ class TestTensorExpval:
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
                 ],
-                obs.diagonalizing_gates(),
+                rotations=obs.diagonalizing_gates(),
             )
 
         res = dev.expval(obs)

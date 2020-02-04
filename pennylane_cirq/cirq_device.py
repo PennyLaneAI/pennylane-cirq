@@ -199,9 +199,8 @@ class CirqDevice(QubitDevice, abc.ABC):
                 )
             )
 
-
-    def apply(self, operations, rotations=None, **kwargs):
-        rotations = rotations or []
+    def apply(self, operations, **kwargs):
+        rotations = kwargs.pop("rotations", [])
 
         for i, operation in enumerate(operations):
             if i > 0 and operation.name in {"BasisState", "QubitStateVector"}:

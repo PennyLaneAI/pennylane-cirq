@@ -69,7 +69,7 @@ class TestSample:
         with mimic_execution_for_sample(dev):
             dev.apply(
                 [qml.RX(theta, wires=[0])],
-                qml.Hermitian(A, wires=[0], do_queue=False).diagonalizing_gates(),
+                rotations=qml.Hermitian(A, wires=[0], do_queue=False).diagonalizing_gates(),
             )
 
         dev._obs_queue = [qml.Hermitian(A, wires=[0], do_queue=False)]
@@ -117,7 +117,7 @@ class TestSample:
                     qml.RY(2 * theta, wires=[1]),
                     qml.CNOT(wires=[0, 1]),
                 ],
-                qml.Hermitian(A, wires=[0, 1], do_queue=False).diagonalizing_gates(),
+                rotations=qml.Hermitian(A, wires=[0, 1], do_queue=False).diagonalizing_gates(),
             )
 
         dev._obs_queue = [qml.Hermitian(A, wires=[0, 1], do_queue=False)]
@@ -169,7 +169,7 @@ class TestTensorSample:
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
                 ],
-                obs.diagonalizing_gates(),
+                rotations=obs.diagonalizing_gates(),
             )
 
         s1 = dev.sample(obs)
@@ -215,7 +215,7 @@ class TestTensorSample:
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
                 ],
-                obs.diagonalizing_gates(),
+                rotations=obs.diagonalizing_gates(),
             )
 
         s1 = dev.sample(obs)
@@ -271,7 +271,7 @@ class TestTensorSample:
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
                 ],
-                obs.diagonalizing_gates(),
+                rotations=obs.diagonalizing_gates(),
             )
 
         s1 = dev.sample(obs)

@@ -566,7 +566,7 @@ class TestExpval:
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0])], op.diagonalizing_gates()
+            [qml.QubitStateVector(np.array(input), wires=[0])], rotations=op.diagonalizing_gates()
         )
 
         res = simulator_device_1_wire.expval(op)
@@ -595,7 +595,7 @@ class TestExpval:
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0])], op.diagonalizing_gates()
+            [qml.QubitStateVector(np.array(input), wires=[0])], rotations=op.diagonalizing_gates()
         )
 
         res = simulator_device_1_wire.expval(op)
@@ -685,7 +685,7 @@ class TestExpval:
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply(
             [qml.QubitStateVector(np.array(input), wires=[0, 1])],
-            op.diagonalizing_gates(),
+            rotations=op.diagonalizing_gates(),
         )
 
         res = simulator_device_2_wires.expval(op)
@@ -724,7 +724,7 @@ class TestVar:
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
             [qml.QubitStateVector(np.array(input), wires=[0, 1])],
-            op.diagonalizing_gates(),
+            rotations=op.diagonalizing_gates(),
         )
 
         res = simulator_device_1_wire.var(op)
@@ -760,7 +760,7 @@ class TestVar:
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
             [qml.QubitStateVector(np.array(input), wires=[0, 1])],
-            op.diagonalizing_gates(),
+            rotations=op.diagonalizing_gates(),
         )
 
         if par:
@@ -815,7 +815,7 @@ class TestVar:
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply(
             [qml.QubitStateVector(np.array(input), wires=[0, 1])],
-            op.diagonalizing_gates(),
+            rotations=op.diagonalizing_gates(),
         )
 
         res = simulator_device_2_wires.var(op)

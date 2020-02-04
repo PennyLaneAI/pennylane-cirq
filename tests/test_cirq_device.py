@@ -123,7 +123,7 @@ class TestOperations:
     def test_reset_on_full_circuit(self, cirq_device_1_wire):
         """Tests that reset resets the internal circuit when it is filled."""
 
-        cirq_device_1_wire.pre_apply()
+        cirq_device_1_wire.reset()
         cirq_device_1_wire.apply([qml.PauliX(0)])
 
         # Assert that the queue is filled
@@ -133,15 +133,6 @@ class TestOperations:
 
         # Assert that the queue is empty
         assert not list(cirq_device_1_wire.circuit.all_operations())
-
-    def test_pre_apply(self, cirq_device_1_wire):
-        """Tests that pre_apply calls reset."""
-
-        cirq_device_1_wire.reset = MagicMock()
-
-        cirq_device_1_wire.pre_apply()
-
-        assert cirq_device_1_wire.reset.called
 
     @pytest.mark.parametrize(
         "gate,expected_cirq_gates",
