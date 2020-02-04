@@ -165,6 +165,20 @@ class CirqDevice(QubitDevice):
     def apply_qubit_state_vector(self, qubit_state_vector_operation):
         pass
 
+    def _apply_operation(self, operation):
+        cirq_operation = self._complete_operation_map[operation.name]
+
+        # If command is None do nothing
+        if cirq_operation:
+            cirq_operation.parametrize(*operation.parameters)
+
+            self.circuit.append(
+                cirq_operation.apply(
+                    *[self.qubits[wire] for wire in operation.wires]
+                )
+            )
+
+
     def apply(self, operations, rotations=None, **kwargs):
         rotations = rotations or []
 
@@ -179,31 +193,10 @@ class CirqDevice(QubitDevice):
             elif operation.name == "QubitStateVector":
                 self.apply_qubit_state_vector(operation)
             else:
-                cirq_operation = self._complete_operation_map[operation.name]
-
-                # If command is None do nothing
-                if cirq_operation:
-                    cirq_operation.parametrize(*operation.parameters)
-
-                    self.circuit.append(
-                        cirq_operation.apply(
-                            *[self.qubits[wire] for wire in operation.wires]
-                        )
-                    )
+                self._apply_operation(operation)
 
         # TODO: get pre rotated state here
 
-        # TODO: Remove duplicate code
         # Diagonalize the given observables
         for operation in rotations:
-            cirq_operation = self._complete_operation_map[operation.name]
-
-            # If command is None do nothing
-            if cirq_operation:
-                cirq_operation.parametrize(*operation.parameters)
-
-                self.circuit.append(
-                    cirq_operation.apply(
-                        *[self.qubits[wire] for wire in operation.wires]
-                    )
-                )
+            self._apply_operation(operation)
