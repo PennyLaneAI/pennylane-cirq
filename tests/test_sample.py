@@ -134,7 +134,7 @@ class TestSample:
         assert np.allclose(np.mean(s1), expected, **tol)
 
 
-@pytest.mark.parametrize("shots", [8192])
+@pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
 class TestTensorSample:
     """Test tensor expectation values"""
 
@@ -145,6 +145,7 @@ class TestTensorSample:
         varphi = -0.543
 
         dev = device(3)
+        obs = qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
 
         with mimic_execution_for_sample(dev):
             dev.apply(
@@ -154,17 +155,11 @@ class TestTensorSample:
                     qml.RX(varphi, wires=[2]),
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
-                ]
+                ],
+                obs.diagonalizing_gates()
             )
 
-        dev._obs_queue = [
-            qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
-        ]
-
-        for idx in range(len(dev._obs_queue)):
-            dev._obs_queue[idx].return_type = qml.operation.Sample
-
-        s1 = dev.sample(["PauliX", "PauliY"], [[0], [2]], [[], [], []])
+        s1 = dev.sample(obs)
 
         # s1 should only contain 1 and -1
         assert np.allclose(s1 ** 2, 1, **tol)
@@ -192,6 +187,10 @@ class TestTensorSample:
 
         dev = device(3)
 
+        obs = (qml.PauliZ(wires=[0], do_queue=False)
+            @ qml.Hadamard(wires=[1], do_queue=False)
+            @ qml.PauliY(wires=[2], do_queue=False))
+
         with mimic_execution_for_sample(dev):
             dev.apply(
                 [
@@ -200,19 +199,11 @@ class TestTensorSample:
                     qml.RX(varphi, wires=[2]),
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
-                ]
+                ],
+                obs.diagonalizing_gates()
             )
 
-        dev._obs_queue = [
-            qml.PauliZ(wires=[0], do_queue=False)
-            @ qml.Hadamard(wires=[1], do_queue=False)
-            @ qml.PauliY(wires=[2], do_queue=False)
-        ]
-
-        for idx in range(len(dev._obs_queue)):
-            dev._obs_queue[idx].return_type = qml.operation.Sample
-
-        s1 = dev.sample(["PauliZ", "Hadamard", "PauliY"], [[0], [1], [2]], [[], [], []])
+        s1 = dev.sample(obs)
 
         # s1 should only contain 1 and -1
         assert np.allclose(s1 ** 2, 1, **tol)
@@ -236,18 +227,10 @@ class TestTensorSample:
         phi = 0.123
         varphi = -0.543
 
-        dev = device(3)
+        # Reseed here so that all eigenvalues are guaranteed to appear in the sample
+        np.random.seed(143)
 
-        with mimic_execution_for_sample(dev):
-            dev.apply(
-                [
-                    qml.RX(theta, wires=[0]),
-                    qml.RX(phi, wires=[1]),
-                    qml.RX(varphi, wires=[2]),
-                    qml.CNOT(wires=[0, 1]),
-                    qml.CNOT(wires=[1, 2]),
-                ]
-            )
+        dev = device(3)
 
         A = np.array(
             [
@@ -258,14 +241,21 @@ class TestTensorSample:
             ]
         )
 
-        dev._obs_queue = [
-            qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(A, wires=[1, 2], do_queue=False)
-        ]
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(A, wires=[1, 2], do_queue=False)
 
-        for idx in range(len(dev._obs_queue)):
-            dev._obs_queue[idx].return_type = qml.operation.Sample
+        with mimic_execution_for_sample(dev):
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RX(phi, wires=[1]),
+                    qml.RX(varphi, wires=[2]),
+                    qml.CNOT(wires=[0, 1]),
+                    qml.CNOT(wires=[1, 2]),
+                ],
+                obs.diagonalizing_gates()
+            )
 
-        s1 = dev.sample(["PauliZ", "Hermitian"], [[0], [1, 2]], [[], [A]])
+        s1 = dev.sample(obs)
 
         # s1 should only contain the eigenvalues of
         # the hermitian matrix tensor product Z
