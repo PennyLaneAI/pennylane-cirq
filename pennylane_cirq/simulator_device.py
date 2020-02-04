@@ -74,7 +74,7 @@ class SimulatorDevice(CirqDevice):
         self._result = None
         self._state = None
 
-    def apply_basis_state(self, basis_state_operation):
+    def _apply_basis_state(self, basis_state_operation):
         if not self.analytic:
             raise qml.DeviceError(
                 "The operation BasisState is only supported in analytic mode."
@@ -100,7 +100,7 @@ class SimulatorDevice(CirqDevice):
         basis_state_idx = np.sum(2 ** np.argwhere(np.flip(basis_state_array) == 1))
         self._initial_state[basis_state_idx] = 1.0
 
-    def apply_qubit_state_vector(self, qubit_state_vector_operation):
+    def _apply_qubit_state_vector(self, qubit_state_vector_operation):
         if not self.analytic:
             raise qml.DeviceError(
                 "The operation QubitStateVector is only supported in analytic mode."

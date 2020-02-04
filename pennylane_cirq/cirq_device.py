@@ -161,11 +161,11 @@ class CirqDevice(QubitDevice, abc.ABC):
         self.reset()
 
     @abc.abstractmethod
-    def apply_basis_state(self, basis_state_operation):
+    def _apply_basis_state(self, basis_state_operation):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def apply_qubit_state_vector(self, qubit_state_vector_operation):
+    def _apply_qubit_state_vector(self, qubit_state_vector_operation):
         raise NotImplementedError
 
     def _apply_operation(self, operation):
@@ -192,9 +192,9 @@ class CirqDevice(QubitDevice, abc.ABC):
                 )
 
             if operation.name == "BasisState":
-                self.apply_basis_state(operation)
+                self._apply_basis_state(operation)
             elif operation.name == "QubitStateVector":
-                self.apply_qubit_state_vector(operation)
+                self._apply_qubit_state_vector(operation)
             else:
                 self._apply_operation(operation)
 
