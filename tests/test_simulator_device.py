@@ -887,3 +887,32 @@ class TestSample:
         # s1 should only contain 1 and -1, which is guaranteed if
         # they square to 1
         assert np.allclose(s1 ** 2, 1, **tol)
+
+
+@pytest.mark.parametrize("shots,analytic", [(100, True)])
+class TestState:
+    """Test the state property."""
+
+    @pytest.mark.parametrize("ops,expected_state", [
+        ([qml.PauliX(0), qml.PauliX(1)], [0, 0, 0, 1]),
+        ([qml.PauliX(0), qml.PauliY(1)], [0, 0, 0, 1j]),
+        ([qml.PauliZ(0), qml.PauliZ(1)], [1, 0, 0, 0]),
+    ])
+    def test_state_pauli_operations(self, simulator_device_2_wires, ops, expected_state, tol):
+        """Test that the state reflects Pauli operations correctly."""
+        simulator_device_2_wires.reset()
+        simulator_device_2_wires.apply(ops)
+
+        assert np.allclose(simulator_device_2_wires.state, expected_state, **tol)
+
+    @pytest.mark.parametrize("ops,diag_ops,expected_state", [
+        ([qml.PauliX(0), qml.PauliX(1)], [], [0, 0, 0, 1]),
+        ([qml.PauliX(0), qml.PauliY(1)], [qml.Hadamard(0)], [0, 1j/np.sqrt(2), 0, -1j/np.sqrt(2)]),
+        ([qml.PauliZ(0), qml.PauliZ(1)], [qml.Hadamard(1)], [1/np.sqrt(2), 1/np.sqrt(2), 0, 0]),
+    ])
+    def test_state_pauli_operations_and_observables(self, simulator_device_2_wires, ops, diag_ops, expected_state, tol):
+        """Test that the state reflects Pauli operations and observable rotations correctly."""
+        simulator_device_2_wires.reset()
+        simulator_device_2_wires.apply(ops, rotations=diag_ops)
+
+        assert np.allclose(simulator_device_2_wires.state, expected_state, **tol)
