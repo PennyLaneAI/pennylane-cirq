@@ -1,2 +1,2 @@
-pennylane>=0.6
+pennylane>=0.7
 cirq>=0.6
