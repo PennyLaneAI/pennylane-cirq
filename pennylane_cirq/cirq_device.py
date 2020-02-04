@@ -59,7 +59,7 @@ class CirqDevice(QubitDevice):
     author = "Johannes Jakob Meyer"
     _capabilities = {
         "model": "qubit",
-        "tensor_observables": False,
+        "tensor_observables": True,
         "inverse_operations": True,
     }
 
