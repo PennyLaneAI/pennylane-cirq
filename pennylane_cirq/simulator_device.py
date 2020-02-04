@@ -149,15 +149,15 @@ class SimulatorDevice(CirqDevice):
 
     def generate_samples(self):
         if self.analytic:
-            super().generate_samples()
-        else:
-            for wire in range(self.num_wires):
-                self.circuit.append(cirq.measure(self.qubits[wire], key=str(wire)))
+            return super().generate_samples()
 
-            self._result = self._simulator.run(self.circuit, repetitions=self.shots)
+        for wire in range(self.num_wires):
+            self.circuit.append(cirq.measure(self.qubits[wire], key=str(wire)))
 
-            # Bring measurements to a more managable form, but keep True/False as values for now
-            # They will be changed in the measurement routines where the observable is available
-            self._samples = np.array(
-                [self._result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
-            )
+        self._result = self._simulator.run(self.circuit, repetitions=self.shots)
+
+        # Bring measurements to a more managable form, but keep True/False as values for now
+        # They will be changed in the measurement routines where the observable is available
+        return np.array(
+            [self._result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
+        ).T.astype(int)

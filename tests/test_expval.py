@@ -31,6 +31,9 @@ def mimic_execution_for_expval(device):
     with device.execution_context():
         yield
 
+        if not device.analytic:
+            device._samples = device.generate_samples()
+
 
 @pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
 class TestExpval:
