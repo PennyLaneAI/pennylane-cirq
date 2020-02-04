@@ -8,7 +8,7 @@
 
 ### Bug fixes
 
-* Fix minor bug introduced into the test suite by the release of Cirq 0.7.0.
+* Fix a minor bug introduced into the test suite by the release of Cirq 0.7.0.
   [#18](https://github.com/XanaduAI/pennylane-cirq/pull/18)
 
 * Fix bugs introduced into the test suite by the release of Cirq 0.6.0.
