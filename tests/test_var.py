@@ -23,12 +23,13 @@ from contextlib import contextmanager
 
 @contextmanager
 def mimic_execution_for_var(device):
-    with device.execution_context():
-        device.pre_apply()
+    device.reset()
 
+    with device.execution_context():
         yield
 
-        device.post_apply()
+        if not device.analytic:
+            device._samples = device.generate_samples()
 
 
 np.random.seed(42)
@@ -48,14 +49,13 @@ class TestVar:
 
         # test correct variance for <Z> of a rotated state
         with mimic_execution_for_var(dev):
-            dev.apply("RX", wires=[0], par=[phi])
-            dev.apply("RY", wires=[0], par=[theta])
+            dev.apply([qml.RX(phi, wires=[0]), qml.RY(theta, wires=[0])])
 
-        dev._obs_queue = [qml.PauliZ(wires=[0], do_queue=False)]
-        dev.pre_measure()
-
-        var = dev.var("PauliZ", [0], [])
-        expected = 0.25 * (3 - np.cos(2 * theta) - 2 * np.cos(theta) ** 2 * np.cos(2 * phi))
+        # Here the observable is already diagonal
+        var = dev.var(qml.PauliZ(wires=[0], do_queue=False))
+        expected = 0.25 * (
+            3 - np.cos(2 * theta) - 2 * np.cos(theta) ** 2 * np.cos(2 * phi)
+        )
 
         assert np.allclose(var, expected, **tol)
 
@@ -69,15 +69,15 @@ class TestVar:
 
         # test correct variance for <H> of a rotated state
         H = np.array([[4, -1 + 6j], [-1 - 6j, 2]])
+        obs = qml.Hermitian(H, wires=[0], do_queue=False)
 
         with mimic_execution_for_var(dev):
-            dev.apply("RX", wires=[0], par=[phi])
-            dev.apply("RY", wires=[0], par=[theta])
+            dev.apply(
+                [qml.RX(phi, wires=[0]), qml.RY(theta, wires=[0])],
+                rotations=obs.diagonalizing_gates(),
+            )
 
-        dev._obs_queue = [qml.Hermitian(H, wires=[0], do_queue=False)]
-        dev.pre_measure()
-
-        var = dev.var("Hermitian", [0], [H])
+        var = dev.var(obs)
         expected = 0.5 * (
             2 * np.sin(2 * theta) * np.cos(phi) ** 2
             + 24 * np.sin(phi) * np.cos(phi) * (np.sin(theta) - np.cos(theta))
@@ -88,8 +88,8 @@ class TestVar:
         assert np.allclose(var, expected, **tol)
 
 
-@pytest.mark.parametrize("shots", [0, 8192])
-class RemoveWhenImplementedTestTensorVar:
+@pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
+class TestTensorVar:
     """Tests for variance of tensor observables"""
 
     def test_paulix_pauliy(self, device, shots, tol):
@@ -99,20 +99,23 @@ class RemoveWhenImplementedTestTensorVar:
         varphi = -0.543
 
         dev = device(3)
+        obs = qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(
+            wires=[2], do_queue=False
+        )
 
         with mimic_execution_for_var(dev):
-            dev.apply("RX", wires=[0], par=[theta])
-            dev.apply("RX", wires=[1], par=[phi])
-            dev.apply("RX", wires=[2], par=[varphi])
-            dev.apply("CNOT", wires=[0, 1], par=[])
-            dev.apply("CNOT", wires=[1, 2], par=[])
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RX(phi, wires=[1]),
+                    qml.RX(varphi, wires=[2]),
+                    qml.CNOT(wires=[0, 1]),
+                    qml.CNOT(wires=[1, 2]),
+                ],
+                rotations=obs.diagonalizing_gates(),
+            )
 
-        dev._obs_queue = [
-            qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
-        ]
-        res = dev.pre_measure()
-
-        res = dev.var(["PauliX", "PauliY"], [[0], [2]], [[], [], []])
+        res = dev.var(obs)
 
         expected = (
             8 * np.sin(theta) ** 2 * np.cos(2 * varphi) * np.sin(phi) ** 2
@@ -133,21 +136,25 @@ class RemoveWhenImplementedTestTensorVar:
 
         dev = device(3)
 
-        with mimic_execution_for_var(dev):
-            dev.apply("RX", wires=[0], par=[theta])
-            dev.apply("RX", wires=[1], par=[phi])
-            dev.apply("RX", wires=[2], par=[varphi])
-            dev.apply("CNOT", wires=[0, 1], par=[])
-            dev.apply("CNOT", wires=[1, 2], par=[])
-
-        dev._obs_queue = [
+        obs = (
             qml.PauliZ(wires=[0], do_queue=False)
             @ qml.Hadamard(wires=[1], do_queue=False)
             @ qml.PauliY(wires=[2], do_queue=False)
-        ]
-        res = dev.pre_measure()
+        )
 
-        res = dev.var(["PauliZ", "Hadamard", "PauliY"], [[0], [1], [2]], [[], [], []])
+        with mimic_execution_for_var(dev):
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RX(phi, wires=[1]),
+                    qml.RX(varphi, wires=[2]),
+                    qml.CNOT(wires=[0, 1]),
+                    qml.CNOT(wires=[1, 2]),
+                ],
+                rotations=obs.diagonalizing_gates(),
+            )
+
+        res = dev.var(obs)
 
         expected = (
             3
@@ -166,13 +173,6 @@ class RemoveWhenImplementedTestTensorVar:
 
         dev = device(3)
 
-        with mimic_execution_for_var(dev):
-            dev.apply("RX", wires=[0], par=[theta])
-            dev.apply("RX", wires=[1], par=[phi])
-            dev.apply("RX", wires=[2], par=[varphi])
-            dev.apply("CNOT", wires=[0, 1], par=[])
-            dev.apply("CNOT", wires=[1, 2], par=[])
-
         A = np.array(
             [
                 [-6, 2 + 1j, -3, -5 + 2j],
@@ -181,19 +181,32 @@ class RemoveWhenImplementedTestTensorVar:
                 [-5 - 2j, -5 - 4j, -4 - 3j, -6],
             ]
         )
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(
+            A, wires=[1, 2], do_queue=False
+        )
 
-        dev._obs_queue = [
-            qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(A, wires=[1, 2], do_queue=False)
-        ]
-        res = dev.pre_measure()
+        with mimic_execution_for_var(dev):
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RX(phi, wires=[1]),
+                    qml.RX(varphi, wires=[2]),
+                    qml.CNOT(wires=[0, 1]),
+                    qml.CNOT(wires=[1, 2]),
+                ],
+                rotations=obs.diagonalizing_gates(),
+            )
 
-        res = dev.var(["PauliZ", "Hermitian"], [[0], [1, 2]], [[], [A]])
+        res = dev.var(obs)
 
         expected = (
             1057
             - np.cos(2 * phi)
             + 12 * (27 + np.cos(2 * phi)) * np.cos(varphi)
-            - 2 * np.cos(2 * varphi) * np.sin(phi) * (16 * np.cos(phi) + 21 * np.sin(phi))
+            - 2
+            * np.cos(2 * varphi)
+            * np.sin(phi)
+            * (16 * np.cos(phi) + 21 * np.sin(phi))
             + 16 * np.sin(2 * phi)
             - 8 * (-17 + np.cos(2 * phi) + 2 * np.sin(2 * phi)) * np.sin(varphi)
             - 8 * np.cos(2 * theta) * (3 + 3 * np.cos(varphi) + np.sin(varphi)) ** 2

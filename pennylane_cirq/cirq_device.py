@@ -31,59 +31,43 @@ Classes
 Code details
 ~~~~~~~~~~~~
 """
+import abc
 import cirq
 import numpy as np
 import pennylane as qml
-from pennylane import Device
+from pennylane import QubitDevice
 from pennylane.operation import Operation
 
 from ._version import __version__
-from .cirq_interface import CirqOperation, unitary_matrix_gate
+from .cirq_interface import CirqOperation
 
-
-class CirqDevice(Device):
+class CirqDevice(QubitDevice, abc.ABC):
     """Abstract base device for PennyLane-Cirq.
 
     Args:
         wires (int): the number of modes to initialize the device in
         shots (int): Number of circuit evaluations/random samples used
-            to estimate expectation values of observables. Shots need
-            to >= 1.
+            to estimate expectation values of observables. Shots need to be >= 1.
         qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
-            By default, an array of `cirq.LineQubit` instances is created.
+            By default, an array of ``cirq.LineQubit`` instances is created.
     """
 
     name = "Cirq Abstract PennyLane plugin baseclass"
     pennylane_requires = ">=0.7.0"
     version = __version__
     author = "Johannes Jakob Meyer"
-    _capabilities = {"model": "qubit", "tensor_observables": False, "inverse_operations": True}
+    _capabilities = {
+        "model": "qubit",
+        "tensor_observables": True,
+        "inverse_operations": True,
+    }
 
     short_name = "cirq.base_device"
 
-    @staticmethod
-    def _convert_measurements(measurements, eigenvalues):
-        r"""Convert measurements from boolean to numeric values.
+    def __init__(self, wires, shots, analytic, qubits=None):
+        super().__init__(wires, shots, analytic)
 
-        Args:
-            measurements (np.array[bool]): the measurements as boolean values
-            eigenvalues (np.array[float]): eigenvalues corresponding to the observed basis states
-
-        Returns:
-            (np.array[float]): the converted measurements
-        """
-        N = measurements.shape[0]
-
-        indices = np.ravel_multi_index(measurements, [2] * N)
-        converted_measurements = eigenvalues[indices]
-
-        return converted_measurements
-
-    def __init__(self, wires, shots, qubits=None):
-        super().__init__(wires, shots)
-
-        self._eigs = dict()
         self.circuit = None
 
         if qubits:
@@ -108,14 +92,19 @@ class CirqDevice(Device):
             inverted_operation = CirqOperation(self._operation_map[key].parametrization)
             inverted_operation.inv()
 
-            self._inverse_operation_map[key + Operation.string_for_inverse] = inverted_operation
+            self._inverse_operation_map[
+                key + Operation.string_for_inverse
+            ] = inverted_operation
 
-        self._complete_operation_map = {**self._operation_map, **self._inverse_operation_map}
+        self._complete_operation_map = {
+            **self._operation_map,
+            **self._inverse_operation_map,
+        }
 
     _operation_map = {
         "BasisState": None,
         "QubitStateVector": None,
-        "QubitUnitary": CirqOperation(unitary_matrix_gate),
+        "QubitUnitary": CirqOperation(cirq.MatrixGate),
         "PauliX": CirqOperation(lambda: cirq.X),
         "PauliY": CirqOperation(lambda: cirq.Y),
         "PauliZ": CirqOperation(lambda: cirq.Z),
@@ -126,18 +115,18 @@ class CirqDevice(Device):
         "SWAP": CirqOperation(lambda: cirq.SWAP),
         "CZ": CirqOperation(lambda: cirq.CZ),
         "PhaseShift": CirqOperation(lambda phi: cirq.ZPowGate(exponent=phi / np.pi)),
-        "RX": CirqOperation(lambda phi: cirq.Rx(phi)),
-        "RY": CirqOperation(lambda phi: cirq.Ry(phi)),
-        "RZ": CirqOperation(lambda phi: cirq.Rz(phi)),
-        "Rot": CirqOperation(lambda a, b, c: [cirq.Rz(a), cirq.Ry(b), cirq.Rz(c)]),
-        "CRX": CirqOperation(lambda phi: cirq.ControlledGate(cirq.Rx(phi))),
-        "CRY": CirqOperation(lambda phi: cirq.ControlledGate(cirq.Ry(phi))),
-        "CRZ": CirqOperation(lambda phi: cirq.ControlledGate(cirq.Rz(phi))),
+        "RX": CirqOperation(cirq.rx),
+        "RY": CirqOperation(cirq.ry),
+        "RZ": CirqOperation(cirq.rz),
+        "Rot": CirqOperation(lambda a, b, c: [cirq.rz(a), cirq.ry(b), cirq.rz(c)]),
+        "CRX": CirqOperation(lambda phi: cirq.ControlledGate(cirq.rx(phi))),
+        "CRY": CirqOperation(lambda phi: cirq.ControlledGate(cirq.ry(phi))),
+        "CRZ": CirqOperation(lambda phi: cirq.ControlledGate(cirq.rz(phi))),
         "CRot": CirqOperation(
             lambda a, b, c: [
-                cirq.ControlledGate(cirq.Rz(a)),
-                cirq.ControlledGate(cirq.Ry(b)),
-                cirq.ControlledGate(cirq.Rz(c)),
+                cirq.ControlledGate(cirq.rz(a)),
+                cirq.ControlledGate(cirq.ry(b)),
+                cirq.ControlledGate(cirq.rz(c)),
             ]
         ),
         "CSWAP": CirqOperation(lambda: cirq.CSWAP),
@@ -154,71 +143,82 @@ class CirqDevice(Device):
     }
 
     def reset(self):
+        # pylint: disable=missing-function-docstring
+        super().reset()
+
         self.circuit = cirq.Circuit()
 
     @property
     def observables(self):
+        # pylint: disable=missing-function-docstring
         return set(self._observable_map.keys())
 
     @property
     def operations(self):
+        # pylint: disable=missing-function-docstring
         return set(self._operation_map.keys())
 
-    def pre_apply(self):
-        self.reset()
+    @abc.abstractmethod
+    def _apply_basis_state(self, basis_state_operation):
+        """Apply a basis state preparation.
 
-    def apply(self, operation, wires, par):
-        operation = self._complete_operation_map[operation]
+        Args:
+            basis_state_operation (pennylane.BasisState): the BasisState operation instance that shall be applied
+
+        Raises:
+            NotImplementedError: when not implemented in the subclass
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _apply_qubit_state_vector(self, qubit_state_vector_operation):
+        """Apply a state vector preparation.
+
+        Args:
+            qubit_state_vector_operation (pennylane.QubitStateVector): the QubitStateVector operation instance that shall be applied
+
+        Raises:
+            NotImplementedError: when not implemented in the subclass
+        """
+        raise NotImplementedError
+
+    def _apply_operation(self, operation):
+        """Apply a single PennyLane Operation.
+
+        Args:
+            operation (pennylane.Operation): The operation that shall be applied
+        """
+        cirq_operation = self._complete_operation_map[operation.name]
 
         # If command is None do nothing
-        if operation:
-            operation.parametrize(*par)
+        if cirq_operation:
+            cirq_operation.parametrize(*operation.parameters)
 
-            self.circuit.append(operation.apply(*[self.qubits[wire] for wire in wires]))
+            self.circuit.append(
+                cirq_operation.apply(
+                    *[self.qubits[wire] for wire in operation.wires]
+                )
+            )
 
-    def pre_measure(self):
-        # Cirq only measures states in the computational basis, i.e. 0 and 1
-        # To measure different observables, we have to go to their eigenbases
+    def apply(self, operations, **kwargs):
+        # pylint: disable=missing-function-docstring
+        rotations = kwargs.pop("rotations", [])
 
-        # This code is adapted from the pennylane-qiskit plugin
-        for e in self.obs_queue:
-            # Identity and PauliZ need no changes
-            if e.name == "PauliX":
-                # X = H.Z.H
-                self.apply("Hadamard", wires=e.wires, par=[])
+        for i, operation in enumerate(operations):
+            if i > 0 and operation.name in {"BasisState", "QubitStateVector"}:
+                raise qml.DeviceError(
+                    "The operation {} is only supported at the beginning of a circuit.".format(operation.name)
+                )
 
-            elif e.name == "PauliY":
-                # Y = (HS^)^.Z.(HS^) and S^=SZ
-                self.apply("PauliZ", wires=e.wires, par=[])
-                self.apply("S", wires=e.wires, par=[])
-                self.apply("Hadamard", wires=e.wires, par=[])
+            if operation.name == "BasisState":
+                self._apply_basis_state(operation)
+            elif operation.name == "QubitStateVector":
+                self._apply_qubit_state_vector(operation)
+            else:
+                self._apply_operation(operation)
 
-            elif e.name == "Hadamard":
-                # H = Ry(-pi/4)^.Z.Ry(-pi/4)
-                self.apply("RY", e.wires, [-np.pi / 4])
+        # TODO: get pre rotated state here
 
-            elif e.name == "Hermitian":
-                # For arbitrary Hermitian matrix H, let U be the unitary matrix
-                # that diagonalises it, and w_i be the eigenvalues.
-                Hmat = e.parameters[0]
-                Hkey = tuple(Hmat.flatten().tolist())
-
-                if Hmat.shape not in [(2, 2), (4, 4)]:
-                    raise qml.DeviceError(
-                        "Cirq only supports single-qubit and two-qubit unitary gates and thus only single-qubit and two-qubit Hermitian observables."
-                    )
-
-                if Hkey in self._eigs:
-                    # retrieve eigenvectors
-                    U = self._eigs[Hkey]["eigvec"]
-                else:
-                    # store the eigenvalues corresponding to H
-                    # in a dictionary, so that they do not need to
-                    # be calculated later
-                    w, U = np.linalg.eigh(Hmat)
-                    self._eigs[Hkey] = {"eigval": w, "eigvec": U}
-
-                # Perform a change of basis before measuring by applying U^ to the circuit
-                self.apply("QubitUnitary", e.wires, [U.conj().T])
-
-            # No measurements are added here because they can't be added for simulations
+        # Diagonalize the given observables
+        for operation in rotations:
+            self._apply_operation(operation)

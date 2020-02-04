@@ -26,12 +26,12 @@ np.random.seed(42)
 
 @contextmanager
 def mimic_execution_for_sample(device):
-    with device.execution_context():
-        device.pre_apply()
+    device.reset()
 
+    with device.execution_context():
         yield
 
-        device.post_apply()
+        device._samples = device.generate_samples()
 
 
 @pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
@@ -45,16 +45,14 @@ class TestSample:
         dev = device(1)
 
         with mimic_execution_for_sample(dev):
-            dev.apply("RX", wires=[0], par=[1.5708])
+            dev.apply([qml.RX(1.5708, wires=[0])])
 
         dev._obs_queue = [qml.PauliZ(wires=[0], do_queue=False)]
 
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.operation.Sample
 
-        dev.pre_measure()
-
-        s1 = dev.sample("PauliZ", [0], [])
+        s1 = dev.sample(qml.PauliZ(wires=[0]))
 
         # s1 should only contain 1 and -1
         assert np.allclose(s1 ** 2, 1, **tol)
@@ -69,16 +67,17 @@ class TestSample:
         A = np.array([[1, 2j], [-2j, 0]])
 
         with mimic_execution_for_sample(dev):
-            dev.apply("RX", wires=[0], par=[theta])
+            dev.apply(
+                [qml.RX(theta, wires=[0])],
+                rotations=qml.Hermitian(A, wires=[0], do_queue=False).diagonalizing_gates(),
+            )
 
         dev._obs_queue = [qml.Hermitian(A, wires=[0], do_queue=False)]
 
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.operation.Sample
 
-        dev.pre_measure()
-
-        s1 = dev.sample("Hermitian", [0], [A])
+        s1 = dev.sample(qml.Hermitian(A, wires=[0]))
 
         # s1 should only contain the eigenvalues of
         # the hermitian matrix
@@ -86,10 +85,14 @@ class TestSample:
         assert np.allclose(sorted(list(set(s1))), sorted(eigvals), **tol)
 
         # the analytic mean is 2*sin(theta)+0.5*cos(theta)+0.5
-        assert np.allclose(np.mean(s1), 2 * np.sin(theta) + 0.5 * np.cos(theta) + 0.5, **tol)
+        assert np.allclose(
+            np.mean(s1), 2 * np.sin(theta) + 0.5 * np.cos(theta) + 0.5, **tol
+        )
 
         # the analytic variance is 0.25*(sin(theta)-4*cos(theta))^2
-        assert np.allclose(np.var(s1), 0.25 * (np.sin(theta) - 4 * np.cos(theta)) ** 2, **tol)
+        assert np.allclose(
+            np.var(s1), 0.25 * (np.sin(theta) - 4 * np.cos(theta)) ** 2, **tol
+        )
 
     def test_sample_values_hermitian_multi_qubit(self, device, shots, tol):
         """Tests if the samples of a multi-qubit Hermitian observable returned by sample have
@@ -108,18 +111,21 @@ class TestSample:
         )
 
         with mimic_execution_for_sample(dev):
-            dev.apply("RX", wires=[0], par=[theta])
-            dev.apply("RY", wires=[1], par=[2 * theta])
-            dev.apply("CNOT", wires=[0, 1], par=[])
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RY(2 * theta, wires=[1]),
+                    qml.CNOT(wires=[0, 1]),
+                ],
+                rotations=qml.Hermitian(A, wires=[0, 1], do_queue=False).diagonalizing_gates(),
+            )
 
         dev._obs_queue = [qml.Hermitian(A, wires=[0, 1], do_queue=False)]
 
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.operation.Sample
 
-        dev.pre_measure()
-
-        s1 = dev.sample("Hermitian", [0, 1], [A])
+        s1 = dev.sample(qml.Hermitian(A, wires=[0, 1]))
 
         # s1 should only contain the eigenvalues of
         # the hermitian matrix
@@ -139,8 +145,8 @@ class TestSample:
         assert np.allclose(np.mean(s1), expected, **tol)
 
 
-@pytest.mark.parametrize("shots", [8192])
-class RemoveWhenImplementedTestTensorSample:
+@pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
+class TestTensorSample:
     """Test tensor expectation values"""
 
     def test_paulix_pauliy(self, device, shots, tol):
@@ -150,24 +156,23 @@ class RemoveWhenImplementedTestTensorSample:
         varphi = -0.543
 
         dev = device(3)
+        obs = qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(
+            wires=[2], do_queue=False
+        )
 
         with mimic_execution_for_sample(dev):
-            dev.apply("RX", wires=[0], par=[theta])
-            dev.apply("RX", wires=[1], par=[phi])
-            dev.apply("RX", wires=[2], par=[varphi])
-            dev.apply("CNOT", wires=[0, 1], par=[])
-            dev.apply("CNOT", wires=[1, 2], par=[])
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RX(phi, wires=[1]),
+                    qml.RX(varphi, wires=[2]),
+                    qml.CNOT(wires=[0, 1]),
+                    qml.CNOT(wires=[1, 2]),
+                ],
+                rotations=obs.diagonalizing_gates(),
+            )
 
-        dev._obs_queue = [
-            qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
-        ]
-
-        for idx in range(len(dev._obs_queue)):
-            dev._obs_queue[idx].return_type = qml.operation.Sample
-
-        res = dev.pre_measure()
-
-        s1 = dev.sample(["PauliX", "PauliY"], [[0], [2]], [[], [], []])
+        s1 = dev.sample(obs)
 
         # s1 should only contain 1 and -1
         assert np.allclose(s1 ** 2, 1, **tol)
@@ -195,31 +200,33 @@ class RemoveWhenImplementedTestTensorSample:
 
         dev = device(3)
 
-        with mimic_execution_for_sample(dev):
-            dev.apply("RX", wires=[0], par=[theta])
-            dev.apply("RX", wires=[1], par=[phi])
-            dev.apply("RX", wires=[2], par=[varphi])
-            dev.apply("CNOT", wires=[0, 1], par=[])
-            dev.apply("CNOT", wires=[1, 2], par=[])
-
-        dev._obs_queue = [
+        obs = (
             qml.PauliZ(wires=[0], do_queue=False)
             @ qml.Hadamard(wires=[1], do_queue=False)
             @ qml.PauliY(wires=[2], do_queue=False)
-        ]
+        )
 
-        for idx in range(len(dev._obs_queue)):
-            dev._obs_queue[idx].return_type = qml.operation.Sample
+        with mimic_execution_for_sample(dev):
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RX(phi, wires=[1]),
+                    qml.RX(varphi, wires=[2]),
+                    qml.CNOT(wires=[0, 1]),
+                    qml.CNOT(wires=[1, 2]),
+                ],
+                rotations=obs.diagonalizing_gates(),
+            )
 
-        res = dev.pre_measure()
-
-        s1 = dev.sample(["PauliZ", "Hadamard", "PauliY"], [[0], [1], [2]], [[], [], []])
+        s1 = dev.sample(obs)
 
         # s1 should only contain 1 and -1
         assert np.allclose(s1 ** 2, 1, **tol)
 
         mean = np.mean(s1)
-        expected = -(np.cos(varphi) * np.sin(phi) + np.sin(varphi) * np.cos(theta)) / np.sqrt(2)
+        expected = -(
+            np.cos(varphi) * np.sin(phi) + np.sin(varphi) * np.cos(theta)
+        ) / np.sqrt(2)
         assert np.allclose(mean, expected, **tol)
 
         var = np.var(s1)
@@ -237,14 +244,10 @@ class RemoveWhenImplementedTestTensorSample:
         phi = 0.123
         varphi = -0.543
 
-        dev = device(3)
+        # Reseed here so that all eigenvalues are guaranteed to appear in the sample
+        np.random.seed(143)
 
-        with mimic_execution_for_sample(dev):
-            dev.apply("RX", wires=[0], par=[theta])
-            dev.apply("RX", wires=[1], par=[phi])
-            dev.apply("RX", wires=[2], par=[varphi])
-            dev.apply("CNOT", wires=[0, 1], par=[])
-            dev.apply("CNOT", wires=[1, 2], par=[])
+        dev = device(3)
 
         A = np.array(
             [
@@ -255,16 +258,23 @@ class RemoveWhenImplementedTestTensorSample:
             ]
         )
 
-        dev._obs_queue = [
-            qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(A, wires=[1, 2], do_queue=False)
-        ]
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(
+            A, wires=[1, 2], do_queue=False
+        )
 
-        for idx in range(len(dev._obs_queue)):
-            dev._obs_queue[idx].return_type = qml.operation.Sample
+        with mimic_execution_for_sample(dev):
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RX(phi, wires=[1]),
+                    qml.RX(varphi, wires=[2]),
+                    qml.CNOT(wires=[0, 1]),
+                    qml.CNOT(wires=[1, 2]),
+                ],
+                rotations=obs.diagonalizing_gates(),
+            )
 
-        res = dev.pre_measure()
-
-        s1 = dev.sample(["PauliZ", "Hermitian"], [[0], [1, 2]], [[], [A]])
+        s1 = dev.sample(obs)
 
         # s1 should only contain the eigenvalues of
         # the hermitian matrix tensor product Z
@@ -286,7 +296,10 @@ class RemoveWhenImplementedTestTensorSample:
             1057
             - np.cos(2 * phi)
             + 12 * (27 + np.cos(2 * phi)) * np.cos(varphi)
-            - 2 * np.cos(2 * varphi) * np.sin(phi) * (16 * np.cos(phi) + 21 * np.sin(phi))
+            - 2
+            * np.cos(2 * varphi)
+            * np.sin(phi)
+            * (16 * np.cos(phi) + 21 * np.sin(phi))
             + 16 * np.sin(2 * phi)
             - 8 * (-17 + np.cos(2 * phi) + 2 * np.sin(2 * phi)) * np.sin(varphi)
             - 8 * np.cos(2 * theta) * (3 + 3 * np.cos(varphi) + np.sin(varphi)) ** 2
