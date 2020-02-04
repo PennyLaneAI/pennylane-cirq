@@ -51,7 +51,7 @@ class CirqDevice(QubitDevice):
             to estimate expectation values of observables. Shots need to be >= 1.
         qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
-            By default, an array of `cirq.LineQubit` instances is created.
+            By default, an array of ``cirq.LineQubit`` instances is created.
     """
 
     name = "Cirq Abstract PennyLane plugin baseclass"
