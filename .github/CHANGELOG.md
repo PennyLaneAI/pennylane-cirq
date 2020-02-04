@@ -12,6 +12,9 @@
 
 ### Bug fixes
 
+* Replaced depreceated Cirq commands.
+  [#19](https://github.com/XanaduAI/pennylane-cirq/pull/19)
+
 * Fix a minor bug introduced into the test suite by the release of Cirq 0.7.0.
   [#18](https://github.com/XanaduAI/pennylane-cirq/pull/18)
 
