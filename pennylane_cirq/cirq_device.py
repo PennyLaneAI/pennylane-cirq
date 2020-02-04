@@ -169,19 +169,14 @@ class CirqDevice(QubitDevice):
         rotations = rotations or []
 
         for i, operation in enumerate(operations):
-            if operation.name == "BasisState":
-                if i > 0:
-                    raise qml.DeviceError(
-                        "The operation BasisState is only supported at the beginning of a circuit."
-                    )
+            if i > 0 and operation.name in {"BasisState", "QubitStateVector"}:
+                raise qml.DeviceError(
+                    "The operation {} is only supported at the beginning of a circuit.".format(operation.name)
+                )
 
+            if operation.name == "BasisState":
                 self.apply_basis_state(operation)
             elif operation.name == "QubitStateVector":
-                if i > 0:
-                    raise qml.DeviceError(
-                        "The operation QubitStateVector is only supported at the beginning of a circuit."
-                    )
-
                 self.apply_qubit_state_vector(operation)
             else:
                 cirq_operation = self._complete_operation_map[operation.name]
