@@ -55,19 +55,6 @@ def simulator_device_3_wires(shots, analytic):
     yield SimulatorDevice(3, shots=shots, analytic=analytic)
 
 @pytest.mark.parametrize("shots,analytic", [(100, True)])
-class TestInternalLogic:
-    """Test internal logic of the SimulatorDevice class."""
-
-    def test_probability_error(self, simulator_device_1_wire):
-        """Test that an error is raised in probability if the
-        internal state is None."""
-
-        simulator_device_1_wire.state = None
-
-        with pytest.raises(qml.DeviceError, match="Probability can not be computed because the internal state is None."):
-            simulator_device_1_wire.probability()
-
-@pytest.mark.parametrize("shots,analytic", [(100, True)])
 class TestApply:
     """Tests that gates are correctly applied"""
 
