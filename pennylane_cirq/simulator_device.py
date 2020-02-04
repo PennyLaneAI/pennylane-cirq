@@ -30,15 +30,12 @@ Classes
 
 ----
 """
-import cirq
 import math
+import cirq
 import numpy as np
 import pennylane as qml
 
 from .cirq_device import CirqDevice
-
-# pylint: disable=missing-function-docstring
-
 
 class SimulatorDevice(CirqDevice):
     r"""Cirq simulator device for PennyLane.
@@ -68,6 +65,7 @@ class SimulatorDevice(CirqDevice):
         self._state = None
 
     def reset(self):
+        # pylint: disable=missing-function-docstring
         super().reset()
 
         self._initial_state = None
@@ -75,6 +73,7 @@ class SimulatorDevice(CirqDevice):
         self._state = None
 
     def _apply_basis_state(self, basis_state_operation):
+        # pylint: disable=missing-function-docstring
         if not self.analytic:
             raise qml.DeviceError(
                 "The operation BasisState is only supported in analytic mode."
@@ -101,6 +100,7 @@ class SimulatorDevice(CirqDevice):
         self._initial_state[basis_state_idx] = 1.0
 
     def _apply_qubit_state_vector(self, qubit_state_vector_operation):
+        # pylint: disable=missing-function-docstring
         if not self.analytic:
             raise qml.DeviceError(
                 "The operation QubitStateVector is only supported in analytic mode."
@@ -128,6 +128,7 @@ class SimulatorDevice(CirqDevice):
         self._initial_state = state_vector
 
     def apply(self, operations, **kwargs):
+        # pylint: disable=missing-function-docstring
         super().apply(operations, **kwargs)
 
         # We apply an identity gate to all wires, otherwise Cirq would ignore
@@ -142,6 +143,7 @@ class SimulatorDevice(CirqDevice):
             self._state = np.array(self._result.state_vector())
 
     def probability(self, wires=None):
+        # pylint: disable=missing-function-docstring
         if self._state is None:
             return None
 
@@ -152,9 +154,11 @@ class SimulatorDevice(CirqDevice):
 
     @property
     def state(self):
+        # pylint: disable=missing-function-docstring
         return self._state
 
     def generate_samples(self):
+        # pylint: disable=missing-function-docstring
         if self.analytic:
             return super().generate_samples()
 

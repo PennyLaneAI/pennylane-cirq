@@ -41,8 +41,6 @@ from pennylane.operation import Operation
 from ._version import __version__
 from .cirq_interface import CirqOperation
 
-# pylint: disable=missing-function-docstring
-
 class CirqDevice(QubitDevice, abc.ABC):
     """Abstract base device for PennyLane-Cirq.
 
@@ -145,16 +143,19 @@ class CirqDevice(QubitDevice, abc.ABC):
     }
 
     def reset(self):
+        # pylint: disable=missing-function-docstring
         super().reset()
 
         self.circuit = cirq.Circuit()
 
     @property
     def observables(self):
+        # pylint: disable=missing-function-docstring
         return set(self._observable_map.keys())
 
     @property
     def operations(self):
+        # pylint: disable=missing-function-docstring
         return set(self._operation_map.keys())
 
     @abc.abstractmethod
@@ -200,6 +201,7 @@ class CirqDevice(QubitDevice, abc.ABC):
             )
 
     def apply(self, operations, **kwargs):
+        # pylint: disable=missing-function-docstring
         rotations = kwargs.pop("rotations", [])
 
         for i, operation in enumerate(operations):
