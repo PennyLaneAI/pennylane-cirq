@@ -157,9 +157,6 @@ class CirqDevice(QubitDevice, abc.ABC):
     def operations(self):
         return set(self._operation_map.keys())
 
-    def pre_apply(self):
-        self.reset()
-
     @abc.abstractmethod
     def _apply_basis_state(self, basis_state_operation):
         raise NotImplementedError
