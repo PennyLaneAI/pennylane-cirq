@@ -97,21 +97,3 @@ class CirqOperation:
             raise qml.DeviceError("CirqOperation can't be inverted after it was parametrized.")
 
         self.is_inverse = not self.is_inverse
-
-
-def unitary_matrix_gate(U):
-    """Creates a Cirq unitary matrix gate from a given matrix.
-
-        Args:
-            U (numpy.ndarray): an array representing the gate matrix.
-    """
-    if U.shape == (2, 2):
-        return cirq.SingleQubitMatrixGate(U)
-    if U.shape == (4, 4):
-        return cirq.TwoQubitMatrixGate(U)
-    else:
-        raise qml.DeviceError(
-            "Cirq only supports single-qubit and two-qubit unitary matrix gates. The given matrix had shape {}".format(
-                U.shape
-            )
-        )

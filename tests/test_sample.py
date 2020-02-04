@@ -31,6 +31,8 @@ def mimic_execution_for_sample(device):
     with device.execution_context():
         yield
 
+        device._samples = device.generate_samples()
+
 
 @pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
 class TestSample:
@@ -50,7 +52,7 @@ class TestSample:
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.operation.Sample
 
-        s1 = dev.sample("PauliZ", [0], [])
+        s1 = dev.sample(qml.PauliZ(wires=[0]))
 
         # s1 should only contain 1 and -1
         assert np.allclose(s1 ** 2, 1, **tol)
@@ -65,14 +67,14 @@ class TestSample:
         A = np.array([[1, 2j], [-2j, 0]])
 
         with mimic_execution_for_sample(dev):
-            dev.apply([qml.RX(theta, wires=[0])])
+            dev.apply([qml.RX(theta, wires=[0])], qml.Hermitian(A, wires=[0], do_queue=False).diagonalizing_gates())
 
         dev._obs_queue = [qml.Hermitian(A, wires=[0], do_queue=False)]
 
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.operation.Sample
 
-        s1 = dev.sample("Hermitian", [0], [A])
+        s1 = dev.sample(qml.Hermitian(A, wires=[0]))
 
         # s1 should only contain the eigenvalues of
         # the hermitian matrix
@@ -103,7 +105,8 @@ class TestSample:
 
         with mimic_execution_for_sample(dev):
             dev.apply(
-                [qml.RX(theta, wires=[0]), qml.RY(2 * theta, wires=[1]), qml.CNOT(wires=[0, 1])]
+                [qml.RX(theta, wires=[0]), qml.RY(2 * theta, wires=[1]), qml.CNOT(wires=[0, 1])],
+                qml.Hermitian(A, wires=[0, 1], do_queue=False).diagonalizing_gates()
             )
 
         dev._obs_queue = [qml.Hermitian(A, wires=[0, 1], do_queue=False)]
@@ -111,7 +114,7 @@ class TestSample:
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.operation.Sample
 
-        s1 = dev.sample("Hermitian", [0, 1], [A])
+        s1 = dev.sample(qml.Hermitian(A, wires=[0, 1]))
 
         # s1 should only contain the eigenvalues of
         # the hermitian matrix

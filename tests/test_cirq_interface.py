@@ -19,7 +19,7 @@ import pytest
 
 import pennylane as qml
 from pennylane import numpy as np
-from pennylane_cirq.cirq_interface import CirqOperation, unitary_matrix_gate
+from pennylane_cirq.cirq_interface import CirqOperation
 
 
 class TestCirqOperation:
@@ -27,7 +27,7 @@ class TestCirqOperation:
 
     def test_init(self):
         """Tests that the class is properly initialized."""
-        fun = lambda x: cirq.Ry(x)
+        fun = lambda x: cirq.ry(x)
 
         operation = CirqOperation(fun)
 
@@ -39,21 +39,21 @@ class TestCirqOperation:
         """Tests that parametrize yields the correct queue of operations."""
 
         operation = CirqOperation(
-            lambda a, b, c: [cirq.X, cirq.Ry(a), cirq.Rx(b), cirq.Z, cirq.Rz(c)]
+            lambda a, b, c: [cirq.X, cirq.ry(a), cirq.rx(b), cirq.Z, cirq.rz(c)]
         )
         operation.parametrize(0.1, 0.2, 0.3)
 
         assert operation.parametrized_cirq_gates[0] == cirq.X
-        assert operation.parametrized_cirq_gates[1] == cirq.Ry(0.1)
-        assert operation.parametrized_cirq_gates[2] == cirq.Rx(0.2)
+        assert operation.parametrized_cirq_gates[1] == cirq.ry(0.1)
+        assert operation.parametrized_cirq_gates[2] == cirq.rx(0.2)
         assert operation.parametrized_cirq_gates[3] == cirq.Z
-        assert operation.parametrized_cirq_gates[4] == cirq.Rz(0.3)
+        assert operation.parametrized_cirq_gates[4] == cirq.rz(0.3)
 
     def test_apply(self):
         """Tests that the operations in the queue are correctly applied."""
 
         operation = CirqOperation(
-            lambda a, b, c: [cirq.X, cirq.Ry(a), cirq.Rx(b), cirq.Z, cirq.Rz(c)]
+            lambda a, b, c: [cirq.X, cirq.ry(a), cirq.rx(b), cirq.Z, cirq.rz(c)]
         )
         operation.parametrize(0.1, 0.2, 0.3)
 
@@ -62,16 +62,16 @@ class TestCirqOperation:
         gate_applications = list(operation.apply(qubit))
 
         assert gate_applications[0] == cirq.X.on(qubit)
-        assert gate_applications[1] == cirq.Ry(0.1).on(qubit)
-        assert gate_applications[2] == cirq.Rx(0.2).on(qubit)
+        assert gate_applications[1] == cirq.ry(0.1).on(qubit)
+        assert gate_applications[2] == cirq.rx(0.2).on(qubit)
         assert gate_applications[3] == cirq.Z.on(qubit)
-        assert gate_applications[4] == cirq.Rz(0.3).on(qubit)
+        assert gate_applications[4] == cirq.rz(0.3).on(qubit)
 
     def test_apply_not_parametrized(self):
         """Tests that the proper error is raised if an Operation is applied
         that was not parametrized before."""
         operation = CirqOperation(
-            lambda a, b, c: [cirq.X, cirq.Ry(a), cirq.Rx(b), cirq.Z, cirq.Rz(c)]
+            lambda a, b, c: [cirq.X, cirq.ry(a), cirq.rx(b), cirq.Z, cirq.rz(c)]
         )
         qubit = cirq.LineQubit(1)
 
@@ -84,7 +84,7 @@ class TestCirqOperation:
         """Test that inv inverts the gate and applying inv twice yields the initial state."""
 
         operation = CirqOperation(
-            lambda a, b, c: [cirq.X, cirq.Ry(a), cirq.Rx(b), cirq.Z, cirq.Rz(c)]
+            lambda a, b, c: [cirq.X, cirq.ry(a), cirq.rx(b), cirq.Z, cirq.rz(c)]
         )
 
         assert not operation.is_inverse
@@ -102,7 +102,7 @@ class TestCirqOperation:
         CirqOperation is inverted."""
 
         operation = CirqOperation(
-            lambda a, b, c: [cirq.X, cirq.Ry(a), cirq.Rx(b), cirq.Z, cirq.Rz(c)]
+            lambda a, b, c: [cirq.X, cirq.ry(a), cirq.rx(b), cirq.Z, cirq.rz(c)]
         )
         operation.inv()
 
@@ -112,17 +112,17 @@ class TestCirqOperation:
 
         gate_applications = list(operation.apply(qubit))
 
-        assert gate_applications[0] == cirq.Rz(-0.3).on(qubit)
+        assert gate_applications[0] == cirq.rz(-0.3).on(qubit)
         assert gate_applications[1] == (cirq.Z ** -1).on(qubit)
-        assert gate_applications[2] == cirq.Rx(-0.2).on(qubit)
-        assert gate_applications[3] == cirq.Ry(-0.1).on(qubit)
+        assert gate_applications[2] == cirq.rx(-0.2).on(qubit)
+        assert gate_applications[3] == cirq.ry(-0.1).on(qubit)
         assert gate_applications[4] == (cirq.X ** -1).on(qubit)
 
     def test_inv_error(self):
         """Test that inv raises an error if the CirqOperation was already parametrized."""
 
         operation = CirqOperation(
-            lambda a, b, c: [cirq.X, cirq.Ry(a), cirq.Rx(b), cirq.Z, cirq.Rz(c)]
+            lambda a, b, c: [cirq.X, cirq.ry(a), cirq.rx(b), cirq.Z, cirq.rz(c)]
         )
         operation.parametrize(0.1, 0.2, 0.3)
 
@@ -131,34 +131,3 @@ class TestCirqOperation:
         ):
             operation.inv()
 
-
-class TestMethods:
-    """Tests the independent methods in the Cirq interface."""
-
-    @pytest.mark.parametrize(
-        "U,expected_cirq_operation",
-        [
-            ([[1, 0], [0, -1]], cirq.SingleQubitMatrixGate(np.array([[1, 0], [0, -1]])),),
-            ([[0, 1j], [-1j, 0]], cirq.SingleQubitMatrixGate(np.array([[0, 1j], [-1j, 0]])),),
-            (
-                [[0, 1j, 0, 0], [-1j, 0, 0, 0], [0, 0, 0, 1j], [0, 0, -1j, 0]],
-                cirq.TwoQubitMatrixGate(
-                    np.array([[0, 1j, 0, 0], [-1j, 0, 0, 0], [0, 0, 0, 1j], [0, 0, -1j, 0]])
-                ),
-            ),
-        ],
-    )
-    def test_unitary_matrix_gate(self, U, expected_cirq_operation):
-        """Tests that the correct Cirq operation is returned for the unitary matrix gate."""
-
-        assert unitary_matrix_gate(np.array(U)) == expected_cirq_operation
-
-    @pytest.mark.parametrize("U", [np.eye(6), np.eye(10), np.eye(3), np.eye(3, 5)])
-    def test_unitary_matrix_gate_error(self, U):
-        """Tests that an error is raised if the given matrix is of wrong format."""
-
-        with pytest.raises(
-            qml.DeviceError,
-            match="Cirq only supports single-qubit and two-qubit unitary matrix gates.",
-        ):
-            unitary_matrix_gate(np.array(U))

@@ -38,7 +38,7 @@ from pennylane import QubitDevice
 from pennylane.operation import Operation
 
 from ._version import __version__
-from .cirq_interface import CirqOperation, unitary_matrix_gate
+from .cirq_interface import CirqOperation
 
 
 class CirqDevice(QubitDevice):
@@ -95,7 +95,7 @@ class CirqDevice(QubitDevice):
     _operation_map = {
         "BasisState": None,
         "QubitStateVector": None,
-        "QubitUnitary": CirqOperation(unitary_matrix_gate),
+        "QubitUnitary": CirqOperation(cirq.MatrixGate),
         "PauliX": CirqOperation(lambda: cirq.X),
         "PauliY": CirqOperation(lambda: cirq.Y),
         "PauliZ": CirqOperation(lambda: cirq.Z),
@@ -106,18 +106,18 @@ class CirqDevice(QubitDevice):
         "SWAP": CirqOperation(lambda: cirq.SWAP),
         "CZ": CirqOperation(lambda: cirq.CZ),
         "PhaseShift": CirqOperation(lambda phi: cirq.ZPowGate(exponent=phi / np.pi)),
-        "RX": CirqOperation(lambda phi: cirq.Rx(phi)),
-        "RY": CirqOperation(lambda phi: cirq.Ry(phi)),
-        "RZ": CirqOperation(lambda phi: cirq.Rz(phi)),
-        "Rot": CirqOperation(lambda a, b, c: [cirq.Rz(a), cirq.Ry(b), cirq.Rz(c)]),
-        "CRX": CirqOperation(lambda phi: cirq.ControlledGate(cirq.Rx(phi))),
-        "CRY": CirqOperation(lambda phi: cirq.ControlledGate(cirq.Ry(phi))),
-        "CRZ": CirqOperation(lambda phi: cirq.ControlledGate(cirq.Rz(phi))),
+        "RX": CirqOperation(cirq.rx),
+        "RY": CirqOperation(cirq.ry),
+        "RZ": CirqOperation(cirq.rz),
+        "Rot": CirqOperation(lambda a, b, c: [cirq.rz(a), cirq.ry(b), cirq.rz(c)]),
+        "CRX": CirqOperation(lambda phi: cirq.ControlledGate(cirq.rx(phi))),
+        "CRY": CirqOperation(lambda phi: cirq.ControlledGate(cirq.ry(phi))),
+        "CRZ": CirqOperation(lambda phi: cirq.ControlledGate(cirq.rz(phi))),
         "CRot": CirqOperation(
             lambda a, b, c: [
-                cirq.ControlledGate(cirq.Rz(a)),
-                cirq.ControlledGate(cirq.Ry(b)),
-                cirq.ControlledGate(cirq.Rz(c)),
+                cirq.ControlledGate(cirq.rz(a)),
+                cirq.ControlledGate(cirq.ry(b)),
+                cirq.ControlledGate(cirq.rz(c)),
             ]
         ),
         "CSWAP": CirqOperation(lambda: cirq.CSWAP),
