@@ -35,7 +35,9 @@ U = np.array(
 U2 = np.array([[0, 1, 1, 1], [1, 0, 1, -1], [1, -1, 0, 1], [1, 1, -1, 0]]) / np.sqrt(3)
 
 # single qubit Hermitian observable
-A = np.array([[1.02789352, 1.61296440 - 0.3498192j], [1.61296440 + 0.3498192j, 1.23920938 + 0j]])
+A = np.array(
+    [[1.02789352, 1.61296440 - 0.3498192j], [1.61296440 + 0.3498192j, 1.23920938 + 0j]]
+)
 
 # two-qubit Hermitian observable
 B = np.array(

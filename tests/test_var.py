@@ -53,7 +53,9 @@ class TestVar:
 
         # Here the observable is already diagonal
         var = dev.var(qml.PauliZ(wires=[0], do_queue=False))
-        expected = 0.25 * (3 - np.cos(2 * theta) - 2 * np.cos(theta) ** 2 * np.cos(2 * phi))
+        expected = 0.25 * (
+            3 - np.cos(2 * theta) - 2 * np.cos(theta) ** 2 * np.cos(2 * phi)
+        )
 
         assert np.allclose(var, expected, **tol)
 
@@ -70,7 +72,10 @@ class TestVar:
         obs = qml.Hermitian(H, wires=[0], do_queue=False)
 
         with mimic_execution_for_var(dev):
-            dev.apply([qml.RX(phi, wires=[0]), qml.RY(theta, wires=[0])], obs.diagonalizing_gates())
+            dev.apply(
+                [qml.RX(phi, wires=[0]), qml.RY(theta, wires=[0])],
+                obs.diagonalizing_gates(),
+            )
 
         var = dev.var(obs)
         expected = 0.5 * (
@@ -94,7 +99,9 @@ class TestTensorVar:
         varphi = -0.543
 
         dev = device(3)
-        obs = qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
+        obs = qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(
+            wires=[2], do_queue=False
+        )
 
         with mimic_execution_for_var(dev):
             dev.apply(
@@ -105,7 +112,7 @@ class TestTensorVar:
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
                 ],
-                obs.diagonalizing_gates()
+                obs.diagonalizing_gates(),
             )
 
         res = dev.var(obs)
@@ -129,9 +136,11 @@ class TestTensorVar:
 
         dev = device(3)
 
-        obs = (qml.PauliZ(wires=[0], do_queue=False)
+        obs = (
+            qml.PauliZ(wires=[0], do_queue=False)
             @ qml.Hadamard(wires=[1], do_queue=False)
-            @ qml.PauliY(wires=[2], do_queue=False))
+            @ qml.PauliY(wires=[2], do_queue=False)
+        )
 
         with mimic_execution_for_var(dev):
             dev.apply(
@@ -142,7 +151,7 @@ class TestTensorVar:
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
                 ],
-                obs.diagonalizing_gates()
+                obs.diagonalizing_gates(),
             )
 
         res = dev.var(obs)
@@ -172,7 +181,9 @@ class TestTensorVar:
                 [-5 - 2j, -5 - 4j, -4 - 3j, -6],
             ]
         )
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(A, wires=[1, 2], do_queue=False)
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(
+            A, wires=[1, 2], do_queue=False
+        )
 
         with mimic_execution_for_var(dev):
             dev.apply(
@@ -183,7 +194,7 @@ class TestTensorVar:
                     qml.CNOT(wires=[0, 1]),
                     qml.CNOT(wires=[1, 2]),
                 ],
-                obs.diagonalizing_gates()
+                obs.diagonalizing_gates(),
             )
 
         res = dev.var(obs)
@@ -192,7 +203,10 @@ class TestTensorVar:
             1057
             - np.cos(2 * phi)
             + 12 * (27 + np.cos(2 * phi)) * np.cos(varphi)
-            - 2 * np.cos(2 * varphi) * np.sin(phi) * (16 * np.cos(phi) + 21 * np.sin(phi))
+            - 2
+            * np.cos(2 * varphi)
+            * np.sin(phi)
+            * (16 * np.cos(phi) + 21 * np.sin(phi))
             + 16 * np.sin(2 * phi)
             - 8 * (-17 + np.cos(2 * phi) + 2 * np.sin(2 * phi)) * np.sin(varphi)
             - 8 * np.cos(2 * theta) * (3 + 3 * np.cos(varphi) + np.sin(varphi)) ** 2

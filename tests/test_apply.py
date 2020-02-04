@@ -151,7 +151,10 @@ class TestStateApply:
 
         with mimic_execution_for_apply(dev):
             dev.apply(
-                [qml.QubitStateVector(state, wires=[0]), qml.__getattribute__(name)(wires=[0])]
+                [
+                    qml.QubitStateVector(state, wires=[0]),
+                    qml.__getattribute__(name)(wires=[0]),
+                ]
             )
 
         res = np.abs(dev._state) ** 2
@@ -187,7 +190,9 @@ class TestStateApply:
         c = -0.654
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0]), qml.Rot(a, b, c, wires=[0])])
+            dev.apply(
+                [qml.QubitStateVector(state, wires=[0]), qml.Rot(a, b, c, wires=[0])]
+            )
 
         res = np.abs(dev._state) ** 2
         expected = np.abs(rot(a, b, c) @ state) ** 2
@@ -326,7 +331,9 @@ class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
         dev = device(2)
         state = np.array([0, 123.432])
 
-        with pytest.raises(ValueError, match=r"State vector must be of length 2\*\*wires"):
+        with pytest.raises(
+            ValueError, match=r"State vector must be of length 2\*\*wires"
+        ):
             with mimic_execution_for_apply(dev):
                 dev.apply([qml.QubitStateVector(state, wires=[0, 1])])
 
@@ -338,7 +345,10 @@ class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
 
         with mimic_execution_for_apply(dev):
             dev.apply(
-                [qml.QubitStateVector(state, wires=[0]), qml.__getattribute__(name)(wires=[0])]
+                [
+                    qml.QubitStateVector(state, wires=[0]),
+                    qml.__getattribute__(name)(wires=[0]),
+                ]
             )
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
@@ -374,7 +384,9 @@ class RemoveThisWhenHardwareIsImplementedTestHardwareApply:
         c = -0.654
 
         with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=[0]), qml.Rot(a, b, c, wires=[0])])
+            dev.apply(
+                [qml.QubitStateVector(state, wires=[0]), qml.Rot(a, b, c, wires=[0])]
+            )
 
         res = np.fromiter(dev.probabilities().values(), dtype=np.float64)
         expected = np.abs(rot(a, b, c) @ state) ** 2
