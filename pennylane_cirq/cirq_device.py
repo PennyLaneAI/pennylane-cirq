@@ -31,6 +31,7 @@ Classes
 Code details
 ~~~~~~~~~~~~
 """
+import abc
 import cirq
 import numpy as np
 import pennylane as qml
@@ -42,7 +43,7 @@ from .cirq_interface import CirqOperation
 
 # pylint: disable=missing-function-docstring
 
-class CirqDevice(QubitDevice):
+class CirqDevice(QubitDevice, abc.ABC):
     """Abstract base device for PennyLane-Cirq.
 
     Args:
@@ -159,11 +160,13 @@ class CirqDevice(QubitDevice):
     def pre_apply(self):
         self.reset()
 
+    @abc.abstractmethod
     def apply_basis_state(self, basis_state_operation):
-        pass
+        raise NotImplementedError
 
+    @abc.abstractmethod
     def apply_qubit_state_vector(self, qubit_state_vector_operation):
-        pass
+        raise NotImplementedError
 
     def _apply_operation(self, operation):
         cirq_operation = self._complete_operation_map[operation.name]
