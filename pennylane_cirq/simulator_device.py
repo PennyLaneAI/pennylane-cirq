@@ -30,17 +30,14 @@ Classes
 
 ----
 """
-import itertools
-
-from collections import OrderedDict
-import functools
-
 import cirq
 import math
 import numpy as np
 import pennylane as qml
 
 from .cirq_device import CirqDevice
+
+# pylint: disable=missing-function-docstring
 
 
 class SimulatorDevice(CirqDevice):

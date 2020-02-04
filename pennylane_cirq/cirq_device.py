@@ -40,6 +40,7 @@ from pennylane.operation import Operation
 from ._version import __version__
 from .cirq_interface import CirqOperation
 
+# pylint: disable=missing-function-docstring
 
 class CirqDevice(QubitDevice):
     """Abstract base device for PennyLane-Cirq.
