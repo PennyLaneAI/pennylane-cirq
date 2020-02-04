@@ -69,7 +69,7 @@ class CirqDevice(Device):
         Args:
             measurements (np.array[bool]): the measurements as boolean values
             eigenvalues (np.array[float]): eigenvalues corresponding to the observed basis states
-        
+
         Returns:
             (np.array[float]): the converted measurements
         """
