@@ -223,9 +223,11 @@ class TestTensorExpval:
         varphi = -0.543
 
         dev = device(3)
+
         obs = qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
 
-        dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.RX(varphi, wires=[2]), qml.CNOT(wires=[0, 1]), qml.CNOT(wires=[1, 2])], obs.diagonalizing_gates())
+        with mimic_execution_for_expval(dev):
+            dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.RX(varphi, wires=[2]), qml.CNOT(wires=[0, 1]), qml.CNOT(wires=[1, 2])], obs.diagonalizing_gates())
 
         res = dev.expval(obs)
         expected = np.sin(theta) * np.sin(phi) * np.sin(varphi)
@@ -239,10 +241,13 @@ class TestTensorExpval:
         varphi = -0.543
 
         dev = device(3)
+
         obs = (qml.PauliZ(wires=[0], do_queue=False)
             @ qml.Hadamard(wires=[1], do_queue=False)
             @ qml.PauliY(wires=[2], do_queue=False))
-        dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.RX(varphi, wires=[2]), qml.CNOT(wires=[0, 1]), qml.CNOT(wires=[1, 2])], obs.diagonalizing_gates())
+
+        with mimic_execution_for_expval(dev):
+            dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.RX(varphi, wires=[2]), qml.CNOT(wires=[0, 1]), qml.CNOT(wires=[1, 2])], obs.diagonalizing_gates())
 
         res = dev.expval(obs)
         expected = -(np.cos(varphi) * np.sin(phi) + np.sin(varphi) * np.cos(theta)) / np.sqrt(2)
@@ -267,7 +272,8 @@ class TestTensorExpval:
         )
         obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(A, wires=[1, 2], do_queue=False)
 
-        dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.RX(varphi, wires=[2]), qml.CNOT(wires=[0, 1]), qml.CNOT(wires=[1, 2])], obs.diagonalizing_gates())
+        with mimic_execution_for_expval(dev):
+            dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.RX(varphi, wires=[2]), qml.CNOT(wires=[0, 1]), qml.CNOT(wires=[1, 2])], obs.diagonalizing_gates())
 
         res = dev.expval(obs)
 
