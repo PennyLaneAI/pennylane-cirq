@@ -889,10 +889,10 @@ class TestSample:
         assert np.allclose(s1 ** 2, 1, **tol)
 
 
-@pytest.mark.parametrize("shots,analytic", [(100, True)])
 class TestState:
     """Test the state property."""
 
+    @pytest.mark.parametrize("shots,analytic", [(100, True)])
     @pytest.mark.parametrize("ops,expected_state", [
         ([qml.PauliX(0), qml.PauliX(1)], [0, 0, 0, 1]),
         ([qml.PauliX(0), qml.PauliY(1)], [0, 0, 0, 1j]),
@@ -905,6 +905,7 @@ class TestState:
 
         assert np.allclose(simulator_device_2_wires.state, expected_state, **tol)
 
+    @pytest.mark.parametrize("shots,analytic", [(100, True)])
     @pytest.mark.parametrize("ops,diag_ops,expected_state", [
         ([qml.PauliX(0), qml.PauliX(1)], [], [0, 0, 0, 1]),
         ([qml.PauliX(0), qml.PauliY(1)], [qml.Hadamard(0)], [0, 1j/np.sqrt(2), 0, -1j/np.sqrt(2)]),
@@ -916,3 +917,11 @@ class TestState:
         simulator_device_2_wires.apply(ops, rotations=diag_ops)
 
         assert np.allclose(simulator_device_2_wires.state, expected_state, **tol)
+
+    @pytest.mark.parametrize("shots,analytic", [(100, False)])
+    def test_state_non_analytic(self, simulator_device_2_wires):
+        """Test that the state is None if in non-analytic mode."""
+        simulator_device_2_wires.reset()
+        simulator_device_2_wires.apply([qml.PauliX(0), qml.PauliX(1)])
+
+        assert simulator_device_2_wires.state is None
