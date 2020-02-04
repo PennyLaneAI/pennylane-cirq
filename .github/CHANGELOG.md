@@ -1,16 +1,17 @@
-# Release 0.2.0-dev
-
-### New features since last release
-
-### Breaking changes
+# Release 0.8.0
 
 ### Improvements
 
-### Documentation
+* Added support for inverse operations by defining the `.inv()` method
+  of the `CirqOperation` class which uses the `cirq.inverse` function.
+  [#15](https://github.com/XanaduAI/pennylane-cirq/pull/15)
 
 ### Bug fixes
 
-* Fix bugs introduces into the test suite by the release of Cirq 0.6.0
+* Fix a minor bug introduced into the test suite by the release of Cirq 0.7.0.
+  [#18](https://github.com/XanaduAI/pennylane-cirq/pull/18)
+
+* Fix bugs introduced into the test suite by the release of Cirq 0.6.0.
   [#13](https://github.com/XanaduAI/pennylane-cirq/pull/13)
 
 ### Contributors

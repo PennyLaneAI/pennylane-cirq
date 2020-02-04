@@ -47,15 +47,15 @@ class CirqDevice(Device):
     Args:
         wires (int): the number of modes to initialize the device in
         shots (int): Number of circuit evaluations/random samples used
-            to estimate expectation values of observables. Shots need 
+            to estimate expectation values of observables. Shots need
             to >= 1.
-        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used 
+        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of `cirq.LineQubit` instances is created.
     """
 
     name = "Cirq Abstract PennyLane plugin baseclass"
-    pennylane_requires = ">=0.6.0"
+    pennylane_requires = ">=0.7.0"
     version = __version__
     author = "Johannes Jakob Meyer"
     _capabilities = {"model": "qubit", "tensor_observables": False, "inverse_operations": True}
@@ -69,7 +69,7 @@ class CirqDevice(Device):
         Args:
             measurements (np.array[bool]): the measurements as boolean values
             eigenvalues (np.array[float]): eigenvalues corresponding to the observed basis states
-        
+
         Returns:
             (np.array[float]): the converted measurements
         """
