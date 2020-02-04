@@ -18,7 +18,7 @@ import numpy as np
 import pennylane as qml
 from contextlib import contextmanager
 
-from conftest import U, U2, A
+from conftest import U, U2, A, B
 
 
 np.random.seed(42)
@@ -88,7 +88,6 @@ class TestExpval:
 
         dev = device(2)
         O = qml.PauliX
-        name = "PauliX"
 
         with mimic_execution_for_expval(dev):
             dev.apply(
@@ -110,12 +109,14 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
+        O = qml.PauliY
 
         with mimic_execution_for_expval(dev):
-            dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.CNOT(wires=[0, 1])])
+            dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.CNOT(wires=[0, 1])],
+                O(wires=[0], do_queue=False).diagonalizing_gates()
+                + O(wires=[1], do_queue=False).diagonalizing_gates(),
+            )
 
-        O = qml.PauliY
-        name = "PauliY"
 
         dev._obs_queue = [O(wires=[0], do_queue=False), O(wires=[1], do_queue=False)]
 
@@ -130,12 +131,13 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
+        O = qml.Hadamard
 
         with mimic_execution_for_expval(dev):
-            dev.apply([qml.RY(theta, wires=[0]), qml.RY(phi, wires=[1]), qml.CNOT(wires=[0, 1])])
-
-        O = qml.Hadamard
-        name = "Hadamard"
+            dev.apply([qml.RY(theta, wires=[0]), qml.RY(phi, wires=[1]), qml.CNOT(wires=[0, 1])],
+                O(wires=[0], do_queue=False).diagonalizing_gates()
+                + O(wires=[1], do_queue=False).diagonalizing_gates(),
+            )
 
         dev._obs_queue = [O(wires=[0], do_queue=False), O(wires=[1], do_queue=False)]
 
@@ -156,19 +158,20 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
+        O = qml.Hermitian
 
         with mimic_execution_for_expval(dev):
-            dev.apply([qml.RY(theta, wires=[0]), qml.RY(phi, wires=[1]), qml.CNOT(wires=[0, 1])])
-
-        O = qml.Hermitian
-        name = "Hermitian"
+            dev.apply([qml.RY(theta, wires=[0]), qml.RY(phi, wires=[1]), qml.CNOT(wires=[0, 1])],
+                O(A, wires=[0], do_queue=False).diagonalizing_gates()
+                + O(A, wires=[1], do_queue=False).diagonalizing_gates(),
+            )
 
         dev._obs_queue = [
             O(A, wires=[0], do_queue=False),
             O(A, wires=[1], do_queue=False),
         ]
 
-        res = np.array([dev.expval(name, [0], [A]), dev.expval(name, [1], [A])])
+        res = np.array([dev.expval(O(A, wires=[0], do_queue=False)), dev.expval(O(A, wires=[1], do_queue=False))])
 
         a = A[0, 0]
         re_b = A[0, 1].real
@@ -185,28 +188,19 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
+        O = qml.Hermitian
 
         with mimic_execution_for_expval(dev):
-            dev.apply([qml.RY(theta, wires=[0]), qml.RY(phi, wires=[1]), qml.CNOT(wires=[0, 1])])
+            dev.apply([qml.RY(theta, wires=[0]), qml.RY(phi, wires=[1]), qml.CNOT(wires=[0, 1])],
+                O(B, wires=[0, 1], do_queue=False).diagonalizing_gates(),
+            )
 
-        O = qml.Hermitian
-        name = "Hermitian"
+        dev._obs_queue = [O(B, wires=[0, 1], do_queue=False)]
 
-        A = np.array(
-            [
-                [-6, 2 + 1j, -3, -5 + 2j],
-                [2 - 1j, 0, 2 - 1j, -5 + 4j],
-                [-3, 2 + 1j, 0, -4 + 3j],
-                [-5 - 2j, -5 - 4j, -4 - 3j, -6],
-            ]
-        )
-
-        dev._obs_queue = [O(A, wires=[0, 1], do_queue=False)]
-
-        res = np.array([dev.expval(name, [0, 1], [A])])
+        res = np.array([dev.expval(O(B, wires=[0, 1], do_queue=False))])
 
         # below is the analytic expectation value for this circuit with arbitrary
-        # Hermitian observable A
+        # Hermitian observable B
         expected = 0.5 * (
             6 * np.cos(theta) * np.sin(phi)
             - np.sin(theta) * (8 * np.sin(phi) + 7 * np.cos(phi) + 3)
