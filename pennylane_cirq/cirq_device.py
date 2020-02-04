@@ -159,13 +159,34 @@ class CirqDevice(QubitDevice, abc.ABC):
 
     @abc.abstractmethod
     def _apply_basis_state(self, basis_state_operation):
+        """Apply a basis state preparation.
+
+        Args:
+            basis_state_operation (pennylane.BasisState): the BasisState operation instance that shall be applied
+
+        Raises:
+            NotImplementedError: when not implemented in the subclass
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def _apply_qubit_state_vector(self, qubit_state_vector_operation):
+        """Apply a state vector preparation.
+
+        Args:
+            qubit_state_vector_operation (pennylane.QubitStateVector): the QubitStateVector operation instance that shall be applied
+
+        Raises:
+            NotImplementedError: when not implemented in the subclass
+        """
         raise NotImplementedError
 
     def _apply_operation(self, operation):
+        """Apply a single PennyLane Operation.
+
+        Args:
+            operation (pennylane.Operation): The operation that shall be applied
+        """
         cirq_operation = self._complete_operation_map[operation.name]
 
         # If command is None do nothing
