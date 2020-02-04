@@ -213,7 +213,7 @@ class TestExpval:
 
 
 @pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
-class RemoveThisWhenTensorsAreImplementedTestTensorExpval:
+class TestTensorExpval:
     """Test tensor expectation values"""
 
     def test_paulix_pauliy(self, device, shots, tol):
@@ -223,17 +223,11 @@ class RemoveThisWhenTensorsAreImplementedTestTensorExpval:
         varphi = -0.543
 
         dev = device(3)
-        dev.apply([qml.RX(theta, wires=[0])])
-        dev.apply([qml.RX(phi, wires=[1])])
-        dev.apply([qml.RX(varphi, wires=[2])])
-        dev.apply([qml.CNOT(wires=[0, 1])])
-        dev.apply([qml.CNOT(wires=[1, 2])])
+        obs = qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
 
-        dev._obs_queue = [
-            qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
-        ]
+        dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.RX(varphi, wires=[2]), qml.CNOT(wires=[0, 1]), qml.CNOT(wires=[1, 2])], obs.diagonalizing_gates())
 
-        res = dev.expval(["PauliX", "PauliY"], [[0], [2]], [[], [], []])
+        res = dev.expval(obs)
         expected = np.sin(theta) * np.sin(phi) * np.sin(varphi)
 
         assert np.allclose(res, expected, **tol)
@@ -245,19 +239,12 @@ class RemoveThisWhenTensorsAreImplementedTestTensorExpval:
         varphi = -0.543
 
         dev = device(3)
-        dev.apply([qml.RX(theta, wires=[0])])
-        dev.apply([qml.RX(phi, wires=[1])])
-        dev.apply([qml.RX(varphi, wires=[2])])
-        dev.apply([qml.CNOT(wires=[0, 1])])
-        dev.apply([qml.CNOT(wires=[1, 2])])
-
-        dev._obs_queue = [
-            qml.PauliZ(wires=[0], do_queue=False)
+        obs = (qml.PauliZ(wires=[0], do_queue=False)
             @ qml.Hadamard(wires=[1], do_queue=False)
-            @ qml.PauliY(wires=[2], do_queue=False)
-        ]
+            @ qml.PauliY(wires=[2], do_queue=False))
+        dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.RX(varphi, wires=[2]), qml.CNOT(wires=[0, 1]), qml.CNOT(wires=[1, 2])], obs.diagonalizing_gates())
 
-        res = dev.expval(["PauliZ", "Hadamard", "PauliY"], [[0], [1], [2]], [[], [], []])
+        res = dev.expval(obs)
         expected = -(np.cos(varphi) * np.sin(phi) + np.sin(varphi) * np.cos(theta)) / np.sqrt(2)
 
         assert np.allclose(res, expected, **tol)
@@ -269,11 +256,6 @@ class RemoveThisWhenTensorsAreImplementedTestTensorExpval:
         varphi = -0.543
 
         dev = device(3)
-        dev.apply([qml.RX(theta, wires=[0])])
-        dev.apply([qml.RX(phi, wires=[1])])
-        dev.apply([qml.RX(varphi, wires=[2])])
-        dev.apply([qml.CNOT(wires=[0, 1])])
-        dev.apply([qml.CNOT(wires=[1, 2])])
 
         A = np.array(
             [
@@ -283,12 +265,12 @@ class RemoveThisWhenTensorsAreImplementedTestTensorExpval:
                 [-5 - 2j, -5 - 4j, -4 - 3j, -6],
             ]
         )
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(A, wires=[1, 2], do_queue=False)
 
-        dev._obs_queue = [
-            qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(A, wires=[1, 2], do_queue=False)
-        ]
+        dev.apply([qml.RX(theta, wires=[0]), qml.RX(phi, wires=[1]), qml.RX(varphi, wires=[2]), qml.CNOT(wires=[0, 1]), qml.CNOT(wires=[1, 2])], obs.diagonalizing_gates())
 
-        res = dev.expval(["PauliZ", "Hermitian"], [[0], [1, 2]], [[], [A]])
+        res = dev.expval(obs)
+
         expected = 0.5 * (
             -6 * np.cos(theta) * (np.cos(varphi) + 1)
             - 2 * np.sin(varphi) * (np.cos(theta) + np.sin(phi) - 2 * np.cos(phi))

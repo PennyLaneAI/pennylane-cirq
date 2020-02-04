@@ -135,7 +135,7 @@ class TestSample:
 
 
 @pytest.mark.parametrize("shots", [8192])
-class RemoveWhenImplementedTestTensorSample:
+class TestTensorSample:
     """Test tensor expectation values"""
 
     def test_paulix_pauliy(self, device, shots, tol):
