@@ -143,7 +143,6 @@ class TestOperations:
 
         assert cirq_device_1_wire.reset.called
 
-    # fmt: off
     @pytest.mark.parametrize(
         "gate,expected_cirq_gates",
         [
@@ -213,7 +212,6 @@ class TestOperations:
             ),
         ],
     )
-    # fmt: on
     def test_apply_single_wire(self, cirq_device_1_wire, gate, expected_cirq_gates):
         """Tests that apply adds the correct gates to the circuit for single-qubit gates."""
 
@@ -228,7 +226,6 @@ class TestOperations:
         for i in range(len(ops)):
             assert ops[i]._gate == expected_cirq_gates[i]
 
-    # fmt: off
     @pytest.mark.parametrize("gate,expected_cirq_gates", [
         (qml.CNOT(wires=[0, 1]), [cirq.CNOT]),
         (qml.CNOT(wires=[0, 1]).inv(), [cirq.CNOT ** -1]),
@@ -327,7 +324,6 @@ class TestOperations:
             ],
         ),
     ])
-    # fmt: on
     def test_apply_two_wires(self, cirq_device_2_wires, gate, expected_cirq_gates):
         """Tests that apply adds the correct gates to the circuit for two-qubit gates."""
 
