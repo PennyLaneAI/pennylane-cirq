@@ -29,14 +29,17 @@ from pennylane_cirq.cirq_device import CirqDevice
 class TestCirqDeviceInit:
     """Tests the routines of the CirqDevice class."""
 
-    def test_default_init(self):
+    @pytest.mark.parametrize("analytic", [True, False])
+    @pytest.mark.parametrize("num_wires", [1, 3, 6])
+    @pytest.mark.parametrize("shots", [1, 100, 137])
+    def test_default_init(self, analytic, num_wires, shots):
         """Tests that the device is properly initialized."""
 
-        dev = CirqDevice(3, 100, False)
+        dev = CirqDevice(num_wires, shots, analytic)
 
-        assert dev.num_wires == 3
-        assert dev.shots == 100
-        assert dev.analytic == False
+        assert dev.num_wires == num_wires
+        assert dev.shots == shots
+        assert dev.analytic == analytic
 
     def test_default_init_of_qubits(self):
         """Tests the default initialization of CirqDevice.qubits."""
