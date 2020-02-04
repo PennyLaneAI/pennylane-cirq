@@ -22,6 +22,7 @@ import numpy as np
 from pennylane_cirq import SimulatorDevice
 import cirq
 
+
 class TestDeviceIntegration:
     """Tests that the SimulatorDevice integrates well with PennyLane"""
 
@@ -54,20 +55,36 @@ def simulator_device_3_wires(shots, analytic):
     """Return a three wire instance of the SimulatorDevice class."""
     yield SimulatorDevice(3, shots=shots, analytic=analytic)
 
+
 @pytest.mark.parametrize("shots,analytic", [(100, True)])
 class TestApply:
     """Tests that gates are correctly applied"""
 
-    @pytest.mark.parametrize("op,input,expected_output", [
-        (qml.PauliX, [1, 0], np.array([0, 1])),
-        (qml.PauliX, [1 / math.sqrt(2), 1 / math.sqrt(2)], [1 / math.sqrt(2), 1 / math.sqrt(2)]),
-        (qml.PauliY, [1, 0], [0, 1j]),
-        (qml.PauliY, [1 / math.sqrt(2), 1 / math.sqrt(2)], [-1j / math.sqrt(2), 1j / math.sqrt(2)]),
-        (qml.PauliZ, [1, 0], [1, 0]),
-        (qml.PauliZ, [1 / math.sqrt(2), 1 / math.sqrt(2)], [1 / math.sqrt(2), -1 / math.sqrt(2)]),
-        (qml.Hadamard, [1, 0], [1 / math.sqrt(2), 1 / math.sqrt(2)]),
-        (qml.Hadamard, [1 / math.sqrt(2), -1 / math.sqrt(2)], [0, 1]),
-    ])
+    @pytest.mark.parametrize(
+        "op,input,expected_output",
+        [
+            (qml.PauliX, [1, 0], np.array([0, 1])),
+            (
+                qml.PauliX,
+                [1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [1 / math.sqrt(2), 1 / math.sqrt(2)],
+            ),
+            (qml.PauliY, [1, 0], [0, 1j]),
+            (
+                qml.PauliY,
+                [1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [-1j / math.sqrt(2), 1j / math.sqrt(2)],
+            ),
+            (qml.PauliZ, [1, 0], [1, 0]),
+            (
+                qml.PauliZ,
+                [1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [1 / math.sqrt(2), -1 / math.sqrt(2)],
+            ),
+            (qml.Hadamard, [1, 0], [1 / math.sqrt(2), 1 / math.sqrt(2)]),
+            (qml.Hadamard, [1 / math.sqrt(2), -1 / math.sqrt(2)], [0, 1]),
+        ],
+    )
     def test_apply_operation_single_wire_no_parameters(
         self, simulator_device_1_wire, tol, op, input, expected_output
     ):
@@ -78,22 +95,36 @@ class TestApply:
         simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
         simulator_device_1_wire.apply([op(wires=[0])])
 
-
         assert np.allclose(
             simulator_device_1_wire.state, np.array(expected_output), **tol
         )
 
-    @pytest.mark.parametrize("op,input,expected_output", [
-        (qml.CNOT, [1, 0, 0, 0], [1, 0, 0, 0]),
-        (qml.CNOT, [0, 0, 1, 0], [0, 0, 0, 1]),
-        (qml.CNOT, [1 / math.sqrt(2), 0, 0, 1 / math.sqrt(2)], [1 / math.sqrt(2), 0, 1 / math.sqrt(2), 0]),
-        (qml.SWAP, [1, 0, 0, 0], [1, 0, 0, 0]),
-        (qml.SWAP, [0, 0, 1, 0], [0, 1, 0, 0]),
-        (qml.SWAP, [1 / math.sqrt(2), 0, -1 / math.sqrt(2), 0], [1 / math.sqrt(2), -1 / math.sqrt(2), 0, 0]),
-        (qml.CZ, [1, 0, 0, 0], [1, 0, 0, 0]),
-        (qml.CZ, [0, 0, 0, 1], [0, 0, 0, -1]),
-        (qml.CZ, [1 / math.sqrt(2), 0, 0, -1 / math.sqrt(2)], [1 / math.sqrt(2), 0, 0, 1 / math.sqrt(2)]),
-    ])
+    @pytest.mark.parametrize(
+        "op,input,expected_output",
+        [
+            (qml.CNOT, [1, 0, 0, 0], [1, 0, 0, 0]),
+            (qml.CNOT, [0, 0, 1, 0], [0, 0, 0, 1]),
+            (
+                qml.CNOT,
+                [1 / math.sqrt(2), 0, 0, 1 / math.sqrt(2)],
+                [1 / math.sqrt(2), 0, 1 / math.sqrt(2), 0],
+            ),
+            (qml.SWAP, [1, 0, 0, 0], [1, 0, 0, 0]),
+            (qml.SWAP, [0, 0, 1, 0], [0, 1, 0, 0]),
+            (
+                qml.SWAP,
+                [1 / math.sqrt(2), 0, -1 / math.sqrt(2), 0],
+                [1 / math.sqrt(2), -1 / math.sqrt(2), 0, 0],
+            ),
+            (qml.CZ, [1, 0, 0, 0], [1, 0, 0, 0]),
+            (qml.CZ, [0, 0, 0, 1], [0, 0, 0, -1]),
+            (
+                qml.CZ,
+                [1 / math.sqrt(2), 0, 0, -1 / math.sqrt(2)],
+                [1 / math.sqrt(2), 0, 0, 1 / math.sqrt(2)],
+            ),
+        ],
+    )
     def test_apply_operation_two_wires_no_parameters(
         self, simulator_device_2_wires, tol, op, input, expected_output
     ):
@@ -108,16 +139,27 @@ class TestApply:
             simulator_device_2_wires.state, np.array(expected_output), **tol
         )
 
-    @pytest.mark.parametrize("op,expected_output,par", [
-        (qml.BasisState, [0, 0, 1, 0], [1, 0]),
-        (qml.BasisState, [0, 0, 1, 0], [1, 0]),
-        (qml.BasisState, [0, 0, 0, 1], [1, 1]),
-        (qml.QubitStateVector, [0, 0, 1, 0], [0, 0, 1, 0]),
-        (qml.QubitStateVector, [0, 0, 1, 0], [0, 0, 1, 0]),
-        (qml.QubitStateVector, [0, 0, 0, 1], [0, 0, 0, 1]),
-        (qml.QubitStateVector, [1 / math.sqrt(3), 0, 1 / math.sqrt(3), 1 / math.sqrt(3)], [1 / math.sqrt(3), 0, 1 / math.sqrt(3), 1 / math.sqrt(3)]),
-        (qml.QubitStateVector, [1 / math.sqrt(3), 0, -1 / math.sqrt(3), 1 / math.sqrt(3)], [1 / math.sqrt(3), 0, -1 / math.sqrt(3), 1 / math.sqrt(3)]),
-    ])
+    @pytest.mark.parametrize(
+        "op,expected_output,par",
+        [
+            (qml.BasisState, [0, 0, 1, 0], [1, 0]),
+            (qml.BasisState, [0, 0, 1, 0], [1, 0]),
+            (qml.BasisState, [0, 0, 0, 1], [1, 1]),
+            (qml.QubitStateVector, [0, 0, 1, 0], [0, 0, 1, 0]),
+            (qml.QubitStateVector, [0, 0, 1, 0], [0, 0, 1, 0]),
+            (qml.QubitStateVector, [0, 0, 0, 1], [0, 0, 0, 1]),
+            (
+                qml.QubitStateVector,
+                [1 / math.sqrt(3), 0, 1 / math.sqrt(3), 1 / math.sqrt(3)],
+                [1 / math.sqrt(3), 0, 1 / math.sqrt(3), 1 / math.sqrt(3)],
+            ),
+            (
+                qml.QubitStateVector,
+                [1 / math.sqrt(3), 0, -1 / math.sqrt(3), 1 / math.sqrt(3)],
+                [1 / math.sqrt(3), 0, -1 / math.sqrt(3), 1 / math.sqrt(3)],
+            ),
+        ],
+    )
     def test_apply_operation_state_preparation(
         self, simulator_device_2_wires, tol, op, expected_output, par
     ):
@@ -131,43 +173,107 @@ class TestApply:
             simulator_device_2_wires.state, np.array(expected_output), **tol
         )
 
-    @pytest.mark.parametrize("op,input,expected_output,par", [
-        (qml.PhaseShift, [1, 0], [1, 0], [math.pi / 2]),
-        (qml.PhaseShift, [0, 1], [0, 1j], [math.pi / 2]),
-        (qml.PhaseShift, [1 / math.sqrt(2), 1 / math.sqrt(2)], [1 / math.sqrt(2), 1 / 2 + 1j / 2], [math.pi / 4]),
-        (qml.RX, [1, 0], [1 / math.sqrt(2), -1j * 1 / math.sqrt(2)], [math.pi / 2]),
-        (qml.RX, [1, 0], [0, -1j], [math.pi]),
-        (qml.RX, [1 / math.sqrt(2), 1 / math.sqrt(2)], [1 / 2 - 1j / 2, 1 / 2 - 1j / 2], [math.pi / 2]),
-        (qml.RY, [1, 0], [1 / math.sqrt(2), 1 / math.sqrt(2)], [math.pi / 2]),
-        (qml.RY, [1, 0], [0, 1], [math.pi]),
-        (qml.RY, [1 / math.sqrt(2), 1 / math.sqrt(2)], [0, 1], [math.pi / 2]),
-        (qml.RZ, [1, 0], [1 / math.sqrt(2) - 1j / math.sqrt(2), 0], [math.pi / 2]),
-        (qml.RZ, [0, 1], [0, 1j], [math.pi]),
-        (qml.RZ, [1 / math.sqrt(2), 1 / math.sqrt(2)], [1 / 2 - 1j / 2, 1 / 2 + 1j / 2], [math.pi / 2]),
-        (qml.Rot, [1, 0], [1 / math.sqrt(2) - 1j / math.sqrt(2), 0], [math.pi / 2, 0, 0]),
-        (qml.Rot, [1, 0], [1 / math.sqrt(2), 1 / math.sqrt(2)], [0, math.pi / 2, 0]),
-        (qml.Rot, [1 / math.sqrt(2), 1 / math.sqrt(2)], [1 / 2 - 1j / 2, 1 / 2 + 1j / 2], [0, 0, math.pi / 2]),
-        (qml.Rot, [1, 0], [-1j / math.sqrt(2), -1 / math.sqrt(2)], [math.pi / 2, -math.pi / 2, math.pi / 2]),
-        (qml.Rot, [1 / math.sqrt(2), 1 / math.sqrt(2)], [1 / 2 + 1j / 2, -1 / 2 + 1j / 2], [-math.pi / 2, math.pi, math.pi]),
-        (qml.QubitUnitary, [1, 0], [1j / math.sqrt(2), 1j / math.sqrt(2)], [
-            np.array([
+    @pytest.mark.parametrize(
+        "op,input,expected_output,par",
+        [
+            (qml.PhaseShift, [1, 0], [1, 0], [math.pi / 2]),
+            (qml.PhaseShift, [0, 1], [0, 1j], [math.pi / 2]),
+            (
+                qml.PhaseShift,
+                [1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [1 / math.sqrt(2), 1 / 2 + 1j / 2],
+                [math.pi / 4],
+            ),
+            (qml.RX, [1, 0], [1 / math.sqrt(2), -1j * 1 / math.sqrt(2)], [math.pi / 2]),
+            (qml.RX, [1, 0], [0, -1j], [math.pi]),
+            (
+                qml.RX,
+                [1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [1 / 2 - 1j / 2, 1 / 2 - 1j / 2],
+                [math.pi / 2],
+            ),
+            (qml.RY, [1, 0], [1 / math.sqrt(2), 1 / math.sqrt(2)], [math.pi / 2]),
+            (qml.RY, [1, 0], [0, 1], [math.pi]),
+            (qml.RY, [1 / math.sqrt(2), 1 / math.sqrt(2)], [0, 1], [math.pi / 2]),
+            (qml.RZ, [1, 0], [1 / math.sqrt(2) - 1j / math.sqrt(2), 0], [math.pi / 2]),
+            (qml.RZ, [0, 1], [0, 1j], [math.pi]),
+            (
+                qml.RZ,
+                [1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [1 / 2 - 1j / 2, 1 / 2 + 1j / 2],
+                [math.pi / 2],
+            ),
+            (
+                qml.Rot,
+                [1, 0],
+                [1 / math.sqrt(2) - 1j / math.sqrt(2), 0],
+                [math.pi / 2, 0, 0],
+            ),
+            (
+                qml.Rot,
+                [1, 0],
+                [1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [0, math.pi / 2, 0],
+            ),
+            (
+                qml.Rot,
+                [1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [1 / 2 - 1j / 2, 1 / 2 + 1j / 2],
+                [0, 0, math.pi / 2],
+            ),
+            (
+                qml.Rot,
+                [1, 0],
+                [-1j / math.sqrt(2), -1 / math.sqrt(2)],
+                [math.pi / 2, -math.pi / 2, math.pi / 2],
+            ),
+            (
+                qml.Rot,
+                [1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [1 / 2 + 1j / 2, -1 / 2 + 1j / 2],
+                [-math.pi / 2, math.pi, math.pi],
+            ),
+            (
+                qml.QubitUnitary,
+                [1, 0],
                 [1j / math.sqrt(2), 1j / math.sqrt(2)],
-                [1j / math.sqrt(2), -1j / math.sqrt(2)]
-            ])
-        ]),
-        (qml.QubitUnitary, [0, 1], [1j / math.sqrt(2), -1j / math.sqrt(2)], [
-            np.array([
-                [1j / math.sqrt(2), 1j / math.sqrt(2)],
-                [1j / math.sqrt(2), -1j / math.sqrt(2)]
-            ])
-        ]),
-        (qml.QubitUnitary, [1 / math.sqrt(2), -1 / math.sqrt(2)], [0, 1j], [
-            np.array([
-                [1j / math.sqrt(2), 1j / math.sqrt(2)],
-                [1j / math.sqrt(2), -1j / math.sqrt(2)]
-            ])
-        ]),
-    ])
+                [
+                    np.array(
+                        [
+                            [1j / math.sqrt(2), 1j / math.sqrt(2)],
+                            [1j / math.sqrt(2), -1j / math.sqrt(2)],
+                        ]
+                    )
+                ],
+            ),
+            (
+                qml.QubitUnitary,
+                [0, 1],
+                [1j / math.sqrt(2), -1j / math.sqrt(2)],
+                [
+                    np.array(
+                        [
+                            [1j / math.sqrt(2), 1j / math.sqrt(2)],
+                            [1j / math.sqrt(2), -1j / math.sqrt(2)],
+                        ]
+                    )
+                ],
+            ),
+            (
+                qml.QubitUnitary,
+                [1 / math.sqrt(2), -1 / math.sqrt(2)],
+                [0, 1j],
+                [
+                    np.array(
+                        [
+                            [1j / math.sqrt(2), 1j / math.sqrt(2)],
+                            [1j / math.sqrt(2), -1j / math.sqrt(2)],
+                        ]
+                    )
+                ],
+            ),
+        ],
+    )
     def test_apply_operation_single_wire_with_parameters(
         self, simulator_device_1_wire, tol, op, input, expected_output, par
     ):
@@ -182,46 +288,120 @@ class TestApply:
             simulator_device_1_wire.state, np.array(expected_output), **tol
         )
 
-    @pytest.mark.parametrize("op,input,expected_output,par", [
-        (qml.CRX, [0, 1, 0, 0], [0, 1, 0, 0], [math.pi / 2]),
-        (qml.CRX, [0, 0, 0, 1], [0, 0, -1j, 0], [math.pi]),
-        (qml.CRX, [0, 1 / math.sqrt(2), 1 / math.sqrt(2), 0], [0, 1 / math.sqrt(2), 1 / 2, -1j / 2], [math.pi / 2]),
-        (qml.CRY, [0, 0, 0, 1], [0, 0, -1 / math.sqrt(2), 1 / math.sqrt(2)], [math.pi / 2]),
-        (qml.CRY, [0, 0, 0, 1], [0, 0, -1, 0], [math.pi]),
-        (qml.CRY, [1 / math.sqrt(2), 1 / math.sqrt(2), 0, 0], [1 / math.sqrt(2), 1 / math.sqrt(2), 0, 0], [math.pi / 2]),
-        (qml.CRZ, [0, 0, 0, 1], [0, 0, 0, 1 / math.sqrt(2) + 1j / math.sqrt(2)], [math.pi / 2]),
-        (qml.CRZ, [0, 0, 0, 1], [0, 0, 0, 1j], [math.pi]),
-        (qml.CRZ, [1 / math.sqrt(2), 1 / math.sqrt(2), 0, 0], [1 / math.sqrt(2), 1 / math.sqrt(2), 0, 0], [math.pi / 2]),
-        (qml.CRot, [0, 0, 0, 1], [0, 0, 0, 1 / math.sqrt(2) + 1j / math.sqrt(2)], [math.pi / 2, 0, 0]),
-        (qml.CRot, [0, 0, 0, 1], [0, 0, -1 / math.sqrt(2), 1 / math.sqrt(2)], [0, math.pi / 2, 0]),
-        (qml.CRot, [0, 0, 1 / math.sqrt(2), 1 / math.sqrt(2)], [0, 0, 1 / 2 - 1j / 2, 1 / 2 + 1j / 2], [0, 0, math.pi / 2]),
-        (qml.CRot, [0, 0, 0, 1], [0, 0, 1 / math.sqrt(2), 1j / math.sqrt(2)], [math.pi / 2, -math.pi / 2, math.pi / 2]),
-        (qml.CRot, [0, 1 / math.sqrt(2), 1 / math.sqrt(2), 0], [0, 1 / math.sqrt(2), 0, -1 / 2 + 1j / 2], [-math.pi / 2, math.pi, math.pi]),
-        (qml.QubitUnitary, [1, 0, 0, 0], [1, 0, 0, 0], [
-            np.array([
-                [1, 0, 0, 0],
+    @pytest.mark.parametrize(
+        "op,input,expected_output,par",
+        [
+            (qml.CRX, [0, 1, 0, 0], [0, 1, 0, 0], [math.pi / 2]),
+            (qml.CRX, [0, 0, 0, 1], [0, 0, -1j, 0], [math.pi]),
+            (
+                qml.CRX,
                 [0, 1 / math.sqrt(2), 1 / math.sqrt(2), 0],
-                [0, 1 / math.sqrt(2), -1 / math.sqrt(2), 0],
+                [0, 1 / math.sqrt(2), 1 / 2, -1j / 2],
+                [math.pi / 2],
+            ),
+            (
+                qml.CRY,
                 [0, 0, 0, 1],
-            ])
-        ]),
-        (qml.QubitUnitary, [0, 1, 0, 0], [0, 1 / math.sqrt(2), 1 / math.sqrt(2), 0], [
-            np.array([
-                [1, 0, 0, 0],
+                [0, 0, -1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [math.pi / 2],
+            ),
+            (qml.CRY, [0, 0, 0, 1], [0, 0, -1, 0], [math.pi]),
+            (
+                qml.CRY,
+                [1 / math.sqrt(2), 1 / math.sqrt(2), 0, 0],
+                [1 / math.sqrt(2), 1 / math.sqrt(2), 0, 0],
+                [math.pi / 2],
+            ),
+            (
+                qml.CRZ,
+                [0, 0, 0, 1],
+                [0, 0, 0, 1 / math.sqrt(2) + 1j / math.sqrt(2)],
+                [math.pi / 2],
+            ),
+            (qml.CRZ, [0, 0, 0, 1], [0, 0, 0, 1j], [math.pi]),
+            (
+                qml.CRZ,
+                [1 / math.sqrt(2), 1 / math.sqrt(2), 0, 0],
+                [1 / math.sqrt(2), 1 / math.sqrt(2), 0, 0],
+                [math.pi / 2],
+            ),
+            (
+                qml.CRot,
+                [0, 0, 0, 1],
+                [0, 0, 0, 1 / math.sqrt(2) + 1j / math.sqrt(2)],
+                [math.pi / 2, 0, 0],
+            ),
+            (
+                qml.CRot,
+                [0, 0, 0, 1],
+                [0, 0, -1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [0, math.pi / 2, 0],
+            ),
+            (
+                qml.CRot,
+                [0, 0, 1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [0, 0, 1 / 2 - 1j / 2, 1 / 2 + 1j / 2],
+                [0, 0, math.pi / 2],
+            ),
+            (
+                qml.CRot,
+                [0, 0, 0, 1],
+                [0, 0, 1 / math.sqrt(2), 1j / math.sqrt(2)],
+                [math.pi / 2, -math.pi / 2, math.pi / 2],
+            ),
+            (
+                qml.CRot,
                 [0, 1 / math.sqrt(2), 1 / math.sqrt(2), 0],
-                [0, 1 / math.sqrt(2), -1 / math.sqrt(2), 0],
-                [0, 0, 0, 1],
-            ])
-        ]),
-        (qml.QubitUnitary, [1 / 2, 1 / 2, -1 / 2, 1 / 2], [1 / 2, 0, 1 / math.sqrt(2), 1 / 2], [
-            np.array([
+                [0, 1 / math.sqrt(2), 0, -1 / 2 + 1j / 2],
+                [-math.pi / 2, math.pi, math.pi],
+            ),
+            (
+                qml.QubitUnitary,
                 [1, 0, 0, 0],
+                [1, 0, 0, 0],
+                [
+                    np.array(
+                        [
+                            [1, 0, 0, 0],
+                            [0, 1 / math.sqrt(2), 1 / math.sqrt(2), 0],
+                            [0, 1 / math.sqrt(2), -1 / math.sqrt(2), 0],
+                            [0, 0, 0, 1],
+                        ]
+                    )
+                ],
+            ),
+            (
+                qml.QubitUnitary,
+                [0, 1, 0, 0],
                 [0, 1 / math.sqrt(2), 1 / math.sqrt(2), 0],
-                [0, 1 / math.sqrt(2), -1 / math.sqrt(2), 0],
-                [0, 0, 0, 1],
-            ])
-        ]),
-    ])
+                [
+                    np.array(
+                        [
+                            [1, 0, 0, 0],
+                            [0, 1 / math.sqrt(2), 1 / math.sqrt(2), 0],
+                            [0, 1 / math.sqrt(2), -1 / math.sqrt(2), 0],
+                            [0, 0, 0, 1],
+                        ]
+                    )
+                ],
+            ),
+            (
+                qml.QubitUnitary,
+                [1 / 2, 1 / 2, -1 / 2, 1 / 2],
+                [1 / 2, 0, 1 / math.sqrt(2), 1 / 2],
+                [
+                    np.array(
+                        [
+                            [1, 0, 0, 0],
+                            [0, 1 / math.sqrt(2), 1 / math.sqrt(2), 0],
+                            [0, 1 / math.sqrt(2), -1 / math.sqrt(2), 0],
+                            [0, 0, 0, 1],
+                        ]
+                    )
+                ],
+            ),
+        ],
+    )
     def test_apply_operation_two_wires_with_parameters(
         self, simulator_device_2_wires, tol, op, input, expected_output, par
     ):
@@ -236,19 +416,56 @@ class TestApply:
             simulator_device_2_wires.state, np.array(expected_output), **tol
         )
 
-    @pytest.mark.parametrize("operation,par,match", [
-        (qml.BasisState, [2], "Argument for BasisState can only contain 0 and 1"),
-        (qml.BasisState, [1.2], "Argument for BasisState can only contain 0 and 1"),
-        (qml.BasisState, [0, 0, 1], "For BasisState, the state has to be specified for the correct number of qubits"),
-        (qml.BasisState, [0, 0], "For BasisState, the state has to be specified for the correct number of qubits"),
-        (qml.QubitStateVector, [0, 0, 1], "For QubitStateVector, the state has to be specified for the correct number of qubits"),
-        (qml.QubitStateVector, [0, 0, 1, 0], "For QubitStateVector, the state has to be specified for the correct number of qubits"),
-        (qml.QubitStateVector, [1], "For QubitStateVector, the state has to be specified for the correct number of qubits"),
-        (qml.QubitStateVector, [0.5, 0.5], "The given state for QubitStateVector is not properly normalized to 1"),
-        (qml.QubitStateVector, [1.1, 0], "The given state for QubitStateVector is not properly normalized to 1"),
-        (qml.QubitStateVector, [0.7, 0.7j], "The given state for QubitStateVector is not properly normalized to 1"),
-    ])
-    def test_state_preparation_error(self, simulator_device_1_wire, operation, par, match):
+    @pytest.mark.parametrize(
+        "operation,par,match",
+        [
+            (qml.BasisState, [2], "Argument for BasisState can only contain 0 and 1"),
+            (qml.BasisState, [1.2], "Argument for BasisState can only contain 0 and 1"),
+            (
+                qml.BasisState,
+                [0, 0, 1],
+                "For BasisState, the state has to be specified for the correct number of qubits",
+            ),
+            (
+                qml.BasisState,
+                [0, 0],
+                "For BasisState, the state has to be specified for the correct number of qubits",
+            ),
+            (
+                qml.QubitStateVector,
+                [0, 0, 1],
+                "For QubitStateVector, the state has to be specified for the correct number of qubits",
+            ),
+            (
+                qml.QubitStateVector,
+                [0, 0, 1, 0],
+                "For QubitStateVector, the state has to be specified for the correct number of qubits",
+            ),
+            (
+                qml.QubitStateVector,
+                [1],
+                "For QubitStateVector, the state has to be specified for the correct number of qubits",
+            ),
+            (
+                qml.QubitStateVector,
+                [0.5, 0.5],
+                "The given state for QubitStateVector is not properly normalized to 1",
+            ),
+            (
+                qml.QubitStateVector,
+                [1.1, 0],
+                "The given state for QubitStateVector is not properly normalized to 1",
+            ),
+            (
+                qml.QubitStateVector,
+                [0.7, 0.7j],
+                "The given state for QubitStateVector is not properly normalized to 1",
+            ),
+        ],
+    )
+    def test_state_preparation_error(
+        self, simulator_device_1_wire, operation, par, match
+    ):
         """Tests that the state preparation routines raise proper errors for wrong parameter values."""
 
         simulator_device_1_wire.reset()
@@ -262,8 +479,13 @@ class TestApply:
 
         simulator_device_1_wire.reset()
 
-        with pytest.raises(qml.DeviceError, match="The operation BasisState is only supported at the beginning of a circuit."):
-            simulator_device_1_wire.apply([qml.PauliX(0), qml.BasisState(np.array([0]), wires=[0])])
+        with pytest.raises(
+            qml.DeviceError,
+            match="The operation BasisState is only supported at the beginning of a circuit.",
+        ):
+            simulator_device_1_wire.apply(
+                [qml.PauliX(0), qml.BasisState(np.array([0]), wires=[0])]
+            )
 
     def test_qubit_state_vector_not_at_beginning_error(self, simulator_device_1_wire):
         """Tests that application of QubitStateVector raises an error if is not
@@ -271,8 +493,14 @@ class TestApply:
 
         simulator_device_1_wire.reset()
 
-        with pytest.raises(qml.DeviceError, match="The operation QubitStateVector is only supported at the beginning of a circuit."):
-            simulator_device_1_wire.apply([qml.PauliX(0), qml.QubitStateVector(np.array([0, 1]), wires=[0])])
+        with pytest.raises(
+            qml.DeviceError,
+            match="The operation QubitStateVector is only supported at the beginning of a circuit.",
+        ):
+            simulator_device_1_wire.apply(
+                [qml.PauliX(0), qml.QubitStateVector(np.array([0, 1]), wires=[0])]
+            )
+
 
 @pytest.mark.parametrize("shots,analytic", [(100, False)])
 class TestStatePreparationErrorsNonAnalytic:
@@ -284,9 +512,11 @@ class TestStatePreparationErrorsNonAnalytic:
 
         simulator_device_1_wire.reset()
 
-        with pytest.raises(qml.DeviceError, match="The operation BasisState is only supported in analytic mode."):
+        with pytest.raises(
+            qml.DeviceError,
+            match="The operation BasisState is only supported in analytic mode.",
+        ):
             simulator_device_1_wire.apply([qml.BasisState(np.array([0]), wires=[0])])
-
 
     def test_qubit_state_vector_not_analytic_error(self, simulator_device_1_wire):
         """Tests that application of QubitStateVector raises an error if the device
@@ -294,170 +524,232 @@ class TestStatePreparationErrorsNonAnalytic:
 
         simulator_device_1_wire.reset()
 
-        with pytest.raises(qml.DeviceError, match="The operation QubitStateVector is only supported in analytic mode."):
-            simulator_device_1_wire.apply([qml.QubitStateVector(np.array([0, 1]), wires=[0])])
+        with pytest.raises(
+            qml.DeviceError,
+            match="The operation QubitStateVector is only supported in analytic mode.",
+        ):
+            simulator_device_1_wire.apply(
+                [qml.QubitStateVector(np.array([0, 1]), wires=[0])]
+            )
 
 
 @pytest.mark.parametrize("shots,analytic", [(100, True)])
 class TestExpval:
     """Tests that expectation values are properly calculated or that the proper errors are raised."""
 
-    @pytest.mark.parametrize("operation,input,expected_output", [
-        (qml.Identity, [1, 0], 1),
-        (qml.Identity, [0, 1], 1),
-        (qml.Identity, [1/math.sqrt(2), -1/math.sqrt(2)], 1),
-        (qml.PauliX, [1/math.sqrt(2), 1/math.sqrt(2)], 1),
-        (qml.PauliX, [1/math.sqrt(2), -1/math.sqrt(2)], -1),
-        (qml.PauliX, [1, 0], 0),
-        (qml.PauliY, [1/math.sqrt(2), 1j/math.sqrt(2)], 1),
-        (qml.PauliY, [1/math.sqrt(2), -1j/math.sqrt(2)], -1),
-        (qml.PauliY, [1, 0], 0),
-        (qml.PauliZ, [1, 0], 1),
-        (qml.PauliZ, [0, 1], -1),
-        (qml.PauliZ, [1/math.sqrt(2), 1/math.sqrt(2)], 0),
-        (qml.Hadamard, [1, 0], 1/math.sqrt(2)),
-        (qml.Hadamard, [0, 1], -1/math.sqrt(2)),
-        (qml.Hadamard, [1/math.sqrt(2), 1/math.sqrt(2)], 1/math.sqrt(2)),
-    ])
-    def test_expval_single_wire_no_parameters(self, simulator_device_1_wire, tol, operation, input, expected_output):
+    @pytest.mark.parametrize(
+        "operation,input,expected_output",
+        [
+            (qml.Identity, [1, 0], 1),
+            (qml.Identity, [0, 1], 1),
+            (qml.Identity, [1 / math.sqrt(2), -1 / math.sqrt(2)], 1),
+            (qml.PauliX, [1 / math.sqrt(2), 1 / math.sqrt(2)], 1),
+            (qml.PauliX, [1 / math.sqrt(2), -1 / math.sqrt(2)], -1),
+            (qml.PauliX, [1, 0], 0),
+            (qml.PauliY, [1 / math.sqrt(2), 1j / math.sqrt(2)], 1),
+            (qml.PauliY, [1 / math.sqrt(2), -1j / math.sqrt(2)], -1),
+            (qml.PauliY, [1, 0], 0),
+            (qml.PauliZ, [1, 0], 1),
+            (qml.PauliZ, [0, 1], -1),
+            (qml.PauliZ, [1 / math.sqrt(2), 1 / math.sqrt(2)], 0),
+            (qml.Hadamard, [1, 0], 1 / math.sqrt(2)),
+            (qml.Hadamard, [0, 1], -1 / math.sqrt(2)),
+            (qml.Hadamard, [1 / math.sqrt(2), 1 / math.sqrt(2)], 1 / math.sqrt(2)),
+        ],
+    )
+    def test_expval_single_wire_no_parameters(
+        self, simulator_device_1_wire, tol, operation, input, expected_output
+    ):
         """Tests that expectation values are properly calculated for single-wire observables without parameters."""
 
         op = operation(0, do_queue=False)
 
         simulator_device_1_wire.reset()
-        simulator_device_1_wire.apply([qml.QubitStateVector(np.array(input), wires=[0])], op.diagonalizing_gates())
-      
+        simulator_device_1_wire.apply(
+            [qml.QubitStateVector(np.array(input), wires=[0])], op.diagonalizing_gates()
+        )
+
         res = simulator_device_1_wire.expval(op)
 
-        assert np.isclose(res, expected_output, **tol) 
+        assert np.isclose(res, expected_output, **tol)
 
-    @pytest.mark.parametrize("operation,input,expected_output,par", [
-        (qml.Hermitian, [1, 0], 1, [np.array([[1, 1j], [-1j, 1]])]),
-        (qml.Hermitian, [0, 1], 1, [np.array([[1, 1j], [-1j, 1]])]),
-        (qml.Hermitian, [1/math.sqrt(2), -1/math.sqrt(2)], 1, [np.array([[1, 1j], [-1j, 1]])]),
-    ])
-    def test_expval_single_wire_with_parameters(self, simulator_device_1_wire, tol, operation, input, expected_output, par):
+    @pytest.mark.parametrize(
+        "operation,input,expected_output,par",
+        [
+            (qml.Hermitian, [1, 0], 1, [np.array([[1, 1j], [-1j, 1]])]),
+            (qml.Hermitian, [0, 1], 1, [np.array([[1, 1j], [-1j, 1]])]),
+            (
+                qml.Hermitian,
+                [1 / math.sqrt(2), -1 / math.sqrt(2)],
+                1,
+                [np.array([[1, 1j], [-1j, 1]])],
+            ),
+        ],
+    )
+    def test_expval_single_wire_with_parameters(
+        self, simulator_device_1_wire, tol, operation, input, expected_output, par
+    ):
         """Tests that expectation values are properly calculated for single-wire observables with parameters."""
 
         op = operation(par[0], 0, do_queue=False)
 
         simulator_device_1_wire.reset()
-        simulator_device_1_wire.apply([qml.QubitStateVector(np.array(input), wires=[0])], op.diagonalizing_gates())
-      
+        simulator_device_1_wire.apply(
+            [qml.QubitStateVector(np.array(input), wires=[0])], op.diagonalizing_gates()
+        )
+
         res = simulator_device_1_wire.expval(op)
 
-        assert np.isclose(res, expected_output, **tol) 
+        assert np.isclose(res, expected_output, **tol)
 
-    @pytest.mark.parametrize("operation,input,expected_output,par", [
-        (qml.Hermitian, [0, 1, 0, 0], -1, [
-            np.array([
-                [1, 0, 0, 0], 
-                [0, -1, 0, 0], 
-                [0, 0, -1, 0], 
+    @pytest.mark.parametrize(
+        "operation,input,expected_output,par",
+        [
+            (
+                qml.Hermitian,
+                [0, 1, 0, 0],
+                -1,
+                [np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1],])],
+            ),
+            (
+                qml.Hermitian,
+                [1 / math.sqrt(3), 0, 1 / math.sqrt(3), 1 / math.sqrt(3)],
+                5 / 3,
+                [
+                    np.array(
+                        [[1, 1j, 0, 1], [-1j, 1, 0, 0], [0, 0, 1, -1j], [1, 0, 1j, 1]]
+                    )
+                ],
+            ),
+            (
+                qml.Hermitian,
                 [0, 0, 0, 1],
-            ])
-        ]),
-        (qml.Hermitian, [1/math.sqrt(3), 0, 1/math.sqrt(3), 1/math.sqrt(3)], 5/3, [
-            np.array([
-                [1, 1j, 0, 1], 
-                [-1j, 1, 0, 0], 
-                [0, 0, 1, -1j], 
-                [1, 0, 1j, 1]
-            ])
-        ]),
-        (qml.Hermitian, [0, 0, 0, 1], 0, [
-            np.array([
-                [0, 1j, 0, 0], 
-                [-1j, 0, 0, 0], 
-                [0, 0, 0, -1j], 
-                [0, 0, 1j, 0]
-            ])
-        ]),
-        (qml.Hermitian, [1/math.sqrt(2), 0, -1/math.sqrt(2), 0], 1, [
-            np.array([
-                [1, 1j, 0, 0], 
-                [-1j, 1, 0, 0], 
-                [0, 0, 1, -1j], 
-                [0, 0, 1j, 1]
-            ])
-        ]),
-        (qml.Hermitian, [1/math.sqrt(3), -1/math.sqrt(3), 1/math.sqrt(6), 1/math.sqrt(6)], 1, [
-            np.array([
-                [1, 1j, 0, .5j], 
-                [-1j, 1, 0, 0], 
-                [0, 0, 1, -1j], 
-                [-.5j, 0, 1j, 1]
-            ])
-        ]),
-        (qml.Hermitian, [1/math.sqrt(2), 0, 0, 1/math.sqrt(2)], 1, [
-            np.array([
-                [1, 0, 0, 0], 
-                [0, -1, 0, 0], 
-                [0, 0, -1, 0], 
-                [0, 0, 0, 1]
-            ])
-        ]),
-        (qml.Hermitian, [0, 1/math.sqrt(2), -1/math.sqrt(2), 0], -1, [
-            np.array([
-                [1, 0, 0, 0], 
-                [0, -1, 0, 0], 
-                [0, 0, -1, 0], 
-                [0, 0, 0, 1]
-            ])
-        ]),
-    ])
-    def test_expval_two_wires_with_parameters(self, simulator_device_2_wires, tol, operation, input, expected_output, par):
+                0,
+                [
+                    np.array(
+                        [[0, 1j, 0, 0], [-1j, 0, 0, 0], [0, 0, 0, -1j], [0, 0, 1j, 0]]
+                    )
+                ],
+            ),
+            (
+                qml.Hermitian,
+                [1 / math.sqrt(2), 0, -1 / math.sqrt(2), 0],
+                1,
+                [
+                    np.array(
+                        [[1, 1j, 0, 0], [-1j, 1, 0, 0], [0, 0, 1, -1j], [0, 0, 1j, 1]]
+                    )
+                ],
+            ),
+            (
+                qml.Hermitian,
+                [
+                    1 / math.sqrt(3),
+                    -1 / math.sqrt(3),
+                    1 / math.sqrt(6),
+                    1 / math.sqrt(6),
+                ],
+                1,
+                [
+                    np.array(
+                        [
+                            [1, 1j, 0, 0.5j],
+                            [-1j, 1, 0, 0],
+                            [0, 0, 1, -1j],
+                            [-0.5j, 0, 1j, 1],
+                        ]
+                    )
+                ],
+            ),
+            (
+                qml.Hermitian,
+                [1 / math.sqrt(2), 0, 0, 1 / math.sqrt(2)],
+                1,
+                [np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])],
+            ),
+            (
+                qml.Hermitian,
+                [0, 1 / math.sqrt(2), -1 / math.sqrt(2), 0],
+                -1,
+                [np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])],
+            ),
+        ],
+    )
+    def test_expval_two_wires_with_parameters(
+        self, simulator_device_2_wires, tol, operation, input, expected_output, par
+    ):
         """Tests that expectation values are properly calculated for two-wire observables with parameters."""
 
         op = operation(par[0], [0, 1], do_queue=False)
 
         simulator_device_2_wires.reset()
-        simulator_device_2_wires.apply([qml.QubitStateVector(np.array(input), wires=[0, 1])], op.diagonalizing_gates())
-      
+        simulator_device_2_wires.apply(
+            [qml.QubitStateVector(np.array(input), wires=[0, 1])],
+            op.diagonalizing_gates(),
+        )
+
         res = simulator_device_2_wires.expval(op)
 
-        assert np.isclose(res, expected_output, **tol) 
+        assert np.isclose(res, expected_output, **tol)
 
 
 @pytest.mark.parametrize("shots,analytic", [(100, True)])
 class TestVar:
     """Tests that variances are properly calculated."""
 
-    @pytest.mark.parametrize("operation,input,expected_output", [
-        (qml.PauliX, [1/math.sqrt(2), 1/math.sqrt(2)], 0),
-        (qml.PauliX, [1/math.sqrt(2), -1/math.sqrt(2)], 0),
-        (qml.PauliX, [1, 0], 1),
-        (qml.PauliY, [1/math.sqrt(2), 1j/math.sqrt(2)], 0),
-        (qml.PauliY, [1/math.sqrt(2), -1j/math.sqrt(2)], 0),
-        (qml.PauliY, [1, 0], 1),
-        (qml.PauliZ, [1, 0], 0),
-        (qml.PauliZ, [0, 1], 0),
-        (qml.PauliZ, [1/math.sqrt(2), 1/math.sqrt(2)], 1),
-        (qml.Hadamard, [1, 0], 1/2),
-        (qml.Hadamard, [0, 1], 1/2),
-        (qml.Hadamard, [1/math.sqrt(2), 1/math.sqrt(2)], 1/2),
-    ])
-    def test_var_single_wire_no_parameters(self, simulator_device_1_wire, tol, operation, input, expected_output):
+    @pytest.mark.parametrize(
+        "operation,input,expected_output",
+        [
+            (qml.PauliX, [1 / math.sqrt(2), 1 / math.sqrt(2)], 0),
+            (qml.PauliX, [1 / math.sqrt(2), -1 / math.sqrt(2)], 0),
+            (qml.PauliX, [1, 0], 1),
+            (qml.PauliY, [1 / math.sqrt(2), 1j / math.sqrt(2)], 0),
+            (qml.PauliY, [1 / math.sqrt(2), -1j / math.sqrt(2)], 0),
+            (qml.PauliY, [1, 0], 1),
+            (qml.PauliZ, [1, 0], 0),
+            (qml.PauliZ, [0, 1], 0),
+            (qml.PauliZ, [1 / math.sqrt(2), 1 / math.sqrt(2)], 1),
+            (qml.Hadamard, [1, 0], 1 / 2),
+            (qml.Hadamard, [0, 1], 1 / 2),
+            (qml.Hadamard, [1 / math.sqrt(2), 1 / math.sqrt(2)], 1 / 2),
+        ],
+    )
+    def test_var_single_wire_no_parameters(
+        self, simulator_device_1_wire, tol, operation, input, expected_output
+    ):
         """Tests that variances are properly calculated for single-wire observables without parameters."""
 
         op = operation(0, do_queue=False)
 
         simulator_device_1_wire.reset()
-        simulator_device_1_wire.apply([qml.QubitStateVector(np.array(input), wires=[0, 1])], op.diagonalizing_gates())
-      
+        simulator_device_1_wire.apply(
+            [qml.QubitStateVector(np.array(input), wires=[0, 1])],
+            op.diagonalizing_gates(),
+        )
+
         res = simulator_device_1_wire.var(op)
 
-        assert np.isclose(res, expected_output, **tol) 
+        assert np.isclose(res, expected_output, **tol)
 
-    @pytest.mark.parametrize("operation,input,expected_output,par", [
-        (qml.Identity, [1, 0], 0, []),
-        (qml.Identity, [0, 1], 0, []),
-        (qml.Identity, [1/math.sqrt(2), -1/math.sqrt(2)], 0, []),
-        (qml.Hermitian, [1, 0], 1, [[[1, 1j], [-1j, 1]]]),
-        (qml.Hermitian, [0, 1], 1, [[[1, 1j], [-1j, 1]]]),
-        (qml.Hermitian, [1/math.sqrt(2), -1/math.sqrt(2)], 1, [[[1, 1j], [-1j, 1]]]),
-    ])
-    def test_var_single_wire_with_parameters(self, simulator_device_1_wire, tol, operation, input, expected_output, par):
+    @pytest.mark.parametrize(
+        "operation,input,expected_output,par",
+        [
+            (qml.Identity, [1, 0], 0, []),
+            (qml.Identity, [0, 1], 0, []),
+            (qml.Identity, [1 / math.sqrt(2), -1 / math.sqrt(2)], 0, []),
+            (qml.Hermitian, [1, 0], 1, [[[1, 1j], [-1j, 1]]]),
+            (qml.Hermitian, [0, 1], 1, [[[1, 1j], [-1j, 1]]]),
+            (
+                qml.Hermitian,
+                [1 / math.sqrt(2), -1 / math.sqrt(2)],
+                1,
+                [[[1, 1j], [-1j, 1]]],
+            ),
+        ],
+    )
+    def test_var_single_wire_with_parameters(
+        self, simulator_device_1_wire, tol, operation, input, expected_output, par
+    ):
         """Tests that expectation values are properly calculated for single-wire observables with parameters."""
 
         if par:
@@ -466,7 +758,10 @@ class TestVar:
             op = operation(0, do_queue=False)
 
         simulator_device_1_wire.reset()
-        simulator_device_1_wire.apply([qml.QubitStateVector(np.array(input), wires=[0, 1])], op.diagonalizing_gates()) 
+        simulator_device_1_wire.apply(
+            [qml.QubitStateVector(np.array(input), wires=[0, 1])],
+            op.diagonalizing_gates(),
+        )
 
         if par:
             res = simulator_device_1_wire.var(op)
@@ -475,24 +770,58 @@ class TestVar:
 
         assert np.isclose(res, expected_output, **tol)
 
-    @pytest.mark.parametrize("operation,input,expected_output,par", [
-        (qml.Hermitian, [1/math.sqrt(3), 0, 1/math.sqrt(3), 1/math.sqrt(3)], 11/9, [[[1, 1j, 0, 1], [-1j, 1, 0, 0], [0, 0, 1, -1j], [1, 0, 1j, 1]]]),
-        (qml.Hermitian, [0, 0, 0, 1], 1, [[[0, 1j, 0, 0], [-1j, 0, 0, 0], [0, 0, 0, -1j], [0, 0, 1j, 0]]]),
-        (qml.Hermitian, [1/math.sqrt(2), 0, -1/math.sqrt(2), 0], 1, [[[1, 1j, 0, 0], [-1j, 1, 0, 0], [0, 0, 1, -1j], [0, 0, 1j, 1]]]),
-        (qml.Hermitian, [1/math.sqrt(2), 0, 0, 1/math.sqrt(2)], 0, [[[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]]]),
-        (qml.Hermitian, [0, 1/math.sqrt(2), -1/math.sqrt(2), 0], 0, [[[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]]]),
-    ])
-    def test_var_two_wires_with_parameters(self, simulator_device_2_wires, tol, operation, input, expected_output, par):
+    @pytest.mark.parametrize(
+        "operation,input,expected_output,par",
+        [
+            (
+                qml.Hermitian,
+                [1 / math.sqrt(3), 0, 1 / math.sqrt(3), 1 / math.sqrt(3)],
+                11 / 9,
+                [[[1, 1j, 0, 1], [-1j, 1, 0, 0], [0, 0, 1, -1j], [1, 0, 1j, 1]]],
+            ),
+            (
+                qml.Hermitian,
+                [0, 0, 0, 1],
+                1,
+                [[[0, 1j, 0, 0], [-1j, 0, 0, 0], [0, 0, 0, -1j], [0, 0, 1j, 0]]],
+            ),
+            (
+                qml.Hermitian,
+                [1 / math.sqrt(2), 0, -1 / math.sqrt(2), 0],
+                1,
+                [[[1, 1j, 0, 0], [-1j, 1, 0, 0], [0, 0, 1, -1j], [0, 0, 1j, 1]]],
+            ),
+            (
+                qml.Hermitian,
+                [1 / math.sqrt(2), 0, 0, 1 / math.sqrt(2)],
+                0,
+                [[[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]]],
+            ),
+            (
+                qml.Hermitian,
+                [0, 1 / math.sqrt(2), -1 / math.sqrt(2), 0],
+                0,
+                [[[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]]],
+            ),
+        ],
+    )
+    def test_var_two_wires_with_parameters(
+        self, simulator_device_2_wires, tol, operation, input, expected_output, par
+    ):
         """Tests that variances are properly calculated for two-wire observables with parameters."""
 
         op = operation(np.array(*par), [0, 1], do_queue=False)
 
         simulator_device_2_wires.reset()
-        simulator_device_2_wires.apply([qml.QubitStateVector(np.array(input), wires=[0, 1])], op.diagonalizing_gates())
-      
+        simulator_device_2_wires.apply(
+            [qml.QubitStateVector(np.array(input), wires=[0, 1])],
+            op.diagonalizing_gates(),
+        )
+
         res = simulator_device_2_wires.var(op)
 
-        assert np.isclose(res, expected_output, **tol) 
+        assert np.isclose(res, expected_output, **tol)
+
 
 class TestVarEstimate:
     """Test the estimation of variances."""
@@ -512,6 +841,7 @@ class TestVarEstimate:
         # an estimated variance an an analytically calculated one
         assert var != 1.0
 
+
 @pytest.mark.parametrize("shots,analytic", [(100, True)])
 class TestSample:
     """Test sampling."""
@@ -521,7 +851,9 @@ class TestSample:
         the correct dimensions
         """
         simulator_device_2_wires.reset()
-        simulator_device_2_wires.apply([qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])])
+        simulator_device_2_wires.apply(
+            [qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])]
+        )
 
         simulator_device_2_wires.shots = 10
         simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
@@ -535,14 +867,16 @@ class TestSample:
 
         simulator_device_2_wires.shots = 17
         simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
-        s3 = simulator_device_2_wires.sample(qml.Hermitian(np.diag([1,1,1,-1]), wires=[0, 1]))
+        s3 = simulator_device_2_wires.sample(
+            qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1])
+        )
         assert np.array_equal(s3.shape, (17,))
 
     def test_sample_values(self, simulator_device_2_wires, tol):
         """Tests if the samples returned by sample have
         the correct values
         """
-        
+
         simulator_device_2_wires.reset()
 
         simulator_device_2_wires.apply([qml.RX(1.5708, wires=[0])])
@@ -552,4 +886,4 @@ class TestSample:
 
         # s1 should only contain 1 and -1, which is guaranteed if
         # they square to 1
-        assert np.allclose(s1**2, 1, **tol)
+        assert np.allclose(s1 ** 2, 1, **tol)
