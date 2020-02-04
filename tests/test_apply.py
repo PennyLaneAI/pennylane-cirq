@@ -222,7 +222,19 @@ class TestStateApply:
         expected = np.abs(mat @ state) ** 2
         assert np.allclose(res, expected, **tol)
 
-    def test_invalid_qubit_state_unitary(self, device):
+    @pytest.mark.usefixtures("run_only_for_cirq_v0_6")
+    def test_invalid_qubit_state_unitary_cirq_v0_6(self, device):
+        """Test that an exception is raised if the
+        unitary matrix is the wrong size"""
+        dev = device(2)
+        state = np.array([[0, 123.432], [-0.432, 023.4]])
+
+        with pytest.raises(ValueError, match=r"Not a 2x2 .* unitary matrix"):
+            with mimic_execution_for_apply(dev):
+                dev.apply("QubitUnitary", [0, 1], [state])
+
+    @pytest.mark.usefixtures("run_only_for_cirq_v0_7_and_above")
+    def test_invalid_qubit_state_unitary_cirq_v0_7_and_above(self, device):
         """Test that an exception is raised if the
         unitary matrix is the wrong size"""
         dev = device(2)

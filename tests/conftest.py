@@ -13,7 +13,9 @@
 # limitations under the License.
 import numpy as np
 import pytest
+from packaging import version
 
+from cirq import __version__
 from pennylane_cirq import SimulatorDevice
 
 
@@ -100,3 +102,15 @@ def device(request, shots, analytic):
             return device(wires=n, shots=shots)
 
     return _device
+
+@pytest.fixture
+def run_only_for_cirq_v0_6():
+    """Fixture to run a test case only for when Cirq version 0.6.0 is installed."""
+    if version.parse(__version__) !=  version.parse("0.6.0"):
+        pytest.skip("This test is only ran for Cirq version 0.6.0.")
+
+@pytest.fixture
+def run_only_for_cirq_v0_7_and_above():
+    """Fixture to run a test case only for when Cirq version 0.7.0 or higher is installed."""
+    if version.parse(__version__) < version.parse("0.7.0"):
+        pytest.skip("This test is only ran for Cirq version 0.7.0 and above.")
