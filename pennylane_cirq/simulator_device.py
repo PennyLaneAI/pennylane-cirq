@@ -162,7 +162,6 @@ class SimulatorDevice(CirqDevice):
             observables. Note that this behaviour is differs from PennyLane's
             default.qubit plugin.
         """
-        # pylint: disable=missing-function-docstring
         return self._state
 
     def generate_samples(self):
