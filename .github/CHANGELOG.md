@@ -8,6 +8,9 @@
 
 ### Documentation
 
+* Redesign of the docs
+  [#XX](https://github.com/XanaduAI/pennylane-cirq/pull/XX)
+
 ### Bug fixes
 
 ### Contributors

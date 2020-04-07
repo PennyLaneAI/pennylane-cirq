@@ -21,89 +21,131 @@ PennyLane Cirq Plugin
     :alt: PyPI
     :target: https://pypi.org/project/pennylane-cirq
 
+.. image:: doc/_static/puzzle_cirq.png
+    :align: center
+    :width: 200px
+    :target: javascript:void(0);
+
+|
+
+.. header-start-inclusion-marker-do-not-remove
+
+The PennyLane-Cirq plugin integrates the Cirq quantum computing framework with PennyLane's
+quantum machine learning capabilities.
 
 `PennyLane <https://pennylane.readthedocs.io>`_ is a cross-platform Python library for quantum machine
 learning, automatic differentiation, and optimization of hybrid quantum-classical computations.
 
-`Cirq <https://github.com/quantumlib/Cirq>`_ is a Python library for writing, manipulating, and optimizing quantum circuits and running them against quantum computers and simulators.
-
-This PennyLane plugin allows to use both the software and hardware backends of Cirq as devices for PennyLane.
+`Cirq <https://github.com/quantumlib/Cirq>`_ is a software library for quantum computing.
 
 
 Features
 ========
 
-* Access to Cirq's simulator backend via the `cirq.simulator` device
+* Provides access to Cirq's simulator backend via the ``cirq.simulator`` device
 
 * Support for all PennyLane core functionality
 
+.. header-end-inclusion-marker-do-not-remove
+.. installation-start-inclusion-marker-do-not-remove
 
 Installation
 ============
 
-Plugin Name requires both PennyLane and Cirq. It can be installed via ``pip``:
+This plugin requires Python version 3.5 and above, as well as PennyLane
+and Cirq. Installation of this plugin, as well as all dependencies, can be done using ``pip``:
 
 .. code-block:: bash
 
-    $ python -m pip install pennylane-cirq
+    $ pip install pennylane-cirq
+
+Alternatively, you can install PennyLane-Cirq from the source code by navigating to the
+top directory and running:
+
+	$ python setup.py install
+
+Dependencies
+~~~~~~~~~~~~
+
+PennyLane-Cirq requires the following libraries be installed:
+
+* `Python <http://python.org/>`_ >=3.5
+
+as well as the following Python packages:
+
+* `PennyLane <http://pennylane.readthedocs.io/>`_ >=0.6
+* `Cirq <https://cirq.readthedocs.io/>`_ >= 0.6
 
 
-Getting started
-===============
+If you currently do not have Python 3 installed, we recommend
+`Anaconda for Python 3 <https://www.anaconda.com/download/>`_, a distributed version of Python packaged
+for scientific computation.
 
-Once Pennylane Cirq is installed, the provided Cirq devices can be accessed straight
-away in PennyLane.
 
-You can instantiate these devices for PennyLane as follows:
+Tests
+~~~~~
 
-.. code-block:: python
+To test that the PennyLane-Cirq plugin is working correctly you can run
 
-    import pennylane as qml
-    dev = qml.device('cirq.simulator', wires=2, shots=100, analytic=True)
+.. code-block:: bash
 
-These devices can then be used just like other devices for the definition and evaluation of
-QNodes within PennyLane. For more details, see the
-`plugin usage guide <https://pennylane-cirq.readthedocs.io/en/latest/usage.html>`_ and refer
-to the PennyLane documentation.
+    $ make test
 
+in the source folder.
+
+Documentation
+~~~~~~~~~~~~~
+
+To build the HTML documentation, go to the top-level directory and run:
+
+  $ make docs
+
+
+The documentation can then be found in the :file:`doc/_build/html/` directory.
+
+.. installation-end-inclusion-marker-do-not-remove
 
 Contributing
 ============
 
-We welcome contributions - simply fork the Plugin Name repository, and then make a
+We welcome contributions - simply fork the repository of this plugin, and then make a
 `pull request <https://help.github.com/articles/about-pull-requests/>`_ containing your contribution.
-All contributors to PennyLane-Cirq will be listed as authors on the releases.
+All contributers to this plugin will be listed as authors on the releases.
 
-We also encourage bug reports, suggestions for new features and enhancements, and even links to cool
-projects or applications built on PennyLane and Cirq.
-
+We also encourage bug reports, suggestions for new features and enhancements, and even links to cool projects
+or applications built on PennyLane.
 
 Authors
 =======
 
-Johannes Jakob Meyer
+PennyLane-Cirq is the work of `many contributors <https://github.com/XanaduAI/pennylane-cirq/graphs/contributors>`_.
 
-If you are doing research using PennyLane, please cite our papers:
+If you are doing research using PennyLane and PennyLane-Cirq, please cite `our paper <https://arxiv.org/abs/1811.04968>`_:
 
-    Ville Bergholm, Josh Izaac, Maria Schuld, Christian Gogolin, and Nathan Killoran.
-    *PennyLane: Automatic differentiation of hybrid quantum-classical computations.* 2018.
-    `arXiv:1811.04968 <https://arxiv.org/abs/1811.04968>`_
+    Ville Bergholm, Josh Izaac, Maria Schuld, Christian Gogolin, M. Sohaib Alam, Shahnawaz Ahmed,
+    Juan Miguel Arrazola, Carsten Blank, Alain Delgado, Soran Jahangiri, Keri McKiernan, Johannes Jakob Meyer,
+    Zeyue Niu, Antal Száva, and Nathan Killoran.
+    *PennyLane: Automatic differentiation of hybrid quantum-classical computations.* 2018. arXiv:1811.04968
 
-    Maria Schuld, Ville Bergholm, Christian Gogolin, Josh Izaac, and Nathan Killoran.
-    *Evaluating analytic gradients on quantum hardware.* 2018.
-    `Phys. Rev. A 99, 032331 <https://journals.aps.org/pra/abstract/10.1103/PhysRevA.99.032331>`_
-
+.. support-start-inclusion-marker-do-not-remove
 
 Support
 =======
 
 - **Source Code:** https://github.com/XanaduAI/pennylane-cirq
 - **Issue Tracker:** https://github.com/XanaduAI/pennylane-cirq/issues
+- **PennyLane Forum:** https://discuss.pennylane.ai
 
-If you are having issues, please let us know by posting the issue on our GitHub issue tracker.
+If you are having issues, please let us know by posting the issue on our Github issue tracker, or
+by asking a question in the forum.
 
+.. support-end-inclusion-marker-do-not-remove
+.. license-start-inclusion-marker-do-not-remove
 
 License
 =======
 
-Plugin Name is **free** and **open source**, released under the Apache License, Version 2.0.
+The PennyLane qiskit plugin is **free** and **open source**, released under
+the `Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`_.
+
+.. license-end-inclusion-marker-do-not-remove
