@@ -1,7 +1,7 @@
 Overview
 ========
 
-Once Pennylane Cirq is installed, the provided Cirq devices can be accessed straight
+Once Pennylane-Cirq is installed, the provided Cirq devices can be accessed straight
 away in PennyLane, without the need to import any additional packages.
 
 Devices
