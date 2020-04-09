@@ -145,7 +145,7 @@ by asking a question in the forum.
 License
 =======
 
-The PennyLane qiskit plugin is **free** and **open source**, released under
+The PennyLane-Cirq plugin is **free** and **open source**, released under
 the `Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`_.
 
 .. license-end-inclusion-marker-do-not-remove
