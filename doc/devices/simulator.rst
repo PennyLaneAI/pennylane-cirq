@@ -32,26 +32,27 @@ You can then execute the circuit like any other function to get the quantum mech
 Device options
 ~~~~~~~~~~~~~~
 
-The Cirq device accepts an additional argument ``qubits=None`` beyond the PennyLane default device arguments.
-
-Cirq has different ways of defining qubits, e.g. `LineQubit` or `GridQubit`. You can define your own
+Cirq has different ways of defining qubits, e.g. `LineQubit` or `GridQubit`. The Cirq device therefore accepts
+an additional argument ``qubits=None`` that you can use to define your own
 qubits and give them to the device as a list.
 
->>> import cirq
->>>
->>> qubits = [
->>>     cirq.GridQubit(0, 0),
->>>     cirq.GridQubit(0, 1),
->>>     cirq.GridQubit(1, 0),
->>>     cirq.GridQubit(1, 1),
->>> ]
->>>
->>> dev = qml.device("cirq.simulator", wires=4, qubits=qubits)
+.. code-block:: python
+
+    import cirq
+
+    qubits = [
+      cirq.GridQubit(0, 0),
+      cirq.GridQubit(0, 1),
+      cirq.GridQubit(1, 0),
+      cirq.GridQubit(1, 1),
+    ]
+
+    dev = qml.device("cirq.simulator", wires=4, qubits=qubits)
 
 The wire of each qubit corresponds to its index in the `qubit` list. In the above example,
-the wire 2 corresponds to `cirq.GridQubit(1, 0)`. If no qubits are given, the plugin will
-create an array of `LineQubit` instances.
+the wire 2 corresponds to `cirq.GridQubit(1, 0)`.
 
+If no qubits are given, the plugin will create an array of `LineQubit` instances.
 
 Supported operations
 ~~~~~~~~~~~~~~~~~~~~
