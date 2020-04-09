@@ -38,6 +38,7 @@ learning, automatic differentiation, and optimization of hybrid quantum-classica
 
 `Cirq <https://github.com/quantumlib/Cirq>`_ is a software library for quantum computing.
 
+.. header-end-inclusion-marker-do-not-remove
 
 Features
 ========
@@ -46,7 +47,6 @@ Features
 
 * Support for all PennyLane core functionality
 
-.. header-end-inclusion-marker-do-not-remove
 .. installation-start-inclusion-marker-do-not-remove
 
 Installation
@@ -59,8 +59,8 @@ and Cirq. Installation of this plugin, as well as all dependencies, can be done 
 
     $ pip install pennylane-cirq
 
-Alternatively, you can install PennyLane-Cirq from the source code by navigating to the
-top directory and running:
+Alternatively, you can install PennyLane-Cirq from the `source code <https://github.com/XanaduAI/pennylane-cirq>`_
+by navigating to the top directory and running:
 
 	$ python setup.py install
 
