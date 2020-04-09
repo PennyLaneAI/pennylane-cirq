@@ -7,7 +7,7 @@ away in PennyLane, without the need to import any additional packages.
 Devices
 ~~~~~~~
 
-Currently, PennyLane-Cirq provides only *one* Cirq device for PennyLane:
+Currently, PennyLane-Cirq provides one Cirq device for PennyLane:
 
 .. devicegalleryitem::
     :name: 'cirq.simulator'
