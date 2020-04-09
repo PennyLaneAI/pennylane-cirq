@@ -142,7 +142,7 @@ class SimulatorDevice(CirqDevice):
 
             self._state = np.array(self._result.state_vector())
 
-    def probability(self, wires=None):
+    def analytic_probability(self, wires=None):
         # pylint: disable=missing-function-docstring
         if self._state is None:
             return None

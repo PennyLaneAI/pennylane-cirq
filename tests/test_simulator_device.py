@@ -532,6 +532,17 @@ class TestStatePreparationErrorsNonAnalytic:
                 [qml.QubitStateVector(np.array([0, 1]), wires=[0])]
             )
 
+@pytest.mark.parametrize("shots,analytic", [(100, True)])
+class TestAnalyticProbability:
+    """Tests the analytic_probability method works as expected."""
+
+    def test_analytic_probability_is_none(self, simulator_device_1_wire):
+        """Tests that analytic_probability returns None if the state of the
+        device is None."""
+
+        simulator_device_1_wire.reset()
+        assert simulator_device_1_wire._state is None
+        assert simulator_device_1_wire.analytic_probability() is None
 
 @pytest.mark.parametrize("shots,analytic", [(100, True)])
 class TestExpval:
