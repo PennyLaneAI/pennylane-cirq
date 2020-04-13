@@ -8,6 +8,9 @@
 
 ### Documentation
 
+* Redesigned the documentation to be consistent with other plugins
+  [#25](https://github.com/XanaduAI/pennylane-cirq/pull/25)
+
 ### Bug fixes
 
 ### Contributors
