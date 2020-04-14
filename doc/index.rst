@@ -25,7 +25,7 @@ Currently, PennyLane-Cirq provides one Cirq device for PennyLane:
 .. devicegalleryitem::
     :name: 'cirq.simulator'
     :description: Cirq's simulator backend.
-    :link: simulator.html
+    :link: devices/simulator.html
 
 .. raw:: html
 
