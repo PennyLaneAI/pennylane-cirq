@@ -32,6 +32,18 @@ Currently, PennyLane-Cirq provides one Cirq device for PennyLane:
         <div style='clear:both'></div>
         </br>
 
+Tutorials
+~~~~~~~~~
+
+To see the PennyLane-Cirq plugin in action, you can use any of the qubit based `demos
+from the PennyLane documentation <https://pennylane.ai/qml/demonstrations.html>`_, for example
+the tutorial on `qubit rotation <https://pennylane.ai/qml/demos/tutorial_qubit_rotation.html>`_,
+and simply replace ``'default.qubit'`` with the ``'cirq.simulator'`` device:
+
+.. code-block:: python
+
+    dev = qml.device('cirq.simulator', wires=XXX)
+
 
 .. toctree::
    :maxdepth: 2
