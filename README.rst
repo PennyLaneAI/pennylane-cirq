@@ -1,5 +1,5 @@
-PennyLane Cirq Plugin
-#########################
+PennyLane-Cirq Plugin
+######################
 
 .. image:: https://img.shields.io/travis/com/XanaduAI/pennylane-cirq/master.svg
     :alt: Travis
@@ -39,6 +39,8 @@ learning, automatic differentiation, and optimization of hybrid quantum-classica
 `Cirq <https://github.com/quantumlib/Cirq>`_ is a software library for quantum computing.
 
 .. header-end-inclusion-marker-do-not-remove
+
+The plugin documentation can be found here: `https://pennylane-cirq.readthedocs.io/en/latest/`_.
 
 Features
 ========
