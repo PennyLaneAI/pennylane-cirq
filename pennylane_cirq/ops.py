@@ -63,7 +63,7 @@ class BitFlip(Operation):
     
     @staticmethod
     def _matrix(*params):
-        return None
+        raise NotImplementedError
 
 # class S(Operation):
 #     r"""S(wires)

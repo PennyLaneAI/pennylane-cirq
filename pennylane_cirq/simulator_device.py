@@ -154,11 +154,11 @@ class SimulatorDevice(CirqDevice):
         return self.marginal_prob(probs, wires)
 
     def _get_state_from_cirq(self, result):
-        """Helper function to extract the state array from a Cirq TrialResult ``result``"""
+        """Extract the state array from a Cirq TrialResult ``result``"""
         return np.array(result.state_vector())
 
     def _get_computational_basis_probs(self):
-        """Helper function to extract the probabilities of all computational basis measurements."""
+        """Extract the probabilities of all computational basis measurements."""
         return np.abs(self._state) ** 2
 
     @property
@@ -234,16 +234,16 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         self._initial_state = self._convert_to_density_matrix(self._initial_state)
 
     def _convert_to_density_matrix(self, state_vec):
-        """Helper function to convert ``state_vec`` into a density matrix."""
+        """Convert ``state_vec`` into a density matrix."""
         dim = 2 ** self.num_wires
         return np.kron(state_vec, state_vec.conj()).reshape((dim, dim))
 
     def _get_state_from_cirq(self, result):
-        """Helper function to extract the state array from a Cirq TrialResult"""
+        """Extract the state array from a Cirq TrialResult"""
         return np.array(result.final_density_matrix)
 
     def _get_computational_basis_probs(self):
-        """Helper function to extract the probabilities of all computational basis measurements."""
+        """Extract the probabilities of all computational basis measurements."""
         return np.diag(self._state).real
 
     @property
