@@ -14,7 +14,7 @@
 import numpy as np
 import pytest
 
-from pennylane_cirq import SimulatorDevice
+from pennylane_cirq import SimulatorDevice, MixedStateSimulatorDevice
 
 
 np.random.seed(42)
@@ -55,7 +55,7 @@ B = np.array(
 
 # List of all devices that support analytic expectation value
 # computation. This generally includes statevector/wavefunction simulators.
-analytic_devices = [SimulatorDevice]
+analytic_devices = [SimulatorDevice, MixedStateSimulatorDevice]
 
 # List of all devices that do *not* support analytic expectation
 # value computation. This generally includes hardware devices
