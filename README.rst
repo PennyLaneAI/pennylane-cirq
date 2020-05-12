@@ -40,7 +40,7 @@ learning, automatic differentiation, and optimization of hybrid quantum-classica
 
 .. header-end-inclusion-marker-do-not-remove
 
-The plugin documentation can be found here: `https://pennylane-cirq.readthedocs.io/en/latest/`_.
+The plugin documentation can be found here: `<https://pennylane-cirq.readthedocs.io/en/latest/>`_.
 
 Features
 ========
