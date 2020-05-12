@@ -15,8 +15,9 @@
 Plugin overview
 ===============
 """
-from .simulator_device import SimulatorDevice
+from .simulator_device import SimulatorDevice, MixedStateSimulatorDevice
 
 # TODO[CUSTOM OPS]: Uncomment and import all custom gates
 # from .ops import S, T, CCNOT, CPHASE, CSWAP, ISWAP, PSWAP
+from .ops import BitFlip
 from ._version import __version__

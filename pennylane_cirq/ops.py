@@ -50,8 +50,20 @@ Code details
 ~~~~~~~~~~~~
 """
 # TODO[CUSTOM OPS]: Uncomment and replace with Cirq-specific ops
-# from pennylane.operation import Operation
+from pennylane.operation import Operation
 
+
+class BitFlip(Operation):
+    num_params = 1
+    num_wires = 1
+    par_domain = 'R'
+    
+    grad_method = None
+    grad_recipe = None
+    
+    @staticmethod
+    def _matrix(*params):
+        return None
 
 # class S(Operation):
 #     r"""S(wires)

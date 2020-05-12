@@ -36,6 +36,7 @@ import numpy as np
 import pennylane as qml
 
 from .cirq_device import CirqDevice
+from .cirq_interface import CirqOperation
 
 class SimulatorDevice(CirqDevice):
     r"""Cirq simulator device for PennyLane.
@@ -140,7 +141,7 @@ class SimulatorDevice(CirqDevice):
                 self.circuit, initial_state=self._initial_state
             )
 
-            self._state = np.array(self._result.state_vector())
+            self._state = self._get_state_from_cirq(self._result)
 
     def analytic_probability(self, wires=None):
         # pylint: disable=missing-function-docstring
@@ -148,9 +149,17 @@ class SimulatorDevice(CirqDevice):
             return None
 
         wires = wires or range(self.num_wires)
-        probs = np.abs(self._state) ** 2
+        probs = self._get_computational_basis_probs()
 
         return self.marginal_prob(probs, wires)
+
+    def _get_state_from_cirq(self, result):
+        """Helper function to extract the state array from a Cirq TrialResult ``result``"""
+        return np.array(result.state_vector())
+
+    def _get_computational_basis_probs(self):
+        """Helper function to extract the probabilities of all computational basis measurements."""
+        return np.abs(self._state) ** 2
 
     @property
     def state(self):
@@ -159,7 +168,7 @@ class SimulatorDevice(CirqDevice):
         .. note::
 
             The state includes possible basis rotations for non-diagonal 
-            observables. Note that this behaviour is differs from PennyLane's
+            observables. Note that this behaviour differs from PennyLane's
             default.qubit plugin.
         """
         return self._state
@@ -182,3 +191,69 @@ class SimulatorDevice(CirqDevice):
                 for wire in range(self.num_wires)
             ]
         ).T.astype(int)
+
+
+class MixedStateSimulatorDevice(SimulatorDevice):
+    r"""Cirq mixed-state simulator device for PennyLane.
+
+    Args:
+        wires (int): the number of modes to initialize the device in
+        shots (int): Number of circuit evaluations/random samples used
+            to estimate expectation values of observables. Shots need
+            to >= 1. In analytic mode, shots indicates the number of entries
+            that are returned by device.sample.
+        analytic (bool): Indicates that expectation values and variances should
+            be calculated analytically. Defaults to `True`.
+        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
+            as wires. The wire number corresponds to the index in the list.
+            By default, an array of `cirq.LineQubit` instances is created.
+    """
+    name = "Cirq Mixed-State Simulator device for PennyLane"
+    short_name = "cirq.mixedsimulator"
+
+    _mixed_sim_operation_map = {
+        "BitFlip": CirqOperation(cirq.bit_flip),
+    }
+
+    def __init__(self, wires, shots=1000, analytic=True, qubits=None):
+        self._operation_map = dict(self._operation_map, **self._mixed_sim_operation_map)
+        super().__init__(wires, shots, analytic, qubits)
+
+        self._simulator = cirq.DensityMatrixSimulator()
+
+        self._initial_state = None
+        self._result = None
+        self._state = None
+
+    def _apply_basis_state(self, basis_state_operation):
+        super()._apply_basis_state(basis_state_operation)
+        self._initial_state = self._convert_to_density_matrix(self._initial_state)
+
+    def _apply_qubit_state_vector(self, qubit_state_vector_operation):
+        super()._apply_qubit_state_vector(qubit_state_vector_operation)
+        self._initial_state = self._convert_to_density_matrix(self._initial_state)
+
+    def _convert_to_density_matrix(self, state_vec):
+        """Helper function to convert ``state_vec`` into a density matrix."""
+        dim = 2 ** self.num_wires
+        return np.kron(state_vec, state_vec.conj()).reshape((dim, dim))
+
+    def _get_state_from_cirq(self, result):
+        """Helper function to extract the state array from a Cirq TrialResult"""
+        return np.array(result.final_density_matrix)
+
+    def _get_computational_basis_probs(self):
+        """Helper function to extract the probabilities of all computational basis measurements."""
+        return np.diag(self._state).real
+
+    @property
+    def state(self):
+        """Returns the density matrix of the circuit prior to measurement.
+
+        .. note::
+
+            The state includes possible basis rotations for non-diagonal
+            observables. Note that this behaviour differs from PennyLane's
+            default.qubit plugin.
+        """
+        return self._state
