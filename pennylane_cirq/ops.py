@@ -49,7 +49,6 @@ Operations
 Code details
 ~~~~~~~~~~~~
 """
-# TODO[CUSTOM OPS]: Uncomment and replace with Cirq-specific ops
 from pennylane.operation import Operation, AnyWires
 
 
