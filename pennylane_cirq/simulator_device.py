@@ -216,6 +216,8 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         "BitFlip": CirqOperation(cirq.bit_flip),
         "PhaseFlip": CirqOperation(cirq.phase_flip),
         "PhaseDamp": CirqOperation(cirq.phase_damp),
+        "AmplitudeDamp": CirqOperation(cirq.amplitude_damp),
+        "Depolarize": CirqOperation(cirq.depolarize),
     }
 
     def __init__(self, wires, shots=1000, analytic=True, qubits=None):
