@@ -152,10 +152,7 @@ class TestApplyPureState:
 
         with mimic_execution_for_apply(dev):
             dev.apply(
-                [
-                    qml.QubitStateVector(state, wires=[0]),
-                    qml.__getattribute__(name)(wires=[0]),
-                ]
+                [qml.QubitStateVector(state, wires=[0]), qml.__getattribute__(name)(wires=[0]),]
             )
 
         res = dev._state
@@ -191,9 +188,7 @@ class TestApplyPureState:
         c = -0.654
 
         with mimic_execution_for_apply(dev):
-            dev.apply(
-                [qml.QubitStateVector(state, wires=[0]), qml.Rot(a, b, c, wires=[0])]
-            )
+            dev.apply([qml.QubitStateVector(state, wires=[0]), qml.Rot(a, b, c, wires=[0])])
 
         res = dev._state
         expected = rot(a, b, c) @ state
@@ -350,10 +345,7 @@ class TestApplyMixedState:
 
         with mimic_execution_for_apply(dev):
             dev.apply(
-                [
-                    qml.QubitStateVector(state, wires=[0]),
-                    qml.__getattribute__(name)(wires=[0]),
-                ]
+                [qml.QubitStateVector(state, wires=[0]), qml.__getattribute__(name)(wires=[0]),]
             )
 
         res = dev._state
@@ -391,9 +383,7 @@ class TestApplyMixedState:
         c = -0.654
 
         with mimic_execution_for_apply(dev):
-            dev.apply(
-                [qml.QubitStateVector(state, wires=[0]), qml.Rot(a, b, c, wires=[0])]
-            )
+            dev.apply([qml.QubitStateVector(state, wires=[0]), qml.Rot(a, b, c, wires=[0])])
 
         res = dev._state
         expected = rot(a, b, c) @ state

@@ -153,14 +153,8 @@ class TestOperations:
             (qml.PhaseShift(1.4, wires=[0]), [cirq.ZPowGate(exponent=1.4 / np.pi)]),
             (qml.PhaseShift(-1.2, wires=[0]), [cirq.ZPowGate(exponent=-1.2 / np.pi)]),
             (qml.PhaseShift(2, wires=[0]), [cirq.ZPowGate(exponent=2 / np.pi)]),
-            (
-                qml.PhaseShift(1.4, wires=[0]).inv(),
-                [cirq.ZPowGate(exponent=-1.4 / np.pi)],
-            ),
-            (
-                qml.PhaseShift(-1.2, wires=[0]).inv(),
-                [cirq.ZPowGate(exponent=1.2 / np.pi)],
-            ),
+            (qml.PhaseShift(1.4, wires=[0]).inv(), [cirq.ZPowGate(exponent=-1.4 / np.pi)],),
+            (qml.PhaseShift(-1.2, wires=[0]).inv(), [cirq.ZPowGate(exponent=1.2 / np.pi)],),
             (qml.PhaseShift(2, wires=[0]).inv(), [cirq.ZPowGate(exponent=-2 / np.pi)]),
             (qml.RX(1.4, wires=[0]), [cirq.rx(1.4)]),
             (qml.RX(-1.2, wires=[0]), [cirq.rx(-1.2)]),
@@ -180,27 +174,15 @@ class TestOperations:
             (qml.RZ(1.4, wires=[0]).inv(), [cirq.rz(-1.4)]),
             (qml.RZ(-1.1, wires=[0]).inv(), [cirq.rz(1.1)]),
             (qml.RZ(1, wires=[0]).inv(), [cirq.rz(-1)]),
-            (
-                qml.Rot(1.4, 2.3, -1.2, wires=[0]),
-                [cirq.rz(1.4), cirq.ry(2.3), cirq.rz(-1.2)],
-            ),
+            (qml.Rot(1.4, 2.3, -1.2, wires=[0]), [cirq.rz(1.4), cirq.ry(2.3), cirq.rz(-1.2)],),
             (qml.Rot(1, 2, -1, wires=[0]), [cirq.rz(1), cirq.ry(2), cirq.rz(-1)]),
-            (
-                qml.Rot(-1.1, 0.2, -1, wires=[0]),
-                [cirq.rz(-1.1), cirq.ry(0.2), cirq.rz(-1)],
-            ),
+            (qml.Rot(-1.1, 0.2, -1, wires=[0]), [cirq.rz(-1.1), cirq.ry(0.2), cirq.rz(-1)],),
             (
                 qml.Rot(1.4, 2.3, -1.2, wires=[0]).inv(),
                 [cirq.rz(1.2), cirq.ry(-2.3), cirq.rz(-1.4)],
             ),
-            (
-                qml.Rot(1, 2, -1, wires=[0]).inv(),
-                [cirq.rz(1), cirq.ry(-2), cirq.rz(-1)],
-            ),
-            (
-                qml.Rot(-1.1, 0.2, -1, wires=[0]).inv(),
-                [cirq.rz(1), cirq.ry(-0.2), cirq.rz(1.1)],
-            ),
+            (qml.Rot(1, 2, -1, wires=[0]).inv(), [cirq.rz(1), cirq.ry(-2), cirq.rz(-1)],),
+            (qml.Rot(-1.1, 0.2, -1, wires=[0]).inv(), [cirq.rz(1), cirq.ry(-0.2), cirq.rz(1.1)],),
             (
                 qml.QubitUnitary(np.array([[1, 0], [0, 1]]), wires=[0]),
                 [cirq.MatrixGate(np.array([[1, 0], [0, 1]]))],
@@ -222,9 +204,7 @@ class TestOperations:
                 [cirq.MatrixGate(np.array([[1, 0], [0, -1]])) ** -1],
             ),
             (
-                qml.QubitUnitary(
-                    np.array([[-1, 1], [1, 1]]) / math.sqrt(2), wires=[0]
-                ).inv(),
+                qml.QubitUnitary(np.array([[-1, 1], [1, 1]]) / math.sqrt(2), wires=[0]).inv(),
                 [cirq.MatrixGate(np.array([[-1, 1], [1, 1]]) / math.sqrt(2)) ** -1],
             ),
         ],
@@ -326,38 +306,23 @@ class TestOperations:
                 ),
                 [
                     cirq.MatrixGate(
-                        np.array(
-                            [[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]]
-                        )
+                        np.array([[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]])
                     )
                 ],
             ),
             (
                 qml.QubitUnitary(
-                    np.array(
-                        [[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1]]
-                    )
-                    / 2,
+                    np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1]]) / 2,
                     wires=[0, 1],
                 ),
                 [
                     cirq.MatrixGate(
-                        np.array(
-                            [
-                                [1, -1, -1, 1],
-                                [-1, -1, 1, 1],
-                                [-1, 1, -1, 1],
-                                [1, 1, 1, 1],
-                            ]
-                        )
+                        np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1],])
                         / 2
                     )
                 ],
             ),
-            (
-                qml.QubitUnitary(np.eye(4), wires=[0, 1]).inv(),
-                [cirq.MatrixGate(np.eye(4)) ** -1],
-            ),
+            (qml.QubitUnitary(np.eye(4), wires=[0, 1]).inv(), [cirq.MatrixGate(np.eye(4)) ** -1],),
             (
                 qml.QubitUnitary(
                     np.array([[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]]),
@@ -365,31 +330,19 @@ class TestOperations:
                 ).inv(),
                 [
                     cirq.MatrixGate(
-                        np.array(
-                            [[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]]
-                        )
+                        np.array([[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]])
                     )
                     ** -1
                 ],
             ),
             (
                 qml.QubitUnitary(
-                    np.array(
-                        [[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1]]
-                    )
-                    / 2,
+                    np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1]]) / 2,
                     wires=[0, 1],
                 ).inv(),
                 [
                     cirq.MatrixGate(
-                        np.array(
-                            [
-                                [1, -1, -1, 1],
-                                [-1, -1, 1, 1],
-                                [-1, 1, -1, 1],
-                                [1, 1, 1, 1],
-                            ]
-                        )
+                        np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1],])
                         / 2
                     )
                     ** -1
@@ -410,4 +363,3 @@ class TestOperations:
 
         for i in range(len(ops)):
             assert ops[i].gate == expected_cirq_gates[i]
-

@@ -56,8 +56,8 @@ from pennylane.operation import Operation, AnyWires
 class BitFlip(Operation):
     num_params = 1
     num_wires = 1
-    par_domain = 'R'
-    
+    par_domain = "R"
+
     grad_method = None
     grad_recipe = None
 
@@ -65,7 +65,7 @@ class BitFlip(Operation):
 class PhaseFlip(Operation):
     num_params = 1
     num_wires = 1
-    par_domain = 'R'
+    par_domain = "R"
 
     grad_method = None
     grad_recipe = None
@@ -74,7 +74,7 @@ class PhaseFlip(Operation):
 class PhaseDamp(Operation):
     num_params = 1
     num_wires = 1
-    par_domain = 'R'
+    par_domain = "R"
 
     grad_method = None
     grad_recipe = None
@@ -83,7 +83,7 @@ class PhaseDamp(Operation):
 class AmplitudeDamp(Operation):
     num_params = 1
     num_wires = 1
-    par_domain = 'R'
+    par_domain = "R"
 
     grad_method = None
     grad_recipe = None
@@ -92,105 +92,7 @@ class AmplitudeDamp(Operation):
 class Depolarize(Operation):
     num_params = 1
     num_wires = 1
-    par_domain = 'R'
+    par_domain = "R"
 
     grad_method = None
     grad_recipe = None
-
-
-# class S(Operation):
-#     r"""S(wires)
-#     S gate.
-
-#     .. math:: S = \begin{bmatrix} 1 & 0 \\ 0 & i \end{bmatrix}
-
-#     **Details:**
-
-#     * Number of wires: 1
-#     * Number of parameters: 0
-
-#     Args:
-#         wires (int): the subsystem the gate acts on
-#     """
-#     num_params = 0
-#     num_wires = 1
-#     par_domain = None
-
-
-# class T(Operation):
-#     r"""T(wires)
-#     T gate.
-
-#     .. math:: T = \begin{bmatrix}1&0\\0&e^{i \pi / 4}\end{bmatrix}
-
-#     **Details:**
-
-#     * Number of wires: 1
-#     * Number of parameters: 0
-
-#     Args:
-#         wires (int): the subsystem the gate acts on
-#     """
-#     num_params = 0
-#     num_wires = 1
-#     par_domain = None
-
-
-# class CCNOT(Operation):
-#     r"""CCNOT(wires)
-#     Controlled-controlled-not gate.
-
-#     .. math::
-
-#         CCNOT = \begin{bmatrix}
-#             1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-#             0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
-#             0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
-#             0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
-#             0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
-#             0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
-#             0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
-#             0 & 0 & 0 & 0 & 0 & 0 & 1 & 0
-#         \end{bmatrix}
-
-#     **Details:**
-
-#     * Number of wires: 3
-#     * Number of parameters: 0
-
-#     Args:
-#         wires (int): the subsystem the gate acts on
-#     """
-#     num_params = 0
-#     num_wires = 3
-#     par_domain = None
-
-
-# class CSWAP(Operation):
-#     r"""CSWAP(wires)
-#     Controlled-swap gate.
-
-#     .. math::
-
-#         CSWAP = \begin{bmatrix}
-#             1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-#              0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
-#              0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
-#              0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
-#              0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
-#              0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
-#              0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
-#              0 & 0 & 0 & 0 & 0 & 0 & 0 & 1
-#         \end{bmatrix}
-
-#     **Details:**
-
-#     * Number of wires: 3
-#     * Number of parameters: 0
-
-#     Args:
-#         wires (int): the subsystem the gate acts on
-#     """
-#     num_params = 0
-#     num_wires = 3
-#     par_domain = None

@@ -96,11 +96,9 @@ class TestApply:
         simulator_device_1_wire.apply([op(wires=[0])])
 
         state = np.array(expected_pure_state)
-        expected_output = np.kron(state, state.conj()).reshape([2,2])
+        expected_output = np.kron(state, state.conj()).reshape([2, 2])
 
-        assert np.allclose(
-            simulator_device_1_wire.state, expected_output, **tol
-        )
+        assert np.allclose(simulator_device_1_wire.state, expected_output, **tol)
 
     @pytest.mark.parametrize(
         "op,input,expected_pure_state",
@@ -139,11 +137,9 @@ class TestApply:
         simulator_device_2_wires.apply([op(wires=[0, 1])])
 
         state = np.array(expected_pure_state)
-        expected_output = np.kron(state, state.conj()).reshape([4,4])
+        expected_output = np.kron(state, state.conj()).reshape([4, 4])
 
-        assert np.allclose(
-            simulator_device_2_wires.state, expected_output, **tol
-        )
+        assert np.allclose(simulator_device_2_wires.state, expected_output, **tol)
 
     @pytest.mark.parametrize(
         "op,expected_pure_state,par",
@@ -176,11 +172,9 @@ class TestApply:
         simulator_device_2_wires.apply([op(np.array(par), wires=[0, 1])])
 
         state = np.array(expected_pure_state)
-        expected_output = np.kron(state, state.conj()).reshape([4,4])
+        expected_output = np.kron(state, state.conj()).reshape([4, 4])
 
-        assert np.allclose(
-            simulator_device_2_wires.state, expected_output, **tol
-        )
+        assert np.allclose(simulator_device_2_wires.state, expected_output, **tol)
 
     @pytest.mark.parametrize(
         "op,input,expected_pure_state,par",
@@ -212,18 +206,8 @@ class TestApply:
                 [1 / 2 - 1j / 2, 1 / 2 + 1j / 2],
                 [math.pi / 2],
             ),
-            (
-                qml.Rot,
-                [1, 0],
-                [1 / math.sqrt(2) - 1j / math.sqrt(2), 0],
-                [math.pi / 2, 0, 0],
-            ),
-            (
-                qml.Rot,
-                [1, 0],
-                [1 / math.sqrt(2), 1 / math.sqrt(2)],
-                [0, math.pi / 2, 0],
-            ),
+            (qml.Rot, [1, 0], [1 / math.sqrt(2) - 1j / math.sqrt(2), 0], [math.pi / 2, 0, 0],),
+            (qml.Rot, [1, 0], [1 / math.sqrt(2), 1 / math.sqrt(2)], [0, math.pi / 2, 0],),
             (
                 qml.Rot,
                 [1 / math.sqrt(2), 1 / math.sqrt(2)],
@@ -294,11 +278,9 @@ class TestApply:
         simulator_device_1_wire.apply([op(*par, wires=[0])])
 
         state = np.array(expected_pure_state)
-        expected_output = np.kron(state, state.conj()).reshape([2,2])
+        expected_output = np.kron(state, state.conj()).reshape([2, 2])
 
-        assert np.allclose(
-            simulator_device_1_wire.state, expected_output, **tol
-        )
+        assert np.allclose(simulator_device_1_wire.state, expected_output, **tol)
 
     @pytest.mark.parametrize(
         "op,input,expected_pure_state,par",
@@ -311,12 +293,7 @@ class TestApply:
                 [0, 1 / math.sqrt(2), 1 / 2, -1j / 2],
                 [math.pi / 2],
             ),
-            (
-                qml.CRY,
-                [0, 0, 0, 1],
-                [0, 0, -1 / math.sqrt(2), 1 / math.sqrt(2)],
-                [math.pi / 2],
-            ),
+            (qml.CRY, [0, 0, 0, 1], [0, 0, -1 / math.sqrt(2), 1 / math.sqrt(2)], [math.pi / 2],),
             (qml.CRY, [0, 0, 0, 1], [0, 0, -1, 0], [math.pi]),
             (
                 qml.CRY,
@@ -425,11 +402,9 @@ class TestApply:
         simulator_device_2_wires.apply([op(*par, wires=[0, 1])])
 
         state = np.array(expected_pure_state)
-        expected_output = np.kron(state, state.conj()).reshape([4,4])
+        expected_output = np.kron(state, state.conj()).reshape([4, 4])
 
-        assert np.allclose(
-            simulator_device_2_wires.state, expected_output, **tol
-        )
+        assert np.allclose(simulator_device_2_wires.state, expected_output, **tol)
 
     @pytest.mark.parametrize(
         "operation,par,match",
@@ -478,9 +453,7 @@ class TestApply:
             ),
         ],
     )
-    def test_state_preparation_error(
-        self, simulator_device_1_wire, operation, par, match
-    ):
+    def test_state_preparation_error(self, simulator_device_1_wire, operation, par, match):
         """Tests that the state preparation routines raise proper errors for wrong parameter values."""
 
         simulator_device_1_wire.reset()
@@ -498,9 +471,7 @@ class TestApply:
             qml.DeviceError,
             match="The operation BasisState is only supported at the beginning of a circuit.",
         ):
-            simulator_device_1_wire.apply(
-                [qml.PauliX(0), qml.BasisState(np.array([0]), wires=[0])]
-            )
+            simulator_device_1_wire.apply([qml.PauliX(0), qml.BasisState(np.array([0]), wires=[0])])
 
     def test_qubit_state_vector_not_at_beginning_error(self, simulator_device_1_wire):
         """Tests that application of QubitStateVector raises an error if is not
@@ -528,8 +499,7 @@ class TestStatePreparationErrorsNonAnalytic:
         simulator_device_1_wire.reset()
 
         with pytest.raises(
-            qml.DeviceError,
-            match="The operation BasisState is only supported in analytic mode.",
+            qml.DeviceError, match="The operation BasisState is only supported in analytic mode.",
         ):
             simulator_device_1_wire.apply([qml.BasisState(np.array([0]), wires=[0])])
 
@@ -543,9 +513,8 @@ class TestStatePreparationErrorsNonAnalytic:
             qml.DeviceError,
             match="The operation QubitStateVector is only supported in analytic mode.",
         ):
-            simulator_device_1_wire.apply(
-                [qml.QubitStateVector(np.array([0, 1]), wires=[0])]
-            )
+            simulator_device_1_wire.apply([qml.QubitStateVector(np.array([0, 1]), wires=[0])])
+
 
 @pytest.mark.parametrize("shots,analytic", [(100, True)])
 class TestAnalyticProbability:
@@ -558,6 +527,7 @@ class TestAnalyticProbability:
         simulator_device_1_wire.reset()
         assert simulator_device_1_wire._state is None
         assert simulator_device_1_wire.analytic_probability() is None
+
 
 @pytest.mark.parametrize("shots,analytic", [(100, True)])
 class TestExpval:
@@ -641,51 +611,25 @@ class TestExpval:
                 qml.Hermitian,
                 [1 / math.sqrt(3), 0, 1 / math.sqrt(3), 1 / math.sqrt(3)],
                 5 / 3,
-                [
-                    np.array(
-                        [[1, 1j, 0, 1], [-1j, 1, 0, 0], [0, 0, 1, -1j], [1, 0, 1j, 1]]
-                    )
-                ],
+                [np.array([[1, 1j, 0, 1], [-1j, 1, 0, 0], [0, 0, 1, -1j], [1, 0, 1j, 1]])],
             ),
             (
                 qml.Hermitian,
                 [0, 0, 0, 1],
                 0,
-                [
-                    np.array(
-                        [[0, 1j, 0, 0], [-1j, 0, 0, 0], [0, 0, 0, -1j], [0, 0, 1j, 0]]
-                    )
-                ],
+                [np.array([[0, 1j, 0, 0], [-1j, 0, 0, 0], [0, 0, 0, -1j], [0, 0, 1j, 0]])],
             ),
             (
                 qml.Hermitian,
                 [1 / math.sqrt(2), 0, -1 / math.sqrt(2), 0],
                 1,
-                [
-                    np.array(
-                        [[1, 1j, 0, 0], [-1j, 1, 0, 0], [0, 0, 1, -1j], [0, 0, 1j, 1]]
-                    )
-                ],
+                [np.array([[1, 1j, 0, 0], [-1j, 1, 0, 0], [0, 0, 1, -1j], [0, 0, 1j, 1]])],
             ),
             (
                 qml.Hermitian,
-                [
-                    1 / math.sqrt(3),
-                    -1 / math.sqrt(3),
-                    1 / math.sqrt(6),
-                    1 / math.sqrt(6),
-                ],
+                [1 / math.sqrt(3), -1 / math.sqrt(3), 1 / math.sqrt(6), 1 / math.sqrt(6),],
                 1,
-                [
-                    np.array(
-                        [
-                            [1, 1j, 0, 0.5j],
-                            [-1j, 1, 0, 0],
-                            [0, 0, 1, -1j],
-                            [-0.5j, 0, 1j, 1],
-                        ]
-                    )
-                ],
+                [np.array([[1, 1j, 0, 0.5j], [-1j, 1, 0, 0], [0, 0, 1, -1j], [-0.5j, 0, 1j, 1],])],
             ),
             (
                 qml.Hermitian,
@@ -765,12 +709,7 @@ class TestVar:
             (qml.Identity, [1 / math.sqrt(2), -1 / math.sqrt(2)], 0, []),
             (qml.Hermitian, [1, 0], 1, [[[1, 1j], [-1j, 1]]]),
             (qml.Hermitian, [0, 1], 1, [[[1, 1j], [-1j, 1]]]),
-            (
-                qml.Hermitian,
-                [1 / math.sqrt(2), -1 / math.sqrt(2)],
-                1,
-                [[[1, 1j], [-1j, 1]]],
-            ),
+            (qml.Hermitian, [1 / math.sqrt(2), -1 / math.sqrt(2)], 1, [[[1, 1j], [-1j, 1]]],),
         ],
     )
     def test_var_single_wire_with_parameters(
@@ -877,9 +816,7 @@ class TestSample:
         the correct dimensions
         """
         simulator_device_2_wires.reset()
-        simulator_device_2_wires.apply(
-            [qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])]
-        )
+        simulator_device_2_wires.apply([qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])])
 
         simulator_device_2_wires.shots = 10
         simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
@@ -893,9 +830,7 @@ class TestSample:
 
         simulator_device_2_wires.shots = 17
         simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
-        s3 = simulator_device_2_wires.sample(
-            qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1])
-        )
+        s3 = simulator_device_2_wires.sample(qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1]))
         assert np.array_equal(s3.shape, (17,))
 
     def test_sample_values(self, simulator_device_2_wires, tol):
@@ -919,34 +854,50 @@ class TestState:
     """Test the state property."""
 
     @pytest.mark.parametrize("shots,analytic", [(100, True)])
-    @pytest.mark.parametrize("ops,expected_pure_state", [
-        ([qml.PauliX(0), qml.PauliX(1)], [0, 0, 0, 1]),
-        ([qml.PauliX(0), qml.PauliY(1)], [0, 0, 0, 1j]),
-        ([qml.PauliZ(0), qml.PauliZ(1)], [1, 0, 0, 0]),
-    ])
+    @pytest.mark.parametrize(
+        "ops,expected_pure_state",
+        [
+            ([qml.PauliX(0), qml.PauliX(1)], [0, 0, 0, 1]),
+            ([qml.PauliX(0), qml.PauliY(1)], [0, 0, 0, 1j]),
+            ([qml.PauliZ(0), qml.PauliZ(1)], [1, 0, 0, 0]),
+        ],
+    )
     def test_state_pauli_operations(self, simulator_device_2_wires, ops, expected_pure_state, tol):
         """Test that the state reflects Pauli operations correctly."""
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply(ops)
 
         state = np.array(expected_pure_state)
-        expected_output = np.kron(state, state.conj()).reshape([4,4])
+        expected_output = np.kron(state, state.conj()).reshape([4, 4])
 
         assert np.allclose(simulator_device_2_wires.state, expected_output, **tol)
 
     @pytest.mark.parametrize("shots,analytic", [(100, True)])
-    @pytest.mark.parametrize("ops,diag_ops,expected_pure_state", [
-        ([qml.PauliX(0), qml.PauliX(1)], [], [0, 0, 0, 1]),
-        ([qml.PauliX(0), qml.PauliY(1)], [qml.Hadamard(0)], [0, 1j/np.sqrt(2), 0, -1j/np.sqrt(2)]),
-        ([qml.PauliZ(0), qml.PauliZ(1)], [qml.Hadamard(1)], [1/np.sqrt(2), 1/np.sqrt(2), 0, 0]),
-    ])
-    def test_state_pauli_operations_and_observables(self, simulator_device_2_wires, ops, diag_ops, expected_pure_state, tol):
+    @pytest.mark.parametrize(
+        "ops,diag_ops,expected_pure_state",
+        [
+            ([qml.PauliX(0), qml.PauliX(1)], [], [0, 0, 0, 1]),
+            (
+                [qml.PauliX(0), qml.PauliY(1)],
+                [qml.Hadamard(0)],
+                [0, 1j / np.sqrt(2), 0, -1j / np.sqrt(2)],
+            ),
+            (
+                [qml.PauliZ(0), qml.PauliZ(1)],
+                [qml.Hadamard(1)],
+                [1 / np.sqrt(2), 1 / np.sqrt(2), 0, 0],
+            ),
+        ],
+    )
+    def test_state_pauli_operations_and_observables(
+        self, simulator_device_2_wires, ops, diag_ops, expected_pure_state, tol
+    ):
         """Test that the state reflects Pauli operations and observable rotations correctly."""
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply(ops, rotations=diag_ops)
 
         state = np.array(expected_pure_state)
-        expected_output = np.kron(state, state.conj()).reshape([4,4])
+        expected_output = np.kron(state, state.conj()).reshape([4, 4])
 
         assert np.allclose(simulator_device_2_wires.state, expected_output, **tol)
 

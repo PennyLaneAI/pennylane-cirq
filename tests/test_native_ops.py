@@ -59,9 +59,7 @@ class TestApply:
         simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
         simulator_device_1_wire.apply([ops.Depolarize(*par, wires=[0])])
 
-        assert np.allclose(
-            simulator_device_1_wire.state, expected_density_matrix, **tol
-        )
+        assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
 
     @pytest.mark.parametrize(
         "par,input,expected_density_matrix",
@@ -78,7 +76,7 @@ class TestApply:
             ([0.0], np.array([1, -1]) / np.sqrt(2), np.array([[1, -1], [-1, 1]]) / 2),
             ([0.5], np.array([1, -1]) / np.sqrt(2), np.array([[1, -1], [-1, 1]]) / 2),
             ([1.0], np.array([1, -1]) / np.sqrt(2), np.array([[1, -1], [-1, 1]]) / 2),
-        ]
+        ],
     )
     def test_apply_bit_flip_single_wire(
         self, simulator_device_1_wire, tol, par, input, expected_density_matrix
@@ -89,9 +87,7 @@ class TestApply:
         simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
         simulator_device_1_wire.apply([ops.BitFlip(*par, wires=[0])])
 
-        assert np.allclose(
-            simulator_device_1_wire.state, expected_density_matrix, **tol
-        )
+        assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
 
     @pytest.mark.parametrize(
         "par,input,expected_density_matrix",
@@ -108,7 +104,7 @@ class TestApply:
             ([0.0], np.array([1, -1]) / np.sqrt(2), np.array([[1, -1], [-1, 1]]) / 2),
             ([0.5], np.array([1, -1]) / np.sqrt(2), np.array([[1, 0], [0, 1]]) / 2),
             ([1.0], np.array([1, -1]) / np.sqrt(2), np.array([[1, 1], [1, 1]]) / 2),
-        ]
+        ],
     )
     def test_apply_phase_flip_single_wire(
         self, simulator_device_1_wire, tol, par, input, expected_density_matrix
@@ -119,10 +115,7 @@ class TestApply:
         simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
         simulator_device_1_wire.apply([ops.PhaseFlip(*par, wires=[0])])
 
-        assert np.allclose(
-            simulator_device_1_wire.state, expected_density_matrix, **tol
-        )
-
+        assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
 
     @pytest.mark.parametrize(
         "par,input,expected_density_matrix",
@@ -134,12 +127,20 @@ class TestApply:
             ([0.5], [0, 1], np.array([[0, 0], [0, 1]])),
             ([1.0], [0, 1], np.array([[0, 0], [0, 1]])),
             ([0.0], np.array([1, 1]) / np.sqrt(2), np.array([[1, 1], [1, 1]]) / 2),
-            ([0.5], np.array([1, 1]) / np.sqrt(2), np.array([[1, np.sqrt(1/2)], [np.sqrt(1/2), 1]]) / 2),
+            (
+                [0.5],
+                np.array([1, 1]) / np.sqrt(2),
+                np.array([[1, np.sqrt(1 / 2)], [np.sqrt(1 / 2), 1]]) / 2,
+            ),
             ([1.0], np.array([1, 1]) / np.sqrt(2), np.array([[1, 0], [0, 1]]) / 2),
             ([0.0], np.array([1, -1]) / np.sqrt(2), np.array([[1, -1], [-1, 1]]) / 2),
-            ([0.5], np.array([1, -1]) / np.sqrt(2), np.array([[1, -np.sqrt(1/2)], [-np.sqrt(1/2), 1]]) / 2),
+            (
+                [0.5],
+                np.array([1, -1]) / np.sqrt(2),
+                np.array([[1, -np.sqrt(1 / 2)], [-np.sqrt(1 / 2), 1]]) / 2,
+            ),
             ([1.0], np.array([1, -1]) / np.sqrt(2), np.array([[1, 0], [0, 1]]) / 2),
-        ]
+        ],
     )
     def test_apply_phase_damp_single_wire(
         self, simulator_device_1_wire, tol, par, input, expected_density_matrix
@@ -150,11 +151,8 @@ class TestApply:
         simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
         simulator_device_1_wire.apply([ops.PhaseDamp(*par, wires=[0])])
 
-        assert np.allclose(
-            simulator_device_1_wire.state, expected_density_matrix, **tol
-        )
-        
-    
+        assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
+
     @pytest.mark.parametrize(
         "par,input,expected_density_matrix",
         [
@@ -165,12 +163,20 @@ class TestApply:
             ([0.5], [0, 1], np.array([[1, 0], [0, 1]]) / 2),
             ([1.0], [0, 1], np.array([[1, 0], [0, 0]])),
             ([0.0], np.array([1, 1]) / np.sqrt(2), np.array([[1, 1], [1, 1]]) / 2),
-            ([0.5], np.array([1, 1]) / np.sqrt(2), np.array([[3 / 2, np.sqrt(1 / 2)], [np.sqrt(1 / 2), 1 / 2]]) / 2),
+            (
+                [0.5],
+                np.array([1, 1]) / np.sqrt(2),
+                np.array([[3 / 2, np.sqrt(1 / 2)], [np.sqrt(1 / 2), 1 / 2]]) / 2,
+            ),
             ([1.0], np.array([1, 1]) / np.sqrt(2), np.array([[1, 0], [0, 0]])),
             ([0.0], np.array([1, -1]) / np.sqrt(2), np.array([[1, -1], [-1, 1]]) / 2),
-            ([0.5], np.array([1, -1]) / np.sqrt(2), np.array([[3 / 2, -np.sqrt(1 / 2)], [-np.sqrt(1 / 2), 1 / 2]]) / 2),
+            (
+                [0.5],
+                np.array([1, -1]) / np.sqrt(2),
+                np.array([[3 / 2, -np.sqrt(1 / 2)], [-np.sqrt(1 / 2), 1 / 2]]) / 2,
+            ),
             ([1.0], np.array([1, -1]) / np.sqrt(2), np.array([[1, 0], [0, 0]])),
-        ]
+        ],
     )
     def test_apply_amplitude_damp_single_wire(
         self, simulator_device_1_wire, tol, par, input, expected_density_matrix
@@ -181,6 +187,4 @@ class TestApply:
         simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
         simulator_device_1_wire.apply([ops.AmplitudeDamp(*par, wires=[0])])
 
-        assert np.allclose(
-            simulator_device_1_wire.state, expected_density_matrix, **tol
-        )
+        assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
