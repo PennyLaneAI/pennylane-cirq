@@ -411,24 +411,3 @@ class TestOperations:
         for i in range(len(ops)):
             assert ops[i].gate == expected_cirq_gates[i]
 
-    # @pytest.mark.parametrize("operation,par,expected_cirq_gates", [
-    #     ("BasisState", [[0]]),
-    #     ("BasisState", [[1]]),
-    #     ("QubitStateVector", [[1, 0]]),
-    #     ("QubitStateVector", [[0, 1]]),
-    #     ("QubitStateVector", [[1/math.sqrt(2), 1j/math.sqrt(2)]]),
-    #     ("QubitStateVector", [[1/2, math.sqrt(3)/2]]),
-    # ])
-    # def test_apply_state_preparations_single_wire(self, cirq_device_1_wire, operation, par, expected_cirq_gates):
-    #     """Tests that apply adds the correct gates to the circuit for state preparations."""
-
-    #     cirq_device_1_wire.reset()
-
-    #     cirq_device_1_wire.apply(operation, wires=[0], par=par)
-
-    #     ops = list(cirq_device_1_wire.circuit.all_operations())
-
-    #     assert len(ops) == len(expected_cirq_gates)
-
-    #     for i in range(len(ops)):
-    #         assert ops[i]._gate == expected_cirq_gates[i]
