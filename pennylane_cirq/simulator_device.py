@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Cirq Simulator Device
+Cirq Simulator Devices
 ========
 
 **Module name:** :mod:`pennylane_cirq.simulator_device`
@@ -20,13 +20,14 @@ Cirq Simulator Device
 .. currentmodule:: pennylane_cirq.simulator_device
 
 This Device implements all the :class:`~pennylane.device.Device` methods,
-for using Cirq simulator as a PennyLane device.
+for using Cirq simulators as PennyLane device.
 
 Classes
 -------
 
 .. autosummary::
    SimulatorDevice
+   MixedStateSimulatorDevice
 
 ----
 """
@@ -213,6 +214,8 @@ class MixedStateSimulatorDevice(SimulatorDevice):
 
     _mixed_sim_operation_map = {
         "BitFlip": CirqOperation(cirq.bit_flip),
+        "PhaseFlip": CirqOperation(cirq.phase_flip),
+        "PhaseDamp": CirqOperation(cirq.phase_damp),
     }
 
     def __init__(self, wires, shots=1000, analytic=True, qubits=None):

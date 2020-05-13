@@ -60,10 +60,25 @@ class BitFlip(Operation):
     
     grad_method = None
     grad_recipe = None
-    
-    @staticmethod
-    def _matrix(*params):
-        raise NotImplementedError
+
+
+class PhaseFlip(Operation):
+    num_params = 1
+    num_wires = 1
+    par_domain = 'R'
+
+    grad_method = None
+    grad_recipe = None
+
+
+class PhaseDamp(Operation):
+    num_params = 1
+    num_wires = 1
+    par_domain = 'R'
+
+    grad_method = None
+    grad_recipe = None
+
 
 # class S(Operation):
 #     r"""S(wires)
