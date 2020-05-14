@@ -40,10 +40,11 @@ Operations
 ----------
 
 .. autosummary::
-    S
-    T
-    CCNOT
-    CSWAP
+    BitFlip
+    PhaseFlip
+    PhaseDamp
+    AmplitudeDamp
+    Depolarize
 
 
 Code details
@@ -53,6 +54,11 @@ from pennylane.operation import Operation, AnyWires
 
 
 class BitFlip(Operation):
+    """Cirq ``bit_flip`` operation.
+
+    See the `Cirq docs <https://cirq.readthedocs.io/en/stable/generated/cirq.bit_flip.html>`_
+    for further details."""
+
     num_params = 1
     num_wires = 1
     par_domain = "R"
@@ -62,6 +68,11 @@ class BitFlip(Operation):
 
 
 class PhaseFlip(Operation):
+    """Cirq ``phase_flip`` operation.
+
+    See the `Cirq docs <https://cirq.readthedocs.io/en/stable/generated/cirq.phase_flip.html>`_
+    for further details."""
+
     num_params = 1
     num_wires = 1
     par_domain = "R"
@@ -71,6 +82,11 @@ class PhaseFlip(Operation):
 
 
 class PhaseDamp(Operation):
+    """Cirq ``phase_damp`` operation.
+
+    See the `Cirq docs <https://cirq.readthedocs.io/en/stable/generated/cirq.phase_damp.html>`_
+    for further details."""
+
     num_params = 1
     num_wires = 1
     par_domain = "R"
@@ -80,6 +96,11 @@ class PhaseDamp(Operation):
 
 
 class AmplitudeDamp(Operation):
+    """Cirq ``amplitude_damp`` operation.
+
+    See the `Cirq docs <https://cirq.readthedocs.io/en/stable/generated/cirq.amplitude_damp.html>`_
+    for further details."""
+
     num_params = 1
     num_wires = 1
     par_domain = "R"
@@ -89,6 +110,11 @@ class AmplitudeDamp(Operation):
 
 
 class Depolarize(Operation):
+    """Cirq ``depolarize`` operation.
+
+    See the `Cirq docs <https://cirq.readthedocs.io/en/stable/generated/cirq.depolarize.html>`_
+    for further details."""
+
     num_params = 1
     num_wires = 1
     par_domain = "R"
