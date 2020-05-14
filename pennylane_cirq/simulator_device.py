@@ -50,7 +50,7 @@ class SimulatorDevice(CirqDevice):
             to >= 1. In analytic mode, shots indicates the number of entries
             that are returned by ``device.sample``.
         analytic (bool): Indicates that expectation values and variances should
-            be calculated analytically. Defaults to `True`. 
+            be calculated analytically. Defaults to ``True``. 
         qubits (List[cirq.Qubit]): a list of Cirq qubits that are used 
             as wires. The wire number corresponds to the index in the list.
             By default, an array of `cirq.LineQubit` instances is created.
@@ -196,10 +196,10 @@ class MixedStateSimulatorDevice(SimulatorDevice):
             to >= 1. In analytic mode, shots indicates the number of entries
             that are returned by device.sample.
         analytic (bool): Indicates that expectation values and variances should
-            be calculated analytically. Defaults to `True`.
+            be calculated analytically. Defaults to ``True``.
         qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
-            By default, an array of `cirq.LineQubit` instances is created.
+            By default, an array of ``cirq.LineQubit`` instances is created.
     """
     name = "Cirq Mixed-State Simulator device for PennyLane"
     short_name = "cirq.mixedsimulator"
