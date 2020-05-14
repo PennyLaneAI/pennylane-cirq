@@ -13,7 +13,7 @@
 # limitations under the License.
 """
 Cirq Simulator Devices
-========
+======================
 
 **Module name:** :mod:`pennylane_cirq.simulator_device`
 
@@ -37,7 +37,7 @@ import numpy as np
 import pennylane as qml
 
 from .cirq_device import CirqDevice
-from .cirq_interface import CirqOperation
+from .cirq_operation import CirqOperation
 
 
 class SimulatorDevice(CirqDevice):
@@ -48,7 +48,7 @@ class SimulatorDevice(CirqDevice):
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need 
             to >= 1. In analytic mode, shots indicates the number of entries
-            that are returned by device.sample.
+            that are returned by ``device.sample``.
         analytic (bool): Indicates that expectation values and variances should
             be calculated analytically. Defaults to `True`. 
         qubits (List[cirq.Qubit]): a list of Cirq qubits that are used 
@@ -136,7 +136,6 @@ class SimulatorDevice(CirqDevice):
 
         if self.analytic:
             self._result = self._simulator.simulate(self.circuit, initial_state=self._initial_state)
-
             self._state = self._get_state_from_cirq(self._result)
 
     def analytic_probability(self, wires=None):
@@ -149,7 +148,8 @@ class SimulatorDevice(CirqDevice):
 
         return self.marginal_prob(probs, wires)
 
-    def _get_state_from_cirq(self, result):
+    @staticmethod
+    def _get_state_from_cirq(result):
         """Extract the state array from a Cirq TrialResult ``result``"""
         return np.array(result.state_vector())
 
@@ -235,7 +235,8 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         dim = 2 ** self.num_wires
         return np.kron(state_vec, state_vec.conj()).reshape((dim, dim))
 
-    def _get_state_from_cirq(self, result):
+    @staticmethod
+    def _get_state_from_cirq(result):
         """Extract the state array from a Cirq TrialResult"""
         return np.array(result.final_density_matrix)
 

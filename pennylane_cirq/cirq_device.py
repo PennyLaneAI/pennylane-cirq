@@ -1,4 +1,4 @@
-# Copyright 2019 Xanadu Quantum Technologies Inc.
+# Copyright 2019-2020 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ from pennylane import QubitDevice
 from pennylane.operation import Operation
 
 from ._version import __version__
-from .cirq_interface import CirqOperation
+from .cirq_operation import CirqOperation
 
 
 class CirqDevice(QubitDevice, abc.ABC):

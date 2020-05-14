@@ -19,7 +19,7 @@ import pytest
 
 import pennylane as qml
 from pennylane import numpy as np
-from pennylane_cirq.cirq_interface import CirqOperation
+from pennylane_cirq.cirq_operation import CirqOperation
 
 
 class TestCirqOperation:

@@ -1,4 +1,4 @@
-# Copyright 2019 Xanadu Quantum Technologies Inc.
+# Copyright 2019-2020 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
 Cirq Operation class
 ====================
 
-**Module name:** :mod:`pennylane_cirq.cirq_interface`
+**Module name:** :mod:`pennylane_cirq.cirq_operation`
 
-.. currentmodule:: pennylane_cirq.cirq_interface
+.. currentmodule:: pennylane_cirq.cirq_operation
 
 An helper class that wraps the native Cirq operations and provides an interface for PennyLane.
 
