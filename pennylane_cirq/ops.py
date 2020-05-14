@@ -50,8 +50,9 @@ Operations
 Code details
 ~~~~~~~~~~~~
 """
-from pennylane.operation import Operation, AnyWires
+from pennylane.operation import Operation
 
+# pylint: disable=missing-function-docstring
 
 class BitFlip(Operation):
     """Cirq ``bit_flip`` operation.

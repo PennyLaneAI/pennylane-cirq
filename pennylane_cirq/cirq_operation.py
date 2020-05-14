@@ -36,7 +36,7 @@ import pennylane as qml
 
 
 class CirqOperation:
-    """A helper class that wraps the native Cirq operations and provides an 
+    """A helper class that wraps the native Cirq operations and provides an
        interface for parametrization and application."""
 
     def __init__(self, parametrization):
@@ -44,7 +44,7 @@ class CirqOperation:
 
         Args:
             parametrization (Tuple[float] -> Union[Cirq:Qid, List[Cirq:Qid]]): Converts the PennyLane gate parameters to an ordered list of gates
-              that are to be applied            
+              that are to be applied
         """
 
         self.parametrization = parametrization
