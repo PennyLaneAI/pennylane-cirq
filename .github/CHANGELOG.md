@@ -1,21 +1,27 @@
-# Release 0.9.0-dev
+# Release 0.9.0
 
 ### New features since last release
 
-### Breaking changes
-
-### Improvements
+* Added a new mixedsimulator class to Cirq, which uses Cirq's
+  DensityMatrixSimulator as a backend.
+  [#27](https://github.com/XanaduAI/pennylane-cirq/pull/27)
 
 ### Documentation
 
-* Redesigned the documentation to be consistent with other plugins
+* Redesigned the documentation to be consistent with other plugins.
   [#25](https://github.com/XanaduAI/pennylane-cirq/pull/25)
 
 ### Bug fixes
 
+* Renamed probability to ``analytic_probability`` to support new
+  changes in PennyLane.
+  [#24](https://github.com/XanaduAI/pennylane-cirq/pull/24)
+
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Theodor Isacsson, Nathan Killoran, Maria Shuld, Antal Száva
 
 ---
 

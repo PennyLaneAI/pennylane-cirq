@@ -64,6 +64,8 @@ and Cirq. Installation of this plugin, as well as all dependencies, can be done 
 Alternatively, you can install PennyLane-Cirq from the `source code <https://github.com/XanaduAI/pennylane-cirq>`__
 by navigating to the top directory and running:
 
+.. code-block:: bash
+
 	$ python setup.py install
 
 Dependencies
@@ -99,6 +101,8 @@ Documentation
 ~~~~~~~~~~~~~
 
 To build the HTML documentation, go to the top-level directory and run:
+
+.. code-block:: bash
 
   $ make docs
 
