@@ -1,4 +1,4 @@
-# Copyright 2019 Xanadu Quantum Technologies Inc.
+# Copyright 2019-2020 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,112 +40,85 @@ Operations
 ----------
 
 .. autosummary::
-    S
-    T
-    CCNOT
-    CSWAP
+    BitFlip
+    PhaseFlip
+    PhaseDamp
+    AmplitudeDamp
+    Depolarize
 
 
 Code details
 ~~~~~~~~~~~~
 """
-# TODO[CUSTOM OPS]: Uncomment and replace with Cirq-specific ops
-# from pennylane.operation import Operation
+from pennylane.operation import Operation
+
+# pylint: disable=missing-function-docstring
+
+class BitFlip(Operation):
+    """Cirq ``bit_flip`` operation.
+
+    See the `Cirq docs <https://cirq.readthedocs.io/en/stable/generated/cirq.bit_flip.html>`_
+    for further details."""
+
+    num_params = 1
+    num_wires = 1
+    par_domain = "R"
+
+    grad_method = None
+    grad_recipe = None
 
 
-# class S(Operation):
-#     r"""S(wires)
-#     S gate.
+class PhaseFlip(Operation):
+    """Cirq ``phase_flip`` operation.
 
-#     .. math:: S = \begin{bmatrix} 1 & 0 \\ 0 & i \end{bmatrix}
+    See the `Cirq docs <https://cirq.readthedocs.io/en/stable/generated/cirq.phase_flip.html>`_
+    for further details."""
 
-#     **Details:**
+    num_params = 1
+    num_wires = 1
+    par_domain = "R"
 
-#     * Number of wires: 1
-#     * Number of parameters: 0
-
-#     Args:
-#         wires (int): the subsystem the gate acts on
-#     """
-#     num_params = 0
-#     num_wires = 1
-#     par_domain = None
+    grad_method = None
+    grad_recipe = None
 
 
-# class T(Operation):
-#     r"""T(wires)
-#     T gate.
+class PhaseDamp(Operation):
+    """Cirq ``phase_damp`` operation.
 
-#     .. math:: T = \begin{bmatrix}1&0\\0&e^{i \pi / 4}\end{bmatrix}
+    See the `Cirq docs <https://cirq.readthedocs.io/en/stable/generated/cirq.phase_damp.html>`_
+    for further details."""
 
-#     **Details:**
+    num_params = 1
+    num_wires = 1
+    par_domain = "R"
 
-#     * Number of wires: 1
-#     * Number of parameters: 0
-
-#     Args:
-#         wires (int): the subsystem the gate acts on
-#     """
-#     num_params = 0
-#     num_wires = 1
-#     par_domain = None
+    grad_method = None
+    grad_recipe = None
 
 
-# class CCNOT(Operation):
-#     r"""CCNOT(wires)
-#     Controlled-controlled-not gate.
+class AmplitudeDamp(Operation):
+    """Cirq ``amplitude_damp`` operation.
 
-#     .. math::
+    See the `Cirq docs <https://cirq.readthedocs.io/en/stable/generated/cirq.amplitude_damp.html>`_
+    for further details."""
 
-#         CCNOT = \begin{bmatrix}
-#             1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-#             0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
-#             0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
-#             0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
-#             0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
-#             0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
-#             0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
-#             0 & 0 & 0 & 0 & 0 & 0 & 1 & 0
-#         \end{bmatrix}
+    num_params = 1
+    num_wires = 1
+    par_domain = "R"
 
-#     **Details:**
-
-#     * Number of wires: 3
-#     * Number of parameters: 0
-
-#     Args:
-#         wires (int): the subsystem the gate acts on
-#     """
-#     num_params = 0
-#     num_wires = 3
-#     par_domain = None
+    grad_method = None
+    grad_recipe = None
 
 
-# class CSWAP(Operation):
-#     r"""CSWAP(wires)
-#     Controlled-swap gate.
+class Depolarize(Operation):
+    """Cirq ``depolarize`` operation.
 
-#     .. math::
+    See the `Cirq docs <https://cirq.readthedocs.io/en/stable/generated/cirq.depolarize.html>`_
+    for further details."""
 
-#         CSWAP = \begin{bmatrix}
-#             1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-#              0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
-#              0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
-#              0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
-#              0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
-#              0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
-#              0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
-#              0 & 0 & 0 & 0 & 0 & 0 & 0 & 1
-#         \end{bmatrix}
+    num_params = 1
+    num_wires = 1
+    par_domain = "R"
 
-#     **Details:**
-
-#     * Number of wires: 3
-#     * Number of parameters: 0
-
-#     Args:
-#         wires (int): the subsystem the gate acts on
-#     """
-#     num_params = 0
-#     num_wires = 3
-#     par_domain = None
+    grad_method = None
+    grad_recipe = None

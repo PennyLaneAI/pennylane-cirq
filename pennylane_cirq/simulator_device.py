@@ -12,21 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Cirq Simulator Device
-========
+Cirq Simulator Devices
+======================
 
 **Module name:** :mod:`pennylane_cirq.simulator_device`
 
 .. currentmodule:: pennylane_cirq.simulator_device
 
 This Device implements all the :class:`~pennylane.device.Device` methods,
-for using Cirq simulator as a PennyLane device.
+for using Cirq simulators as PennyLane device.
 
 Classes
 -------
 
 .. autosummary::
    SimulatorDevice
+   MixedStateSimulatorDevice
 
 ----
 """
@@ -36,6 +37,8 @@ import numpy as np
 import pennylane as qml
 
 from .cirq_device import CirqDevice
+from .cirq_operation import CirqOperation
+
 
 class SimulatorDevice(CirqDevice):
     r"""Cirq simulator device for PennyLane.
@@ -43,14 +46,14 @@ class SimulatorDevice(CirqDevice):
     Args:
         wires (int): the number of modes to initialize the device in
         shots (int): Number of circuit evaluations/random samples used
-            to estimate expectation values of observables. Shots need 
+            to estimate expectation values of observables. Shots need
             to >= 1. In analytic mode, shots indicates the number of entries
-            that are returned by device.sample.
+            that are returned by ``device.sample``.
         analytic (bool): Indicates that expectation values and variances should
-            be calculated analytically. Defaults to `True`. 
-        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used 
+            be calculated analytically. Defaults to ``True``.
+        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
-            By default, an array of `cirq.LineQubit` instances is created.
+            By default, an array of ``cirq.LineQubit`` instances is created.
     """
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
@@ -75,9 +78,7 @@ class SimulatorDevice(CirqDevice):
     def _apply_basis_state(self, basis_state_operation):
         # pylint: disable=missing-function-docstring
         if not self.analytic:
-            raise qml.DeviceError(
-                "The operation BasisState is only supported in analytic mode."
-            )
+            raise qml.DeviceError("The operation BasisState is only supported in analytic mode.")
 
         basis_state_array = np.array(basis_state_operation.parameters[0])
 
@@ -106,9 +107,7 @@ class SimulatorDevice(CirqDevice):
                 "The operation QubitStateVector is only supported in analytic mode."
             )
 
-        state_vector = np.array(
-            qubit_state_vector_operation.parameters[0], dtype=np.complex64
-        )
+        state_vector = np.array(qubit_state_vector_operation.parameters[0], dtype=np.complex64)
 
         if len(state_vector) != 2 ** len(self.qubits):
             raise qml.DeviceError(
@@ -136,11 +135,8 @@ class SimulatorDevice(CirqDevice):
         self.circuit.append(cirq.IdentityGate(len(self.qubits))(*self.qubits))
 
         if self.analytic:
-            self._result = self._simulator.simulate(
-                self.circuit, initial_state=self._initial_state
-            )
-
-            self._state = np.array(self._result.state_vector())
+            self._result = self._simulator.simulate(self.circuit, initial_state=self._initial_state)
+            self._state = self._get_state_from_cirq(self._result)
 
     def analytic_probability(self, wires=None):
         # pylint: disable=missing-function-docstring
@@ -148,9 +144,18 @@ class SimulatorDevice(CirqDevice):
             return None
 
         wires = wires or range(self.num_wires)
-        probs = np.abs(self._state) ** 2
+        probs = self._get_computational_basis_probs()
 
         return self.marginal_prob(probs, wires)
+
+    @staticmethod
+    def _get_state_from_cirq(result):
+        """Extract the state array from a Cirq TrialResult ``result``"""
+        return np.array(result.state_vector())
+
+    def _get_computational_basis_probs(self):
+        """Extract the probabilities of all computational basis measurements."""
+        return np.abs(self._state) ** 2
 
     @property
     def state(self):
@@ -158,8 +163,8 @@ class SimulatorDevice(CirqDevice):
 
         .. note::
 
-            The state includes possible basis rotations for non-diagonal 
-            observables. Note that this behaviour is differs from PennyLane's
+            The state includes possible basis rotations for non-diagonal
+            observables. Note that this behaviour differs from PennyLane's
             default.qubit plugin.
         """
         return self._state
@@ -177,8 +182,76 @@ class SimulatorDevice(CirqDevice):
         # Bring measurements to a more managable form, but keep True/False as values for now
         # They will be changed in the measurement routines where the observable is available
         return np.array(
-            [
-                self._result.measurements[str(wire)].flatten()
-                for wire in range(self.num_wires)
-            ]
+            [self._result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
         ).T.astype(int)
+
+
+class MixedStateSimulatorDevice(SimulatorDevice):
+    r"""Cirq mixed-state simulator device for PennyLane.
+
+    Args:
+        wires (int): the number of modes to initialize the device in
+        shots (int): Number of circuit evaluations/random samples used
+            to estimate expectation values of observables. Shots need
+            to >= 1. In analytic mode, shots indicates the number of entries
+            that are returned by device.sample.
+        analytic (bool): Indicates that expectation values and variances should
+            be calculated analytically. Defaults to ``True``.
+        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
+            as wires. The wire number corresponds to the index in the list.
+            By default, an array of ``cirq.LineQubit`` instances is created.
+    """
+    name = "Cirq Mixed-State Simulator device for PennyLane"
+    short_name = "cirq.mixedsimulator"
+
+    _mixed_sim_operation_map = {
+        "BitFlip": CirqOperation(cirq.bit_flip),
+        "PhaseFlip": CirqOperation(cirq.phase_flip),
+        "PhaseDamp": CirqOperation(cirq.phase_damp),
+        "AmplitudeDamp": CirqOperation(cirq.amplitude_damp),
+        "Depolarize": CirqOperation(cirq.depolarize),
+    }
+
+    def __init__(self, wires, shots=1000, analytic=True, qubits=None):
+        self._operation_map = dict(self._operation_map, **self._mixed_sim_operation_map)
+        super().__init__(wires, shots, analytic, qubits)
+
+        self._simulator = cirq.DensityMatrixSimulator()
+
+        self._initial_state = None
+        self._result = None
+        self._state = None
+
+    def _apply_basis_state(self, basis_state_operation):
+        super()._apply_basis_state(basis_state_operation)
+        self._initial_state = self._convert_to_density_matrix(self._initial_state)
+
+    def _apply_qubit_state_vector(self, qubit_state_vector_operation):
+        super()._apply_qubit_state_vector(qubit_state_vector_operation)
+        self._initial_state = self._convert_to_density_matrix(self._initial_state)
+
+    def _convert_to_density_matrix(self, state_vec):
+        """Convert ``state_vec`` into a density matrix."""
+        dim = 2 ** self.num_wires
+        return np.kron(state_vec, state_vec.conj()).reshape((dim, dim))
+
+    @staticmethod
+    def _get_state_from_cirq(result):
+        """Extract the state array from a Cirq TrialResult"""
+        return np.array(result.final_density_matrix)
+
+    def _get_computational_basis_probs(self):
+        """Extract the probabilities of all computational basis measurements."""
+        return np.diag(self._state).real
+
+    @property
+    def state(self):
+        """Returns the density matrix of the circuit prior to measurement.
+
+        .. note::
+
+            The state includes possible basis rotations for non-diagonal
+            observables. Note that this behaviour differs from PennyLane's
+            default.qubit plugin.
+        """
+        return self._state

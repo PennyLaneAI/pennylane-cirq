@@ -14,7 +14,7 @@
 import numpy as np
 import pytest
 
-from pennylane_cirq import SimulatorDevice
+from pennylane_cirq import SimulatorDevice, MixedStateSimulatorDevice
 
 
 np.random.seed(42)
@@ -35,9 +35,7 @@ U = np.array(
 U2 = np.array([[0, 1, 1, 1], [1, 0, 1, -1], [1, -1, 0, 1], [1, 1, -1, 0]]) / np.sqrt(3)
 
 # single qubit Hermitian observable
-A = np.array(
-    [[1.02789352, 1.61296440 - 0.3498192j], [1.61296440 + 0.3498192j, 1.23920938 + 0j]]
-)
+A = np.array([[1.02789352, 1.61296440 - 0.3498192j], [1.61296440 + 0.3498192j, 1.23920938 + 0j]])
 
 # two-qubit Hermitian observable
 B = np.array(
@@ -55,7 +53,7 @@ B = np.array(
 
 # List of all devices that support analytic expectation value
 # computation. This generally includes statevector/wavefunction simulators.
-analytic_devices = [SimulatorDevice]
+analytic_devices = [SimulatorDevice, MixedStateSimulatorDevice]
 
 # List of all devices that do *not* support analytic expectation
 # value computation. This generally includes hardware devices

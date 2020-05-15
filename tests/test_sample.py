@@ -85,14 +85,10 @@ class TestSample:
         assert np.allclose(sorted(list(set(s1))), sorted(eigvals), **tol)
 
         # the analytic mean is 2*sin(theta)+0.5*cos(theta)+0.5
-        assert np.allclose(
-            np.mean(s1), 2 * np.sin(theta) + 0.5 * np.cos(theta) + 0.5, **tol
-        )
+        assert np.allclose(np.mean(s1), 2 * np.sin(theta) + 0.5 * np.cos(theta) + 0.5, **tol)
 
         # the analytic variance is 0.25*(sin(theta)-4*cos(theta))^2
-        assert np.allclose(
-            np.var(s1), 0.25 * (np.sin(theta) - 4 * np.cos(theta)) ** 2, **tol
-        )
+        assert np.allclose(np.var(s1), 0.25 * (np.sin(theta) - 4 * np.cos(theta)) ** 2, **tol)
 
     def test_sample_values_hermitian_multi_qubit(self, device, shots, tol):
         """Tests if the samples of a multi-qubit Hermitian observable returned by sample have
@@ -112,11 +108,7 @@ class TestSample:
 
         with mimic_execution_for_sample(dev):
             dev.apply(
-                [
-                    qml.RX(theta, wires=[0]),
-                    qml.RY(2 * theta, wires=[1]),
-                    qml.CNOT(wires=[0, 1]),
-                ],
+                [qml.RX(theta, wires=[0]), qml.RY(2 * theta, wires=[1]), qml.CNOT(wires=[0, 1]),],
                 rotations=qml.Hermitian(A, wires=[0, 1], do_queue=False).diagonalizing_gates(),
             )
 
@@ -156,9 +148,7 @@ class TestTensorSample:
         varphi = -0.543
 
         dev = device(3)
-        obs = qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(
-            wires=[2], do_queue=False
-        )
+        obs = qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
 
         with mimic_execution_for_sample(dev):
             dev.apply(
@@ -224,9 +214,7 @@ class TestTensorSample:
         assert np.allclose(s1 ** 2, 1, **tol)
 
         mean = np.mean(s1)
-        expected = -(
-            np.cos(varphi) * np.sin(phi) + np.sin(varphi) * np.cos(theta)
-        ) / np.sqrt(2)
+        expected = -(np.cos(varphi) * np.sin(phi) + np.sin(varphi) * np.cos(theta)) / np.sqrt(2)
         assert np.allclose(mean, expected, **tol)
 
         var = np.var(s1)
@@ -258,9 +246,7 @@ class TestTensorSample:
             ]
         )
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(
-            A, wires=[1, 2], do_queue=False
-        )
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(A, wires=[1, 2], do_queue=False)
 
         with mimic_execution_for_sample(dev):
             dev.apply(
@@ -296,10 +282,7 @@ class TestTensorSample:
             1057
             - np.cos(2 * phi)
             + 12 * (27 + np.cos(2 * phi)) * np.cos(varphi)
-            - 2
-            * np.cos(2 * varphi)
-            * np.sin(phi)
-            * (16 * np.cos(phi) + 21 * np.sin(phi))
+            - 2 * np.cos(2 * varphi) * np.sin(phi) * (16 * np.cos(phi) + 21 * np.sin(phi))
             + 16 * np.sin(2 * phi)
             - 8 * (-17 + np.cos(2 * phi) + 2 * np.sin(2 * phi)) * np.sin(varphi)
             - 8 * np.cos(2 * theta) * (3 + 3 * np.cos(varphi) + np.sin(varphi)) ** 2

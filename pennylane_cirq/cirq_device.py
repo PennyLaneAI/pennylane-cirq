@@ -1,4 +1,4 @@
-# Copyright 2019 Xanadu Quantum Technologies Inc.
+# Copyright 2019-2020 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ from pennylane import QubitDevice
 from pennylane.operation import Operation
 
 from ._version import __version__
-from .cirq_interface import CirqOperation
+from .cirq_operation import CirqOperation
+
 
 class CirqDevice(QubitDevice, abc.ABC):
     """Abstract base device for PennyLane-Cirq.
@@ -56,7 +57,7 @@ class CirqDevice(QubitDevice, abc.ABC):
     name = "Cirq Abstract PennyLane plugin baseclass"
     pennylane_requires = ">=0.8.0"
     version = __version__
-    author = "Johannes Jakob Meyer"
+    author = "Xanadu Inc"
     _capabilities = {
         "model": "qubit",
         "tensor_observables": True,
@@ -92,9 +93,7 @@ class CirqDevice(QubitDevice, abc.ABC):
             inverted_operation = CirqOperation(self._operation_map[key].parametrization)
             inverted_operation.inv()
 
-            self._inverse_operation_map[
-                key + Operation.string_for_inverse
-            ] = inverted_operation
+            self._inverse_operation_map[key + Operation.string_for_inverse] = inverted_operation
 
         self._complete_operation_map = {
             **self._operation_map,
@@ -195,9 +194,7 @@ class CirqDevice(QubitDevice, abc.ABC):
             cirq_operation.parametrize(*operation.parameters)
 
             self.circuit.append(
-                cirq_operation.apply(
-                    *[self.qubits[wire] for wire in operation.wires]
-                )
+                cirq_operation.apply(*[self.qubits[wire] for wire in operation.wires])
             )
 
     def apply(self, operations, **kwargs):
@@ -207,7 +204,9 @@ class CirqDevice(QubitDevice, abc.ABC):
         for i, operation in enumerate(operations):
             if i > 0 and operation.name in {"BasisState", "QubitStateVector"}:
                 raise qml.DeviceError(
-                    "The operation {} is only supported at the beginning of a circuit.".format(operation.name)
+                    "The operation {} is only supported at the beginning of a circuit.".format(
+                        operation.name
+                    )
                 )
 
             if operation.name == "BasisState":

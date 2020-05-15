@@ -12,48 +12,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Unit tests for the SimulatorDevice
+Unit tests for the MixedStateMixedStateSimulatorDevice
 """
 import pytest
 import math
 
 import pennylane as qml
 import numpy as np
-from pennylane_cirq import SimulatorDevice
+from pennylane_cirq import MixedStateSimulatorDevice
 import cirq
 
 
 class TestDeviceIntegration:
-    """Tests that the SimulatorDevice integrates well with PennyLane"""
+    """Tests that the MixedStateSimulatorDevice integrates well with PennyLane"""
 
     def test_device_loading(self):
         """Tests that the cirq.simulator device is properly loaded"""
 
-        dev = qml.device("cirq.simulator", wires=2)
+        dev = qml.device("cirq.mixedsimulator", wires=2)
 
         assert dev.num_wires == 2
         assert dev.shots == 1000
-        assert dev.short_name == "cirq.simulator"
+        assert dev.short_name == "cirq.mixedsimulator"
 
-        assert isinstance(dev, SimulatorDevice)
+        assert isinstance(dev, MixedStateSimulatorDevice)
 
 
 @pytest.fixture(scope="function")
 def simulator_device_1_wire(shots, analytic):
-    """Return a single wire instance of the SimulatorDevice class."""
-    yield SimulatorDevice(1, shots=shots, analytic=analytic)
+    """Return a single wire instance of the MixedStateSimulatorDevice class."""
+    yield MixedStateSimulatorDevice(1, shots=shots, analytic=analytic)
 
 
 @pytest.fixture(scope="function")
 def simulator_device_2_wires(shots, analytic):
-    """Return a two wire instance of the SimulatorDevice class."""
-    yield SimulatorDevice(2, shots=shots, analytic=analytic)
+    """Return a two wire instance of the MixedStateSimulatorDevice class."""
+    yield MixedStateSimulatorDevice(2, shots=shots, analytic=analytic)
 
 
 @pytest.fixture(scope="function")
 def simulator_device_3_wires(shots, analytic):
-    """Return a three wire instance of the SimulatorDevice class."""
-    yield SimulatorDevice(3, shots=shots, analytic=analytic)
+    """Return a three wire instance of the MixedStateSimulatorDevice class."""
+    yield MixedStateSimulatorDevice(3, shots=shots, analytic=analytic)
 
 
 @pytest.mark.parametrize("shots,analytic", [(100, True)])
@@ -61,7 +61,7 @@ class TestApply:
     """Tests that gates are correctly applied"""
 
     @pytest.mark.parametrize(
-        "op,input,expected_output",
+        "op,input,expected_pure_state",
         [
             (qml.PauliX, [1, 0], np.array([0, 1])),
             (
@@ -86,7 +86,7 @@ class TestApply:
         ],
     )
     def test_apply_operation_single_wire_no_parameters(
-        self, simulator_device_1_wire, tol, op, input, expected_output
+        self, simulator_device_1_wire, tol, op, input, expected_pure_state
     ):
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
@@ -95,10 +95,13 @@ class TestApply:
         simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
         simulator_device_1_wire.apply([op(wires=[0])])
 
-        assert np.allclose(simulator_device_1_wire.state, np.array(expected_output), **tol)
+        state = np.array(expected_pure_state)
+        expected_output = np.kron(state, state.conj()).reshape([2, 2])
+
+        assert np.allclose(simulator_device_1_wire.state, expected_output, **tol)
 
     @pytest.mark.parametrize(
-        "op,input,expected_output",
+        "op,input,expected_pure_state",
         [
             (qml.CNOT, [1, 0, 0, 0], [1, 0, 0, 0]),
             (qml.CNOT, [0, 0, 1, 0], [0, 0, 0, 1]),
@@ -124,7 +127,7 @@ class TestApply:
         ],
     )
     def test_apply_operation_two_wires_no_parameters(
-        self, simulator_device_2_wires, tol, op, input, expected_output
+        self, simulator_device_2_wires, tol, op, input, expected_pure_state
     ):
         """Tests that applying an operation yields the expected output state for two wire
            operations that have no parameters."""
@@ -133,10 +136,13 @@ class TestApply:
         simulator_device_2_wires._initial_state = np.array(input, dtype=np.complex64)
         simulator_device_2_wires.apply([op(wires=[0, 1])])
 
-        assert np.allclose(simulator_device_2_wires.state, np.array(expected_output), **tol)
+        state = np.array(expected_pure_state)
+        expected_output = np.kron(state, state.conj()).reshape([4, 4])
+
+        assert np.allclose(simulator_device_2_wires.state, expected_output, **tol)
 
     @pytest.mark.parametrize(
-        "op,expected_output,par",
+        "op,expected_pure_state,par",
         [
             (qml.BasisState, [0, 0, 1, 0], [1, 0]),
             (qml.BasisState, [0, 0, 1, 0], [1, 0]),
@@ -157,7 +163,7 @@ class TestApply:
         ],
     )
     def test_apply_operation_state_preparation(
-        self, simulator_device_2_wires, tol, op, expected_output, par
+        self, simulator_device_2_wires, tol, op, expected_pure_state, par
     ):
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
@@ -165,10 +171,13 @@ class TestApply:
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply([op(np.array(par), wires=[0, 1])])
 
-        assert np.allclose(simulator_device_2_wires.state, np.array(expected_output), **tol)
+        state = np.array(expected_pure_state)
+        expected_output = np.kron(state, state.conj()).reshape([4, 4])
+
+        assert np.allclose(simulator_device_2_wires.state, expected_output, **tol)
 
     @pytest.mark.parametrize(
-        "op,input,expected_output,par",
+        "op,input,expected_pure_state,par",
         [
             (qml.PhaseShift, [1, 0], [1, 0], [math.pi / 2]),
             (qml.PhaseShift, [0, 1], [0, 1j], [math.pi / 2]),
@@ -259,7 +268,7 @@ class TestApply:
         ],
     )
     def test_apply_operation_single_wire_with_parameters(
-        self, simulator_device_1_wire, tol, op, input, expected_output, par
+        self, simulator_device_1_wire, tol, op, input, expected_pure_state, par
     ):
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
@@ -268,10 +277,13 @@ class TestApply:
         simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
         simulator_device_1_wire.apply([op(*par, wires=[0])])
 
-        assert np.allclose(simulator_device_1_wire.state, np.array(expected_output), **tol)
+        state = np.array(expected_pure_state)
+        expected_output = np.kron(state, state.conj()).reshape([2, 2])
+
+        assert np.allclose(simulator_device_1_wire.state, expected_output, **tol)
 
     @pytest.mark.parametrize(
-        "op,input,expected_output,par",
+        "op,input,expected_pure_state,par",
         [
             (qml.CRX, [0, 1, 0, 0], [0, 1, 0, 0], [math.pi / 2]),
             (qml.CRX, [0, 0, 0, 1], [0, 0, -1j, 0], [math.pi]),
@@ -380,7 +392,7 @@ class TestApply:
         ],
     )
     def test_apply_operation_two_wires_with_parameters(
-        self, simulator_device_2_wires, tol, op, input, expected_output, par
+        self, simulator_device_2_wires, tol, op, input, expected_pure_state, par
     ):
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
@@ -389,7 +401,10 @@ class TestApply:
         simulator_device_2_wires._initial_state = np.array(input, dtype=np.complex64)
         simulator_device_2_wires.apply([op(*par, wires=[0, 1])])
 
-        assert np.allclose(simulator_device_2_wires.state, np.array(expected_output), **tol)
+        state = np.array(expected_pure_state)
+        expected_output = np.kron(state, state.conj()).reshape([4, 4])
+
+        assert np.allclose(simulator_device_2_wires.state, expected_output, **tol)
 
     @pytest.mark.parametrize(
         "operation,par,match",
@@ -840,23 +855,26 @@ class TestState:
 
     @pytest.mark.parametrize("shots,analytic", [(100, True)])
     @pytest.mark.parametrize(
-        "ops,expected_state",
+        "ops,expected_pure_state",
         [
             ([qml.PauliX(0), qml.PauliX(1)], [0, 0, 0, 1]),
             ([qml.PauliX(0), qml.PauliY(1)], [0, 0, 0, 1j]),
             ([qml.PauliZ(0), qml.PauliZ(1)], [1, 0, 0, 0]),
         ],
     )
-    def test_state_pauli_operations(self, simulator_device_2_wires, ops, expected_state, tol):
+    def test_state_pauli_operations(self, simulator_device_2_wires, ops, expected_pure_state, tol):
         """Test that the state reflects Pauli operations correctly."""
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply(ops)
 
-        assert np.allclose(simulator_device_2_wires.state, expected_state, **tol)
+        state = np.array(expected_pure_state)
+        expected_output = np.kron(state, state.conj()).reshape([4, 4])
+
+        assert np.allclose(simulator_device_2_wires.state, expected_output, **tol)
 
     @pytest.mark.parametrize("shots,analytic", [(100, True)])
     @pytest.mark.parametrize(
-        "ops,diag_ops,expected_state",
+        "ops,diag_ops,expected_pure_state",
         [
             ([qml.PauliX(0), qml.PauliX(1)], [], [0, 0, 0, 1]),
             (
@@ -872,13 +890,16 @@ class TestState:
         ],
     )
     def test_state_pauli_operations_and_observables(
-        self, simulator_device_2_wires, ops, diag_ops, expected_state, tol
+        self, simulator_device_2_wires, ops, diag_ops, expected_pure_state, tol
     ):
         """Test that the state reflects Pauli operations and observable rotations correctly."""
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply(ops, rotations=diag_ops)
 
-        assert np.allclose(simulator_device_2_wires.state, expected_state, **tol)
+        state = np.array(expected_pure_state)
+        expected_output = np.kron(state, state.conj()).reshape([4, 4])
+
+        assert np.allclose(simulator_device_2_wires.state, expected_output, **tol)
 
     @pytest.mark.parametrize("shots,analytic", [(100, False)])
     def test_state_non_analytic(self, simulator_device_2_wires):

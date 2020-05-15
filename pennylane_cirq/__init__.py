@@ -1,4 +1,4 @@
-# Copyright 2019 Xanadu Quantum Technologies Inc.
+# Copyright 2019-2020 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,8 +15,7 @@
 Plugin overview
 ===============
 """
-from .simulator_device import SimulatorDevice
+from .simulator_device import SimulatorDevice, MixedStateSimulatorDevice
 
-# TODO[CUSTOM OPS]: Uncomment and import all custom gates
-# from .ops import S, T, CCNOT, CPHASE, CSWAP, ISWAP, PSWAP
+from .ops import BitFlip, PhaseFlip, PhaseDamp, AmplitudeDamp, Depolarize
 from ._version import __version__

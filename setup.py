@@ -1,4 +1,4 @@
-# Copyright 2019 Xanadu Quantum Technologies Inc.
+# Copyright 2019-2020 Xanadu Quantum Technologies Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,7 +34,8 @@ info = {
     "url": "http://xanadu.ai",
     "license": "Apache License 2.0",
     "packages": ["pennylane_cirq"],
-    "entry_points": {"pennylane.plugins": ["cirq.simulator = pennylane_cirq:SimulatorDevice"]},
+    "entry_points": {"pennylane.plugins": ["cirq.simulator = pennylane_cirq:SimulatorDevice",
+                                           "cirq.mixedsimulator = pennylane_cirq:MixedStateSimulatorDevice"],},
     # Place a one line description here. This will be shown by pip
     "description": "PennyLane plugin for Cirq",
     "long_description": open("README.rst").read(),
