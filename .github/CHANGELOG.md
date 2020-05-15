@@ -13,7 +13,7 @@
 
 ### Bug fixes
 
-* Renamed probability to analytic_probability to support new
+* Renamed probability to ``analytic_probability`` to support new
   changes in PennyLane.
   [#24](https://github.com/XanaduAI/pennylane-cirq/pull/24)
 
@@ -21,7 +21,7 @@
 
 This release contains contributions from (in alphabetical order):
 
-Nathan Killoran, Maria Shuld, Antal Száva
+Theodor Isacsson, Nathan Killoran, Maria Shuld, Antal Száva
 
 ---
 
