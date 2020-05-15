@@ -55,7 +55,7 @@ class CirqDevice(QubitDevice, abc.ABC):
     """
 
     name = "Cirq Abstract PennyLane plugin baseclass"
-    pennylane_requires = ">=0.8.0"
+    pennylane_requires = ">=0.9.0"
     version = __version__
     author = "Xanadu Inc"
     _capabilities = {
