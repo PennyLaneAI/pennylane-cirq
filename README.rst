@@ -21,7 +21,7 @@ PennyLane-Cirq Plugin
     :alt: PyPI
     :target: https://pypi.org/project/pennylane-cirq
 
-.. image:: doc/_static/puzzle_cirq.png
+.. image:: https://github.com/XanaduAI/pennylane-cirq/blob/master/doc/_static/puzzle_cirq.png?raw=true
     :align: center
     :width: 200px
     :target: javascript:void(0);
