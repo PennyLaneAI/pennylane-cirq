@@ -32,7 +32,7 @@ You can then execute the circuit like any other function to get the quantum mech
 Device options
 ~~~~~~~~~~~~~~
 
-Cirq has different ways of defining qubits, e.g. `LineQubit` or `GridQubit`. The Cirq device therefore accepts
+Cirq has different ways of defining qubits, e.g., ``LineQubit`` or ``GridQubit``. The Cirq device therefore accepts
 an additional argument ``qubits=None`` that you can use to define your own
 qubits and give them to the device as a list.
 
@@ -52,7 +52,7 @@ qubits and give them to the device as a list.
 The wire of each qubit corresponds to its index in the `qubit` list. In the above example,
 the wire 2 corresponds to `cirq.GridQubit(1, 0)`.
 
-If no qubits are given, the plugin will create an array of `LineQubit` instances.
+If no qubits are given, the plugin will create an array of ``LineQubit`` instances.
 
 Supported operations
 ~~~~~~~~~~~~~~~~~~~~
