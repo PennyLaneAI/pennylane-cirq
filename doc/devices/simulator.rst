@@ -59,5 +59,3 @@ Supported operations
 
 The ``cirq.simulator`` device supports all PennyLane
 `operations and observables <https://pennylane.readthedocs.io/en/stable/introduction/operations.html>`_.
-
-In the future, the device will also support all Cirq operations.

@@ -64,6 +64,7 @@ and simply replace ``'default.qubit'`` with the ``'cirq.simulator'`` device:
    :hidden:
 
    devices/simulator
+   devices/mixed_simulator
 
 .. toctree::
    :maxdepth: 1
