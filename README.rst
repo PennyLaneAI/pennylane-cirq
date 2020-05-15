@@ -33,14 +33,14 @@ PennyLane-Cirq Plugin
 The PennyLane-Cirq plugin integrates the Cirq quantum computing framework with PennyLane's
 quantum machine learning capabilities.
 
-`PennyLane <https://pennylane.readthedocs.io>`_ is a cross-platform Python library for quantum machine
+`PennyLane <https://pennylane.readthedocs.io>`__ is a cross-platform Python library for quantum machine
 learning, automatic differentiation, and optimization of hybrid quantum-classical computations.
 
-`Cirq <https://github.com/quantumlib/Cirq>`_ is a software library for quantum computing.
+`Cirq <https://github.com/quantumlib/Cirq>`__ is a software library for quantum computing.
 
 .. header-end-inclusion-marker-do-not-remove
 
-The plugin documentation can be found here: `<https://pennylane-cirq.readthedocs.io/en/latest/>`_.
+The plugin documentation can be found here: `<https://pennylane-cirq.readthedocs.io/en/latest/>`__.
 
 Features
 ========
@@ -54,14 +54,14 @@ Features
 Installation
 ============
 
-This plugin requires Python version 3.5 and above, as well as PennyLane
+This plugin requires Python version 3.6 or above, as well as PennyLane
 and Cirq. Installation of this plugin, as well as all dependencies, can be done using ``pip``:
 
 .. code-block:: bash
 
     $ pip install pennylane-cirq
 
-Alternatively, you can install PennyLane-Cirq from the `source code <https://github.com/XanaduAI/pennylane-cirq>`_
+Alternatively, you can install PennyLane-Cirq from the `source code <https://github.com/XanaduAI/pennylane-cirq>`__
 by navigating to the top directory and running:
 
 	$ python setup.py install
@@ -71,16 +71,16 @@ Dependencies
 
 PennyLane-Cirq requires the following libraries be installed:
 
-* `Python <http://python.org/>`_ >=3.5
+* `Python <http://python.org/>`__ >= 3.6
 
 as well as the following Python packages:
 
-* `PennyLane <http://pennylane.readthedocs.io/>`_ >=0.6
-* `Cirq <https://cirq.readthedocs.io/>`_ >= 0.6
+* `PennyLane <http://pennylane.readthedocs.io/>`__ >= 0.9
+* `Cirq <https://cirq.readthedocs.io/>`__ >= 0.7
 
 
 If you currently do not have Python 3 installed, we recommend
-`Anaconda for Python 3 <https://www.anaconda.com/download/>`_, a distributed version of Python packaged
+`Anaconda for Python 3 <https://www.anaconda.com/download/>`__, a distributed version of Python packaged
 for scientific computation.
 
 
@@ -103,7 +103,7 @@ To build the HTML documentation, go to the top-level directory and run:
   $ make docs
 
 
-The documentation can then be found in the :file:`doc/_build/html/` directory.
+The documentation can then be found in the ``doc/_build/html/`` directory.
 
 .. installation-end-inclusion-marker-do-not-remove
 
@@ -111,7 +111,7 @@ Contributing
 ============
 
 We welcome contributions - simply fork the repository of this plugin, and then make a
-`pull request <https://help.github.com/articles/about-pull-requests/>`_ containing your contribution.
+`pull request <https://help.github.com/articles/about-pull-requests/>`__ containing your contribution.
 All contributers to this plugin will be listed as authors on the releases.
 
 We also encourage bug reports, suggestions for new features and enhancements, and even links to cool projects
@@ -120,9 +120,9 @@ or applications built on PennyLane.
 Authors
 =======
 
-PennyLane-Cirq is the work of `many contributors <https://github.com/XanaduAI/pennylane-cirq/graphs/contributors>`_.
+PennyLane-Cirq is the work of `many contributors <https://github.com/XanaduAI/pennylane-cirq/graphs/contributors>`__.
 
-If you are doing research using PennyLane and PennyLane-Cirq, please cite `our paper <https://arxiv.org/abs/1811.04968>`_:
+If you are doing research using PennyLane and PennyLane-Cirq, please cite `our paper <https://arxiv.org/abs/1811.04968>`__:
 
     Ville Bergholm, Josh Izaac, Maria Schuld, Christian Gogolin, M. Sohaib Alam, Shahnawaz Ahmed,
     Juan Miguel Arrazola, Carsten Blank, Alain Delgado, Soran Jahangiri, Keri McKiernan, Johannes Jakob Meyer,
@@ -148,6 +148,6 @@ License
 =======
 
 The PennyLane-Cirq plugin is **free** and **open source**, released under
-the `Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`_.
+the `Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`__.
 
 .. license-end-inclusion-marker-do-not-remove
