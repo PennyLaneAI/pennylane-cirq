@@ -20,13 +20,18 @@ away in PennyLane, without the need to import any additional packages.
 Devices
 ~~~~~~~
 
-Currently, PennyLane-Cirq provides one Cirq device for PennyLane:
+Currently, PennyLane-Cirq provides two Cirq devices for PennyLane:
 
 .. devicegalleryitem::
     :name: 'cirq.simulator'
     :description: Cirq's simulator backend.
     :link: devices/simulator.html
 
+.. devicegalleryitem::
+    :name: 'cirq.mixedsimulator'
+    :description: Cirq's density matrix simulator backend.
+    :link: devices/mixed_simulator.html
+ 
 .. raw:: html
 
         <div style='clear:both'></div>
