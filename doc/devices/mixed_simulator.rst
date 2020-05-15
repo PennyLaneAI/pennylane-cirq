@@ -64,4 +64,5 @@ The ``cirq.mixedsimulator`` device supports all PennyLane
 `operations and observables <https://pennylane.readthedocs.io/en/stable/introduction/operations.html>`_.
 
 It also supports the following non-unitary channels from Cirq (found in ``pennylane_cirq.ops``):
-``BitFlip``, ``PhaseFlip``, ``PhaseDamp``, ``AmplitudeDamp``, and ``Depolarize``.
+:class:`~.BitFlip`, :class:`~.PhaseFlip`, :class:`~.PhaseDamp`,
+:class:`~.AmplitudeDamp`, and :class:`~.Depolarize`.
