@@ -16,6 +16,20 @@ This release contains contributions from (in alphabetical order):
 
 ---
 
+# Release 0.9.1
+
+### Improvements
+
+Made plugin device compatible with new PennyLane wire management.
+
+### Contributors
+
+This release contains contributions from (in alphabetical order):
+
+Maria Schuld
+
+---
+
 # Release 0.9.0
 
 ### New features since last release
@@ -39,7 +53,7 @@ This release contains contributions from (in alphabetical order):
 
 This release contains contributions from (in alphabetical order):
 
-Theodor Isacsson, Nathan Killoran, Maria Shuld, Antal Száva
+Theodor Isacsson, Nathan Killoran, Maria Schuld, Antal Száva
 
 ---
 
