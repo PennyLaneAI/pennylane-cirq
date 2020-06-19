@@ -46,7 +46,7 @@ class CirqDevice(QubitDevice, abc.ABC):
     """Abstract base device for PennyLane-Cirq.
 
     Args:
-        wires (int): the number of modes to initialize the device in
+        wires (int): the number of wires to initialize the device with
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need to be >= 1.
         qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
