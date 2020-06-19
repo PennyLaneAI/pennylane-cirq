@@ -72,13 +72,14 @@ class CirqDevice(QubitDevice, abc.ABC):
         self.circuit = None
 
         if qubits:
-            if wires != len(qubits):
+            if isinstance(qubits, cirq.LineQubit) and wires != len(qubits):
                 raise qml.DeviceError(
                     "The number of given qubits and the specified number of wires have to match. Got {} wires and {} qubits.".format(
                         wires, len(qubits)
                     )
                 )
-
+            # flying blind; number of wires in PL may not match wires
+            # in ``qubits``
             self.qubits = qubits
         else:
             self.qubits = [cirq.LineQubit(wire) for wire in range(wires)]
