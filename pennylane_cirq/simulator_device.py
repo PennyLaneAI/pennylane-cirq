@@ -44,7 +44,7 @@ class SimulatorDevice(CirqDevice):
     r"""Cirq simulator device for PennyLane.
 
     Args:
-        wires (int): the number of modes to initialize the device in
+        wires (int): the number of wires to initialize the device with
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need
             to >= 1. In analytic mode, shots indicates the number of entries
