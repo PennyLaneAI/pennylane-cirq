@@ -56,13 +56,6 @@ class PasqalDevice(SimulatorDevice):
 
         if not qubits:
             qubits = [pasqal.ThreeDGridQubit(wire) for wire in range(wires)]
-
         self.control_radius = control_radius or 1.0
-
         super().__init__(wires, shots, analytic, qubits)
 
-        self._simulator = pasqal.PasqalDevice(self.control_radius, self.qubits)
-
-        self._initial_state = None
-        self._result = None
-        self._state = None
