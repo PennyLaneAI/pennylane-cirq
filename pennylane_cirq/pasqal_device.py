@@ -36,8 +36,7 @@ class PasqalDevice(SimulatorDevice):
             arrangement along the first coordinate axis,
             i.e., ``(0,0,0), (1,0,0), (2,0,0)``, etc.
         control_radius (float): The maximum distance between qubits for a controlled
-                gate. Distance is measured in units of the indices passed into
-                the qubits keyword argument.
+                gate. Distance is measured in units of the ``ThreeDGridQubit`` indices.
     """
     name = "Cirq Pasqal device for PennyLane"
     short_name = "cirq.pasqal"
