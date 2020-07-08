@@ -34,7 +34,7 @@ class PasqalDevice(SimulatorDevice):
         qubits (List[cirq.ThreeDGridQubit]): A list of Cirq ThreeDGridQubits that are used
             as wires. If not specified, the ThreeDGridQubits are put in a linear
             arrangement along the first coordinate axis,
-            i.e., (0,0,0), (1,0,0), (2,0,0), etc.
+            i.e., ``(0,0,0), (1,0,0), (2,0,0)``, etc.
         control_radius (float): The maximum distance between qubits for a controlled
                 gate. Distance is measured in units of the indices passed into
                 the qubits keyword argument.
