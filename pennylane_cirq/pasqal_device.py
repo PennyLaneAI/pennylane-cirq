@@ -29,8 +29,8 @@ class PasqalDevice(SimulatorDevice):
             to estimate expectation values of observables. Shots need
             to be >= 1. In analytic mode, shots indicates the number of entries
             that are returned by ``device.sample``.
-        analytic (bool): Indicates whether expectation values and variances should
-            be calculated analytically. Defaults to ``True``.
+        analytic (bool): indicates whether expectation values and variances should
+            be calculated analytically
         qubits (List[cirq.ThreeDGridQubit]): A list of Cirq ThreeDGridQubits that are used
             as wires. If not specified, the ThreeDGridQubits are put in a linear
             arrangement along the first coordinate axis,
