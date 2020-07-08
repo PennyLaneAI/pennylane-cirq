@@ -26,28 +26,26 @@ class PasqalDevice(SimulatorDevice):
         wires (int): the number of wires to initialize the device with
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need
-            to >= 1. In analytic mode, shots indicates the number of entries
+            to be >= 1. In analytic mode, shots indicates the number of entries
             that are returned by ``device.sample``.
-        analytic (bool): Indicates that expectation values and variances should
+        analytic (bool): Indicates whether expectation values and variances should
             be calculated analytically. Defaults to ``True``.
-        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
-            as wires. The wire number corresponds to the index in the list.
-            By default, an array of ``cirq.LineQubit`` instances is created.
+        qubits (List[cirq.ThreeDGridQubit]): A list of Cirq ThreeDGridQubits that are used
+            as wires. If not specified, the ThreeDGridQubits are put in a linear
+            arrangement along the first coordinate axis,
+            i.e., (0,0,0), (1,0,0), (2,0,0), etc.
+        control_radius (float): The maximum distance between qubits for a controlled
+                gate. Distance is measured in units of the indices passed into
+                the qubits keyword argument.
     """
     name = "Cirq Pasqal device for PennyLane"
     short_name = "cirq.pasqal"
 
-    def __init__(self, wires, shots=1000, analytic=True, qubits=None, control_radius=None):
+    def __init__(self, wires, shots=1000, analytic=True, qubits=None, control_radius=1.0):
 
         if not qubits:
-            qubits = [pasqal.ThreeDGridQubit(wire) for wire in range(wires)]
-
-        self.control_radius = control_radius or 1.0
-
+            qubits = [pasqal.ThreeDGridQubit(wire, 0, 0) for wire in range(wires)]
+        self.control_radius = float(control_radius)
+        if self.control_radius < 0:
+            raise ValueError("The control_radius must be a non-negative real number.")
         super().__init__(wires, shots, analytic, qubits)
-
-        self._simulator = pasqal.PasqalDevice(self.control_radius, self.qubits)
-
-        self._initial_state = None
-        self._result = None
-        self._state = None
