@@ -12,22 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Cirq Pasqal Devices
-======================
-
-**Module name:** :mod:`pennylane_cirq.pasqal_device`
-
-.. currentmodule:: pennylane_cirq.pasqal_device
-
-This Device implements exposes the ``PasqalDevice`` from Cirq.
-
-Classes
--------
-
-.. autosummary::
-   PasqalDevice
-
-----
+This module provides the ``PasqalDevice`` from Cirq.
 """
 from cirq import pasqal
 
