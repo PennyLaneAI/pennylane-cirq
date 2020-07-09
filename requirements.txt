@@ -1,4 +1,4 @@
 pennylane>=0.9
 google-api-core[grpc]<=1.14.0
-git+https://github.com/lhenriet/Cirq/tree/pasqal_new
+git+git://github.com/lhenriet/Cirq/@pasqal_new
 numpy~=1.16
