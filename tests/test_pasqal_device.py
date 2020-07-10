@@ -18,7 +18,7 @@ import pytest
 
 import pennylane as qml
 from pennylane_cirq import PasqalDevice, SimulatorDevice
-from cirq.pasqal import ThreeDGridQubit
+from cirq.pasqal import ThreeDQubit
 
 
 class TestDeviceIntegration:
@@ -35,7 +35,7 @@ class TestDeviceIntegration:
         assert dev.short_name == "cirq.pasqal"
         assert dev.analytic == True
         assert dev.control_radius == 1.0
-        assert dev.qubits == [ThreeDGridQubit(0, 0, 0), ThreeDGridQubit(1, 0, 0)]
+        assert dev.qubits == [ThreeDQubit(0, 0, 0), ThreeDQubit(1, 0, 0)]
         assert isinstance(dev, SimulatorDevice)
 
 
@@ -53,7 +53,7 @@ class TestDevice:
         assert dev.short_name == "cirq.pasqal"
         assert dev.analytic == True
         assert dev.control_radius == 5.0
-        assert dev.qubits == [ThreeDGridQubit(0, 0, 0), ThreeDGridQubit(1, 0, 0)]
+        assert dev.qubits == [ThreeDQubit(0, 0, 0), ThreeDQubit(1, 0, 0)]
         assert isinstance(dev, SimulatorDevice)
 
     @pytest.mark.parametrize(
@@ -65,9 +65,9 @@ class TestDevice:
         ],
     )
     def test_device_creation(self, coord_idxs):
-        """Tests that ThreeDGridQubits can be passed as an argument"""
+        """Tests that ThreeDQubits can be passed as an argument"""
 
-        qubits = [ThreeDGridQubit(*idxs) for idxs in coord_idxs]
+        qubits = [ThreeDQubit(*idxs) for idxs in coord_idxs]
         dev = PasqalDevice(wires=4, qubits=qubits)
 
         assert dev.qubits == qubits
