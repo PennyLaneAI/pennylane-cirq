@@ -1,30 +1,29 @@
 PennyLane-Cirq Plugin
 ######################
 
-.. image:: https://img.shields.io/travis/com/XanaduAI/pennylane-cirq/master.svg
-    :alt: Travis
-    :target: https://travis-ci.com/XanaduAI/pennylane-cirq
+.. image:: https://img.shields.io/github/workflow/status/PennyLaneAI/pennylane-cirq/Tests/master?logo=github&style=flat-square
+    :alt: GitHub Workflow Status (branch)
+    :target: https://github.com/PennyLaneAI/pennylane-cirq/actions?query=workflow%3ATests
 
-.. image:: https://img.shields.io/codecov/c/github/xanaduai/pennylane-cirq/master.svg
+.. image:: https://img.shields.io/codecov/c/github/PennyLaneAI/pennylane-cirq/master.svg?logo=codecov&style=flat-square
     :alt: Codecov coverage
-    :target: https://codecov.io/gh/XanaduAI/pennylane-cirq
+    :target: https://codecov.io/gh/PennyLaneAI/pennylane-cirq
 
-.. image:: https://img.shields.io/codacy/grade/33d12f7d2d0644968087e33966ed904e.svg
-    :alt: Codacy grade
-    :target: https://app.codacy.com/app/XanaduAI/pennylane-cirq
+.. image:: https://img.shields.io/codefactor/grade/github/PennyLaneAI/pennylane-cirq/master?logo=codefactor&style=flat-square
+    :alt: CodeFactor Grade
+    :target: https://www.codefactor.io/repository/github/pennylaneai/pennylane-cirq
 
-.. image:: https://img.shields.io/readthedocs/pennylane-cirq.svg
+.. image:: https://img.shields.io/readthedocs/pennylane-cirq.svg?logo=read-the-docs&style=flat-square
     :alt: Read the Docs
     :target: https://pennylane-cirq.readthedocs.io
 
-.. image:: https://img.shields.io/pypi/v/pennylane-cirq.svg
+.. image:: https://img.shields.io/pypi/v/PennyLane-cirq.svg?style=flat-square
     :alt: PyPI
-    :target: https://pypi.org/project/pennylane-cirq
+    :target: https://pypi.org/project/PennyLane-cirq
 
-.. image:: https://github.com/XanaduAI/pennylane-cirq/blob/master/doc/_static/puzzle_cirq.png?raw=true
-    :align: center
-    :width: 200px
-    :target: javascript:void(0);
+.. image:: https://img.shields.io/pypi/pyversions/PennyLane-cirq.svg?style=flat-square
+    :alt: PyPI - Python Version
+    :target: https://pypi.org/project/PennyLane-cirq
 
 |
 
@@ -61,7 +60,7 @@ and Cirq. Installation of this plugin, as well as all dependencies, can be done 
 
     $ pip install pennylane-cirq
 
-Alternatively, you can install PennyLane-Cirq from the `source code <https://github.com/XanaduAI/pennylane-cirq>`__
+Alternatively, you can install PennyLane-Cirq from the `source code <https://github.com/PennyLaneAI/pennylane-cirq>`__
 by navigating to the top directory and running:
 
 .. code-block:: bash
@@ -124,7 +123,7 @@ or applications built on PennyLane.
 Authors
 =======
 
-PennyLane-Cirq is the work of `many contributors <https://github.com/XanaduAI/pennylane-cirq/graphs/contributors>`__.
+PennyLane-Cirq is the work of `many contributors <https://github.com/PennyLaneAI/pennylane-cirq/graphs/contributors>`__.
 
 If you are doing research using PennyLane and PennyLane-Cirq, please cite `our paper <https://arxiv.org/abs/1811.04968>`__:
 
@@ -138,8 +137,8 @@ If you are doing research using PennyLane and PennyLane-Cirq, please cite `our p
 Support
 =======
 
-- **Source Code:** https://github.com/XanaduAI/pennylane-cirq
-- **Issue Tracker:** https://github.com/XanaduAI/pennylane-cirq/issues
+- **Source Code:** https://github.com/PennyLaneAI/pennylane-cirq
+- **Issue Tracker:** https://github.com/PennyLaneAI/pennylane-cirq/issues
 - **PennyLane Forum:** https://discuss.pennylane.ai
 
 If you are having issues, please let us know by posting the issue on our Github issue tracker, or
