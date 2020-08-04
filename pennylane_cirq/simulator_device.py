@@ -39,8 +39,6 @@ import pennylane as qml
 from .cirq_device import CirqDevice
 from .cirq_operation import CirqOperation
 
-import qsimcirq
-
 
 class SimulatorDevice(CirqDevice):
     r"""Cirq simulator device for PennyLane.
@@ -257,18 +255,3 @@ class MixedStateSimulatorDevice(SimulatorDevice):
             default.qubit plugin.
         """
         return self._state
-
-
-class QSimDevice(SimulatorDevice):
-    r""""""
-    name = "QSim device for PennyLane"
-    short_name = "cirq.qsim"
-
-    def __init__(self, wires, shots=1000, analytic=True, qubits=None):
-        super().__init__(wires, shots, analytic, qubits)
-        self.circuit = qsimcirq.QSimCircuit(cirq_circuit=cirq.Circuit())
-        self._simulator = qsimcirq.QSimSimulator()
-
-        self._initial_state = None
-        self._result = None
-        self._state = None
