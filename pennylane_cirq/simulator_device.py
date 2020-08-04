@@ -39,6 +39,8 @@ import pennylane as qml
 from .cirq_device import CirqDevice
 from .cirq_operation import CirqOperation
 
+import qsimcirq
+
 
 class SimulatorDevice(CirqDevice):
     r"""Cirq simulator device for PennyLane.
@@ -132,7 +134,8 @@ class SimulatorDevice(CirqDevice):
 
         # We apply an identity gate to all wires, otherwise Cirq would ignore
         # wires that are not acted upon
-        self.circuit.append(cirq.IdentityGate(len(self.qubits))(*self.qubits))
+        for qb in self.qubits:
+            self.circuit.append(cirq.IdentityGate(1)(qb))
 
         if self.analytic:
             self._result = self._simulator.simulate(self.circuit, initial_state=self._initial_state)
@@ -213,7 +216,6 @@ class MixedStateSimulatorDevice(SimulatorDevice):
     }
 
     def __init__(self, wires, shots=1000, analytic=True, qubits=None):
-        self._operation_map = dict(self._operation_map, **self._mixed_sim_operation_map)
         super().__init__(wires, shots, analytic, qubits)
 
         self._simulator = cirq.DensityMatrixSimulator()
@@ -255,3 +257,18 @@ class MixedStateSimulatorDevice(SimulatorDevice):
             default.qubit plugin.
         """
         return self._state
+
+
+class QSimDevice(SimulatorDevice):
+    r""""""
+    name = "QSim device for PennyLane"
+    short_name = "cirq.qsim"
+
+    def __init__(self, wires, shots=1000, analytic=True, qubits=None):
+        super().__init__(wires, shots, analytic, qubits)
+        self.circuit = qsimcirq.QSimCircuit(cirq_circuit=cirq.Circuit())
+        self._simulator = qsimcirq.QSimSimulator()
+
+        self._initial_state = None
+        self._result = None
+        self._state = None
