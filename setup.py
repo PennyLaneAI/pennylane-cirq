@@ -36,7 +36,8 @@ info = {
     "packages": ["pennylane_cirq"],
     "entry_points": {"pennylane.plugins": ["cirq.simulator = pennylane_cirq:SimulatorDevice",
                                            "cirq.mixedsimulator = pennylane_cirq:MixedStateSimulatorDevice",
-                                           "cirq.qsim = pennylane_cirq.qsim_device:QSimDevice"],},
+                                           "cirq.qsim = pennylane_cirq.qsim_device:QSimDevice",
+                                           "cirq.qsimh = pennylane_cirq.qsim_device:QSimhDevice"],},
     # Place a one line description here. This will be shown by pip
     "description": "PennyLane plugin for Cirq",
     "long_description": open("README.rst").read(),
