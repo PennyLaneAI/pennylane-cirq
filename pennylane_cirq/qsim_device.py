@@ -16,7 +16,15 @@
 This module provides the ``QSimDevice`` from Cirq.
 """
 import cirq
-import qsimcirq
+
+try:
+    import qsimcirq
+except ImportError:
+    raise ImportError(
+        "QSim Cirq is needed for the QSim device to work."
+        "\nIt can be installed using pip:"
+        "\n\npip install qsimcirq"
+    )
 
 from .simulator_device import SimulatorDevice
 
