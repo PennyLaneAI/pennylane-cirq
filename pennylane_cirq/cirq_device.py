@@ -193,8 +193,9 @@ class CirqDevice(QubitDevice, abc.ABC):
         if cirq_operation:
             cirq_operation.parametrize(*operation.parameters)
 
+            device_wires = self.map_wires(operation.wires)
             self.circuit.append(
-                cirq_operation.apply(*[self.qubits[reg] for reg in self.wire_map(operation.wires)])
+                cirq_operation.apply(*[self.qubits[w] for w in device_wires.labels])
             )
 
     def apply(self, operations, **kwargs):
