@@ -20,7 +20,7 @@
     qml.CNOT(wires=[1, 'ancilla'])
     ...
   ```
-  [#XX](https://github.com/PennyLaneAI/pennylane-XX/pull/XX)
+  [#37](https://github.com/PennyLaneAI/pennylane-cirq/pull/37)
 
 ### Documentation
 
