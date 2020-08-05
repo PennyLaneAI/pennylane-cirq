@@ -71,6 +71,8 @@ class CirqDevice(QubitDevice, abc.ABC):
 
         self.circuit = None
 
+        device_wires = self.map_wires(self.wires)
+
         if qubits:
             if wires != len(qubits):
                 raise qml.DeviceError(
@@ -81,7 +83,7 @@ class CirqDevice(QubitDevice, abc.ABC):
 
             self.qubits = qubits
         else:
-            self.qubits = [cirq.LineQubit(wire) for wire in range(wires)]
+            self.qubits = [cirq.LineQubit(wire) for wire in device_wires.labels]
 
         # Add inverse operations
         self._inverse_operation_map = {}
