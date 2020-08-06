@@ -22,7 +22,7 @@ try:
 except ImportError:
     raise ImportError(
         "QFlex Cirq is needed for the QFlex device to work."
-        "\nInstallation instructions can be found at https://github.com/ngnrsaa/qflex."
+        "\nInstallation instructions can be found at https://github.com/ngnrsaa/qflex"
     )
 
 from .simulator_device import SimulatorDevice
