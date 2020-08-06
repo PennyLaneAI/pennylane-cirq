@@ -214,6 +214,7 @@ class MixedStateSimulatorDevice(SimulatorDevice):
     }
 
     def __init__(self, wires, shots=1000, analytic=True, qubits=None):
+        self._operation_map = dict(self._operation_map, **self._mixed_sim_operation_map)
         super().__init__(wires, shots, analytic, qubits)
 
         self._simulator = cirq.DensityMatrixSimulator()
