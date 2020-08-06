@@ -6,9 +6,37 @@
 
 ### Improvements
 
+* Made plugin device compatible with new PennyLane wire management. 
+    
+  One can now specify any string or number as a custom wire label, 
+  and use these labels to address subsystems on the device:
+  
+  ``` python
+  
+  dev = qml.device('cirq.simulator', wires=['q1', 'ancilla', 0, 1]
+  
+  def circuit():
+    qml.Hadamard(wires='q1')
+    qml.CNOT(wires=[1, 'ancilla'])
+    ...
+  ```
+  [#37](https://github.com/PennyLaneAI/pennylane-cirq/pull/37)
+
 ### Documentation
 
 ### Bug fixes
+
+### Contributors
+
+This release contains contributions from (in alphabetical order):
+
+Maria Schuld
+
+---
+
+# Release 0.9.1
+
+### Improvements
 
 ### Contributors
 
@@ -39,7 +67,7 @@ This release contains contributions from (in alphabetical order):
 
 This release contains contributions from (in alphabetical order):
 
-Theodor Isacsson, Nathan Killoran, Maria Shuld, Antal Száva
+Theodor Isacsson, Nathan Killoran, Maria Schuld, Antal Száva
 
 ---
 
