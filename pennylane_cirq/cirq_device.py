@@ -49,7 +49,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         wires (int): the number of wires to initialize the device with
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need to be >= 1.
-        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
+        qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
     """

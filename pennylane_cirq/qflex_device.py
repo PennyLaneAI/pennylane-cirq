@@ -40,7 +40,7 @@ class QFlexDevice(SimulatorDevice):
             that are returned by ``device.sample``.
         analytic (bool): indicates whether expectation values and variances should
             be calculated analytically
-        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
+        qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
     """

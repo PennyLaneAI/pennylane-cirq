@@ -67,10 +67,10 @@ class QSimhDevice(SimulatorDevice):
             that are returned by ``device.sample``.
         analytic (bool): indicates whether expectation values and variances should
             be calculated analytically
-        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
+        qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
-        qsimh_options (dict): a dictionary with options for the QSimh simulator. See the `QSim
+        qsimh_options (dict): A dictionary with options for the QSimh simulator. See the `QSim
             usage documentation <https://github.com/quantumlib/qsim/blob/master/docs/usage.md>`__
             for further details.
     """
