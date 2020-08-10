@@ -46,7 +46,9 @@ class CirqDevice(QubitDevice, abc.ABC):
     """Abstract base device for PennyLane-Cirq.
 
     Args:
-        wires (int): the number of wires to initialize the device with
+        wires (int or Iterable[Number, str]]): Number of subsystems represented by the device,
+            or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
+            or strings (``['ancilla', 'q1', 'q2']``).
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need to be >= 1.
         qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
@@ -55,7 +57,7 @@ class CirqDevice(QubitDevice, abc.ABC):
     """
 
     name = "Cirq Abstract PennyLane plugin baseclass"
-    pennylane_requires = ">=0.9.0"
+    pennylane_requires = ">=0.11.0"
     version = __version__
     author = "Xanadu Inc"
     _capabilities = {
