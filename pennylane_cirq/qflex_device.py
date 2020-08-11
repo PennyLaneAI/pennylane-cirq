@@ -40,7 +40,7 @@ class QFlexDevice(SimulatorDevice):
             that are returned by ``device.sample``.
         analytic (bool): indicates whether expectation values and variances should
             be calculated analytically
-        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
+        qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
     """
@@ -48,11 +48,15 @@ class QFlexDevice(SimulatorDevice):
     short_name = "cirq.qflex"
 
     def __init__(self, wires, shots=1000, analytic=True, qubits=None):
+
+        if qubits is None:
+            qubits = [cirq.GridQubit(0, wire) for wire in range(wires)]
+
         super().__init__(wires, shots, analytic, qubits)
         grid = qflexcirq.QFlexGrid().create_rectangular(1, len(self.wires))
-        qflex_device = qflexcirq.QFlexVirtualDevice(qflex_grid=grid)
+        self.qflex_device = qflexcirq.QFlexVirtualDevice(qflex_grid=grid)
 
-        self.circuit = qflexcirq.QFlexCircuit(cirq_circuit=cirq.Circuit(), device=qflex_device)
+        self.circuit = cirq.Circuit()
         self._simulator = qflexcirq.QFlexSimulator()
 
         self._initial_state = None
@@ -66,9 +70,14 @@ class QFlexDevice(SimulatorDevice):
         # wires that are not acted upon
         for qb in self.qubits:
             self.circuit.append(cirq.IdentityGate(1)(qb))
-
         if self.analytic:
+            qflex_circuit = qflexcirq.QFlexCircuit(
+                cirq_circuit=self.circuit,
+                device=self.qflex_device,
+                allow_decomposition=True
+            )
+
             self._state = self._simulator.compute_amplitudes(
-                program=self.circuit,
+                program=qflex_circuit,
                 bitstrings=list(range(2 ** len(self.wires)))
             )
