@@ -16,6 +16,7 @@
 This module provides the ``QSimDevice`` and ``QSimhDevice`` from Cirq.
 """
 import cirq
+import numpy as np
 
 try:
     import qsimcirq
@@ -102,7 +103,9 @@ class QSimhDevice(SimulatorDevice):
             self.circuit.append(cirq.IdentityGate(1)(qb))
 
         if self.analytic:
-            self._state = self._simulator.compute_amplitudes(
+            state = self._simulator.compute_amplitudes(
                 program=self.circuit,
                 bitstrings=list(range(2 ** len(self.wires)))
             )
+
+            self._state = np.array(state)

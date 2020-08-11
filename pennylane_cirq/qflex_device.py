@@ -16,6 +16,8 @@
 This module provides the ``QFlex`` from Cirq.
 """
 import cirq
+import numpy as np
+from .cirq_operation import CirqOperation
 
 try:
     import qflexcirq
@@ -29,7 +31,7 @@ from .simulator_device import SimulatorDevice
 from .cirq_device import CirqDevice
 
 
-# TODO: Not fully working yet; need to update cirq.Circuit to use GridQubit.
+# TODO: Not fully working yet. Returns strange states.
 class QFlexDevice(SimulatorDevice):
     r"""QFlex device for PennyLane.
     Args:
@@ -48,13 +50,27 @@ class QFlexDevice(SimulatorDevice):
     short_name = "cirq.qflex"
 
     def __init__(self, wires, shots=1000, analytic=True, qubits=None):
-
-        if qubits is None:
-            qubits = [cirq.GridQubit(0, wire) for wire in range(wires)]
-
         super().__init__(wires, shots, analytic, qubits)
+
+        device_wires = self.map_wires(self.wires)
+        if qubits is None:
+            self.qubits = [cirq.GridQubit(0, wire) for wire in device_wires.labels]
+
+        self._complete_operation_map.update({
+            "PauliX": CirqOperation(lambda: [
+                cirq.XPowGate(exponent=0.5),
+                cirq.XPowGate(exponent=0.5),
+            ]),
+            "PauliY": CirqOperation(lambda: [
+                cirq.YPowGate(exponent=0.5),
+                cirq.YPowGate(exponent=0.5),
+            ])
+        })
+
         grid = qflexcirq.QFlexGrid().create_rectangular(1, len(self.wires))
         self.qflex_device = qflexcirq.QFlexVirtualDevice(qflex_grid=grid)
+
+        self.final_bitstrings = [f"{i:b}".zfill(len(self.wires)) for i in range(2 ** len(self.wires))]
 
         self.circuit = cirq.Circuit()
         self._simulator = qflexcirq.QFlexSimulator()
@@ -66,18 +82,16 @@ class QFlexDevice(SimulatorDevice):
     def apply(self, operations, **kwargs):
         CirqDevice.apply(self, operations, **kwargs)
 
-        # We apply an identity gate to all wires, otherwise Cirq would ignore
-        # wires that are not acted upon
-        for qb in self.qubits:
-            self.circuit.append(cirq.IdentityGate(1)(qb))
         if self.analytic:
             qflex_circuit = qflexcirq.QFlexCircuit(
                 cirq_circuit=self.circuit,
                 device=self.qflex_device,
-                allow_decomposition=True
+                allow_decomposition=True,
             )
 
-            self._state = self._simulator.compute_amplitudes(
+            state = self._simulator.compute_amplitudes(
                 program=qflex_circuit,
-                bitstrings=list(range(2 ** len(self.wires)))
+                bitstrings=self.final_bitstrings
             )
+
+            self._state = np.array(state)
