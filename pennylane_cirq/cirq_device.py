@@ -32,6 +32,7 @@ Code details
 ~~~~~~~~~~~~
 """
 import abc
+from collections import OrderedDict
 import cirq
 import numpy as np
 import pennylane as qml
@@ -69,24 +70,30 @@ class CirqDevice(QubitDevice, abc.ABC):
     short_name = "cirq.base_device"
 
     def __init__(self, wires, shots, analytic, qubits=None):
-        super().__init__(wires, shots, analytic)
 
-        self.circuit = None
-        self.cirq_device = None
-
-        device_wires = self.map_wires(self.wires)
+        if type(wires) == int:
+            num_wires = wires
+        elif type(wires) == qml.Wires:
+            num_wires = len(wires)
+        else:
+            raise ValueError()
 
         if qubits:
-            if wires != len(qubits):
+            if num_wires != len(qubits):
                 raise qml.DeviceError(
                     "The number of given qubits and the specified number of wires have to match. Got {} wires and {} qubits.".format(
                         wires, len(qubits)
                     )
                 )
-
-            self.qubits = qubits
         else:
-            self.qubits = [cirq.LineQubit(wire) for wire in device_wires.labels]
+            qubits = [cirq.LineQubit(idx) for idx in range(num_wires)]
+
+        self.qubits = sorted(qubits)
+
+        super().__init__(wires, shots, analytic)
+
+        self.circuit = None
+        self.cirq_device = None
 
         # Add inverse operations
         self._inverse_operation_map = {}
