@@ -32,7 +32,7 @@ Code details
 ~~~~~~~~~~~~
 """
 import abc
-from collections import OrderedDict
+from collections import Iterable
 import cirq
 import numpy as np
 import pennylane as qml
@@ -71,12 +71,10 @@ class CirqDevice(QubitDevice, abc.ABC):
 
     def __init__(self, wires, shots, analytic, qubits=None):
 
-        if type(wires) == int:
-            num_wires = wires
-        elif type(wires) == qml.Wires:
-            num_wires = len(wires)
-        else:
-            raise ValueError()
+        if not isinstance(wires, Iterable):
+            # interpret wires as the number of consecutive wires
+            wires = range(wires)
+        num_wires = len(wires)
 
         if qubits:
             if num_wires != len(qubits):
@@ -88,6 +86,8 @@ class CirqDevice(QubitDevice, abc.ABC):
         else:
             qubits = [cirq.LineQubit(idx) for idx in range(num_wires)]
 
+        # cirq orders the subsystems based on a total order defined on qubits.
+        # For consistency, this plugin uses that same total order
         self.qubits = sorted(qubits)
 
         super().__init__(wires, shots, analytic)
