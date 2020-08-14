@@ -27,7 +27,8 @@ class TestDeviceIntegration:
     def test_device_loading(self):
         """Tests that the cirq.pasqal device is properly loaded"""
 
-        dev = qml.device("cirq.pasqal", wires=2)
+        control_radius = 1.0
+        dev = qml.device("cirq.pasqal", wires=2, control_radius=1.0)
 
         assert dev.num_wires == 2
         assert len(dev.qubits) == 2
@@ -35,7 +36,7 @@ class TestDeviceIntegration:
         assert dev.short_name == "cirq.pasqal"
         assert dev.analytic == True
         assert dev.control_radius == 1.0
-        assert dev.qubits == [ThreeDQubit(0, 0, 0), ThreeDQubit(1, 0, 0)]
+        assert dev.qubits == sorted([ThreeDQubit(0, 0, 0), ThreeDQubit(control_radius / 2, 0, 0)])
         assert isinstance(dev, SimulatorDevice)
 
 
@@ -68,9 +69,9 @@ class TestDevice:
         """Tests that ThreeDQubits can be passed as an argument"""
 
         qubits = [ThreeDQubit(*idxs) for idxs in coord_idxs]
-        dev = PasqalDevice(wires=4, qubits=qubits)
+        dev = PasqalDevice(wires=4, qubits=qubits, control_radius=3)
 
-        assert dev.qubits == qubits
+        assert dev.qubits == sorted(qubits)
 
     def test_control_radius_negative_exception(self):
         """Tests that an exception is raised when the supplied control_radius parameter
