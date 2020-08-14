@@ -72,6 +72,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         super().__init__(wires, shots, analytic)
 
         self.circuit = None
+        self.cirq_device = None
 
         device_wires = self.map_wires(self.wires)
 
@@ -149,7 +150,10 @@ class CirqDevice(QubitDevice, abc.ABC):
         # pylint: disable=missing-function-docstring
         super().reset()
 
-        self.circuit = cirq.Circuit()
+        if self.cirq_device:
+            self.circuit = cirq.Circuit(self.cirq_device)
+        else:
+            self.circuit = cirq.Circuit()
 
     @property
     def observables(self):
