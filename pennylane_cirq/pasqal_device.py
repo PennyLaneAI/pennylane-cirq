@@ -45,7 +45,7 @@ class PasqalDevice(SimulatorDevice):
 
         if not qubits:
             # a linear chain in 3D with x coords uniform between 0 and 1
-            max_pos = len(wires)
+            max_pos = wires
             qubits = [pasqal.ThreeDQubit(wire / max_pos, 0, 0) for wire in range(wires)]
         self.control_radius = float(control_radius)
         if self.control_radius < 0:
