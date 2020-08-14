@@ -1,4 +1,4 @@
 pennylane>=0.9
 google-api-core[grpc]<=1.14.0
-git+https://github.com/lhenriet/Cirq.git@pasqal_new
+git+https://github.com/quantumlib/Cirq.git@master
 numpy~=1.16
