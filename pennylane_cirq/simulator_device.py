@@ -44,7 +44,9 @@ class SimulatorDevice(CirqDevice):
     r"""Cirq simulator device for PennyLane.
 
     Args:
-        wires (int): the number of wires to initialize the device with
+        wires (int or Iterable[Number, str]]): Number of subsystems represented by the device,
+            or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
+            or strings (``['ancilla', 'q1', 'q2']``).
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need
             to >= 1. In analytic mode, shots indicates the number of entries
@@ -143,9 +145,7 @@ class SimulatorDevice(CirqDevice):
         if self._state is None:
             return None
 
-        wires = wires or range(self.num_wires)
         probs = self._get_computational_basis_probs()
-
         return self.marginal_prob(probs, wires)
 
     @staticmethod
@@ -190,7 +190,9 @@ class MixedStateSimulatorDevice(SimulatorDevice):
     r"""Cirq mixed-state simulator device for PennyLane.
 
     Args:
-        wires (int): the number of wires to initialize the device with
+        wires (int or Iterable[Number, str]]): Number of subsystems represented by the device,
+            or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
+            or strings (``['ancilla', 'q1', 'q2']``).
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need
             to >= 1. In analytic mode, shots indicates the number of entries

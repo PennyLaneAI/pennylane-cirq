@@ -46,7 +46,9 @@ class CirqDevice(QubitDevice, abc.ABC):
     """Abstract base device for PennyLane-Cirq.
 
     Args:
-        wires (int): the number of wires to initialize the device with
+        wires (int or Iterable[Number, str]]): Number of subsystems represented by the device,
+            or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
+            or strings (``['ancilla', 'q1', 'q2']``).
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need to be >= 1.
         qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
@@ -55,7 +57,7 @@ class CirqDevice(QubitDevice, abc.ABC):
     """
 
     name = "Cirq Abstract PennyLane plugin baseclass"
-    pennylane_requires = ">=0.9.0"
+    pennylane_requires = ">=0.11.0"
     version = __version__
     author = "Xanadu Inc"
     _capabilities = {
@@ -71,6 +73,8 @@ class CirqDevice(QubitDevice, abc.ABC):
 
         self.circuit = None
 
+        device_wires = self.map_wires(self.wires)
+
         if qubits:
             if wires != len(qubits):
                 raise qml.DeviceError(
@@ -81,7 +85,7 @@ class CirqDevice(QubitDevice, abc.ABC):
 
             self.qubits = qubits
         else:
-            self.qubits = [cirq.LineQubit(wire) for wire in range(wires)]
+            self.qubits = [cirq.LineQubit(wire) for wire in device_wires.labels]
 
         # Add inverse operations
         self._inverse_operation_map = {}
@@ -193,8 +197,9 @@ class CirqDevice(QubitDevice, abc.ABC):
         if cirq_operation:
             cirq_operation.parametrize(*operation.parameters)
 
+            device_wires = self.map_wires(operation.wires)
             self.circuit.append(
-                cirq_operation.apply(*[self.qubits[wire] for wire in operation.wires])
+                cirq_operation.apply(*[self.qubits[w] for w in device_wires.labels])
             )
 
     def apply(self, operations, **kwargs):
