@@ -73,8 +73,6 @@ class TestDevice:
         """Tests that a PasqalDevice can be properly instantiated with ThreeDQubits that are ordered following Cirq's convention."""
 
         qubits = [ThreeDQubit(*idxs) for idxs in coord_idxs]
-        print(qubits)
-        print(sorted(qubits))
         dev = PasqalDevice(wires=4, qubits=qubits, control_radius=3)
 
         assert dev.qubits == qubits

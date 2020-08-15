@@ -123,7 +123,6 @@ class TestCirqDeviceIntegration:
             cirq.GridQubit(0, 0),
             cirq.GridQubit(1, 1),
         ]
-        print(sorted(unordered_qubits))
 
         user_labels = ["alice", "bob", "charlie", "david"]
         sort_order = [2,0,1,3]
@@ -142,7 +141,6 @@ class TestCirqDeviceIntegration:
             cirq.GridQubit(0, 0),
             cirq.GridQubit(1, 1),
         ]
-        print(sorted(unordered_qubits))
 
         user_labels = [-1,1,66,0]
         sort_order = [2,0,1,3]
