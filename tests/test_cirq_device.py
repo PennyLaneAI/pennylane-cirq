@@ -19,6 +19,7 @@ from unittest.mock import MagicMock, patch
 
 import cirq
 import pennylane as qml
+from pennylane.wires import Wires
 import pytest
 import numpy as np
 
@@ -94,6 +95,62 @@ class TestCirqDeviceInit:
             match="The number of given qubits and the specified number of wires have to match",
         ):
             dev = CirqDevice(3, 100, False, qubits=qubits)
+
+
+class TestCirqDeviceIntegration:
+    """Integration tests for Cirq devices"""
+
+    def test_outer_init_of_qubits_with_wire_number(self):
+        """Tests that giving qubits as parameters to CirqDevice works when the user provides a number of wires."""
+
+        unordered_qubits = [
+            cirq.GridQubit(0, 1),
+            cirq.GridQubit(1, 0),
+            cirq.GridQubit(0, 0),
+            cirq.GridQubit(1, 1),
+        ]
+
+        dev = qml.device("cirq.simulator", wires=4, qubits=unordered_qubits)
+        assert len(dev.qubits) == 4
+        assert dev.qubits == sorted(unordered_qubits)
+
+    def test_outer_init_of_qubits_with_wire_label_strings(self):
+        """Tests that giving qubits as parameters to CirqDevice works when the user also provides custom string wire labels."""
+
+        unordered_qubits = [
+            cirq.GridQubit(0, 1),
+            cirq.GridQubit(1, 0),
+            cirq.GridQubit(0, 0),
+            cirq.GridQubit(1, 1),
+        ]
+        print(sorted(unordered_qubits))
+
+        user_labels = ["alice", "bob", "charlie", "david"]
+        sort_order = [2,0,1,3]
+
+        dev = qml.device("cirq.simulator", wires=user_labels, qubits=unordered_qubits)
+        assert len(dev.qubits) == 4
+        assert dev.qubits == sorted(unordered_qubits)
+        assert all(dev.map_wires(Wires(label)) == Wires(idx) for label, idx in zip(user_labels, sort_order))
+
+    def test_outer_init_of_qubits_with_wire_label_ints(self):
+        """Tests that giving qubits as parameters to CirqDevice works when the user also provides custom integer wire labels."""
+
+        unordered_qubits = [
+            cirq.GridQubit(0, 1),
+            cirq.GridQubit(1, 0),
+            cirq.GridQubit(0, 0),
+            cirq.GridQubit(1, 1),
+        ]
+        print(sorted(unordered_qubits))
+
+        user_labels = [-1,1,66,0]
+        sort_order = [2,0,1,3]
+
+        dev = qml.device("cirq.simulator", wires=user_labels, qubits=unordered_qubits)
+        assert len(dev.qubits) == 4
+        assert dev.qubits == sorted(unordered_qubits)
+        assert all(dev.map_wires(Wires(label)) == Wires(idx) for label, idx in zip(user_labels, sort_order))
 
 
 @pytest.fixture(scope="function")

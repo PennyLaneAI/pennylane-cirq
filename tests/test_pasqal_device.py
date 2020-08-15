@@ -18,7 +18,7 @@ import pytest
 
 import pennylane as qml
 from pennylane_cirq import PasqalDevice, SimulatorDevice
-from cirq.pasqal import ThreeDQubit
+from cirq.pasqal import ThreeDQubit, PasqalVirtualDevice
 
 
 class TestDeviceIntegration:
@@ -59,6 +59,7 @@ class TestDevice:
         assert dev.control_radius == control_radius
         assert dev.qubits == [ThreeDQubit(0, 0, 0), ThreeDQubit(control_radius / 2, 0, 0)]
         assert isinstance(dev, SimulatorDevice)
+        assert isinstance(dev.cirq_device, PasqalVirtualDevice)
 
     @pytest.mark.parametrize(
         "coord_idxs",

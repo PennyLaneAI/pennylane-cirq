@@ -50,5 +50,5 @@ class PasqalDevice(SimulatorDevice):
         self.control_radius = float(control_radius)
         if self.control_radius < 0:
             raise ValueError("The control_radius must be a non-negative real number.")
-        self.cirq_device = pasqal.PasqalVirtualDevice(self.control_radius, qubits)
         super().__init__(wires, shots, analytic, qubits)
+        self.cirq_device = pasqal.PasqalVirtualDevice(self.control_radius, qubits)

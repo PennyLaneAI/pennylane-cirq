@@ -32,12 +32,13 @@ Code details
 ~~~~~~~~~~~~
 """
 import abc
-from collections import Iterable
+from collections import Iterable, OrderedDict
 import cirq
 import numpy as np
 import pennylane as qml
 from pennylane import QubitDevice
 from pennylane.operation import Operation
+from pennylane.wires import Wires
 
 from ._version import __version__
 from .cirq_operation import CirqOperation
@@ -52,9 +53,14 @@ class CirqDevice(QubitDevice, abc.ABC):
             or strings (``['ancilla', 'q1', 'q2']``).
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need to be >= 1.
-        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
-            as wires. The wire number corresponds to the index in the list.
-            By default, an array of ``cirq.LineQubit`` instances is created.
+        qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
+            as wires. By default, an array of ``cirq.LineQubit`` instances is created.
+            Wires are mapped to qubits using Cirq's internal mechanism for ordering
+            qubits. For example, if ``wires=2`` and ``qubits=[q1, q2]``, with
+            ``q1>q2``, then the wire indices 0 and 1 are mapped to q2 and q1, respectively.
+            If the user provides their own wire labels, e.g., ``wires=["alice", "bob"]``, and the
+            qubits are the same as the previous example, then "alice" would map to qubit q2
+            and "bob" would map to qubit q1.
     """
 
     name = "Cirq Abstract PennyLane plugin baseclass"
@@ -88,6 +94,7 @@ class CirqDevice(QubitDevice, abc.ABC):
 
         # cirq orders the subsystems based on a total order defined on qubits.
         # For consistency, this plugin uses that same total order
+        self._unsorted_qubits = qubits
         self.qubits = sorted(qubits)
 
         super().__init__(wires, shots, analytic)
@@ -158,7 +165,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         super().reset()
 
         if self.cirq_device:
-            self.circuit = cirq.Circuit(self.cirq_device)
+            self.circuit = cirq.Circuit(device=self.cirq_device)
         else:
             self.circuit = cirq.Circuit()
 
@@ -237,3 +244,10 @@ class CirqDevice(QubitDevice, abc.ABC):
         # Diagonalize the given observables
         for operation in rotations:
             self._apply_operation(operation)
+
+    def define_wire_map(self, wires):
+        cirq_order = np.argsort(self._unsorted_qubits)
+        consecutive_wires = Wires(cirq_order)
+
+        wire_map = zip(wires, consecutive_wires)
+        return OrderedDict(wire_map)
