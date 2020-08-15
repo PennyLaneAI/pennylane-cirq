@@ -43,19 +43,40 @@ class TestDeviceIntegration:
 class TestDevice:
     """Unit tests for the PasqalDevice"""
 
-    def test_device_creation(self):
+    @pytest.mark.parametrize(
+        "control_radius", [1.0, 2.0, 99.99]
+    )
+    def test_device_creation(self, control_radius):
         """Tests that the cirq.pasqal device is properly created"""
 
-        dev = PasqalDevice(wires=2, shots=123, control_radius=5.0)
+        dev = PasqalDevice(wires=2, shots=123, control_radius=control_radius)
 
         assert dev.num_wires == 2
         assert len(dev.qubits) == 2
         assert dev.shots == 123
         assert dev.short_name == "cirq.pasqal"
         assert dev.analytic == True
-        assert dev.control_radius == 5.0
-        assert dev.qubits == [ThreeDQubit(0, 0, 0), ThreeDQubit(1, 0, 0)]
+        assert dev.control_radius == control_radius
+        assert dev.qubits == [ThreeDQubit(0, 0, 0), ThreeDQubit(control_radius / 2, 0, 0)]
         assert isinstance(dev, SimulatorDevice)
+
+    @pytest.mark.parametrize(
+        "coord_idxs",
+        [
+            [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0)],
+            [(0, 0, 0), (0, 0, 1), (0, 1, 1), (1, 1, 1)],
+            [(-1, -1, -1000), (1, 2, 3), (3, 2, 3), (3, 3, 3)],
+        ],
+    )
+    def test_device_creation_threeDqubits_ordered(self, coord_idxs):
+        """Tests that a PasqalDevice can be properly instantiated with ThreeDQubits that are ordered following Cirq's convention."""
+
+        qubits = [ThreeDQubit(*idxs) for idxs in coord_idxs]
+        print(qubits)
+        print(sorted(qubits))
+        dev = PasqalDevice(wires=4, qubits=qubits, control_radius=3)
+
+        assert dev.qubits == qubits
 
     @pytest.mark.parametrize(
         "coord_idxs",
@@ -65,8 +86,8 @@ class TestDevice:
             [(1, 2, 3), (3, 2, 1), (0, 0, 0), (-1, -1, -10)],
         ],
     )
-    def test_device_creation(self, coord_idxs):
-        """Tests that ThreeDQubits can be passed as an argument"""
+    def test_device_creation_threeDqubits_unordered(self, coord_idxs):
+        """Tests that a PasqalDevice can be properly instantiated with ThreeDQubits that are not ordered following Cirq's convention."""
 
         qubits = [ThreeDQubit(*idxs) for idxs in coord_idxs]
         dev = PasqalDevice(wires=4, qubits=qubits, control_radius=3)

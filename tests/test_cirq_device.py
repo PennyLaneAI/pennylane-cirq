@@ -51,8 +51,8 @@ class TestCirqDeviceInit:
         assert dev.qubits[1] == cirq.LineQubit(1)
         assert dev.qubits[2] == cirq.LineQubit(2)
 
-    def test_outer_init_of_qubits(self):
-        """Tests that giving qubits as parameters to CirqDevice works."""
+    def test_outer_init_of_qubits_ordered(self):
+        """Tests that giving qubits as parameters to CirqDevice works when the qubits are already ordered consistently with Cirq's convention."""
 
         qubits = [
             cirq.GridQubit(0, 0),
@@ -63,10 +63,21 @@ class TestCirqDeviceInit:
 
         dev = CirqDevice(4, 100, False, qubits=qubits)
         assert len(dev.qubits) == 4
-        assert dev.qubits[0] == cirq.GridQubit(0, 0)
-        assert dev.qubits[1] == cirq.GridQubit(0, 1)
-        assert dev.qubits[2] == cirq.GridQubit(1, 0)
-        assert dev.qubits[3] == cirq.GridQubit(1, 1)
+        assert dev.qubits == qubits
+
+    def test_outer_init_of_qubits_unordered(self):
+        """Tests that giving qubits as parameters to CirqDevice works when the qubits are not ordered consistently with Cirq's convention."""
+
+        qubits = [
+            cirq.GridQubit(0, 1),
+            cirq.GridQubit(1, 0),
+            cirq.GridQubit(0, 0),
+            cirq.GridQubit(1, 1),
+        ]
+
+        dev = CirqDevice(4, 100, False, qubits=qubits)
+        assert len(dev.qubits) == 4
+        assert dev.qubits == sorted(qubits)
 
     def test_outer_init_of_qubits_error(self):
         """Tests that giving the wrong number of qubits as parameters to CirqDevice raises an error."""
