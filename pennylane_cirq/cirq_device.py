@@ -63,7 +63,7 @@ class CirqDevice(QubitDevice, abc.ABC):
             and "bob" would map to qubit q1.
     """
 
-    name = "Cirq Abstract PennyLane plugin baseclass"
+    name = "Cirq Abstract PennyLane plugin base class"
     pennylane_requires = ">=0.11.0"
     version = __version__
     author = "Xanadu Inc"
