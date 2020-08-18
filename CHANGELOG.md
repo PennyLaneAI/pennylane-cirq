@@ -4,6 +4,7 @@
 
 * Made plugin device compatible with new PennyLane wire management.
   [(#37)](https://github.com/PennyLaneAI/pennylane-cirq/pull/37)
+  [(#42)](https://github.com/PennyLaneAI/pennylane-cirq/pull/42)
 
   One can now specify any string or number as a custom wire label,
   and use these labels to address subsystems on the device:
@@ -21,7 +22,7 @@
 
 This release contains contributions from (in alphabetical order):
 
-Maria Schuld
+Josh Izaac, Nathan Killoran, Maria Schuld
 
 ---
 

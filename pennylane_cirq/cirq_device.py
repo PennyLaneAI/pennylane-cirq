@@ -32,7 +32,7 @@ Code details
 ~~~~~~~~~~~~
 """
 import abc
-from collections import Iterable, OrderedDict
+from collections.abc import Iterable, OrderedDict
 
 import cirq
 import numpy as np
@@ -246,7 +246,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         for operation in rotations:
             self._apply_operation(operation)
 
-    def define_wire_map(self, wires):
+    def define_wire_map(self, wires):  # pylint: disable=missing-function-docstring
         cirq_order = np.argsort(self._unsorted_qubits)
         consecutive_wires = Wires(cirq_order)
 
