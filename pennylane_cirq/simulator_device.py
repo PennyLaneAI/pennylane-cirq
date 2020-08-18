@@ -132,6 +132,7 @@ class SimulatorDevice(CirqDevice):
         # pylint: disable=missing-function-docstring
         super().apply(operations, **kwargs)
 
+        # TODO: remove the need for this hack by keeping better track of unused wires
         # We apply identity gates to all wires, otherwise Cirq would ignore
         # wires that are not acted upon
         for q in self.qubits:
