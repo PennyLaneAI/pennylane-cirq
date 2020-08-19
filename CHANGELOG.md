@@ -1,6 +1,6 @@
 # Release 0.11.0
 
-### Improvements
+### New features
 
 * Made plugin device compatible with new PennyLane wire management.
   [(#37)](https://github.com/PennyLaneAI/pennylane-cirq/pull/37)

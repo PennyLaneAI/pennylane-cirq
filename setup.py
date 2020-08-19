@@ -39,6 +39,7 @@ info = {
     # Place a one line description here. This will be shown by pip
     "description": "PennyLane plugin for Cirq",
     "long_description": open("README.rst").read(),
+    "long_description_content_type": "text/x-rst",
     # The name of the folder containing the plugin
     "provides": ["pennylane_cirq"],
     "install_requires": requirements,
