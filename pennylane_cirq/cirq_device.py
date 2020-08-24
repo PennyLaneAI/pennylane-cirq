@@ -187,7 +187,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         """Apply a single PennyLane Operation.
 
         Args:
-            operation (pennylane.Operation): The operation that shall be applied
+            operation (pennylane.Operation): the operation that shall be applied
         """
         cirq_operation = self._complete_operation_map[operation.name]
 
