@@ -46,7 +46,9 @@ class CirqDevice(QubitDevice, abc.ABC):
     """Abstract base device for PennyLane-Cirq.
 
     Args:
-        wires (int): the number of wires to initialize the device with
+        wires (int, Iterable[Number, str]]): Number of subsystems represented by the device,
+            or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
+            or strings (``['ancilla', 'q1', 'q2']``). Default 1 if not specified.
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need to be >= 1.
         qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
@@ -74,7 +76,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         device_wires = self.map_wires(self.wires)
 
         if qubits:
-            if wires != len(qubits):
+            if len(device_wires) != len(qubits):
                 raise qml.DeviceError(
                     "The number of given qubits and the specified number of wires have to match. Got {} wires and {} qubits.".format(
                         wires, len(qubits)
