@@ -18,7 +18,6 @@ import math
 from unittest.mock import MagicMock, patch
 
 import cirq
-import qsimcirq
 import pennylane as qml
 from pennylane.wires import Wires
 import pytest
