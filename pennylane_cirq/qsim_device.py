@@ -33,6 +33,7 @@ from .cirq_device import CirqDevice
 
 class QSimDevice(SimulatorDevice):
     r"""QSim device for PennyLane.
+
     Args:
         wires (int, Iterable[Number, str]]): Number of subsystems represented by the device,
             or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
