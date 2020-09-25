@@ -86,12 +86,7 @@ class QSimhDevice(SimulatorDevice):
     def __init__(self, wires, shots=1000, analytic=True, qubits=None, qsimh_options=None):
         super().__init__(wires, shots, analytic, qubits)
         if qsimh_options is None:
-            qsimh_options = {
-                'k': [0],
-                'w': 0,
-                'p': 0,
-                'r': 1
-            }
+            qsimh_options = {"k": [0], "w": 0, "p": 0, "r": 1}
         self.circuit = None
         self.qsimh_options = qsimh_options
         self._simulator = qsimcirq.QSimhSimulator(qsimh_options)
@@ -110,8 +105,7 @@ class QSimhDevice(SimulatorDevice):
 
         if self.analytic:
             state = self._simulator.compute_amplitudes(
-                program=self.circuit,
-                bitstrings=list(range(2 ** len(self.wires)))
+                program=self.circuit, bitstrings=list(range(2 ** len(self.wires)))
             )
 
             self._state = np.array(state)
