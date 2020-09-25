@@ -91,10 +91,6 @@ class QSimhDevice(SimulatorDevice):
         self.qsimh_options = qsimh_options
         self._simulator = qsimcirq.QSimhSimulator(qsimh_options)
 
-        self._initial_state = None
-        self._result = None
-        self._state = None
-
     def apply(self, operations, **kwargs):
         CirqDevice.apply(self, operations, **kwargs)
 
