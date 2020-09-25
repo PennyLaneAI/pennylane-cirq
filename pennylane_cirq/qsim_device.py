@@ -52,12 +52,13 @@ class QSimDevice(SimulatorDevice):
 
     def __init__(self, wires, shots=1000, analytic=True, qubits=None):
         super().__init__(wires, shots, analytic, qubits)
-        self.circuit = qsimcirq.QSimCircuit(cirq_circuit=cirq.Circuit())
+        self.circuit = None
         self._simulator = qsimcirq.QSimSimulator()
 
-        self._initial_state = None
-        self._result = None
-        self._state = None
+    def reset(self):
+        # pylint: disable=missing-function-docstring
+        super().reset()
+        self.circuit = qsimcirq.QSimCircuit(cirq_circuit=self.circuit)
 
 
 class QSimhDevice(SimulatorDevice):
@@ -91,7 +92,8 @@ class QSimhDevice(SimulatorDevice):
                 'p': 0,
                 'r': 1
             }
-        self.circuit = cirq.Circuit()
+        self.circuit = None
+        self.qsimh_options = qsimh_options
         self._simulator = qsimcirq.QSimhSimulator(qsimh_options)
 
         self._initial_state = None
