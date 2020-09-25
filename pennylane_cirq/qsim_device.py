@@ -98,7 +98,8 @@ class QSimhDevice(SimulatorDevice):
     def apply(self, operations, **kwargs):
         CirqDevice.apply(self, operations, **kwargs)
 
-        # We apply an identity gate to all wires, otherwise Cirq would ignore
+        # TODO: remove the need for this hack by keeping better track of unused wires
+        # We apply identity gates to all wires, otherwise Cirq would ignore
         # wires that are not acted upon
         for qb in self.qubits:
             self.circuit.append(cirq.IdentityGate(1)(qb))
