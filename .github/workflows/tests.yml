@@ -80,6 +80,6 @@ jobs:
           pl-device-test --device=cirq.mixedsimulator --tb=short --skip-ops --analytic=False --shots=20000
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.7
+        uses: codecov/codecov-action@v1
         with:
           file: ./coverage.xml
