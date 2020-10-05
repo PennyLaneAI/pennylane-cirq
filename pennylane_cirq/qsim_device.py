@@ -62,36 +62,20 @@ class QSimDevice(SimulatorDevice):
         super().reset()
         self.circuit = qsimcirq.QSimCircuit(cirq_circuit=cirq.Circuit())
 
-    def _apply_basis_state(self, basis_state_operation):
+    @property
+    def operations(self):
         # pylint: disable=missing-function-docstring
-        if not self.analytic:
-            raise qml.DeviceError("The operation BasisState is only supported in analytic mode.")
+        ops = set(self._operation_map.keys()) - {"QubitStateVector", "BasisState"}
+        return ops
 
-        self.reset()
-        basis_state_array = np.array(basis_state_operation.parameters[0])
-
-        if len(basis_state_array) != len(self.qubits):
-            raise qml.DeviceError(
-                "For BasisState, the state has to be specified for the correct number of qubits. Got a state for {} qubits, expected {}.".format(
-                    len(basis_state_array), len(self.qubits)
-                )
-            )
-
-        if not np.all(np.isin(basis_state_array, np.array([0, 1]))):
-            raise qml.DeviceError(
-                "Argument for BasisState can only contain 0 and 1. Got {}".format(
-                    basis_state_operation.parameters[0]
-                )
-            )
-
-        n_idx = np.where(basis_state_array)
-
-        for q in np.array(self.qubits)[n_idx]:
-            self.circuit.append(cirq.X(q))
-
-    def _apply_qubit_state_vector(self, qubit_state_vector_operation):
+    @classmethod
+    def capabilities(cls):
         # pylint: disable=missing-function-docstring
-        raise NotImplementedError("QSim does not support arbitrary state preparations.")
+        capabilities = super().capabilities().copy()
+        capabilities.update(
+            supports_inverse_operations=False,
+        )
+        return capabilities
 
 
 class QSimhDevice(SimulatorDevice):
@@ -125,36 +109,20 @@ class QSimhDevice(SimulatorDevice):
         self.qsimh_options = qsimh_options
         self._simulator = qsimcirq.QSimhSimulator(qsimh_options)
 
-    def _apply_basis_state(self, basis_state_operation):
+    @property
+    def operations(self):
         # pylint: disable=missing-function-docstring
-        if not self.analytic:
-            raise qml.DeviceError("The operation BasisState is only supported in analytic mode.")
+        ops = set(self._operation_map.keys()) - {"QubitStateVector", "BasisState"}
+        return ops
 
-        self.reset()
-        basis_state_array = np.array(basis_state_operation.parameters[0])
-
-        if len(basis_state_array) != len(self.qubits):
-            raise qml.DeviceError(
-                "For BasisState, the state has to be specified for the correct number of qubits. Got a state for {} qubits, expected {}.".format(
-                    len(basis_state_array), len(self.qubits)
-                )
-            )
-
-        if not np.all(np.isin(basis_state_array, np.array([0, 1]))):
-            raise qml.DeviceError(
-                "Argument for BasisState can only contain 0 and 1. Got {}".format(
-                    basis_state_operation.parameters[0]
-                )
-            )
-
-        n_idx = np.where(basis_state_array)
-
-        for q in np.array(self.qubits)[n_idx]:
-            self.circuit.append(cirq.X(q))
-
-    def _apply_qubit_state_vector(self, qubit_state_vector_operation):
+    @classmethod
+    def capabilities(cls):
         # pylint: disable=missing-function-docstring
-        raise NotImplementedError("QSimh does not support arbitrary state preparations.")
+        capabilities = super().capabilities().copy()
+        capabilities.update(
+            supports_inverse_operations=False,
+        )
+        return capabilities
 
     def apply(self, operations, **kwargs):
         # pylint: disable=missing-function-docstring
@@ -172,3 +140,14 @@ class QSimhDevice(SimulatorDevice):
             )
 
             self._state = np.array(state)
+
+    def generate_samples(self):
+        # pylint: disable=missing-function-docstring
+        number_of_states = 2 ** self.num_wires
+
+        rotated_prob = self.analytic_probability()
+        if rotated_prob is not None:
+            rotated_prob /= np.sum(rotated_prob)
+
+        samples = self.sample_basis_states(number_of_states, rotated_prob)
+        return self.states_to_binary(samples, self.num_wires)
