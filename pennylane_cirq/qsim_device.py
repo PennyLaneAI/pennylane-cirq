@@ -85,6 +85,9 @@ class QSimhDevice(SimulatorDevice):
         wires (int, Iterable[Number, str]]): Number of subsystems represented by the device,
             or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
             or strings (``['ancilla', 'q1', 'q2']``). Default 1 if not specified.
+        qsimh_options (dict): A dictionary with options for the QSimh simulator. See the `QSim
+            usage documentation <https://github.com/quantumlib/qsim/blob/master/docs/usage.md>`__
+            for further details.
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need
             to be >= 1. In analytic mode, shots indicates the number of entries
@@ -94,17 +97,13 @@ class QSimhDevice(SimulatorDevice):
         qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
-        qsimh_options (dict): A dictionary with options for the QSimh simulator. See the `QSim
-            usage documentation <https://github.com/quantumlib/qsim/blob/master/docs/usage.md>`__
-            for further details.
     """
     name = "QSimh device for PennyLane"
     short_name = "cirq.qsimh"
 
-    def __init__(self, wires, shots=1000, analytic=True, qubits=None, qsimh_options=None):
+    def __init__(self, wires, qsimh_options, shots=1000, analytic=True, qubits=None):
         super().__init__(wires, shots, analytic, qubits)
-        if qsimh_options is None:
-            qsimh_options = {"k": [0], "w": 0, "p": 0, "r": 0}
+
         self.circuit = None
         self.qsimh_options = qsimh_options
         self._simulator = qsimcirq.QSimhSimulator(qsimh_options)
