@@ -37,6 +37,51 @@ class TestDeviceIntegration:
 
         assert isinstance(dev, QSimDevice)
 
+    @pytest.mark.parametrize("analytic", [True, False])
+    @pytest.mark.parametrize("shots", [8192])
+    def test_one_qubit_circuit(self, shots, analytic, tol):
+        """Test that devices provide correct result for a simple circuit"""
+
+        dev = qml.device("cirq.qsim", wires=1, shots=shots, analytic=analytic)
+
+        a = 0.543
+        b = 0.123
+        c = 0.987
+
+        @qml.qnode(dev)
+        def circuit(x, y, z):
+            """Reference QNode"""
+            qml.BasisState(np.array([1]), wires=0)
+            qml.Hadamard(wires=0)
+            qml.Rot(x, y, z, wires=0)
+            return qml.expval(qml.PauliZ(0))
+
+        assert np.allclose(circuit(a, b, c), np.cos(a) * np.sin(b), **tol)
+
+    @pytest.mark.parametrize("analytic", [True, False])
+    @pytest.mark.parametrize("shots", [8192])
+    @pytest.mark.parametrize(
+        "op, params",
+        [(qml.QubitStateVector, np.array([0, 1])),
+         (qml.BasisState, np.array([1]))]
+    )
+    def test_decomposition(self, shots, analytic, op, params, mocker):
+        """Test that QubitStateVector and BasisState are decomposed"""
+
+        dev = qml.device("cirq.qsim", wires=1, shots=shots, analytic=analytic)
+
+        spy = mocker.spy(op, "decomposition")
+
+        @qml.qnode(dev)
+        def circuit():
+            """Reference QNode"""
+            op(params, wires=0)
+            return qml.expval(qml.PauliZ(0))
+
+        circuit()
+
+        spy.assert_called_once()
+
 
 @pytest.fixture(scope="function")
 def qsim_device_1_wire(shots, analytic):
@@ -61,22 +106,21 @@ class TestApply:
     """Tests that gates are correctly applied"""
 
     @pytest.mark.parametrize(
-        "op,input,expected_output",
+        "op,expected_output",
         [
-            (qml.PauliX, [0], np.array([0, 1])),
-            (qml.PauliY, [0], [0, 1j]),
-            (qml.PauliZ, [0], [1, 0]),
-            (qml.Hadamard, [0], [1 / math.sqrt(2), 1 / math.sqrt(2)]),
+            (qml.PauliX, np.array([0, 1])),
+            (qml.PauliY, [0, 1j]),
+            (qml.PauliZ, [1, 0]),
+            (qml.Hadamard, [1 / math.sqrt(2), 1 / math.sqrt(2)]),
         ],
     )
     def test_apply_operation_single_wire_no_parameters(
-        self, qsim_device_1_wire, tol, op, input, expected_output
+        self, qsim_device_1_wire, tol, op, expected_output
     ):
         """Tests that applying an operation yields the expected output state for single wire
            operations that have no parameters."""
 
         qsim_device_1_wire.reset()
-        qsim_device_1_wire.apply([qml.BasisState(np.array(input), wires=[0, 1])])
         qsim_device_1_wire.apply([op(wires=[0])])
 
         assert np.allclose(qsim_device_1_wire.state, np.array(expected_output), **tol)
@@ -85,10 +129,12 @@ class TestApply:
         "op,input,expected_output",
         [
             (qml.CNOT, [0, 0], [1, 0, 0, 0]),
-            (qml.CNOT, [1, 0], [0, 0, 0, 1]),
             (qml.SWAP, [0, 0], [1, 0, 0, 0]),
-            (qml.SWAP, [1, 0], [0, 1, 0, 0]),
             (qml.CZ, [0, 0], [1, 0, 0, 0]),
+
+            (qml.CNOT, [1, 0], [0, 0, 0, 1]),
+            (qml.SWAP, [1, 0], [0, 1, 0, 0]),
+
             (qml.CZ, [1, 1], [0, 0, 0, -1]),
         ],
     )
@@ -99,52 +145,37 @@ class TestApply:
            operations that have no parameters."""
 
         qsim_device_2_wires.reset()
-        qsim_device_2_wires.apply([qml.BasisState(np.array(input), wires=[0, 1])])
+
+        # prepare the correct basis state
+        if 1 in input:
+            qsim_device_2_wires.apply([qml.PauliX(i) for i in np.where(np.array(input) == 1)[0]])
+
         qsim_device_2_wires.apply([op(wires=[0, 1])])
-
-        assert np.allclose(qsim_device_2_wires.state, np.array(expected_output), **tol)
-
-    @pytest.mark.parametrize(
-        "op,expected_output,par",
-        [
-            (qml.BasisState, [0, 0, 1, 0], [1, 0]),
-            (qml.BasisState, [0, 0, 1, 0], [1, 0]),
-            (qml.BasisState, [0, 0, 0, 1], [1, 1]),
-        ],
-    )
-    def test_apply_operation_state_preparation(
-        self, qsim_device_2_wires, tol, op, expected_output, par
-    ):
-        """Tests that applying an operation yields the expected output state for single wire
-           operations that have no parameters."""
-
-        qsim_device_2_wires.reset()
-        qsim_device_2_wires.apply([op(np.array(par), wires=[0, 1])])
 
         assert np.allclose(qsim_device_2_wires.state, np.array(expected_output), **tol)
 
     @pytest.mark.parametrize(
         "op,input,expected_output,par",
         [
-            (qml.PhaseShift, [0], [1, 0], [math.pi / 2]),
-            (qml.PhaseShift, [1], [0, 1], [math.pi / 2]),
-            (qml.RX, [0], [0.5, 0.5], [math.pi / 2]),
-            (qml.RX, [0], [0, 1], [math.pi]),
-            (qml.RY, [0], [0.5, 0.5], [math.pi / 2]),
-            (qml.RY, [0], [0, 1], [math.pi]),
-            (qml.RZ, [0], [1, 0], [math.pi / 2]),
-            (qml.RZ, [1], [0, 1], [math.pi]),
-            (qml.Rot, [0], [1, 0], [math.pi / 2, 0, 0],),
-            (qml.Rot, [0], [0.5, 0.5], [0, math.pi / 2, 0],),
+            (qml.PhaseShift, 0, [1, 0], [math.pi / 2]),
+            (qml.PhaseShift, 1, [0, 1], [math.pi / 2]),
+            (qml.RX, 0, [0.5, 0.5], [math.pi / 2]),
+            (qml.RX, 0, [0, 1], [math.pi]),
+            (qml.RY, 0, [0.5, 0.5], [math.pi / 2]),
+            (qml.RY, 0, [0, 1], [math.pi]),
+            (qml.RZ, 0, [1, 0], [math.pi / 2]),
+            (qml.RZ, 1, [0, 1], [math.pi]),
+            (qml.Rot, 0, [1, 0], [math.pi / 2, 0, 0],),
+            (qml.Rot, 0, [0.5, 0.5], [0, math.pi / 2, 0],),
             (
                 qml.Rot,
-                [0],
+                0,
                 [0.5, 0.5],
                 [math.pi / 2, -math.pi / 2, math.pi / 2],
             ),
             (
                 qml.QubitUnitary,
-                [0],
+                0,
                 [0.5, 0.5],
                 [
                     np.array(
@@ -157,7 +188,7 @@ class TestApply:
             ),
             (
                 qml.QubitUnitary,
-                [1],
+                1,
                 [0.5, 0.5],
                 [
                     np.array(
@@ -177,7 +208,11 @@ class TestApply:
            operations that have no parameters."""
 
         qsim_device_1_wire.reset()
-        qsim_device_1_wire.apply([qml.BasisState(np.array(input), wires=[0])])
+
+        # prepare the correct basis state
+        if input:
+            qsim_device_1_wire.apply([qml.PauliX(0)])
+
         qsim_device_1_wire.apply([op(*par, wires=[0])])
         assert np.allclose(qsim_device_1_wire.probability(), np.array(expected_output), **tol)
 
@@ -223,61 +258,14 @@ class TestApply:
            operations that have no parameters."""
 
         qsim_device_2_wires.reset()
-        qsim_device_2_wires.apply([qml.BasisState(np.array(input), wires=[0, 1])])
+
+        # prepare the correct basis state
+        if 1 in input:
+            qsim_device_2_wires.apply([qml.PauliX(i) for i in np.where(np.array(input) == 1)[0]])
+
         qsim_device_2_wires.apply([op(*par, wires=[0, 1])])
 
         assert np.allclose(qsim_device_2_wires.probability(), np.array(expected_output), **tol)
-
-    @pytest.mark.parametrize(
-        "operation,par,match",
-        [
-            (qml.BasisState, [2], "Argument for BasisState can only contain 0 and 1"),
-            (qml.BasisState, [1.2], "Argument for BasisState can only contain 0 and 1"),
-            (
-                qml.BasisState,
-                [0, 0, 1],
-                "For BasisState, the state has to be specified for the correct number of qubits",
-            ),
-            (
-                qml.BasisState,
-                [0, 0],
-                "For BasisState, the state has to be specified for the correct number of qubits",
-            ),
-        ],
-    )
-    def test_state_preparation_error(self, qsim_device_1_wire, operation, par, match):
-        """Tests that the state preparation routines raise proper errors for wrong parameter values."""
-
-        qsim_device_1_wire.reset()
-
-        with pytest.raises(qml.DeviceError, match=match):
-            qsim_device_1_wire.apply([operation(np.array(par), wires=[0])])
-
-    def test_basis_state_not_at_beginning_error(self, qsim_device_1_wire):
-        """Tests that application of BasisState raises an error if is not
-        the first operation."""
-
-        qsim_device_1_wire.reset()
-
-        with pytest.raises(
-            qml.DeviceError,
-            match="The operation BasisState is only supported at the beginning of a circuit.",
-        ):
-            qsim_device_1_wire.apply([qml.PauliX(0), qml.BasisState(np.array([0]), wires=[0])])
-@pytest.mark.parametrize("shots,analytic", [(100, False)])
-class TestStatePreparationErrorsNonAnalytic:
-    """Tests state preparation errors that occur for non-analytic devices."""
-
-    def test_basis_state_not_analytic_error(self, qsim_device_1_wire):
-        """Tests that application of BasisState raises an error if the device
-        is not in analytic mode."""
-
-        qsim_device_1_wire.reset()
-
-        with pytest.raises(
-            qml.DeviceError, match="The operation BasisState is only supported in analytic mode.",
-        ):
-            qsim_device_1_wire.apply([qml.BasisState(np.array([0]), wires=[0])])
 
 
 @pytest.mark.parametrize("shots,analytic", [(100, True)])
@@ -300,14 +288,14 @@ class TestExpval:
     @pytest.mark.parametrize(
         "operation,input,expected_output",
         [
-            (qml.Identity, [0], 1),
-            (qml.Identity, [1], 1),
-            (qml.PauliX, [0], 0),
-            (qml.PauliY, [0], 0),
-            (qml.PauliZ, [0], 1),
-            (qml.PauliZ, [1], -1),
-            (qml.Hadamard, [0], 1 / math.sqrt(2)),
-            (qml.Hadamard, [1], -1 / math.sqrt(2)),
+            (qml.Identity, 0, 1),
+            (qml.Identity, 1, 1),
+            (qml.PauliX, 0, 0),
+            (qml.PauliY, 0, 0),
+            (qml.PauliZ, 0, 1),
+            (qml.PauliZ, 1, -1),
+            (qml.Hadamard, 0, 1 / math.sqrt(2)),
+            (qml.Hadamard, 1, -1 / math.sqrt(2)),
         ],
     )
     def test_expval_single_wire_no_parameters(
@@ -318,9 +306,10 @@ class TestExpval:
         op = operation(0, do_queue=False)
 
         qsim_device_1_wire.reset()
-        qsim_device_1_wire.apply(
-            [qml.BasisState(np.array(input), wires=[0])], rotations=op.diagonalizing_gates()
-        )
+
+        if input:
+            qsim_device_1_wire.apply([qml.PauliX(0)])
+        qsim_device_1_wire.apply(op.diagonalizing_gates())
 
         res = qsim_device_1_wire.expval(op)
 
@@ -329,8 +318,8 @@ class TestExpval:
     @pytest.mark.parametrize(
         "operation,input,expected_output,par",
         [
-            (qml.Hermitian, [0], 1, [np.array([[1, 1j], [-1j, 1]])]),
-            (qml.Hermitian, [1], 1, [np.array([[1, 1j], [-1j, 1]])]),
+            (qml.Hermitian, 0, 1, [np.array([[1, 1j], [-1j, 1]])]),
+            (qml.Hermitian, 1, 1, [np.array([[1, 1j], [-1j, 1]])]),
         ],
     )
     def test_expval_single_wire_with_parameters(
@@ -341,9 +330,10 @@ class TestExpval:
         op = operation(par[0], 0, do_queue=False)
 
         qsim_device_1_wire.reset()
-        qsim_device_1_wire.apply(
-            [qml.BasisState(np.array(input), wires=[0])], rotations=op.diagonalizing_gates()
-        )
+
+        if input:
+            qsim_device_1_wire.apply([qml.PauliX(0)])
+        qsim_device_1_wire.apply(op.diagonalizing_gates())
 
         res = qsim_device_1_wire.expval(op)
 
@@ -376,10 +366,11 @@ class TestExpval:
         op = operation(par[0], [0, 1], do_queue=False)
 
         qsim_device_2_wires.reset()
-        qsim_device_2_wires.apply(
-            [qml.BasisState(np.array(input), wires=[0, 1])],
-            rotations=op.diagonalizing_gates(),
-        )
+
+        # prepare the correct basis state
+        if 1 in input:
+            qsim_device_2_wires.apply([qml.PauliX(i) for i in np.where(np.array(input) == 1)[0]])
+        qsim_device_2_wires.apply(op.diagonalizing_gates())
 
         res = qsim_device_2_wires.expval(op)
 
@@ -391,44 +382,38 @@ class TestVar:
     """Tests that variances are properly calculated."""
 
     @pytest.mark.parametrize(
-        "operation,input,expected_output",
+        "operation,expected_output",
         [
-            (qml.PauliX, [0], 1),
-            (qml.PauliY, [0], 1),
-            (qml.PauliZ, [0], 0),
-            (qml.PauliZ, [1], 0),
-            (qml.Hadamard, [0], 1 / 2),
-            (qml.Hadamard, [1], 1 / 2),
+            (qml.PauliX, 1),
+            (qml.PauliY, 1),
+            (qml.PauliZ, 0),
+            (qml.Hadamard, 1 / 2),
         ],
     )
     def test_var_single_wire_no_parameters(
-        self, qsim_device_1_wire, tol, operation, input, expected_output
+        self, qsim_device_1_wire, tol, operation, expected_output
     ):
         """Tests that variances are properly calculated for single-wire observables without parameters."""
 
         op = operation(0, do_queue=False)
 
         qsim_device_1_wire.reset()
-        qsim_device_1_wire.apply(
-            [qml.BasisState(np.array(input), wires=[0, 1])],
-            rotations=op.diagonalizing_gates(),
-        )
+        qsim_device_1_wire.apply(op.diagonalizing_gates())
 
         res = qsim_device_1_wire.var(op)
 
         assert np.isclose(res, expected_output, **tol)
 
+    @pytest.mark.parametrize("basis_state", [0, 1])
     @pytest.mark.parametrize(
-        "operation,input,expected_output,par",
+        "operation,expected_output,par",
         [
-            (qml.Identity, [0], 0, []),
-            (qml.Identity, [1], 0, []),
-            (qml.Hermitian, [0], 1, [[[1, 1j], [-1j, 1]]]),
-            (qml.Hermitian, [1], 1, [[[1, 1j], [-1j, 1]]]),
+            (qml.Identity, 0, []),
+            (qml.Hermitian, 1, [[[1, 1j], [-1j, 1]]]),
         ],
     )
     def test_var_single_wire_with_parameters(
-        self, qsim_device_1_wire, tol, operation, input, expected_output, par
+        self, qsim_device_1_wire, tol, basis_state, operation, expected_output, par
     ):
         """Tests that expectation values are properly calculated for single-wire observables with parameters."""
 
@@ -438,10 +423,9 @@ class TestVar:
             op = operation(0, do_queue=False)
 
         qsim_device_1_wire.reset()
-        qsim_device_1_wire.apply(
-            [qml.BasisState(np.array(input), wires=[0, 1])],
-            rotations=op.diagonalizing_gates(),
-        )
+        if basis_state:
+            qsim_device_1_wire.apply([qml.PauliX(0)])
+        qsim_device_1_wire.apply(op.diagonalizing_gates())
 
         if par:
             res = qsim_device_1_wire.var(op)
@@ -451,31 +435,26 @@ class TestVar:
         assert np.isclose(res, expected_output, **tol)
 
     @pytest.mark.parametrize(
-        "operation,input,expected_output,par",
+        "operation,expected_output,par",
         [
             (
                 qml.Hermitian,
-                [1, 1],
                 1,
                 [[[0, 1j, 0, 0], [-1j, 0, 0, 0], [0, 0, 0, -1j], [0, 0, 1j, 0]]],
             ),
         ],
     )
     def test_var_two_wires_with_parameters(
-        self, qsim_device_2_wires, tol, operation, input, expected_output, par
+        self, qsim_device_2_wires, tol, operation, expected_output, par
     ):
         """Tests that variances are properly calculated for two-wire observables with parameters."""
 
         op = operation(np.array(*par), [0, 1], do_queue=False)
 
         qsim_device_2_wires.reset()
-        qsim_device_2_wires.apply(
-            [qml.BasisState(np.array(input), wires=[0, 1])],
-            rotations=op.diagonalizing_gates(),
-        )
+        qsim_device_2_wires.apply(op.diagonalizing_gates())
 
         res = qsim_device_2_wires.var(op)
-
         assert np.isclose(res, expected_output, **tol)
 
 
