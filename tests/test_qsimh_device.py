@@ -22,6 +22,7 @@ import numpy as np
 from pennylane_cirq import QSimhDevice
 import cirq
 
+qsimh_options = {"k": [0], "w": 0, "p": 0, "r": 0}
 
 class TestDeviceIntegration:
     """Tests that the QSimhDevice integrates well with PennyLane"""
@@ -29,7 +30,7 @@ class TestDeviceIntegration:
     def test_device_loading(self):
         """Tests that the cirq.qsimh device is properly loaded"""
 
-        dev = qml.device("cirq.qsimh", wires=2)
+        dev = qml.device("cirq.qsimh", wires=2, qsimh_options=qsimh_options)
 
         assert dev.num_wires == 2
         assert dev.shots == 1000
@@ -86,19 +87,19 @@ class TestDeviceIntegration:
 @pytest.fixture(scope="function")
 def qsimh_device_1_wire(shots, analytic):
     """Return a single wire instance of the QSimhDevice class."""
-    yield QSimhDevice(1, shots=shots, analytic=analytic)
+    yield QSimhDevice(1, qsimh_options, shots=shots, analytic=analytic)
 
 
 @pytest.fixture(scope="function")
 def qsimh_device_2_wires(shots, analytic):
     """Return a two wire instance of the QSimhDevice class."""
-    yield QSimhDevice(2, shots=shots, analytic=analytic)
+    yield QSimhDevice(2, qsimh_options, shots=shots, analytic=analytic)
 
 
 @pytest.fixture(scope="function")
 def qsimh_device_3_wires(shots, analytic):
     """Return a three wire instance of the QSimhDevice class."""
-    yield QSimhDevice(3, shots=shots, analytic=analytic)
+    yield QSimhDevice(3, qsimh_options, shots=shots, analytic=analytic)
 
 
 @pytest.mark.parametrize("shots,analytic", [(100, True)])
