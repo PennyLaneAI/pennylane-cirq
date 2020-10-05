@@ -3,3 +3,4 @@ pygments-github-lexers
 cirq
 pennylane
 sphinx-automodapi
+qsimcirq
