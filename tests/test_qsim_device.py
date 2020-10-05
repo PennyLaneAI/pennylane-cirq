@@ -127,25 +127,25 @@ class TestApply:
         "op,input,expected_output,par",
         [
             (qml.PhaseShift, [0], [1, 0], [math.pi / 2]),
-            (qml.PhaseShift, [1], [0, 1j], [math.pi / 2]),
-            (qml.RX, [0], [1 / math.sqrt(2), -1j * 1 / math.sqrt(2)], [math.pi / 2 + 0.0000001]),
-            (qml.RX, [0], [0, -1j], [math.pi+0.0000001]),
-            (qml.RY, [0], [1 / math.sqrt(2), 1 / math.sqrt(2)], [math.pi / 2 + 0.0000001]),
-            (qml.RY, [0], [0, 1], [math.pi+0.0000001]),
-            (qml.RZ, [0], [1 / math.sqrt(2) - 1j / math.sqrt(2), 0], [math.pi / 2 + 0.0000001]),
-            (qml.RZ, [1], [0, 1j], [math.pi+0.0000001]),
-            (qml.Rot, [0], [1 / math.sqrt(2) - 1j / math.sqrt(2), 0], [math.pi / 2 + 0.0000001, 0, 0],),
-            (qml.Rot, [0], [1 / math.sqrt(2), 1 / math.sqrt(2)], [0, math.pi / 2 + 0.0000001, 0],),
+            (qml.PhaseShift, [1], [0, 1], [math.pi / 2]),
+            (qml.RX, [0], [0.5, 0.5], [math.pi / 2]),
+            (qml.RX, [0], [0, 1], [math.pi]),
+            (qml.RY, [0], [0.5, 0.5], [math.pi / 2]),
+            (qml.RY, [0], [0, 1], [math.pi]),
+            (qml.RZ, [0], [1, 0], [math.pi / 2]),
+            (qml.RZ, [1], [0, 1], [math.pi]),
+            (qml.Rot, [0], [1, 0], [math.pi / 2, 0, 0],),
+            (qml.Rot, [0], [0.5, 0.5], [0, math.pi / 2, 0],),
             (
                 qml.Rot,
                 [0],
-                [-1j / math.sqrt(2), -1 / math.sqrt(2)],
-                [math.pi / 2 + 0.0000001, -math.pi / 2 + 0.0000001, math.pi / 2 + 0.0000001],
+                [0.5, 0.5],
+                [math.pi / 2, -math.pi / 2, math.pi / 2],
             ),
             (
                 qml.QubitUnitary,
                 [0],
-                [1j / math.sqrt(2), 1j / math.sqrt(2)],
+                [0.5, 0.5],
                 [
                     np.array(
                         [
@@ -158,7 +158,7 @@ class TestApply:
             (
                 qml.QubitUnitary,
                 [1],
-                [1j / math.sqrt(2), -1j / math.sqrt(2)],
+                [0.5, 0.5],
                 [
                     np.array(
                         [
@@ -173,14 +173,13 @@ class TestApply:
     def test_apply_operation_single_wire_with_parameters(
         self, qsim_device_1_wire, tol, op, input, expected_output, par
     ):
-        """Tests that applying an operation yields the expected output state for single wire
+        """Tests that applying an operation yields the expected output probabilities for single wire
            operations that have no parameters."""
 
         qsim_device_1_wire.reset()
         qsim_device_1_wire.apply([qml.BasisState(np.array(input), wires=[0])])
         qsim_device_1_wire.apply([op(*par, wires=[0])])
-
-        assert np.allclose(qsim_device_1_wire.state, np.array(expected_output), **tol)
+        assert np.allclose(qsim_device_1_wire.probability(), np.array(expected_output), **tol)
 
     @pytest.mark.parametrize(
         "op,input,expected_output,par",
@@ -200,37 +199,34 @@ class TestApply:
                     )
                 ],
             ),
-            # Doesn't provide the correct answer with vanilla qsim.
-            # Output is [0, -1 / math.sqrt(2), 1 / math.sqrt(2), 0]
-            # (
-            #     qml.QubitUnitary,
-            #     [0, 1],
-            #     [0, 1 / math.sqrt(2), 1 / math.sqrt(2), 0],
-            #     [
-            #         np.array(
-            #             [
-            #                 [1, 0, 0, 0],
-            #                 [0, 1 / math.sqrt(2), 1 / math.sqrt(2), 0],
-            #                 [0, 1 / math.sqrt(2), -1 / math.sqrt(2), 0],
-            #                 [0, 0, 0, 1],
-            #             ]
-            #         )
-            #     ],
-            # ),
+            (
+                qml.QubitUnitary,
+                [0, 1],
+                [0, 0.5, 0.5, 0],
+                [
+                    np.array(
+                        [
+                            [1, 0, 0, 0],
+                            [0, 1 / math.sqrt(2), 1 / math.sqrt(2), 0],
+                            [0, 1 / math.sqrt(2), -1 / math.sqrt(2), 0],
+                            [0, 0, 0, 1],
+                        ]
+                    )
+                ],
+            ),
         ],
     )
     def test_apply_operation_two_wires_with_parameters(
         self, qsim_device_2_wires, tol, op, input, expected_output, par
     ):
-        """Tests that applying an operation yields the expected output state for single wire
+        """Tests that applying an operation yields the expected output probabilities for single wire
            operations that have no parameters."""
 
         qsim_device_2_wires.reset()
-        # qsim_device_2_wires._initial_state = np.array(input, dtype=np.complex64)
         qsim_device_2_wires.apply([qml.BasisState(np.array(input), wires=[0, 1])])
         qsim_device_2_wires.apply([op(*par, wires=[0, 1])])
 
-        assert np.allclose(qsim_device_2_wires.state, np.array(expected_output), **tol)
+        assert np.allclose(qsim_device_2_wires.probability(), np.array(expected_output), **tol)
 
     @pytest.mark.parametrize(
         "operation,par,match",

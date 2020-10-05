@@ -127,25 +127,25 @@ class TestApply:
         "op,input,expected_output,par",
         [
             (qml.PhaseShift, [0], [1, 0], [math.pi / 2]),
-            (qml.PhaseShift, [1], [0, 1j], [math.pi / 2]),
-            (qml.RX, [0], [1 / math.sqrt(2), -1j * 1 / math.sqrt(2)], [math.pi / 2 + 0.0000001]),
-            (qml.RX, [0], [0, -1j], [math.pi+0.0000001]),
-            (qml.RY, [0], [1 / math.sqrt(2), 1 / math.sqrt(2)], [math.pi / 2 + 0.0000001]),
-            (qml.RY, [0], [0, 1], [math.pi+0.0000001]),
-            (qml.RZ, [0], [1 / math.sqrt(2) - 1j / math.sqrt(2), 0], [math.pi / 2 + 0.0000001]),
-            (qml.RZ, [1], [0, 1j], [math.pi+0.0000001]),
-            (qml.Rot, [0], [1 / math.sqrt(2) - 1j / math.sqrt(2), 0], [math.pi / 2 + 0.0000001, 0, 0],),
-            (qml.Rot, [0], [1 / math.sqrt(2), 1 / math.sqrt(2)], [0, math.pi / 2 + 0.0000001, 0],),
+            (qml.PhaseShift, [1], [0, 1], [math.pi / 2]),
+            (qml.RX, [0], [0.5, 0.5], [math.pi / 2]),
+            (qml.RX, [0], [0, 1], [math.pi]),
+            (qml.RY, [0], [0.5, 0.5], [math.pi / 2]),
+            (qml.RY, [0], [0, 1], [math.pi]),
+            (qml.RZ, [0], [1, 0], [math.pi / 2]),
+            (qml.RZ, [1], [0, 1], [math.pi]),
+            (qml.Rot, [0], [1, 0], [math.pi / 2, 0, 0],),
+            (qml.Rot, [0], [0.5, 0.5], [0, math.pi / 2, 0],),
             (
                 qml.Rot,
                 [0],
-                [-1j / math.sqrt(2), -1 / math.sqrt(2)],
-                [math.pi / 2 + 0.0000001, -math.pi / 2 + 0.0000001, math.pi / 2 + 0.0000001],
+                [0.5, 0.5],
+                [math.pi / 2, -math.pi / 2, math.pi / 2],
             ),
             (
                 qml.QubitUnitary,
                 [0],
-                [1j / math.sqrt(2), 1j / math.sqrt(2)],
+                [0.5, 0.5],
                 [
                     np.array(
                         [
@@ -158,7 +158,7 @@ class TestApply:
             (
                 qml.QubitUnitary,
                 [1],
-                [1j / math.sqrt(2), -1j / math.sqrt(2)],
+                [0.5, 0.5],
                 [
                     np.array(
                         [
@@ -180,7 +180,7 @@ class TestApply:
         qsimh_device_1_wire.apply([qml.BasisState(np.array(input), wires=[0])])
         qsimh_device_1_wire.apply([op(*par, wires=[0])])
 
-        assert np.allclose(qsimh_device_1_wire.state, np.array(expected_output), **tol)
+        assert np.allclose(qsimh_device_1_wire.probability(), np.array(expected_output), **tol)
 
     # FIXME: no Schmidt decomposition for gate kind 36.
     # qsimh simulation of the circuit errored out.
@@ -231,7 +231,6 @@ class TestApply:
     #     qsimh_device_2_wires.reset()
     #     qsimh_device_2_wires.apply([qml.BasisState(np.array(input), wires=[0, 1])])
     #     qsimh_device_2_wires.apply([op(*par, wires=[0, 1])])
-    #     # asdsa
     #     assert np.allclose(qsimh_device_2_wires.state, np.array(expected_output), **tol)
 
     @pytest.mark.parametrize(
@@ -390,7 +389,6 @@ class TestExpval:
     #         rotations=op.diagonalizing_gates(),
     #     )
 
-    #     sdfsd
     #     res = qsimh_device_2_wires.expval(op)
     #     assert np.isclose(res, expected_output, **tol)
 
@@ -485,7 +483,6 @@ class TestVar:
     #         [qml.BasisState(np.array(input), wires=[0, 1])],
     #         rotations=op.diagonalizing_gates(),
     #     )
-    #     sdfsdf
 
     #     res = qsimh_device_2_wires.var(op)
 
@@ -520,6 +517,7 @@ class TestSample:
 
     # FIXME: Doesn't work because np.abs(QSimhDevice._state) ** 2 doesn't exactly sum up to 1;
     # it's a very close 0.999999910599974, which np.random.choice doesn't like.
+    # see https://github.com/quantumlib/qsim/pull/63#pullrequestreview-382203401
 
     # def test_sample_dimensions(self, qsimh_device_2_wires):
     #     """Tests if the samples returned by the sample function have
