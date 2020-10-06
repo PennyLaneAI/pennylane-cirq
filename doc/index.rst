@@ -11,7 +11,7 @@ PennyLane-Cirq Plugin
 |
 
 .. include:: ../README.rst
-  :start-after:	header-start-inclusion-marker-do-not-remove
+  :start-after:    header-start-inclusion-marker-do-not-remove
   :end-before: header-end-inclusion-marker-do-not-remove
 
 Once Pennylane-Cirq is installed, the provided Cirq devices can be accessed straight
@@ -20,7 +20,7 @@ away in PennyLane, without the need to import any additional packages.
 Devices
 ~~~~~~~
 
-Currently, PennyLane-Cirq provides two Cirq devices for PennyLane:
+Currently, PennyLane-Cirq provides four Cirq devices for PennyLane:
 
 .. devicegalleryitem::
     :name: 'cirq.simulator'
@@ -31,7 +31,17 @@ Currently, PennyLane-Cirq provides two Cirq devices for PennyLane:
     :name: 'cirq.mixedsimulator'
     :description: Cirq's density matrix simulator backend.
     :link: devices/mixed_simulator.html
- 
+
+.. devicegalleryitem::
+    :name: 'cirq.qsim'
+    :description: The qsim simulator backend.
+    :link: devices/qsim.html
+
+.. devicegalleryitem::
+    :name: 'cirq.qsimh'
+    :description: The qsimh simulator backend.
+    :link: devices/qsim.html
+
 .. raw:: html
 
         <div style='clear:both'></div>
@@ -65,6 +75,7 @@ and simply replace ``'default.qubit'`` with the ``'cirq.simulator'`` device:
 
    devices/simulator
    devices/mixed_simulator
+   devices/qsim
 
 .. toctree::
    :maxdepth: 1

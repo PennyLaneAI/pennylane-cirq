@@ -1,4 +1,4 @@
-The Mixed Simulator Device
+The Mixed Simulator device
 ==========================
 
 You can instantiate the mixed-state simulator device in PennyLane as follows:

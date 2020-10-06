@@ -23,7 +23,7 @@ try:
     import qsimcirq
 except ImportError:
     raise ImportError(
-        "QSim Cirq is needed for the QSim devices to work."
+        "qsim Cirq is needed for the qsim devices to work."
         "\nIt can be installed using pip:"
         "\n\npip install qsimcirq"
     )
@@ -33,7 +33,7 @@ from .cirq_device import CirqDevice
 
 
 class QSimDevice(SimulatorDevice):
-    r"""QSim device for PennyLane.
+    r"""qsim device for PennyLane.
 
     Args:
         wires (int, Iterable[Number, str]]): Number of subsystems represented by the device,
@@ -86,13 +86,13 @@ class QSimDevice(SimulatorDevice):
 
 
 class QSimhDevice(SimulatorDevice):
-    r"""QSimh device for PennyLane.
+    r"""qsimh device for PennyLane.
 
     Args:
         wires (int, Iterable[Number, str]]): Number of subsystems represented by the device,
             or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
             or strings (``['ancilla', 'q1', 'q2']``). Default 1 if not specified.
-        qsimh_options (dict): A dictionary with options for the QSimh simulator. See the `QSim
+        qsimh_options (dict): A dictionary with options for the qsimh simulator. See the `qsim
             usage documentation <https://github.com/quantumlib/qsim/blob/master/docs/usage.md>`__
             for further details.
         shots (int): Number of circuit evaluations/random samples used
@@ -105,7 +105,7 @@ class QSimhDevice(SimulatorDevice):
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
     """
-    name = "QSimh device for PennyLane"
+    name = "qsimh device for PennyLane"
     short_name = "cirq.qsimh"
 
     def __init__(self, wires, qsimh_options, shots=1000, analytic=True, qubits=None):
