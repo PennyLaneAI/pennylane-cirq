@@ -65,7 +65,8 @@ class QSimDevice(SimulatorDevice):
     @property
     def operations(self):
         # pylint: disable=missing-function-docstring
-        ops = set(self._operation_map.keys()) - {"QubitStateVector", "BasisState"}
+        unsupported_gates = {"QubitStateVector", "BasisState", "CRX", "CRY", "CRZ", "CRot"}
+        ops = set(self._operation_map.keys()) - unsupported_gates
         return ops
 
     @classmethod
@@ -111,7 +112,7 @@ class QSimhDevice(SimulatorDevice):
     @property
     def operations(self):
         # pylint: disable=missing-function-docstring
-        ops = set(self._operation_map.keys()) - {"QubitStateVector", "BasisState"}
+        ops = set(self._operation_map.keys()) - {"QubitStateVector", "BasisState", "CRX", "CRY", "CRZ", "CRot"}
         return ops
 
     @classmethod
