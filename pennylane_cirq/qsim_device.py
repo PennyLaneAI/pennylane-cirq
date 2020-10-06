@@ -17,8 +17,8 @@ This module provides the ``QSimDevice`` and ``QSimhDevice`` from Cirq.
 """
 import cirq
 import numpy as np
-import pennylane as qml
 
+# pylint: disable=raise-missing-from
 try:
     import qsimcirq
 except ImportError:
@@ -65,8 +65,14 @@ class QSimDevice(SimulatorDevice):
     @property
     def operations(self):
         # pylint: disable=missing-function-docstring
-        unsupported_gates = {"QubitStateVector", "BasisState", "CRX", "CRY", "CRZ", "CRot"}
-        ops = set(self._operation_map.keys()) - unsupported_gates
+        ops = set(self._operation_map.keys()) - {
+            "QubitStateVector",
+            "BasisState",
+            "CRX",
+            "CRY",
+            "CRZ",
+            "CRot",
+        }
         return ops
 
     @classmethod
@@ -112,7 +118,14 @@ class QSimhDevice(SimulatorDevice):
     @property
     def operations(self):
         # pylint: disable=missing-function-docstring
-        ops = set(self._operation_map.keys()) - {"QubitStateVector", "BasisState", "CRX", "CRY", "CRZ", "CRot"}
+        ops = set(self._operation_map.keys()) - {
+            "QubitStateVector",
+            "BasisState",
+            "CRX",
+            "CRY",
+            "CRZ",
+            "CRot",
+        }
         return ops
 
     @classmethod
