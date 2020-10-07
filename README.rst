@@ -81,7 +81,7 @@ as well as the following Python packages:
 * `PennyLane <http://pennylane.readthedocs.io/>`__ >= 0.9
 * `Cirq <https://cirq.readthedocs.io/>`__ >= 0.7
 
-To use the qsim and qsimh devices, the qsim-Cirq interface `qsimcirq` is required:
+To use the qsim and qsimh devices, the qsim-Cirq interface ``qsimcirq`` is required:
 
 * `qsimcirq <https://github.com/quantumlib/qsim/blob/master/docs/cirq_interface.md>`__
 

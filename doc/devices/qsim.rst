@@ -1,12 +1,19 @@
 The qsim device
 ===============
 
-qsim is a Schrödinger full state-vector simulator while qsimh is a hybrid
-Schrödinger-Feynman simulator, cutting the qubit lattice into two parts and then
-using qsim to simulate each part individually. For further details see the `qsim
-website <https://github.com/quantumlib/qsim>`__. These simulators are
-considerably faster compared to the Cirq simulator for many qubits, as can be
-seen in the benchmark below.
+The `qsim circuit simulator package <https://github.com/quantumlib/qsim>`__
+provides two additional circuit simulators that can be used with PennyLane-Cirq:
+
+* qsim, a Schrödinger full state-vector simulator
+
+* qsimh, a hybrid Schrödinger-Feynman simulator. This simulator cuts the qubit lattice into two parts;
+  each part is individually simulated using qsim, with Feynman-style path summation used to return the
+  final result. Compared to full state-vector simulation, qsimh reduces memory requirements, at the expense
+  of an increased runtime.
+
+For further details see the `qsim website <https://github.com/quantumlib/qsim>`__.
+
+For a large number of qubits, these simulators are considerably faster than the Cirq simulator:
 
 .. image:: ../_static/qsim_bench.png
     :align: center
@@ -44,10 +51,10 @@ You can then execute the circuit like any other function to get the quantum mech
 Device options
 ~~~~~~~~~~~~~~
 
-qsim and qsimh use the same way of defining qubits as Cirq, e.g., ``LineQubit``
+qsim and qsimh use the same method of defining qubits as Cirq, e.g., ``LineQubit``
 or ``GridQubit``. As with the Cirq device, the qsim and qsimh devices therefore
 accept an additional argument ``qubits=None`` that can be used to define your
-own qubits and give them to the device as a list.
+own qubits and pass them to the device as a list.
 
 .. code-block:: python
 
@@ -71,7 +78,7 @@ qsimh options
 ^^^^^^^^^^^^^
 
 qsimh requires specific options to be set for the simulator. These can be passed
-by the positional argument ``qsimh_options``. See the `QSimh usage documentation
+by the positional argument ``qsimh_options``. See the `qsimh usage documentation
 <https://github.com/quantumlib/qsim/blob/master/docs/usage.md>`__ for further
 details.
 
