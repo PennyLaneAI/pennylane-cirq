@@ -33,14 +33,10 @@ Currently, PennyLane-Cirq provides four Cirq devices for PennyLane:
     :link: devices/mixed_simulator.html
 
 .. devicegalleryitem::
-    :name: 'cirq.qsim'
-    :description: The qsim simulator backend.
+    :name: 'cirq.qsim' and 'cirq.qsimh'
+    :description: The qsim and qsimh simulator backends.
     :link: devices/qsim.html
 
-.. devicegalleryitem::
-    :name: 'cirq.qsimh'
-    :description: The qsimh simulator backend.
-    :link: devices/qsim.html
 
 .. raw:: html
 
