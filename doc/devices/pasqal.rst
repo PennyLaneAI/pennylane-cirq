@@ -9,8 +9,10 @@ You can instantiate a simulator for Pasqal's neutral-atom devices in PennyLane a
 
     dev = qml.device("cirq.pasqal", wires=2, control_radius=1.5)
 
+
 This device can then be used just like other devices for the definition and evaluation of QNodes within PennyLane.
-The Pasqal device supports the unique features of Pasqal's quantum computing hardware provided via Cirq, namely
+
+The Pasqal device supports unique features of Pasqal's quantum computing hardware provided via Cirq, namely
 the ``ThreeDQubit`` and the notion of a ``control_radius``.
 
 .. code-block:: python
