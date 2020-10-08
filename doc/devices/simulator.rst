@@ -1,5 +1,5 @@
-The Simulator device
-====================
+Simulator device
+================
 
 You can instantiate the device in PennyLane as follows:
 
