@@ -125,12 +125,14 @@ class TestCirqDeviceIntegration:
         ]
 
         user_labels = ["alice", "bob", "charlie", "david"]
-        sort_order = [2,0,1,3]
+        sort_order = [2, 0, 1, 3]
 
         dev = qml.device("cirq.simulator", wires=user_labels, qubits=unordered_qubits)
         assert len(dev.qubits) == 4
         assert dev.qubits == sorted(unordered_qubits)
-        assert all(dev.map_wires(Wires(label)) == Wires(idx) for label, idx in zip(user_labels, sort_order))
+        assert all(
+            dev.map_wires(Wires(label)) == Wires(idx) for label, idx in zip(user_labels, sort_order)
+        )
 
     def test_outer_init_of_qubits_with_wire_label_ints(self):
         """Tests that giving qubits as parameters to CirqDevice works when the user also provides custom integer wire labels."""
@@ -142,13 +144,15 @@ class TestCirqDeviceIntegration:
             cirq.GridQubit(1, 1),
         ]
 
-        user_labels = [-1,1,66,0]
-        sort_order = [2,0,1,3]
+        user_labels = [-1, 1, 66, 0]
+        sort_order = [2, 0, 1, 3]
 
         dev = qml.device("cirq.simulator", wires=user_labels, qubits=unordered_qubits)
         assert len(dev.qubits) == 4
         assert dev.qubits == sorted(unordered_qubits)
-        assert all(dev.map_wires(Wires(label)) == Wires(idx) for label, idx in zip(user_labels, sort_order))
+        assert all(
+            dev.map_wires(Wires(label)) == Wires(idx) for label, idx in zip(user_labels, sort_order)
+        )
 
 
 @pytest.fixture(scope="function")

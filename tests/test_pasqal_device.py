@@ -43,9 +43,7 @@ class TestDeviceIntegration:
 class TestDevice:
     """Unit tests for the PasqalDevice"""
 
-    @pytest.mark.parametrize(
-        "control_radius", [1.0, 2.0, 99.99]
-    )
+    @pytest.mark.parametrize("control_radius", [1.0, 2.0, 99.99])
     def test_device_creation(self, control_radius):
         """Tests that the cirq.pasqal device is properly created"""
 
