@@ -32,7 +32,7 @@ Code details
 ~~~~~~~~~~~~
 """
 import abc
-from collections import Iterable, OrderedDict
+from collections.abc import Iterable, OrderedDict
 import cirq
 import numpy as np
 import pennylane as qml
