@@ -24,7 +24,7 @@ with open("pennylane_cirq/_version.py") as f:
 # Requirements should be as minimal as possible.
 # Avoid pinning, and use minimum version numbers
 # only where required.
-requirements = ["pennylane>=0.11", "cirq"]
+requirements = ["pennylane>=0.11", "cirq>=0.9"]
 
 info = {
     "name": "PennyLane-Cirq",
