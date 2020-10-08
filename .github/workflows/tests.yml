@@ -40,9 +40,9 @@ jobs:
         run: python -m pytest tests --cov=pennylane_cirq --cov-report=term-missing --cov-report=xml -p no:warnings --tb=native
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.7
+        uses: codecov/codecov-action@v1
         with:
-          file: ./.coverage
+          file: ./coverage.xml
 
   integration-tests:
     runs-on: ubuntu-latest
@@ -73,12 +73,12 @@ jobs:
 
       - name: Run tests
         run: |
-          pl-device-test --device=cirq.simulator --tb=short --skip-ops --analytic=True
-          pl-device-test --device=cirq.simulator --tb=short --skip-ops --analytic=False --shots=20000
-          pl-device-test --device=cirq.mixedsimulator --tb=short --skip-ops --analytic=True
-          pl-device-test --device=cirq.mixedsimulator --tb=short --skip-ops --analytic=False --shots=20000
+          pl-device-test --device=cirq.simulator --tb=short --skip-ops --analytic=True --cov=pennylane_cirq --cov-report=xml
+          pl-device-test --device=cirq.simulator --tb=short --skip-ops --analytic=False --shots=20000 --cov=pennylane_cirq --cov-report=xml
+          pl-device-test --device=cirq.mixedsimulator --tb=short --skip-ops --analytic=True --cov=pennylane_cirq --cov-report=xml
+          pl-device-test --device=cirq.mixedsimulator --tb=short --skip-ops --analytic=False --shots=20000 --cov=pennylane_cirq --cov-report=xml
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.7
+        uses: codecov/codecov-action@v1
         with:
           file: ./coverage.xml

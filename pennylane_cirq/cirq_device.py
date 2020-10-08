@@ -34,7 +34,6 @@ Code details
 import abc
 from collections.abc import Iterable  # pylint: disable=no-name-in-module
 from collections import OrderedDict
-
 import cirq
 import numpy as np
 import pennylane as qml

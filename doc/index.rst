@@ -31,7 +31,12 @@ Currently, PennyLane-Cirq provides two Cirq devices for PennyLane:
     :name: 'cirq.mixedsimulator'
     :description: Cirq's density matrix simulator backend.
     :link: devices/mixed_simulator.html
- 
+
+.. devicegalleryitem::
+    :name: 'cirq.pasqal'
+    :description: Simulator for Pasqal's neutral atom devices.
+    :link: devices/pasqal.html
+
 .. raw:: html
 
         <div style='clear:both'></div>
@@ -65,6 +70,7 @@ and simply replace ``'default.qubit'`` with the ``'cirq.simulator'`` device:
 
    devices/simulator
    devices/mixed_simulator
+   devices/pasqal
 
 .. toctree::
    :maxdepth: 1

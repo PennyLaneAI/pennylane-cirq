@@ -37,7 +37,7 @@ import pennylane as qml
 
 class CirqOperation:
     """A helper class that wraps the native Cirq operations and provides an
-       interface for parametrization and application."""
+    interface for parametrization and application."""
 
     def __init__(self, parametrization):
         """Initializes the CirqOperation
