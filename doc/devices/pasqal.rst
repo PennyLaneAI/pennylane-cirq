@@ -32,4 +32,8 @@ the ``ThreeDQubit`` and the notion of a ``control_radius``.
 
     circuit(0.3)
 
+Note that if not specified, ``ThreeDGridQubits`` are automatically arranged in a linear
+arrangement along the first coordinate axis, separated by a distance of ``control_radius / 2``.
+That is, ``(0, 0, 0), (control_radius/2, 0, 0), (control_radius, 0, 0)``.
+
 For more details about Pasqal devices, consult the `Cirq docs <https://cirq.readthedocs.io/en/stable/docs/pasqal/getting_started.html>`_.
