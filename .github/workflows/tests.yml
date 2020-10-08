@@ -40,7 +40,7 @@ jobs:
         run: python -m pytest tests --cov=pennylane_cirq --cov-report=term-missing --cov-report=xml -p no:warnings --tb=native
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.7
+        uses: codecov/codecov-action@v1
         with:
           file: ./.coverage
 
@@ -79,6 +79,6 @@ jobs:
           pl-device-test --device=cirq.mixedsimulator --tb=short --skip-ops --analytic=False --shots=20000
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.7
+        uses: codecov/codecov-action@v1
         with:
           file: ./coverage.xml
