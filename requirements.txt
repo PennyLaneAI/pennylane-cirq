@@ -1,4 +1,3 @@
-pennylane>=0.9
-google-api-core[grpc]<=1.14.0
-git+https://github.com/quantumlib/Cirq.git@master
+pennylane>=0.11
+cirq>=0.9
 numpy~=1.16
