@@ -25,7 +25,7 @@ except ImportError as e:
         "qsim Cirq is needed for the qsim devices to work."
         "\nIt can be installed using pip:"
         "\n\npip install qsimcirq"
-    ) as e
+    ) from e
 
 from .simulator_device import SimulatorDevice
 from .cirq_device import CirqDevice
