@@ -48,6 +48,9 @@ You can then execute the circuit like any other function to get the quantum mech
 
     circuit(0.2, 0.1, 0.3)
 
+The qsimh device can be loaded similarly, with the addition of the keyword
+argument ``qsimh_options`` as described below.
+
 Device options
 ~~~~~~~~~~~~~~
 
