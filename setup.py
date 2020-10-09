@@ -24,7 +24,7 @@ with open("pennylane_cirq/_version.py") as f:
 # Requirements should be as minimal as possible.
 # Avoid pinning, and use minimum version numbers
 # only where required.
-requirements = ["pennylane>=0.11", "cirq"]
+requirements = ["pennylane>=0.11", "cirq>=0.9"]
 
 info = {
     "name": "PennyLane-Cirq",
@@ -36,8 +36,9 @@ info = {
     "packages": ["pennylane_cirq"],
     "entry_points": {"pennylane.plugins": ["cirq.simulator = pennylane_cirq:SimulatorDevice",
                                            "cirq.mixedsimulator = pennylane_cirq:MixedStateSimulatorDevice",
-                                           "cirq.qsim = pennylane_cirq.qsim_device:QSimDevice",
-                                           "cirq.qsimh = pennylane_cirq.qsim_device:QSimhDevice"],},
+                                           "cirq.qsim = pennylane_cirq:QSimDevice",
+                                           "cirq.qsimh = pennylane_cirq:QSimhDevice"],},
+                                           "cirq.pasqal = pennylane_cirq:PasqalDevice"],},
     # Place a one line description here. This will be shown by pip
     "description": "PennyLane plugin for Cirq",
     "long_description": open("README.rst").read(),

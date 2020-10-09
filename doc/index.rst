@@ -37,6 +37,10 @@ Currently, PennyLane-Cirq provides four Cirq devices for PennyLane:
     :description: The qsim and qsimh simulator backends.
     :link: devices/qsim.html
 
+.. devicegalleryitem::
+    :name: 'cirq.pasqal'
+    :description: Simulator for Pasqal's neutral atom devices.
+    :link: devices/pasqal.html
 
 .. raw:: html
 
@@ -72,6 +76,7 @@ and simply replace ``'default.qubit'`` with the ``'cirq.simulator'`` device:
    devices/simulator
    devices/mixed_simulator
    devices/qsim
+   devices/pasqal
 
 .. toctree::
    :maxdepth: 1

@@ -17,6 +17,7 @@ Plugin overview
 """
 from .simulator_device import SimulatorDevice, MixedStateSimulatorDevice
 from .qsim_device import QSimDevice, QSimhDevice
+from .pasqal_device import PasqalDevice
 
 from .ops import BitFlip, PhaseFlip, PhaseDamp, AmplitudeDamp, Depolarize
 from ._version import __version__
