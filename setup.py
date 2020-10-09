@@ -38,7 +38,6 @@ info = {
                                            "cirq.mixedsimulator = pennylane_cirq:MixedStateSimulatorDevice",
                                            "cirq.qsim = pennylane_cirq:QSimDevice",
                                            "cirq.qsimh = pennylane_cirq:QSimhDevice",
-
                                            "cirq.pasqal = pennylane_cirq:PasqalDevice"],},
     # Place a one line description here. This will be shown by pip
     "description": "PennyLane plugin for Cirq",
