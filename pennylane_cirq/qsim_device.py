@@ -18,15 +18,14 @@ This module provides the ``QSimDevice`` and ``QSimhDevice`` from Cirq.
 import cirq
 import numpy as np
 
-# pylint: disable=raise-missing-from
 try:
     import qsimcirq
-except ImportError:
+except ImportError as e:
     raise ImportError(
         "qsim Cirq is needed for the qsim devices to work."
         "\nIt can be installed using pip:"
         "\n\npip install qsimcirq"
-    )
+    ) as e
 
 from .simulator_device import SimulatorDevice
 from .cirq_device import CirqDevice
@@ -38,7 +37,7 @@ class QSimDevice(SimulatorDevice):
     Args:
         wires (int, Iterable[Number, str]]): Number of subsystems represented by the device,
             or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
-            or strings (``['ancilla', 'q1', 'q2']``). Default 1 if not specified.
+            or strings (``['ancilla', 'q1', 'q2']``).
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need
             to be >= 1. In analytic mode, shots indicates the number of entries
@@ -91,7 +90,7 @@ class QSimhDevice(SimulatorDevice):
     Args:
         wires (int, Iterable[Number, str]]): Number of subsystems represented by the device,
             or iterable that contains unique labels for the subsystems as numbers (i.e., ``[-1, 0, 2]``)
-            or strings (``['ancilla', 'q1', 'q2']``). Default 1 if not specified.
+            or strings (``['ancilla', 'q1', 'q2']``).
         qsimh_options (dict): A dictionary with options for the qsimh simulator. See the `qsim
             usage documentation <https://github.com/quantumlib/qsim/blob/master/docs/usage.md>`__
             for further details.

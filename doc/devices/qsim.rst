@@ -28,7 +28,7 @@ PennyLane as follows:
 
     dev = qml.device('cirq.qsim', wires=2)
 
-This device can then be used just like other devices for the definition and evaluation of QNodes within PennyLane.
+This device can then be used just like other devices for the evaluation of QNodes within PennyLane.
 A simple quantum function that returns the expectation value of a measurement and depends on three classical input
 parameters would look like:
 
@@ -42,7 +42,7 @@ parameters would look like:
         qml.CNOT(wires=[0, 1])
         return qml.expval(qml.PauliZ(wires=1))
 
-You can then execute the circuit like any other function to get the quantum mechanical expectation value.
+You can then execute the circuit like any other function to get the quantum mechanical expectation value:
 
 .. code-block:: python
 
@@ -53,7 +53,7 @@ Device options
 
 qsim and qsimh use the same method of defining qubits as Cirq, e.g., ``LineQubit``
 or ``GridQubit``. As with the Cirq device, the qsim and qsimh devices therefore
-accept an additional argument ``qubits=None`` that can be used to define your
+accept an additional argument ``qubits`` that can be used to define your
 own qubits and pass them to the device as a list.
 
 .. code-block:: python
@@ -111,7 +111,7 @@ and observables
 with the exceptions of inverse operations and ``QubitUnitary`` gates on 3 or
 more qubits.
 
-For state preparation qsim relies on decomposing ``BasisState`` into a a set of
+For state preparation qsim relies on decomposing ``BasisState`` into a set of
 `PauliX
 <https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliX.html>`__
 gates and `QubitStateVector
