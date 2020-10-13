@@ -1,28 +1,22 @@
-# Release 0.12.0-dev
+# Release 0.12.0
 
 ### New features since last release
 
 * Devices from Cirq's Pasqal submodule are now available for use.
   [(#40)](https://github.com/PennyLaneAI/pennylane-cirq/pull/40).
-  
+
   A simulator device compatible with Pasqal's neutral-atom model can be invoked via the name
-  `"cirq.pasqal"`, e.g., 
-  
+  `"cirq.pasqal"`, e.g.,
+
   ```python
   dev = qml.device("cirq.pasqal", control_radius=1.0, wires=3)
   ```
 
-### Breaking changes
-
-### Improvements
-
-### Documentation
-
-### Bug fixes
-
 ### Contributors
 
-This release contains contributions from (in alphabetical order): Nathan Killoran, Josh Izaac
+This release contains contributions from (in alphabetical order):
+
+Nathan Killoran, Josh Izaac
 
 ---
 
