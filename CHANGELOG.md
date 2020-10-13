@@ -2,12 +2,22 @@
 
 ### New features since last release
 
+* Devices from Cirq's qsim and qsimh submodules are now available for use.
+  [(#36)](https://github.com/PennyLaneAI/pennylane-cirq/pull/36).
+
+  Two simulator devices using the qsim and qsimh simulators can be invoked via the names
+  `"cirq.qsim"` and `"cirq.qsimh" respectively`, e.g.,
+
+  ```python
+  dev = qml.device("cirq.qsimh", qsimh_options=qsimh_options, wires=3)
+  ```
+
 * Devices from Cirq's Pasqal submodule are now available for use.
   [(#40)](https://github.com/PennyLaneAI/pennylane-cirq/pull/40).
-  
+
   A simulator device compatible with Pasqal's neutral-atom model can be invoked via the name
-  `"cirq.pasqal"`, e.g., 
-  
+  `"cirq.pasqal"`, e.g.,
+
   ```python
   dev = qml.device("cirq.pasqal", control_radius=1.0, wires=3)
   ```
@@ -22,7 +32,7 @@
 
 ### Contributors
 
-This release contains contributions from (in alphabetical order): Nathan Killoran, Josh Izaac
+This release contains contributions from (in alphabetical order): Theodor Isacsson, Nathan Killoran, Josh Izaac
 
 ---
 
