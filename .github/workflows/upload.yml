@@ -1,7 +1,10 @@
 name: Upload
 on:
+  push:
+    branches:
+      - master
   release:
-    types: [created]
+    types: [published]
 
 jobs:
   upload:
