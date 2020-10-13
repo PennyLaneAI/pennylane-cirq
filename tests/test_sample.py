@@ -42,6 +42,9 @@ class TestSample:
         """Tests if the samples returned by sample have
         the correct values
         """
+        # TODO: remove when random seeds in tests are fixed
+        np.random.seed(42)
+
         dev = device(1)
 
         with mimic_execution_for_sample(dev):
