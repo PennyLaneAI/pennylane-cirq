@@ -146,12 +146,11 @@ class QSimhDevice(SimulatorDevice):
         for qb in self.qubits:
             self.circuit.append(cirq.IdentityGate(1)(qb))
 
-        if self.analytic:
-            state = self._simulator.compute_amplitudes(
-                program=self.circuit, bitstrings=list(range(2 ** len(self.wires)))
-            )
+        state = self._simulator.compute_amplitudes(
+            program=self.circuit, bitstrings=list(range(2 ** len(self.wires)))
+        )
 
-            self._state = np.array(state)
+        self._state = np.array(state)
 
     def generate_samples(self):
         # pylint: disable=missing-function-docstring

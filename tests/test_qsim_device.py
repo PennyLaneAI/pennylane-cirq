@@ -82,6 +82,25 @@ class TestDeviceIntegration:
 
         spy.assert_called_once()
 
+    def test_inverse_not_in_capabilites(self):
+        """Test that QSimDevice does not support inverse operations"""
+        dev = qml.device("cirq.qsim", wires=1)
+
+        assert not dev.capabilities()["supports_inverse_operations"]
+
+    @pytest.mark.parametrize("gate", [
+        "QubitStateVector",
+        "BasisState",
+        "CRX",
+        "CRY",
+        "CRZ",
+        "CRot",])
+    def test_incompatible_gates_not_in_operations(self, gate):
+        """Test that QSimDevice does not support inverse operations"""
+        dev = qml.device("cirq.qsim", wires=1)
+
+        assert gate not in dev.operations
+
 
 @pytest.fixture(scope="function")
 def qsim_device_1_wire(shots, analytic):

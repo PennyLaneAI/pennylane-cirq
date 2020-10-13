@@ -43,7 +43,7 @@ class TestDeviceIntegration:
     def test_one_qubit_circuit(self, shots, analytic, tol):
         """Test that devices provide correct result for a simple circuit"""
 
-        dev = qml.device("cirq.qsim", wires=1, shots=shots, analytic=analytic)
+        dev = qml.device("cirq.qsimh", wires=1, shots=shots, analytic=analytic, qsimh_options=qsimh_options)
 
         a = 0.543
         b = 0.123
@@ -69,7 +69,7 @@ class TestDeviceIntegration:
     def test_decomposition(self, shots, analytic, op, params, mocker):
         """Test that QubitStateVector and BasisState are decomposed"""
 
-        dev = qml.device("cirq.qsim", wires=1, shots=shots, analytic=analytic)
+        dev = qml.device("cirq.qsimh", wires=1, shots=shots, analytic=analytic, qsimh_options=qsimh_options)
 
         spy = mocker.spy(op, "decomposition")
 
@@ -82,6 +82,25 @@ class TestDeviceIntegration:
         circuit()
 
         spy.assert_called_once()
+
+    def test_inverse_not_in_capabilites(self):
+        """Test that QSimhDevice does not support inverse operations"""
+        dev = qml.device("cirq.qsimh", wires=1, qsimh_options=qsimh_options)
+
+        assert not dev.capabilities()["supports_inverse_operations"]
+
+    @pytest.mark.parametrize("gate", [
+        "QubitStateVector",
+        "BasisState",
+        "CRX",
+        "CRY",
+        "CRZ",
+        "CRot",])
+    def test_incompatible_gates_not_in_operations(self, gate):
+        """Test that QSimhDevice does not support inverse operations"""
+        dev = qml.device("cirq.qsimh", wires=1, qsimh_options=qsimh_options)
+
+        assert gate not in dev.operations
 
 
 @pytest.fixture(scope="function")
@@ -354,7 +373,7 @@ class TestVarEstimate:
     def test_var_estimate(self):
         """Test that the variance is not analytically calculated"""
 
-        dev = qml.device("cirq.qsim", wires=1, shots=3, analytic=False)
+        dev = qml.device("cirq.qsimh", wires=1, shots=3, analytic=False, qsimh_options=qsimh_options)
 
         @qml.qnode(dev)
         def circuit():
@@ -454,11 +473,3 @@ class TestState:
         qsimh_device_2_wires.apply(ops, rotations=diag_ops)
 
         assert np.allclose(qsimh_device_2_wires.state, expected_state, **tol)
-
-    @pytest.mark.parametrize("shots,analytic", [(100, False)])
-    def test_state_non_analytic(self, qsimh_device_2_wires):
-        """Test that the state is None if in non-analytic mode."""
-        qsimh_device_2_wires.reset()
-        qsimh_device_2_wires.apply([qml.PauliX(0), qml.PauliX(1)])
-
-        assert qsimh_device_2_wires.state is None
