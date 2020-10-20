@@ -1,4 +1,4 @@
-# Release 0.12.1-dev
+# Release 0.12.1
 
 ### New features since last release
 
