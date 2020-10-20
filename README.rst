@@ -44,7 +44,9 @@ The plugin documentation can be found here: `<https://pennylane-cirq.readthedocs
 Features
 ========
 
-* Provides access to Cirq's simulator backend via the ``cirq.simulator`` device
+* Provides access to built-in Cirq backends including ``cirq.simulator`` and ``cirq.mixedsimulator``
+
+* Provides access to Pasqal's neutral-atom devices via ``cirq.pasqal``
 
 * Provides access to the simulators qsim and qsimh via the ``cirq.qsim`` and ``cirq.qsimh`` devices
 
