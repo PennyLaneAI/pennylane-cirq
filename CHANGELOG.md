@@ -1,18 +1,36 @@
-# Release 0.12.1-dev
+# Release 0.12.1
 
 ### New features since last release
 
-### Breaking changes
+* PennyLane integration with the [qsim circuit simulator
+  package](https://github.com/quantumlib/qsim) is now available.
+  [(#36)](https://github.com/PennyLaneAI/pennylane-cirq/pull/36).
 
-### Improvements
+  The new devices include:
 
-### Documentation
+  * `cirq.qsim`, a Schrödinger full state-vector simulator
 
-### Bug fixes
+  * `cirq.qsimh`, a hybrid Schrödinger-Feynman simulator. This simulator cuts the qubit lattice into
+    two parts; each part is individually simulated using qsim, with Feynman-style path summation used
+    to return the final result. Compared to full state-vector simulation, qsimh reduces memory
+    requirements, at the expense of an increased runtime.
+
+  After installing the `qsimcirq` package, the qsim and qsimh devices
+  can be invoked via the names `"cirq.qsim"` and `"cirq.qsimh"` respectively, e.g.,
+
+  ```python
+  dev = qml.device("cirq.qsimh", qsimh_options=qsimh_options, wires=3)
+  ```
+
+  These devices can then be used for the evaluation of QNodes within PennyLane. For more details,
+  see the [PennyLane qsim
+  documentation](https://pennylane-cirq.readthedocs.io/en/latest/devices/qsim.html)
 
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Theodor Isacsson, Nathan Killoran, Josh Izaac
 
 ---
 

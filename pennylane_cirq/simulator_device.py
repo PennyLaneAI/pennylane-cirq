@@ -53,7 +53,7 @@ class SimulatorDevice(CirqDevice):
             that are returned by ``device.sample``.
         analytic (bool): Indicates that expectation values and variances should
             be calculated analytically. Defaults to ``True``.
-        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
+        qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
     """
@@ -135,6 +135,7 @@ class SimulatorDevice(CirqDevice):
         # TODO: remove the need for this hack by keeping better track of unused wires
         # We apply identity gates to all wires, otherwise Cirq would ignore
         # wires that are not acted upon
+
         for q in self.qubits:
             self.circuit.append(cirq.IdentityGate(1)(q))
 
@@ -201,7 +202,7 @@ class MixedStateSimulatorDevice(SimulatorDevice):
             that are returned by device.sample.
         analytic (bool): Indicates that expectation values and variances should
             be calculated analytically. Defaults to ``True``.
-        qubits (List[cirq.Qubit]): a list of Cirq qubits that are used
+        qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
     """

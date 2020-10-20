@@ -43,8 +43,8 @@ class CirqOperation:
         """Initializes the CirqOperation
 
         Args:
-            parametrization (Tuple[float] -> Union[Cirq:Qid, List[Cirq:Qid]]): Converts the PennyLane gate parameters to an ordered list of gates
-              that are to be applied
+            parametrization (Tuple[float] -> Union[Cirq:Qid, List[Cirq:Qid]]): Converts the
+                PennyLane gate parameters to an ordered list of gates that are to be applied.
         """
 
         self.parametrization = parametrization
