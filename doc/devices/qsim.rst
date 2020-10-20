@@ -19,8 +19,13 @@ For a large number of qubits, these simulators are considerably faster than the 
     :align: center
     :width: 70%
 
-You can instantiate the qsim device in
-PennyLane as follows:
+In order to use these devices, the ``qsimcirq`` package must first be installed:
+
+.. code-block:: console
+
+    pip install qsimcirq
+
+You can instantiate the qsim device in PennyLane as follows:
 
 .. code-block:: python
 

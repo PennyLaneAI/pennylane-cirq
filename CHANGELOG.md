@@ -2,33 +2,29 @@
 
 ### New features since last release
 
-* Devices from Cirq's qsim and qsimh submodules are now available for use.
+* PennyLane integration with the [qsim circuit simulator
+  package](https://github.com/quantumlib/qsim) is now available.
   [(#36)](https://github.com/PennyLaneAI/pennylane-cirq/pull/36).
 
-  Two simulator devices using the qsim and qsimh simulators can be invoked via the names
-  `"cirq.qsim"` and `"cirq.qsimh" respectively`, e.g.,
+  The new devices include:
+
+  * `cirq.qsim`, a Schrödinger full state-vector simulator
+
+  * `cirq.qsimh`, a hybrid Schrödinger-Feynman simulator. This simulator cuts the qubit lattice into
+    two parts; each part is individually simulated using qsim, with Feynman-style path summation used
+    to return the final result. Compared to full state-vector simulation, qsimh reduces memory
+    requirements, at the expense of an increased runtime.
+
+  After installing the `qsimcirq` package, the qsim and qsimh devices
+  can be invoked via the names `"cirq.qsim"` and `"cirq.qsimh"` respectively, e.g.,
 
   ```python
   dev = qml.device("cirq.qsimh", qsimh_options=qsimh_options, wires=3)
   ```
 
-* Devices from Cirq's Pasqal submodule are now available for use.
-  [(#40)](https://github.com/PennyLaneAI/pennylane-cirq/pull/40).
-
-  A simulator device compatible with Pasqal's neutral-atom model can be invoked via the name
-  `"cirq.pasqal"`, e.g.,
-
-  ```python
-  dev = qml.device("cirq.pasqal", control_radius=1.0, wires=3)
-  ```
-
-### Breaking changes
-
-### Improvements
-
-### Documentation
-
-### Bug fixes
+  These devices can then be used for the evaluation of QNodes within PennyLane. For more details,
+  see the [PennyLane qsim
+  documentation](https://pennylane-cirq.readthedocs.io/en/latest/devices/qsim.html)
 
 ### Contributors
 
