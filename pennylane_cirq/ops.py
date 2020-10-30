@@ -138,6 +138,7 @@ class ISWAP(Operation):
     grad_method = None
     grad_recipe = None
 
+
 class CPhase(Operation):
     r"""Conditional phase operation following PennyLane conventions.
 
