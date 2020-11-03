@@ -19,7 +19,7 @@ import math
 
 import pennylane as qml
 import numpy as np
-from pennylane_cirq import ops, MixedStateSimulatorDevice
+from pennylane_cirq import ops, MixedStateSimulatorDevice, SimulatorDevice
 import cirq
 
 
@@ -188,3 +188,54 @@ class TestApply:
         simulator_device_1_wire.apply([ops.AmplitudeDamp(*par, wires=[0])])
 
         assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
+
+    @pytest.mark.parametrize("input",
+        [
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1],
+        ]
+    )
+    def test_apply_iswap(self, tol, input, shots, analytic):
+        """Tests that applying the CPhase gate yields the expected output."""
+        device = SimulatorDevice(2, shots=shots, analytic=analytic)
+
+        iswap_mat = np.array([[1, 0, 0, 0],
+                              [0, 0, 1j, 0],
+                              [0, 1j, 0, 0],
+                              [0, 0, 0, 1]])
+
+        expected = input @ iswap_mat
+
+        device.reset()
+        device._initial_state = np.array(input, dtype=np.complex64)
+        device.apply([ops.ISWAP(wires=[0, 1])])
+
+        assert np.allclose(device.state, expected, **tol)
+
+    @pytest.mark.parametrize("par", [0, 0.5, 1.42, np.pi/4, np.pi/2, np.pi])
+    @pytest.mark.parametrize("input",
+        [
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1],
+        ]
+    )
+    def test_apply_cphase(self, tol, par, input, shots, analytic):
+        """Tests that applying the iSWAP gate yields the expected output."""
+        device = SimulatorDevice(2, shots=shots, analytic=analytic)
+
+        cphase_mat = np.array([[1, 0, 0, 0],
+                               [0, 1, 0, 0],
+                               [0, 0, 1, 0],
+                               [0, 0, 0, np.exp(1j * par)]])
+
+        expected = input @ cphase_mat
+
+        device.reset()
+        device._initial_state = np.array(input, dtype=np.complex64)
+        device.apply([ops.CPhase(par, wires=[0, 1])])
+
+        assert np.allclose(device.state, expected, **tol)
