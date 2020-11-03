@@ -123,3 +123,43 @@ class Depolarize(Operation):
 
     grad_method = None
     grad_recipe = None
+
+
+class ISWAP(Operation):
+    """Cirq ``ISWAP`` operation.
+
+    See the `Cirq docs <https://cirq.readthedocs.io/en/stable/generated/cirq.ISWAP.html>`_
+    for further details."""
+
+    num_params = 0
+    num_wires = 2
+    par_domain = None
+
+    grad_method = None
+    grad_recipe = None
+
+
+class CPhase(Operation):
+    r"""Conditional phase operation following PennyLane conventions.
+
+    Implemented as Cirq ``CZPowGate(exponent=phi / np.pi)``.
+
+    .. math::
+
+        CPhase(\phi) =
+            \begin{bmatrix}
+                1 & 0 & 0 & 0\\
+                0 & 1 & 0 & 0\\
+                0 & 0 & 1 & 0\\
+                0 & 0 & 0 & e^{i\phi}
+            \end{bmatrix}
+
+    See the `Cirq docs <https://cirq.readthedocs.io/en/stable/generated/cirq.CZPowGate.html>`_
+    for further details."""
+
+    num_params = 1
+    num_wires = 2
+    par_domain = "R"
+
+    grad_method = None
+    grad_recipe = None
