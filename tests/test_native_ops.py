@@ -191,14 +191,16 @@ class TestApply:
 
     @pytest.mark.parametrize("input",
         [
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1],
+            np.array([1, 0, 0, 0]),
+            np.array([2, 1, 0, 1]) / np.sqrt(6),
+            np.array([0, 0, 1, 0]),
+            np.array([0, 1, 0, 1]) / np.sqrt(2),
+            np.array([0, 0, 0, 1]),
+            np.array([2, 1, 2, 1]) / np.sqrt(10),
         ]
     )
     def test_apply_iswap(self, tol, input, shots, analytic):
-        """Tests that applying the CPhase gate yields the expected output."""
+        """Tests that applying the iSWAP gate yields the expected output."""
         device = SimulatorDevice(2, shots=shots, analytic=analytic)
 
         iswap_mat = np.array([[1, 0, 0, 0],
@@ -206,7 +208,7 @@ class TestApply:
                               [0, 1j, 0, 0],
                               [0, 0, 0, 1]])
 
-        expected = input @ iswap_mat
+        expected = iswap_mat @ input
 
         device.reset()
         device._initial_state = np.array(input, dtype=np.complex64)
@@ -217,14 +219,16 @@ class TestApply:
     @pytest.mark.parametrize("par", [0, 0.5, 1.42, np.pi/4, np.pi/2, np.pi])
     @pytest.mark.parametrize("input",
         [
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, 1],
+            np.array([1, 0, 0, 0]),
+            np.array([2, 1, 0, 1]) / np.sqrt(6),
+            np.array([0, 0, 1, 0]),
+            np.array([0, 1, 0, 1]) / np.sqrt(2),
+            np.array([0, 0, 0, 1]),
+            np.array([2, 1, 2, 1]) / np.sqrt(10),
         ]
     )
     def test_apply_cphase(self, tol, par, input, shots, analytic):
-        """Tests that applying the iSWAP gate yields the expected output."""
+        """Tests that applying the CPhase gate yields the expected output."""
         device = SimulatorDevice(2, shots=shots, analytic=analytic)
 
         cphase_mat = np.array([[1, 0, 0, 0],
@@ -232,7 +236,7 @@ class TestApply:
                                [0, 0, 1, 0],
                                [0, 0, 0, np.exp(1j * par)]])
 
-        expected = input @ cphase_mat
+        expected = cphase_mat @ input
 
         device.reset()
         device._initial_state = np.array(input, dtype=np.complex64)
