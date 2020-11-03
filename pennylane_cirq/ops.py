@@ -148,11 +148,11 @@ class CPhase(Operation):
 
         CPhase(\phi) =
             \begin{bmatrix}
-                [[1, 0, 0, 0],
-                [0, 1, 0, 0],
-                [0, 0, 1, 0],
-                [0, 0, 0, e^{i\phi]]
-            \end{bmatrix}.
+                1 & 0 & 0 & 0\\
+                0 & 1 & 0 & 0\\
+                0 & 0 & 1 & 0\\
+                0 & 0 & 0 & e^{i\phi}
+            \end{bmatrix}
 
     See the `Cirq docs <https://cirq.readthedocs.io/en/stable/generated/cirq.CZPowGate.html>`_
     for further details."""
