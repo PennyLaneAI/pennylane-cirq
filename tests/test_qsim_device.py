@@ -19,8 +19,7 @@ import math
 
 import pennylane as qml
 import numpy as np
-from pennylane_cirq import QSimDevice
-import cirq
+from pennylane_cirq.qsim_device import QSimDevice
 
 
 class TestDeviceIntegration:
