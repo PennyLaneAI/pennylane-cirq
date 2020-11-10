@@ -19,8 +19,7 @@ import math
 
 import pennylane as qml
 import numpy as np
-from pennylane_cirq import QSimhDevice
-import cirq
+from pennylane_cirq.qsim_device import QSimhDevice
 
 qsimh_options = {"k": [0], "w": 0, "p": 0, "r": 0}
 
