@@ -21,6 +21,8 @@
 
 This release contains contributions from (in alphabetical order):
 
+Theodor Isacsson
+
 ---
 
 # Release 0.12.1
