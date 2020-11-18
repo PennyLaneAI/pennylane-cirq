@@ -4,15 +4,24 @@
 
 ### Improvements
 
+* Added support for iSWAP and CPhase gate operations.
+  [(#45)](https://github.com/PennyLaneAI/pennylane-cirq/pull/45)
+
 ### Breaking changes
 
 ### Bug fixes
+
+* Removed import of `qsimcirq` from `__init__.py`, allowing other devices in
+  this plugin to work without `qsimcirq` being installed.
+  [(#46)](https://github.com/PennyLaneAI/pennylane-cirq/pull/46)
 
 ### Documentation
 
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Theodor Isacsson
 
 ---
 
