@@ -8,7 +8,7 @@
 
 ### Contributors
 
-This release contains contributions from (in alphabetical order
+This release contains contributions from (in alphabetical order):
 
 ---
 
