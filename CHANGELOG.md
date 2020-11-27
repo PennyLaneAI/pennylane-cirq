@@ -6,6 +6,8 @@
 
 ### Bug fixes
 
+### Documentation
+
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
