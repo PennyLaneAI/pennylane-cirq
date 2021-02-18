@@ -34,13 +34,14 @@ Code details
 import abc
 from collections.abc import Iterable  # pylint: disable=no-name-in-module
 from collections import OrderedDict
-import cirq
 import functools
-import numpy as np
 import operator
+
+import cirq
+import numpy as np
 import pennylane as qml
 from pennylane import QubitDevice
-from pennylane.operation import Operation, Observable, Tensor
+from pennylane.operation import Operation, Tensor
 from pennylane.wires import Wires
 
 from ._version import __version__
@@ -166,6 +167,7 @@ class CirqDevice(QubitDevice, abc.ABC):
     }
 
     def to_paulistring(self, observable):
+        """Convert an observable to a cirq.PauliString"""
         if isinstance(observable, Tensor):
             obs = [self.to_paulistring(o) for o in observable.obs]
             return functools.reduce(operator.mul, obs)

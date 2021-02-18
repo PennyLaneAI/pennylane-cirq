@@ -15,7 +15,7 @@
 Unit tests for the CirqDevice class
 """
 import math
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import cirq
 import pennylane as qml
