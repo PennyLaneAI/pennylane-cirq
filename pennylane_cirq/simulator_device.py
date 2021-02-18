@@ -60,10 +60,10 @@ class SimulatorDevice(CirqDevice):
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
 
-    def __init__(self, wires, shots=1000, analytic=True, qubits=None):
+    def __init__(self, wires, shots=1000, analytic=True, qubits=None, simulator=None):
         super().__init__(wires, shots, analytic, qubits)
 
-        self._simulator = cirq.Simulator()
+        self._simulator = simulator or cirq.Simulator()
 
         self._initial_state = None
         self._result = None
@@ -187,6 +187,13 @@ class SimulatorDevice(CirqDevice):
         return np.array(
             [self._result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
         ).T.astype(int)
+
+    def expval(self, observable):
+        if not self.analytic or not hasattr(self._simulator, "simulate_expectation_values"):
+            return super().expval(observable)
+        return self._simulator.simulate_expectation_values(
+            self.circuit, self.to_paulistring(observable)
+        )[0]
 
 
 class MixedStateSimulatorDevice(SimulatorDevice):

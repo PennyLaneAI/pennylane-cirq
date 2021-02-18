@@ -35,10 +35,12 @@ import abc
 from collections.abc import Iterable  # pylint: disable=no-name-in-module
 from collections import OrderedDict
 import cirq
+import functools
 import numpy as np
+import operator
 import pennylane as qml
 from pennylane import QubitDevice
-from pennylane.operation import Operation
+from pennylane.operation import Operation, Observable, Tensor
 from pennylane.wires import Wires
 
 from ._version import __version__
@@ -155,13 +157,27 @@ class CirqDevice(QubitDevice, abc.ABC):
     }
 
     _observable_map = {
-        "PauliX": None,
-        "PauliY": None,
-        "PauliZ": None,
-        "Hadamard": None,
+        "PauliX": CirqOperation(lambda: cirq.X),
+        "PauliY": CirqOperation(lambda: cirq.Y),
+        "PauliZ": CirqOperation(lambda: cirq.Z),
+        "Hadamard": CirqOperation(lambda: cirq.H),
         "Hermitian": None,
-        "Identity": None,
+        "Identity": CirqOperation(lambda: cirq.I),
     }
+
+    def to_paulistring(self, observable):
+        if isinstance(observable, Tensor):
+            obs = [self.to_paulistring(o) for o in observable.obs]
+            return functools.reduce(operator.mul, obs)
+        else:
+            cirq_op = self._observable_map[observable.name]
+            if cirq_op is None:
+                raise NotImplementedError(f"{observable.name} is not currently supported.")
+            cirq_op.parametrize(*observable.parameters)
+            device_wires = self.map_wires(observable.wires)
+            return functools.reduce(
+                operator.mul, cirq_op.apply(*[self.qubits[w] for w in device_wires.labels])
+            )
 
     def reset(self):
         # pylint: disable=missing-function-docstring
