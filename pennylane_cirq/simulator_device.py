@@ -56,6 +56,8 @@ class SimulatorDevice(CirqDevice):
         qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
+        simulator (Optional[cirq.Simulator]): Optional custom simulator object to use. If
+            None, the default cirq.Simulator() will be used instead.
     """
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
