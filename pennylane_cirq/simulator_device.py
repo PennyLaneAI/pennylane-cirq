@@ -195,7 +195,7 @@ class SimulatorDevice(CirqDevice):
         if not self.analytic or not hasattr(self._simulator, "simulate_expectation_values"):
             return super().expval(observable)
         return self._simulator.simulate_expectation_values(
-            self.circuit, self.to_paulistring(observable)
+            self.circuit, cirq.PauliSum() + self.to_paulistring(observable)
         )[0]
 
 
