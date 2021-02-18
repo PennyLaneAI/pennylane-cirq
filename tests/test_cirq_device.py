@@ -433,3 +433,15 @@ class TestOperations:
 
         for i in range(len(ops)):
             assert ops[i].gate == expected_cirq_gates[i]
+
+def test_to_paulistring_sanity_check():
+    with patch.multiple(CirqDevice, __abstractmethods__=set()):
+        device = CirqDevice(2, shots=1, analytic=True)
+        result = device.to_paulistring(qml.PauliX(0) @ qml.PauliZ(1))
+        assert result == cirq.X(cirq.LineQubit(0)) * cirq.Z(cirq.LineQubit(1))
+
+def test_to_paulistring_single_gate():
+    with patch.multiple(CirqDevice, __abstractmethods__=set()):
+        device = CirqDevice(2, shots=1, analytic=True)
+        result = device.to_paulistring(qml.PauliX(0))
+        assert result == cirq.X(cirq.LineQubit(0))

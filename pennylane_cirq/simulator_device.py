@@ -56,14 +56,16 @@ class SimulatorDevice(CirqDevice):
         qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
+        simulator (Optional[cirq.Simulator]): Optional custom simulator object to use. If
+            None, the default cirq.Simulator() will be used instead.
     """
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
-
-    def __init__(self, wires, shots=1000, analytic=True, qubits=None):
+    # pylint: disable=too-many-arguments
+    def __init__(self, wires, shots=1000, analytic=True, qubits=None, simulator=None):
         super().__init__(wires, shots, analytic, qubits)
 
-        self._simulator = cirq.Simulator()
+        self._simulator = simulator or cirq.Simulator()
 
         self._initial_state = None
         self._result = None
@@ -187,6 +189,14 @@ class SimulatorDevice(CirqDevice):
         return np.array(
             [self._result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
         ).T.astype(int)
+
+    def expval(self, observable):
+        # pylint: disable=missing-function-docstring
+        if not hasattr(self._simulator, "simulate_expectation_values"):
+            return super().expval(observable)
+        return self._simulator.simulate_expectation_values(
+            self.circuit, cirq.PauliSum() + self.to_paulistring(observable)
+        )[0]
 
 
 class MixedStateSimulatorDevice(SimulatorDevice):
