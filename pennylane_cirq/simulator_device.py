@@ -192,7 +192,7 @@ class SimulatorDevice(CirqDevice):
 
     def expval(self, observable):
         # pylint: disable=missing-function-docstring
-        if not self.analytic or not hasattr(self._simulator, "simulate_expectation_values"):
+        if not hasattr(self._simulator, "simulate_expectation_values"):
             return super().expval(observable)
         return self._simulator.simulate_expectation_values(
             self.circuit, cirq.PauliSum() + self.to_paulistring(observable)
