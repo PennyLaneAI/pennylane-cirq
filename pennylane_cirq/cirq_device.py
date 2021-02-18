@@ -171,15 +171,15 @@ class CirqDevice(QubitDevice, abc.ABC):
         if isinstance(observable, Tensor):
             obs = [self.to_paulistring(o) for o in observable.obs]
             return functools.reduce(operator.mul, obs)
-        else:
-            cirq_op = self._observable_map[observable.name]
-            if cirq_op is None:
-                raise NotImplementedError(f"{observable.name} is not currently supported.")
-            cirq_op.parametrize(*observable.parameters)
-            device_wires = self.map_wires(observable.wires)
-            return functools.reduce(
-                operator.mul, cirq_op.apply(*[self.qubits[w] for w in device_wires.labels])
-            )
+
+        cirq_op = self._observable_map[observable.name]
+        if cirq_op is None:
+            raise NotImplementedError(f"{observable.name} is not currently supported.")
+        cirq_op.parametrize(*observable.parameters)
+        device_wires = self.map_wires(observable.wires)
+        return functools.reduce(
+            operator.mul, cirq_op.apply(*[self.qubits[w] for w in device_wires.labels])
+        )
 
     def reset(self):
         # pylint: disable=missing-function-docstring

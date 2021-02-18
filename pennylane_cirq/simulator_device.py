@@ -59,7 +59,7 @@ class SimulatorDevice(CirqDevice):
     """
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
-
+    # pylint: disable=too-many-arguments
     def __init__(self, wires, shots=1000, analytic=True, qubits=None, simulator=None):
         super().__init__(wires, shots, analytic, qubits)
 
@@ -189,6 +189,7 @@ class SimulatorDevice(CirqDevice):
         ).T.astype(int)
 
     def expval(self, observable):
+        # pylint: disable=missing-function-docstring
         if not self.analytic or not hasattr(self._simulator, "simulate_expectation_values"):
             return super().expval(observable)
         return self._simulator.simulate_expectation_values(
