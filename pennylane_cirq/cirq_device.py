@@ -162,6 +162,8 @@ class CirqDevice(QubitDevice, abc.ABC):
         "PauliY": CirqOperation(lambda: cirq.Y),
         "PauliZ": CirqOperation(lambda: cirq.Z),
         "Hadamard": CirqOperation(lambda: cirq.H),
+        # TODO(chase): Consider using qml.utils.decompose_hamiltonian()
+        # to support this observable.
         "Hermitian": None,
         "Identity": CirqOperation(lambda: cirq.I),
     }
