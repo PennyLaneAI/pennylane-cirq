@@ -114,7 +114,7 @@ class QSimhDevice(SimulatorDevice):
         super().__init__(wires, shots, analytic, qubits)
 
         self.circuit = None
-        self.qsimh_options = qsimh_options or {}
+        self.qsimh_options = qsimh_options
         self._simulator = qsimcirq.QSimhSimulator(qsimh_options)
 
     @property
