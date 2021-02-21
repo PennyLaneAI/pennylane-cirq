@@ -57,7 +57,7 @@ class QSimDevice(SimulatorDevice):
     def __init__(self, wires, shots=1000, analytic=True, qubits=None, qsim_options=None):
         super().__init__(wires, shots, analytic, qubits)
         self.circuit = qsimcirq.QSimCircuit(cirq_circuit=cirq.Circuit())
-        self._simulator = qsimcirq.QSimSimulator(qsim_options=qsim_options)
+        self._simulator = qsimcirq.QSimSimulator(qsim_options=qsim_options or {})
 
     def reset(self):
         # pylint: disable=missing-function-docstring
