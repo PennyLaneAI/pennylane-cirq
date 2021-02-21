@@ -1,4 +1,4 @@
-# Release 0.14.0-dev
+## Release 0.14.0
 
 ### New features
 
@@ -14,6 +14,7 @@
 
 This release contains contributions from (in alphabetical order):
 
+Chase Roberts
 ---
 
 # Release 0.13.0
