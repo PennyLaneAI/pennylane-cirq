@@ -144,15 +144,15 @@ class CirqDevice(QubitDevice, abc.ABC):
         "RZ": CirqOperation(lambda phi: cirq.ZPowGate(exponent=phi / np.pi, global_shift=-0.5)),
         "Rot": CirqOperation(lambda a, b, c: [cirq.ZPowGate(exponent=a / np.pi, global_shift=-0.5), cirq.YPowGate(exponent=b / np.pi, global_shift=-0.5), cirq.ZPowGate(exponent=c / np.pi, global_shift=-0.5)]),
         "CRX": CirqOperation(lambda phi: cirq.CNotPowGate(exponent=phi / np.pi, global_shift=-0.5)),
-        "CRY": CirqOperation(lambda phi: cirq.ControlledGate(cirq.YPowGate(exponent=phi / np.pi, global_shift=-0.5))),
+        #"CRY": CirqOperation(lambda phi: cirq.ControlledGate(cirq.YPowGate(exponent=phi / np.pi, global_shift=-0.5))),
         "CRZ": CirqOperation(lambda phi: cirq.CZPowGate(exponent=phi / np.pi, global_shift=-0.5)),
-        "CRot": CirqOperation(
-            lambda a, b, c: [
-                cirq.ControlledGate(cirq.rz(a)),
-                cirq.ControlledGate(cirq.ry(b)),
-                cirq.ControlledGate(cirq.rz(c)),
-            ]
-        ),
+        #"CRot": CirqOperation(
+            #lambda a, b, c: [
+                #cirq.ControlledGate(cirq.rz(a)),
+                #cirq.ControlledGate(cirq.ry(b)),
+                #cirq.ControlledGate(cirq.rz(c)),
+            #]
+        #),
         "CSWAP": CirqOperation(lambda: cirq.CSWAP),
         "Toffoli": CirqOperation(lambda: cirq.TOFFOLI),
     }
