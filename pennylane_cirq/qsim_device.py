@@ -47,14 +47,17 @@ class QSimDevice(SimulatorDevice):
         qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
+        qsim_options: (Dict[str, Any]): A dictionary with options for the qsimh simulator. See the `qsim
+            usage documentation <https://github.com/quantumlib/qsim/blob/master/docs/usage.md>`__
+            for further details.
     """
     name = "QSim device for PennyLane"
     short_name = "cirq.qsim"
 
-    def __init__(self, wires, shots=1000, analytic=True, qubits=None):
+    def __init__(self, wires, shots=1000, analytic=True, qubits=None, qsim_options=None):
         super().__init__(wires, shots, analytic, qubits)
         self.circuit = qsimcirq.QSimCircuit(cirq_circuit=cirq.Circuit())
-        self._simulator = qsimcirq.QSimSimulator()
+        self._simulator = qsimcirq.QSimSimulator(qsim_options=qsim_options or {})
 
     def reset(self):
         # pylint: disable=missing-function-docstring

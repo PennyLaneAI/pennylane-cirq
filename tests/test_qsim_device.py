@@ -36,6 +36,17 @@ class TestDeviceIntegration:
 
         assert isinstance(dev, QSimDevice)
 
+    def test_device_loading_options(self):
+        """Tests that the cirq.qsim device is properly loaded with options"""
+
+        dev = qml.device("cirq.qsim", wires=2, qsim_options={'t': 2})
+
+        assert dev.num_wires == 2
+        assert dev.shots == 1000
+        assert dev.short_name == "cirq.qsim"
+
+        assert isinstance(dev, QSimDevice)
+
     @pytest.mark.parametrize("analytic", [True, False])
     @pytest.mark.parametrize("shots", [8192])
     def test_one_qubit_circuit(self, shots, analytic, tol):
