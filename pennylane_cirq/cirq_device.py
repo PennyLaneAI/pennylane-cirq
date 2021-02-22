@@ -142,7 +142,6 @@ class CirqDevice(QubitDevice, abc.ABC):
         "RX": CirqOperation(lambda phi: cirq.XPowGate(exponent=phi / np.pi, global_shift=-0.5)),
         "RY": CirqOperation(lambda phi: cirq.YPowGate(exponent=phi / np.pi, global_shift=-0.5)),
         "RZ": CirqOperation(lambda phi: cirq.ZPowGate(exponent=phi / np.pi, global_shift=-0.5)),
-cirq.ZPowGate(exponent=a / np.pi, global_shift=-0.5)
         "Rot": CirqOperation(lambda a, b, c: [cirq.ZPowGate(exponent=a / np.pi, global_shift=-0.5), cirq.YPowGate(exponent=b / np.pi, global_shift=-0.5), cirq.ZPowGate(exponent=c / np.pi, global_shift=-0.5)]),
         "CRX": CirqOperation(lambda phi: cirq.ControlledGate(cirq.XPowGate(exponent=phi / np.pi, global_shift=-0.5))),
         "CRY": CirqOperation(lambda phi: cirq.ControlledGate(cirq.YPowGate(exponent=phi / np.pi, global_shift=-0.5))),
