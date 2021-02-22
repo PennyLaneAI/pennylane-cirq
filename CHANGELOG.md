@@ -1,3 +1,19 @@
+# Release 0.15.0
+
+### New features
+
+### Improvements
+
+### Bug fixes
+
+### Documentation
+
+### Contributors
+
+This release contains contributions from (in alphabetical order):
+
+---
+
 # Release 0.14.0
 
 ### New features
