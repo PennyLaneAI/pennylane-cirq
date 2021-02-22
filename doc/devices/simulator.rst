@@ -54,6 +54,22 @@ the wire 2 corresponds to ``cirq.GridQubit(1, 0)``.
 
 If no qubits are given, the plugin will create an array of ``LineQubit`` instances.
 
+Custom simulators
+~~~~~~~~~~~~~~~~~
+
+The simulator device can also be instantiated using an optional custom simulator object:
+
+.. code-block:: python
+
+    import pennylane as qml
+    import cirq
+
+    sim = cirq.Simulator()
+    dev = qml.device("cirq.simulator", wires=2, simulator=sim)
+
+If the simulator argument is not provided, the device will by default
+create a ``cirq.Simulator`` simulator.
+
 Supported operations
 ~~~~~~~~~~~~~~~~~~~~
 

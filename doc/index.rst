@@ -3,13 +3,6 @@ PennyLane-Cirq Plugin
 
 :Release: |release|
 
-.. image:: _static/puzzle_cirq.png
-    :align: center
-    :width: 70%
-    :target: javascript:void(0);
-
-|
-
 .. include:: ../README.rst
   :start-after:    header-start-inclusion-marker-do-not-remove
   :end-before: header-end-inclusion-marker-do-not-remove

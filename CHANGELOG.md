@@ -2,19 +2,15 @@
 
 ### New features
 
-### Improvements
-* Added support for custom simulator objects. Intended to be used with the Floq service.
+* Added support for custom simulator objects for use with the Floq service.
   [(#51)](https://github.com/PennyLaneAI/pennylane-cirq/pull/51)
-
-### Bug fixes
-
-### Documentation
 
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
 
 Chase Roberts
+
 ---
 
 # Release 0.13.0
