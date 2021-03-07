@@ -190,14 +190,6 @@ class SimulatorDevice(CirqDevice):
             [self._result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
         ).T.astype(int)
 
-    def expval(self, observable):
-        # pylint: disable=missing-function-docstring
-        if not hasattr(self._simulator, "simulate_expectation_values"):
-            return super().expval(observable)
-        return self._simulator.simulate_expectation_values(
-            self.circuit, cirq.PauliSum() + self.to_paulistring(observable)
-        )[0]
-
 
 class MixedStateSimulatorDevice(SimulatorDevice):
     r"""Cirq mixed-state simulator device for PennyLane.
