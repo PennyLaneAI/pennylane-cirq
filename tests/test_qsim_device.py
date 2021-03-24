@@ -47,12 +47,11 @@ class TestDeviceIntegration:
 
         assert isinstance(dev, QSimDevice)
 
-    @pytest.mark.parametrize("analytic", [True, False])
-    @pytest.mark.parametrize("shots", [8192])
-    def test_one_qubit_circuit(self, shots, analytic, tol):
+    @pytest.mark.parametrize("shots", [8192, None])
+    def test_one_qubit_circuit(self, shots, tol):
         """Test that devices provide correct result for a simple circuit"""
 
-        dev = qml.device("cirq.qsim", wires=1, shots=shots, analytic=analytic)
+        dev = qml.device("cirq.qsim", wires=1, shots=shots)
 
         a = 0.543
         b = 0.123
@@ -68,17 +67,16 @@ class TestDeviceIntegration:
 
         assert np.allclose(circuit(a, b, c), np.cos(a) * np.sin(b), **tol)
 
-    @pytest.mark.parametrize("analytic", [True, False])
-    @pytest.mark.parametrize("shots", [8192])
+    @pytest.mark.parametrize("shots", [8192, None])
     @pytest.mark.parametrize(
         "op, params",
         [(qml.QubitStateVector, np.array([0, 1])),
          (qml.BasisState, np.array([1]))]
     )
-    def test_decomposition(self, shots, analytic, op, params, mocker):
+    def test_decomposition(self, shots, op, params, mocker):
         """Test that QubitStateVector and BasisState are decomposed"""
 
-        dev = qml.device("cirq.qsim", wires=1, shots=shots, analytic=analytic)
+        dev = qml.device("cirq.qsim", wires=1, shots=shots)
 
         spy = mocker.spy(op, "decomposition")
 
@@ -113,24 +111,24 @@ class TestDeviceIntegration:
 
 
 @pytest.fixture(scope="function")
-def qsim_device_1_wire(shots, analytic):
+def qsim_device_1_wire(shots):
     """Return a single wire instance of the QSimDevice class."""
-    yield QSimDevice(1, shots=shots, analytic=analytic)
+    yield QSimDevice(1, shots=shots)
 
 
 @pytest.fixture(scope="function")
-def qsim_device_2_wires(shots, analytic):
+def qsim_device_2_wires(shots):
     """Return a two wire instance of the QSimDevice class."""
-    yield QSimDevice(2, shots=shots, analytic=analytic)
+    yield QSimDevice(2, shots=shots)
 
 
 @pytest.fixture(scope="function")
-def qsim_device_3_wires(shots, analytic):
+def qsim_device_3_wires(shots):
     """Return a three wire instance of the QSimDevice class."""
-    yield QSimDevice(3, shots=shots, analytic=analytic)
+    yield QSimDevice(3, shots=shots)
 
 
-@pytest.mark.parametrize("shots,analytic", [(100, True)])
+@pytest.mark.parametrize("shots", [None])
 class TestApply:
     """Tests that gates are correctly applied"""
 
@@ -297,7 +295,7 @@ class TestApply:
         assert np.allclose(qsim_device_2_wires.probability(), np.array(expected_output), **tol)
 
 
-@pytest.mark.parametrize("shots,analytic", [(100, True)])
+@pytest.mark.parametrize("shots", [None])
 class TestAnalyticProbability:
     """Tests the analytic_probability method works as expected."""
 
@@ -310,7 +308,7 @@ class TestAnalyticProbability:
         assert qsim_device_1_wire.analytic_probability() is None
 
 
-@pytest.mark.parametrize("shots,analytic", [(100, True)])
+@pytest.mark.parametrize("shots", [None])
 class TestExpval:
     """Tests that expectation values are properly calculated or that the proper errors are raised."""
 
@@ -406,7 +404,7 @@ class TestExpval:
         assert np.isclose(res, expected_output, **tol)
 
 
-@pytest.mark.parametrize("shots,analytic", [(100, True)])
+@pytest.mark.parametrize("shots", [None])
 class TestVar:
     """Tests that variances are properly calculated."""
 
@@ -493,7 +491,7 @@ class TestVarEstimate:
     def test_var_estimate(self):
         """Test that the variance is not analytically calculated"""
 
-        dev = qml.device("cirq.qsim", wires=1, shots=3, analytic=False)
+        dev = qml.device("cirq.qsim", wires=1, shots=3)
 
         @qml.qnode(dev)
         def circuit():
@@ -506,7 +504,7 @@ class TestVarEstimate:
         assert var != 1.0
 
 
-@pytest.mark.parametrize("shots,analytic", [(100, True)])
+@pytest.mark.parametrize("shots", [None])
 class TestSample:
     """Test sampling."""
 
@@ -552,7 +550,7 @@ class TestSample:
 class TestState:
     """Test the state property."""
 
-    @pytest.mark.parametrize("shots,analytic", [(100, True)])
+    @pytest.mark.parametrize("shots", [None])
     @pytest.mark.parametrize(
         "ops,expected_state",
         [
@@ -568,7 +566,7 @@ class TestState:
 
         assert np.allclose(qsim_device_2_wires.state, expected_state, **tol)
 
-    @pytest.mark.parametrize("shots,analytic", [(100, True)])
+    @pytest.mark.parametrize("shots", [None])
     @pytest.mark.parametrize(
         "ops,diag_ops,expected_state",
         [
@@ -594,7 +592,7 @@ class TestState:
 
         assert np.allclose(qsim_device_2_wires.state, expected_state, **tol)
 
-    @pytest.mark.parametrize("shots,analytic", [(100, False)])
+    @pytest.mark.parametrize("shots", [100])
     def test_state_non_analytic(self, qsim_device_2_wires):
         """Test that the state is None if in non-analytic mode."""
         qsim_device_2_wires.reset()

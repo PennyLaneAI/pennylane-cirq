@@ -24,12 +24,12 @@ import cirq
 
 
 @pytest.fixture(scope="function")
-def simulator_device_1_wire(shots, analytic):
+def simulator_device_1_wire(shots):
     """Return a single wire instance of the MixedStateSimulatorDevice class."""
-    yield MixedStateSimulatorDevice(1, shots=shots, analytic=analytic)
+    yield MixedStateSimulatorDevice(1, shots=shots)
 
 
-@pytest.mark.parametrize("shots,analytic", [(100, True)])
+@pytest.mark.parametrize("shots", [None])
 class TestApply:
     """Tests that ops are correctly applied"""
 
@@ -199,9 +199,9 @@ class TestApply:
             np.array([2, 1, 2, 1]) / np.sqrt(10),
         ]
     )
-    def test_apply_iswap(self, tol, input, shots, analytic):
+    def test_apply_iswap(self, tol, input, shots):
         """Tests that applying the iSWAP gate yields the expected output."""
-        device = SimulatorDevice(2, shots=shots, analytic=analytic)
+        device = SimulatorDevice(2, shots=shots)
 
         iswap_mat = np.array([[1, 0, 0, 0],
                               [0, 0, 1j, 0],
@@ -227,9 +227,9 @@ class TestApply:
             np.array([2, 1, 2, 1]) / np.sqrt(10),
         ]
     )
-    def test_apply_cphase(self, tol, par, input, shots, analytic):
+    def test_apply_cphase(self, tol, par, input, shots):
         """Tests that applying the CPhase gate yields the expected output."""
-        device = SimulatorDevice(2, shots=shots, analytic=analytic)
+        device = SimulatorDevice(2, shots=shots)
 
         cphase_mat = np.array([[1, 0, 0, 0],
                                [0, 1, 0, 0],

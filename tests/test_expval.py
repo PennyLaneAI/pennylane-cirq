@@ -31,11 +31,11 @@ def mimic_execution_for_expval(device):
     with device.execution_context():
         yield
 
-        if not device.analytic:
+        if not device.shots is None:
             device._samples = device.generate_samples()
 
 
-@pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
+@pytest.mark.parametrize("shots", [None, 8192])
 class TestExpval:
     """Test expectation values"""
 
@@ -224,7 +224,7 @@ class TestExpval:
         assert np.allclose(res, expected, **tol)
 
 
-@pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
+@pytest.mark.parametrize("shots", [None, 8192])
 class TestTensorExpval:
     """Test tensor expectation values"""
 

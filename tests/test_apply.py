@@ -87,13 +87,13 @@ def mimic_execution_for_apply(device):
         yield
 
 
-@pytest.mark.parametrize("shots,analytic", [(1000, True)])
+@pytest.mark.parametrize("shots", [None])
 class TestApplyPureState:
     """Test application of PennyLane operations on the pure state simulator."""
 
-    def test_basis_state(self, analytic, shots, tol):
+    def test_basis_state(self, shots, tol):
         """Test basis state initialization"""
-        dev = SimulatorDevice(4, analytic=analytic, shots=shots)
+        dev = SimulatorDevice(4, shots=shots)
         state = np.array([0, 0, 1, 0])
 
         with mimic_execution_for_apply(dev):
@@ -105,9 +105,9 @@ class TestApplyPureState:
         expected[np.ravel_multi_index(state, [2] * 4)] = 1
         assert np.allclose(res, expected, **tol)
 
-    def test_identity_basis_state(self, analytic, shots, tol):
+    def test_identity_basis_state(self, shots, tol):
         """Test basis state initialization if identity"""
-        dev = SimulatorDevice(4, analytic=analytic, shots=shots)
+        dev = SimulatorDevice(4, shots=shots)
         state = np.array([1, 0, 0, 0])
 
         with mimic_execution_for_apply(dev):
@@ -119,9 +119,9 @@ class TestApplyPureState:
         expected[np.ravel_multi_index(state, [2] * 4)] = 1
         assert np.allclose(res, expected, **tol)
 
-    def test_qubit_state_vector(self, init_state, analytic, shots, tol):
+    def test_qubit_state_vector(self, init_state, shots, tol):
         """Test PauliX application"""
-        dev = SimulatorDevice(1, analytic=analytic, shots=shots)
+        dev = SimulatorDevice(1, shots=shots)
         state = init_state(1)
 
         with mimic_execution_for_apply(dev):
@@ -131,10 +131,10 @@ class TestApplyPureState:
         expected = state
         assert np.allclose(res, expected, **tol)
 
-    def test_invalid_qubit_state_vector(self, analytic, shots):
+    def test_invalid_qubit_state_vector(self, shots):
         """Test that an exception is raised if the state
         vector is the wrong size"""
-        dev = SimulatorDevice(2, analytic=analytic, shots=shots)
+        dev = SimulatorDevice(2, shots=shots)
         state = np.array([0, 123.432])
 
         with pytest.raises(
@@ -145,9 +145,9 @@ class TestApplyPureState:
                 dev.apply([qml.QubitStateVector(state, wires=[0, 1])])
 
     @pytest.mark.parametrize("name,mat", single_qubit)
-    def test_single_qubit_no_parameters(self, init_state, analytic, shots, name, mat, tol):
+    def test_single_qubit_no_parameters(self, init_state, shots, name, mat, tol):
         """Test application of single qubit gates without parameters"""
-        dev = SimulatorDevice(1, analytic=analytic, shots=shots)
+        dev = SimulatorDevice(1, shots=shots)
         state = init_state(1)
 
         with mimic_execution_for_apply(dev):
@@ -161,9 +161,9 @@ class TestApplyPureState:
 
     @pytest.mark.parametrize("theta", [0.5432, -0.232])
     @pytest.mark.parametrize("name,func", single_qubit_param)
-    def test_single_qubit_parameters(self, init_state, analytic, shots, name, func, theta, tol):
+    def test_single_qubit_parameters(self, init_state, shots, name, func, theta, tol):
         """Test application of single qubit gates with parameters"""
-        dev = SimulatorDevice(1, analytic=analytic, shots=shots)
+        dev = SimulatorDevice(1, shots=shots)
         state = init_state(1)
 
         with mimic_execution_for_apply(dev):
@@ -178,9 +178,9 @@ class TestApplyPureState:
         expected = func(theta) @ state
         assert np.allclose(res, expected, **tol)
 
-    def test_rotation(self, init_state, analytic, shots, tol):
+    def test_rotation(self, init_state, shots, tol):
         """Test three axis rotation gate"""
-        dev = SimulatorDevice(1, analytic=analytic, shots=shots)
+        dev = SimulatorDevice(1, shots=shots)
         state = init_state(1)
 
         a = 0.542
@@ -195,9 +195,9 @@ class TestApplyPureState:
         assert np.allclose(res, expected, **tol)
 
     @pytest.mark.parametrize("name,mat", two_qubit)
-    def test_two_qubit_no_parameters(self, init_state, analytic, shots, name, mat, tol):
+    def test_two_qubit_no_parameters(self, init_state, shots, name, mat, tol):
         """Test PauliX application"""
-        dev = SimulatorDevice(2, analytic=analytic, shots=shots)
+        dev = SimulatorDevice(2, shots=shots)
         state = init_state(2)
 
         with mimic_execution_for_apply(dev):
@@ -213,9 +213,9 @@ class TestApplyPureState:
         assert np.allclose(res, expected, **tol)
 
     @pytest.mark.parametrize("mat", [U, U2])
-    def test_qubit_unitary(self, init_state, analytic, shots, mat, tol):
+    def test_qubit_unitary(self, init_state, shots, mat, tol):
         N = int(np.log2(len(mat)))
-        dev = SimulatorDevice(N, analytic=analytic, shots=shots)
+        dev = SimulatorDevice(N, shots=shots)
         state = init_state(N)
 
         with mimic_execution_for_apply(dev):
@@ -230,10 +230,10 @@ class TestApplyPureState:
         expected = mat @ state
         assert np.allclose(res, expected, **tol)
 
-    def test_invalid_qubit_state_unitary(self, analytic, shots):
+    def test_invalid_qubit_state_unitary(self, shots):
         """Test that an exception is raised if the
         unitary matrix is the wrong size"""
-        dev = SimulatorDevice(2, analytic=analytic, shots=shots)
+        dev = SimulatorDevice(2, shots=shots)
         state = np.array([[0, 123.432], [-0.432, 023.4]])
 
         with pytest.raises(ValueError, match=r"Not a unitary matrix"):
@@ -241,8 +241,8 @@ class TestApplyPureState:
                 dev.apply([qml.QubitUnitary(state, wires=[0, 1])])
 
     @pytest.mark.parametrize("name, mat", three_qubit)
-    def test_three_qubit_no_parameters(self, init_state, analytic, shots, name, mat, tol):
-        dev = SimulatorDevice(3, analytic=analytic, shots=shots)
+    def test_three_qubit_no_parameters(self, init_state, shots, name, mat, tol):
+        dev = SimulatorDevice(3, shots=shots)
         state = init_state(3)
 
         with mimic_execution_for_apply(dev):
@@ -259,9 +259,9 @@ class TestApplyPureState:
 
     @pytest.mark.parametrize("theta", [0.5432, -0.232])
     @pytest.mark.parametrize("name,func", two_qubit_param)
-    def test_two_qubits_parameters(self, init_state, analytic, shots, name, func, theta, tol):
+    def test_two_qubits_parameters(self, init_state, shots, name, func, theta, tol):
         """Test application of two qubit gates with parameters"""
-        dev = SimulatorDevice(2, analytic=analytic, shots=shots)
+        dev = SimulatorDevice(2, shots=shots)
         state = init_state(2)
 
         with mimic_execution_for_apply(dev):
@@ -277,13 +277,13 @@ class TestApplyPureState:
         assert np.allclose(res, expected, **tol)
 
 
-@pytest.mark.parametrize("shots,analytic", [(1000, True)])
+@pytest.mark.parametrize("shots", [None])
 class TestApplyMixedState:
     """Test application of PennyLane operations on the mixed state simulator."""
 
-    def test_basis_state(self, analytic, shots, tol):
+    def test_basis_state(self, shots, tol):
         """Test basis state initialization"""
-        dev = MixedStateSimulatorDevice(4, analytic=analytic, shots=shots)
+        dev = MixedStateSimulatorDevice(4, shots=shots)
         state = np.array([0, 0, 1, 0])
 
         with mimic_execution_for_apply(dev):
@@ -296,9 +296,9 @@ class TestApplyMixedState:
         expected = np.kron(expected, expected.conj()).reshape([2 ** 4, 2 ** 4])
         assert np.allclose(res, expected, **tol)
 
-    def test_identity_basis_state(self, analytic, shots, tol):
+    def test_identity_basis_state(self, shots, tol):
         """Test basis state initialization if identity"""
-        dev = MixedStateSimulatorDevice(4, analytic=analytic, shots=shots)
+        dev = MixedStateSimulatorDevice(4, shots=shots)
         state = np.array([1, 0, 0, 0])
 
         with mimic_execution_for_apply(dev):
@@ -311,9 +311,9 @@ class TestApplyMixedState:
         expected = np.kron(expected, expected.conj()).reshape([16, 16])
         assert np.allclose(res, expected, **tol)
 
-    def test_qubit_state_vector(self, init_state, analytic, shots, tol):
+    def test_qubit_state_vector(self, init_state, shots, tol):
         """Test PauliX application"""
-        dev = MixedStateSimulatorDevice(1, analytic=analytic, shots=shots)
+        dev = MixedStateSimulatorDevice(1, shots=shots)
         state = init_state(1)
 
         with mimic_execution_for_apply(dev):
@@ -324,10 +324,10 @@ class TestApplyMixedState:
         expected = np.kron(state, state.conj()).reshape([2, 2])
         assert np.allclose(res, expected, **tol)
 
-    def test_invalid_qubit_state_vector(self, analytic, shots):
+    def test_invalid_qubit_state_vector(self, shots):
         """Test that an exception is raised if the state
         vector is the wrong size"""
-        dev = MixedStateSimulatorDevice(2, analytic=analytic, shots=shots)
+        dev = MixedStateSimulatorDevice(2, shots=shots)
         state = np.array([0, 123.432])
 
         with pytest.raises(
@@ -338,9 +338,9 @@ class TestApplyMixedState:
                 dev.apply([qml.QubitStateVector(state, wires=[0, 1])])
 
     @pytest.mark.parametrize("name,mat", single_qubit)
-    def test_single_qubit_no_parameters(self, init_state, analytic, shots, name, mat, tol):
+    def test_single_qubit_no_parameters(self, init_state, shots, name, mat, tol):
         """Test application of single qubit gates without parameters"""
-        dev = MixedStateSimulatorDevice(1, analytic=analytic, shots=shots)
+        dev = MixedStateSimulatorDevice(1, shots=shots)
         state = init_state(1)
 
         with mimic_execution_for_apply(dev):
@@ -355,9 +355,9 @@ class TestApplyMixedState:
 
     @pytest.mark.parametrize("theta", [0.5432, -0.232])
     @pytest.mark.parametrize("name,func", single_qubit_param)
-    def test_single_qubit_parameters(self, init_state, analytic, shots, name, func, theta, tol):
+    def test_single_qubit_parameters(self, init_state, shots, name, func, theta, tol):
         """Test application of single qubit gates with parameters"""
-        dev = MixedStateSimulatorDevice(1, analytic=analytic, shots=shots)
+        dev = MixedStateSimulatorDevice(1, shots=shots)
         state = init_state(1)
 
         with mimic_execution_for_apply(dev):
@@ -373,9 +373,9 @@ class TestApplyMixedState:
         expected = np.kron(expected, expected.conj()).reshape([2, 2])
         assert np.allclose(res, expected, **tol)
 
-    def test_rotation(self, init_state, analytic, shots, tol):
+    def test_rotation(self, init_state, shots, tol):
         """Test three axis rotation gate"""
-        dev = MixedStateSimulatorDevice(1, analytic=analytic, shots=shots)
+        dev = MixedStateSimulatorDevice(1, shots=shots)
         state = init_state(1)
 
         a = 0.542
@@ -391,9 +391,9 @@ class TestApplyMixedState:
         assert np.allclose(res, expected, **tol)
 
     @pytest.mark.parametrize("name,mat", two_qubit)
-    def test_two_qubit_no_parameters(self, init_state, analytic, shots, name, mat, tol):
+    def test_two_qubit_no_parameters(self, init_state, shots, name, mat, tol):
         """Test PauliX application"""
-        dev = MixedStateSimulatorDevice(2, analytic=analytic, shots=shots)
+        dev = MixedStateSimulatorDevice(2, shots=shots)
         state = init_state(2)
 
         with mimic_execution_for_apply(dev):
@@ -410,9 +410,9 @@ class TestApplyMixedState:
         assert np.allclose(res, expected, **tol)
 
     @pytest.mark.parametrize("mat", [U, U2])
-    def test_qubit_unitary(self, init_state, analytic, shots, mat, tol):
+    def test_qubit_unitary(self, init_state, shots, mat, tol):
         N = int(np.log2(len(mat)))
-        dev = MixedStateSimulatorDevice(N, analytic=analytic, shots=shots)
+        dev = MixedStateSimulatorDevice(N, shots=shots)
         state = init_state(N)
 
         with mimic_execution_for_apply(dev):
@@ -428,10 +428,10 @@ class TestApplyMixedState:
         expected = np.kron(expected, expected.conj()).reshape([2 ** N, 2 ** N])
         assert np.allclose(res, expected, **tol)
 
-    def test_invalid_qubit_state_unitary(self, analytic, shots):
+    def test_invalid_qubit_state_unitary(self, shots):
         """Test that an exception is raised if the
         unitary matrix is the wrong size"""
-        dev = MixedStateSimulatorDevice(2, analytic=analytic, shots=shots)
+        dev = MixedStateSimulatorDevice(2, shots=shots)
         state = np.array([[0, 123.432], [-0.432, 023.4]])
 
         with pytest.raises(ValueError, match=r"Not a unitary matrix"):
@@ -439,8 +439,8 @@ class TestApplyMixedState:
                 dev.apply([qml.QubitUnitary(state, wires=[0, 1])])
 
     @pytest.mark.parametrize("name, mat", three_qubit)
-    def test_three_qubit_no_parameters(self, init_state, analytic, shots, name, mat, tol):
-        dev = MixedStateSimulatorDevice(3, analytic=analytic, shots=shots)
+    def test_three_qubit_no_parameters(self, init_state, shots, name, mat, tol):
+        dev = MixedStateSimulatorDevice(3, shots=shots)
         state = init_state(3)
 
         with mimic_execution_for_apply(dev):
@@ -458,9 +458,9 @@ class TestApplyMixedState:
 
     @pytest.mark.parametrize("theta", [0.5432, -0.232])
     @pytest.mark.parametrize("name,func", two_qubit_param)
-    def test_two_qubits_parameters(self, init_state, analytic, shots, name, func, theta, tol):
+    def test_two_qubits_parameters(self, init_state, shots, name, func, theta, tol):
         """Test application of single qubit gates with parameters"""
-        dev = MixedStateSimulatorDevice(2, analytic=analytic, shots=shots)
+        dev = MixedStateSimulatorDevice(2, shots=shots)
         state = init_state(2)
 
         with mimic_execution_for_apply(dev):

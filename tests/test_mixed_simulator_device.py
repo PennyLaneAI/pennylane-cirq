@@ -39,24 +39,24 @@ class TestDeviceIntegration:
 
 
 @pytest.fixture(scope="function")
-def simulator_device_1_wire(shots, analytic):
+def simulator_device_1_wire(shots):
     """Return a single wire instance of the MixedStateSimulatorDevice class."""
-    yield MixedStateSimulatorDevice(1, shots=shots, analytic=analytic)
+    yield MixedStateSimulatorDevice(1, shots=shots)
 
 
 @pytest.fixture(scope="function")
-def simulator_device_2_wires(shots, analytic):
+def simulator_device_2_wires(shots):
     """Return a two wire instance of the MixedStateSimulatorDevice class."""
-    yield MixedStateSimulatorDevice(2, shots=shots, analytic=analytic)
+    yield MixedStateSimulatorDevice(2, shots=shots)
 
 
 @pytest.fixture(scope="function")
-def simulator_device_3_wires(shots, analytic):
+def simulator_device_3_wires(shots):
     """Return a three wire instance of the MixedStateSimulatorDevice class."""
-    yield MixedStateSimulatorDevice(3, shots=shots, analytic=analytic)
+    yield MixedStateSimulatorDevice(3, shots=shots)
 
 
-@pytest.mark.parametrize("shots,analytic", [(100, True)])
+@pytest.mark.parametrize("shots", [None])
 class TestApply:
     """Tests that gates are correctly applied"""
 
@@ -488,7 +488,7 @@ class TestApply:
             )
 
 
-@pytest.mark.parametrize("shots,analytic", [(100, False)])
+@pytest.mark.parametrize("shots", [(100, False)])
 class TestStatePreparationErrorsNonAnalytic:
     """Tests state preparation errors that occur for non-analytic devices."""
 
@@ -516,7 +516,7 @@ class TestStatePreparationErrorsNonAnalytic:
             simulator_device_1_wire.apply([qml.QubitStateVector(np.array([0, 1]), wires=[0])])
 
 
-@pytest.mark.parametrize("shots,analytic", [(100, True)])
+@pytest.mark.parametrize("shots", [None])
 class TestAnalyticProbability:
     """Tests the analytic_probability method works as expected."""
 
@@ -529,7 +529,7 @@ class TestAnalyticProbability:
         assert simulator_device_1_wire.analytic_probability() is None
 
 
-@pytest.mark.parametrize("shots,analytic", [(100, True)])
+@pytest.mark.parametrize("shots", [None])
 class TestExpval:
     """Tests that expectation values are properly calculated or that the proper errors are raised."""
 
@@ -663,7 +663,7 @@ class TestExpval:
         assert np.isclose(res, expected_output, **tol)
 
 
-@pytest.mark.parametrize("shots,analytic", [(100, True)])
+@pytest.mark.parametrize("shots", [None])
 class TestVar:
     """Tests that variances are properly calculated."""
 
@@ -794,7 +794,7 @@ class TestVarEstimate:
     def test_var_estimate(self):
         """Test that the variance is not analytically calculated"""
 
-        dev = qml.device("cirq.simulator", wires=1, shots=3, analytic=False)
+        dev = qml.device("cirq.simulator", wires=1, shots=3)
 
         @qml.qnode(dev)
         def circuit():
@@ -807,7 +807,7 @@ class TestVarEstimate:
         assert var != 1.0
 
 
-@pytest.mark.parametrize("shots,analytic", [(100, True)])
+@pytest.mark.parametrize("shots", [100])
 class TestSample:
     """Test sampling."""
 
@@ -823,11 +823,13 @@ class TestSample:
         s1 = simulator_device_2_wires.sample(qml.PauliZ(0))
         assert np.array_equal(s1.shape, (10,))
 
+        simulator_device_2_wires.reset()
         simulator_device_2_wires.shots = 12
         simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
         s2 = simulator_device_2_wires.sample(qml.PauliZ(1))
         assert np.array_equal(s2.shape, (12,))
 
+        simulator_device_2_wires.reset()
         simulator_device_2_wires.shots = 17
         simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
         s3 = simulator_device_2_wires.sample(qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1]))
@@ -853,7 +855,7 @@ class TestSample:
 class TestState:
     """Test the state property."""
 
-    @pytest.mark.parametrize("shots,analytic", [(100, True)])
+    @pytest.mark.parametrize("shots", [None])
     @pytest.mark.parametrize(
         "ops,expected_pure_state",
         [
@@ -872,7 +874,7 @@ class TestState:
 
         assert np.allclose(simulator_device_2_wires.state, expected_output, **tol)
 
-    @pytest.mark.parametrize("shots,analytic", [(100, True)])
+    @pytest.mark.parametrize("shots", [None])
     @pytest.mark.parametrize(
         "ops,diag_ops,expected_pure_state",
         [
@@ -901,7 +903,7 @@ class TestState:
 
         assert np.allclose(simulator_device_2_wires.state, expected_output, **tol)
 
-    @pytest.mark.parametrize("shots,analytic", [(100, False)])
+    @pytest.mark.parametrize("shots", [100])
     def test_state_non_analytic(self, simulator_device_2_wires):
         """Test that the state is None if in non-analytic mode."""
         simulator_device_2_wires.reset()

@@ -34,7 +34,6 @@ class TestDeviceIntegration:
         assert len(dev.qubits) == 2
         assert dev.shots == 1000
         assert dev.short_name == "cirq.pasqal"
-        assert dev.analytic == True
         assert dev.control_radius == 1.0
         assert dev.qubits == sorted([ThreeDQubit(0, 0, 0), ThreeDQubit(control_radius / 2, 0, 0)])
         assert isinstance(dev, SimulatorDevice)
@@ -53,7 +52,6 @@ class TestDevice:
         assert len(dev.qubits) == 2
         assert dev.shots == 123
         assert dev.short_name == "cirq.pasqal"
-        assert dev.analytic == True
         assert dev.control_radius == control_radius
         assert dev.qubits == [ThreeDQubit(0, 0, 0), ThreeDQubit(control_radius / 2, 0, 0)]
         assert isinstance(dev, SimulatorDevice)
