@@ -30,22 +30,20 @@ from pennylane_cirq.cirq_device import CirqDevice
 class TestCirqDeviceInit:
     """Tests the routines of the CirqDevice class."""
 
-    @pytest.mark.parametrize("analytic", [True, False])
     @pytest.mark.parametrize("num_wires", [1, 3, 6])
-    @pytest.mark.parametrize("shots", [1, 100, 137])
-    def test_default_init(self, analytic, num_wires, shots):
+    @pytest.mark.parametrize("shots", [1, 100, 137, None])
+    def test_default_init(self, num_wires, shots):
         """Tests that the device is properly initialized."""
 
-        dev = CirqDevice(num_wires, shots, analytic)
+        dev = CirqDevice(num_wires, shots)
 
         assert dev.num_wires == num_wires
         assert dev.shots == shots
-        assert dev.analytic == analytic
 
     def test_default_init_of_qubits(self):
         """Tests the default initialization of CirqDevice.qubits."""
 
-        dev = CirqDevice(3, 100, False)
+        dev = CirqDevice(3, 100)
 
         assert len(dev.qubits) == 3
         assert dev.qubits[0] == cirq.LineQubit(0)
@@ -62,7 +60,7 @@ class TestCirqDeviceInit:
             cirq.GridQubit(1, 1),
         ]
 
-        dev = CirqDevice(4, 100, False, qubits=qubits)
+        dev = CirqDevice(4, 100, qubits=qubits)
         assert len(dev.qubits) == 4
         assert dev.qubits == qubits
 
@@ -76,7 +74,7 @@ class TestCirqDeviceInit:
             cirq.GridQubit(1, 1),
         ]
 
-        dev = CirqDevice(4, 100, False, qubits=qubits)
+        dev = CirqDevice(4, 100, qubits=qubits)
         assert len(dev.qubits) == 4
         assert dev.qubits == sorted(qubits)
 
@@ -94,7 +92,7 @@ class TestCirqDeviceInit:
             qml.DeviceError,
             match="The number of given qubits and the specified number of wires have to match",
         ):
-            dev = CirqDevice(3, 100, False, qubits=qubits)
+            dev = CirqDevice(3, 100, qubits=qubits)
 
 
 class TestCirqDeviceIntegration:
@@ -160,7 +158,7 @@ def cirq_device_1_wire(shots):
     """A mock instance of the abstract Device class"""
 
     with patch.multiple(CirqDevice, __abstractmethods__=set()):
-        yield CirqDevice(1, shots=shots, analytic=True)
+        yield CirqDevice(1, shots=None)
 
 
 @pytest.fixture(scope="function")
@@ -168,7 +166,7 @@ def cirq_device_2_wires(shots):
     """A mock instance of the abstract Device class"""
 
     with patch.multiple(CirqDevice, __abstractmethods__=set()):
-        yield CirqDevice(2, shots=shots, analytic=True)
+        yield CirqDevice(2, shots=None)
 
 
 @pytest.fixture(scope="function")
@@ -176,7 +174,7 @@ def cirq_device_3_wires(shots):
     """A mock instance of the abstract Device class"""
 
     with patch.multiple(CirqDevice, __abstractmethods__=set()):
-        yield CirqDevice(3, shots=shots, analytic=True)
+        yield CirqDevice(3, shots=None)
 
 
 @pytest.mark.parametrize("shots", [100])
@@ -436,12 +434,12 @@ class TestOperations:
 
 def test_to_paulistring_sanity_check():
     with patch.multiple(CirqDevice, __abstractmethods__=set()):
-        device = CirqDevice(2, shots=1, analytic=True)
+        device = CirqDevice(2, shots=None)
         result = device.to_paulistring(qml.PauliX(0) @ qml.PauliZ(1))
         assert result == cirq.X(cirq.LineQubit(0)) * cirq.Z(cirq.LineQubit(1))
 
 def test_to_paulistring_single_gate():
     with patch.multiple(CirqDevice, __abstractmethods__=set()):
-        device = CirqDevice(2, shots=1, analytic=True)
+        device = CirqDevice(2, shots=None)
         result = device.to_paulistring(qml.PauliX(0))
         assert result == cirq.X(cirq.LineQubit(0))

@@ -40,10 +40,7 @@ class QSimDevice(SimulatorDevice):
             or strings (``['ancilla', 'q1', 'q2']``).
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need
-            to be >= 1. In analytic mode, shots indicates the number of entries
-            that are returned by ``device.sample``.
-        analytic (bool): indicates whether expectation values and variances should
-            be calculated analytically
+            to be >= 1. If ``None``, expectation values are calculated analytically.
         qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
@@ -54,8 +51,8 @@ class QSimDevice(SimulatorDevice):
     name = "QSim device for PennyLane"
     short_name = "cirq.qsim"
 
-    def __init__(self, wires, shots=1000, analytic=True, qubits=None, qsim_options=None):
-        super().__init__(wires, shots, analytic, qubits)
+    def __init__(self, wires, shots=1000, qubits=None, qsim_options=None):
+        super().__init__(wires, shots)
         self.circuit = qsimcirq.QSimCircuit(cirq_circuit=cirq.Circuit())
         self._simulator = qsimcirq.QSimSimulator(qsim_options=qsim_options or {})
 
@@ -99,10 +96,7 @@ class QSimhDevice(SimulatorDevice):
             for further details.
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need
-            to be >= 1. In analytic mode, shots indicates the number of entries
-            that are returned by ``device.sample``.
-        analytic (bool): indicates whether expectation values and variances should
-            be calculated analytically
+            to be >= 1. If ``None``, expectation values are calculated analytically.
         qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
@@ -110,8 +104,8 @@ class QSimhDevice(SimulatorDevice):
     name = "qsimh device for PennyLane"
     short_name = "cirq.qsimh"
 
-    def __init__(self, wires, qsimh_options, shots=1000, analytic=True, qubits=None):
-        super().__init__(wires, shots, analytic, qubits)
+    def __init__(self, wires, qsimh_options, shots=1000, qubits=None):
+        super().__init__(wires, shots, qubits)
 
         self.circuit = None
         self.qsimh_options = qsimh_options

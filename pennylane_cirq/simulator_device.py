@@ -49,10 +49,7 @@ class SimulatorDevice(CirqDevice):
             or strings (``['ancilla', 'q1', 'q2']``).
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need
-            to >= 1. In analytic mode, shots indicates the number of entries
-            that are returned by ``device.sample``.
-        analytic (bool): Indicates that expectation values and variances should
-            be calculated analytically. Defaults to ``True``.
+            to >= 1. If ``None``, expectation values are calculated analytically.
         qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
@@ -62,8 +59,8 @@ class SimulatorDevice(CirqDevice):
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
     # pylint: disable=too-many-arguments
-    def __init__(self, wires, shots=1000, analytic=True, qubits=None, simulator=None):
-        super().__init__(wires, shots, analytic, qubits)
+    def __init__(self, wires, shots=1000, qubits=None, simulator=None):
+        super().__init__(wires, shots, qubits)
 
         self._simulator = simulator or cirq.Simulator()
 
@@ -81,7 +78,7 @@ class SimulatorDevice(CirqDevice):
 
     def _apply_basis_state(self, basis_state_operation):
         # pylint: disable=missing-function-docstring
-        if not self.analytic:
+        if not self.shots is None:
             raise qml.DeviceError("The operation BasisState is only supported in analytic mode.")
 
         basis_state_array = np.array(basis_state_operation.parameters[0])
@@ -106,7 +103,7 @@ class SimulatorDevice(CirqDevice):
 
     def _apply_qubit_state_vector(self, qubit_state_vector_operation):
         # pylint: disable=missing-function-docstring
-        if not self.analytic:
+        if not self.shots is None:
             raise qml.DeviceError(
                 "The operation QubitStateVector is only supported in analytic mode."
             )
@@ -141,7 +138,7 @@ class SimulatorDevice(CirqDevice):
         for q in self.qubits:
             self.circuit.append(cirq.IdentityGate(1)(q))
 
-        if self.analytic:
+        if self.shots is None:
             self._result = self._simulator.simulate(self.circuit, initial_state=self._initial_state)
             self._state = self._get_state_from_cirq(self._result)
 
@@ -176,7 +173,7 @@ class SimulatorDevice(CirqDevice):
 
     def generate_samples(self):
         # pylint: disable=missing-function-docstring
-        if self.analytic:
+        if self.shots is None:
             return super().generate_samples()
 
         for wire in range(self.num_wires):
@@ -200,10 +197,7 @@ class MixedStateSimulatorDevice(SimulatorDevice):
             or strings (``['ancilla', 'q1', 'q2']``).
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need
-            to >= 1. In analytic mode, shots indicates the number of entries
-            that are returned by device.sample.
-        analytic (bool): Indicates that expectation values and variances should
-            be calculated analytically. Defaults to ``True``.
+            to >= 1. If ``None``, expectation values are calculated analytically.
         qubits (List[cirq.Qubit]): A list of Cirq qubits that are used
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
@@ -219,9 +213,9 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         "Depolarize": CirqOperation(cirq.depolarize),
     }
 
-    def __init__(self, wires, shots=1000, analytic=True, qubits=None):
+    def __init__(self, wires, shots=1000, qubits=None):
         self._operation_map = dict(self._operation_map, **self._mixed_sim_operation_map)
-        super().__init__(wires, shots, analytic, qubits)
+        super().__init__(wires, shots, qubits)
 
         self._simulator = cirq.DensityMatrixSimulator()
 

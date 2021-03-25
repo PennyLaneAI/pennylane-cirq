@@ -79,7 +79,7 @@ class CirqDevice(QubitDevice, abc.ABC):
 
     short_name = "cirq.base_device"
 
-    def __init__(self, wires, shots, analytic, qubits=None):
+    def __init__(self, wires, shots, qubits=None):
 
         if not isinstance(wires, Iterable):
             # interpret wires as the number of consecutive wires
@@ -101,7 +101,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         self._unsorted_qubits = qubits
         self.qubits = sorted(qubits)
 
-        super().__init__(wires, shots, analytic)
+        super().__init__(wires, shots)
 
         self.circuit = None
         self.cirq_device = None

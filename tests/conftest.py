@@ -95,14 +95,14 @@ def init_state(scope="session"):
 
 
 @pytest.fixture(params=analytic_devices + hw_devices)
-def device(request, shots, analytic):
+def device(request, shots):
     """Fixture to initialize and return a PennyLane device"""
     device = request.param
 
     if device in analytic_devices:
 
         def _device(n):
-            return device(wires=n, shots=shots, analytic=analytic)
+            return device(wires=n, shots=shots)
 
     elif device in hw_devices:
 

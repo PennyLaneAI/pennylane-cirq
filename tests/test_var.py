@@ -28,14 +28,14 @@ def mimic_execution_for_var(device):
     with device.execution_context():
         yield
 
-        if not device.analytic:
+        if not device.shots is None:
             device._samples = device.generate_samples()
 
 
 np.random.seed(42)
 
 
-@pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
+@pytest.mark.parametrize("shots", [None, 8192])
 class TestVar:
     """Tests for the variance"""
 
@@ -86,7 +86,7 @@ class TestVar:
         assert np.allclose(var, expected, **tol)
 
 
-@pytest.mark.parametrize("shots,analytic", [(1000, True), (8192, False)])
+@pytest.mark.parametrize("shots", [None, 8192])
 class TestTensorVar:
     """Tests for variance of tensor observables"""
 
