@@ -1,3 +1,21 @@
+# Release 0.16.0-dev
+
+## New features
+
+## Improvements
+
+## Bug fixes
+
+## Breaking changes
+
+## Documentation
+
+### Contributors
+
+This release contains contributions from (in alphabetical order):
+
+---
+
 # Release 0.15.0
 
 ## Breaking changes
