@@ -1,16 +1,18 @@
 # Release 0.15.0
 
-### New features
+## Breaking changes
 
-### Improvements
-
-### Bug fixes
-
-### Documentation
+* For compatibility with PennyLane v0.15, the `analytic` keyword argument
+  has been removed from all devices. Statistics can still be computed analytically
+  by setting `shots=None`.
+  [(#57)](https://github.com/PennyLaneAI/pennylane-cirq/pull/57)
+  [(#58)](https://github.com/PennyLaneAI/pennylane-cirq/pull/58)
 
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Josh Izaac, Chase Roberts
 
 ---
 
