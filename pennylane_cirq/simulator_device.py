@@ -213,7 +213,7 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         "Depolarize": CirqOperation(cirq.depolarize),
     }
 
-    def __init__(self, wires, shots=1000, qubits=None):
+    def __init__(self, wires, shots=None, qubits=None):
         self._operation_map = dict(self._operation_map, **self._mixed_sim_operation_map)
         super().__init__(wires, shots, qubits)
 

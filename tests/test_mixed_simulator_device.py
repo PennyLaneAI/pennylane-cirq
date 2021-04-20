@@ -32,7 +32,7 @@ class TestDeviceIntegration:
         dev = qml.device("cirq.mixedsimulator", wires=2)
 
         assert dev.num_wires == 2
-        assert dev.shots == 1000
+        assert dev.shots == None
         assert dev.short_name == "cirq.mixedsimulator"
 
         assert isinstance(dev, MixedStateSimulatorDevice)

@@ -32,7 +32,7 @@ class TestDeviceIntegration:
 
         assert dev.num_wires == 2
         assert len(dev.qubits) == 2
-        assert dev.shots == 1000
+        assert dev.shots == None
         assert dev.short_name == "cirq.pasqal"
         assert dev.control_radius == 1.0
         assert dev.qubits == sorted([ThreeDQubit(0, 0, 0), ThreeDQubit(control_radius / 2, 0, 0)])
