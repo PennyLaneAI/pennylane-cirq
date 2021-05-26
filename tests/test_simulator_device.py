@@ -46,7 +46,7 @@ class TestDeviceIntegration:
         def circuit():
             qml.PauliX(0)
             return qml.expval(qml.PauliX(0))
-        
+
         assert circuit() == 0.0
 
 
@@ -484,6 +484,27 @@ class TestApply:
                 [qml.PauliX(0), qml.QubitStateVector(np.array([0, 1]), wires=[0])]
             )
 
+
+@pytest.mark.parametrize(
+    "state, device_wires, op_wires, expected",
+    [
+        (np.array([1, 0]), 2, [0], [1, 0, 0, 0]),
+        (np.array([0, 1]), 2, [0], [0, 0, 1, 0]),
+        (np.array([1, 1]) / np.sqrt(2), 2, [1], np.array([1, 1, 0, 0]) / np.sqrt(2)),
+        (np.array([1, 1]) / np.sqrt(2), 3, [0], np.array([1, 0, 0, 0, 1, 0, 0, 0]) / np.sqrt(2)),
+        (np.array([1, 2, 3, 4]) / np.sqrt(48), 3, [0, 1], np.array([1, 0, 2, 0, 3, 0, 4, 0]) / np.sqrt(48)),
+        (np.array([1, 2, 3, 4]) / np.sqrt(48), 3, [1, 0], np.array([1, 0, 3, 0, 2, 0, 4, 0]) / np.sqrt(48)),
+        (np.array([1, 2, 3, 4]) / np.sqrt(48), 3, [0, 2], np.array([1, 2, 0, 0, 3, 4, 0, 0]) / np.sqrt(48)),
+        (np.array([1, 2, 3, 4]) / np.sqrt(48), 3, [1, 2], np.array([1, 2, 3, 4, 0, 0, 0, 0]) / np.sqrt(48)),
+    ],
+)
+@pytest.mark.parametrize("shots", [None])
+def test_expand_state(state, op_wires, device_wires, expected, tol):
+    """Test that the expand_state method works as expected."""
+    dev = SimulatorDevice(device_wires)
+    res = dev._expand_state(state, op_wires)
+
+    assert np.allclose(res, expected, **tol)
 
 @pytest.mark.parametrize("shots", [1000])
 class TestStatePreparationErrorsNonAnalytic:
