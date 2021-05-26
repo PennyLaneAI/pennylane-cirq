@@ -85,23 +85,23 @@ class SimulatorDevice(CirqDevice):
 
         wires = basis_state_operation.wires
 
-        # expand basis state to device wires
-        basis_state_array = np.zeros(self.num_wires, dtype=int)
-        basis_state_array[wires] = basis_state_operation.parameters[0]
-
-        if len(basis_state_array) != len(self.qubits):
+        if len(basis_state_operation.parameters[0]) != len(wires):
             raise qml.DeviceError(
                 "For BasisState, the state has to be specified for the correct number of qubits. Got a state for {} qubits, expected {}.".format(
-                    len(basis_state_array), len(self.qubits)
+                    len(basis_state_operation.parameters[0]), len(self.qubits)
                 )
             )
 
-        if not np.all(np.isin(basis_state_array, np.array([0, 1]))):
+        if not np.all(np.isin(basis_state_operation.parameters[0], np.array([0, 1]))):
             raise qml.DeviceError(
                 "Argument for BasisState can only contain 0 and 1. Got {}".format(
                     basis_state_operation.parameters[0]
                 )
             )
+
+        # expand basis state to device wires
+        basis_state_array = np.zeros(self.num_wires, dtype=int)
+        basis_state_array[wires] = basis_state_operation.parameters[0]
 
         self._initial_state = np.zeros(2 ** len(self.qubits), dtype=np.complex64)
         basis_state_idx = np.sum(2 ** np.argwhere(np.flip(basis_state_array) == 1))
