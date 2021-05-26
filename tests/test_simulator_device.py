@@ -711,7 +711,7 @@ class TestVar:
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0, 1])],
+            [qml.QubitStateVector(np.array(input), wires=[0])],
             rotations=op.diagonalizing_gates(),
         )
 
@@ -742,7 +742,7 @@ class TestVar:
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0, 1])],
+            [qml.QubitStateVector(np.array(input), wires=[0])],
             rotations=op.diagonalizing_gates(),
         )
 
