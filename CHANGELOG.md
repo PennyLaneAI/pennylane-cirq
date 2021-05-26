@@ -6,11 +6,16 @@
 
 ### Bug fixes
 
+* Fixed issue when using a subset of wires with `BasisState`.
+  [(#61)](https://github.com/PennyLaneAI/pennylane-cirq/pull/61)
+
 ### Documentation
 
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Theodor Isacsson
 
 ---
 
