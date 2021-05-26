@@ -37,7 +37,6 @@ import itertools as it
 import cirq
 import numpy as np
 import pennylane as qml
-from pennylane.wires import WireError
 
 from .cirq_device import CirqDevice
 from .cirq_operation import CirqOperation
