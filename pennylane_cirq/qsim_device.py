@@ -51,7 +51,7 @@ class QSimDevice(SimulatorDevice):
     name = "QSim device for PennyLane"
     short_name = "cirq.qsim"
 
-    def __init__(self, wires, shots=1000, qubits=None, qsim_options=None):
+    def __init__(self, wires, shots=None, qubits=None, qsim_options=None):
         super().__init__(wires, shots)
         self.circuit = qsimcirq.QSimCircuit(cirq_circuit=cirq.Circuit())
         self._simulator = qsimcirq.QSimSimulator(qsim_options=qsim_options or {})
@@ -104,7 +104,7 @@ class QSimhDevice(SimulatorDevice):
     name = "qsimh device for PennyLane"
     short_name = "cirq.qsimh"
 
-    def __init__(self, wires, qsimh_options, shots=1000, qubits=None):
+    def __init__(self, wires, qsimh_options, shots=None, qubits=None):
         super().__init__(wires, shots, qubits)
 
         self.circuit = None

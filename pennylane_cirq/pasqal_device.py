@@ -39,7 +39,7 @@ class PasqalDevice(SimulatorDevice):
     name = "Cirq Pasqal device for PennyLane"
     short_name = "cirq.pasqal"
 
-    def __init__(self, wires, control_radius, shots=1000, qubits=None):
+    def __init__(self, wires, control_radius, shots=None, qubits=None):
 
         if not qubits:
             qubits = [pasqal.ThreeDQubit(wire * control_radius / 2, 0, 0) for wire in range(wires)]

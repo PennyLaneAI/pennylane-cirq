@@ -1,21 +1,41 @@
-# Release 0.15.0
+# Release 0.16.0-dev
 
-### New features
+## New features
 
-### Improvements
+## Improvements
 
-### Bug fixes
+## Bug fixes
 
 * Fixed issue when using a subset of wires with `BasisState`.
   [(#61)](https://github.com/PennyLaneAI/pennylane-cirq/pull/61)
 
-### Documentation
+## Breaking changes
+
+## Documentation
 
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
 
 Theodor Isacsson
+
+---
+
+# Release 0.15.0
+
+## Breaking changes
+
+* For compatibility with PennyLane v0.15, the `analytic` keyword argument
+  has been removed from all devices. Statistics can still be computed analytically
+  by setting `shots=None`.
+  [(#57)](https://github.com/PennyLaneAI/pennylane-cirq/pull/57)
+  [(#58)](https://github.com/PennyLaneAI/pennylane-cirq/pull/58)
+
+### Contributors
+
+This release contains contributions from (in alphabetical order):
+
+Josh Izaac, Chase Roberts
 
 ---
 
