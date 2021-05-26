@@ -133,12 +133,9 @@ class SimulatorDevice(CirqDevice):
             )
 
         state_vector = np.array(qubit_state_vector_operation.parameters[0], dtype=np.complex64)
-        try:
-            wires = self.map_wires(qubit_state_vector_operation.wires)
-        except WireError:
-            wires = qubit_state_vector_operation.wires
+        wires = self.map_wires(qubit_state_vector_operation.wires)
 
-        if len(wires) < self.num_wires or sorted(wires) != wires.tolist():
+        if len(wires) != self.num_wires or sorted(wires) != wires.tolist():
             state_vector = self._expand_state(state_vector, wires)
 
         if len(state_vector) != 2 ** len(self.qubits):
