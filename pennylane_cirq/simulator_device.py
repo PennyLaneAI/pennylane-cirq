@@ -37,6 +37,7 @@ import itertools as it
 import cirq
 import numpy as np
 import pennylane as qml
+from pennylane.wires import WireError
 
 from .cirq_device import CirqDevice
 from .cirq_operation import CirqOperation
@@ -132,9 +133,15 @@ class SimulatorDevice(CirqDevice):
             )
 
         state_vector = np.array(qubit_state_vector_operation.parameters[0], dtype=np.complex64)
-        wires = self.map_wires(qubit_state_vector_operation.wires)
+        try:
+            wires = self.map_wires(qubit_state_vector_operation.wires)
+        except WireError:
+            wires = qubit_state_vector_operation.wires
 
-        if len(state_vector) != 2 ** len(wires):
+        if len(wires) < self.num_wires or sorted(wires) != wires.tolist():
+            state_vector = self._expand_state(state_vector, wires)
+
+        if len(state_vector) != 2 ** len(self.qubits):
             raise qml.DeviceError(
                 "For QubitStateVector, the state has to be specified for the correct number of qubits. Got a state of length {}, expected {}.".format(
                     len(state_vector), 2 ** len(wires)
@@ -148,8 +155,6 @@ class SimulatorDevice(CirqDevice):
                     math.sqrt(norm_squared)
                 )
             )
-        if len(wires) != self.num_wires or sorted(wires) != wires:
-            state_vector = self._expand_state(state_vector, wires)
 
         self._initial_state = state_vector
 
