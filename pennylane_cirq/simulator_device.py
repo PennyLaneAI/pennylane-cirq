@@ -32,6 +32,8 @@ Classes
 ----
 """
 import math
+import itertools as it
+
 import cirq
 import numpy as np
 import pennylane as qml
@@ -81,7 +83,11 @@ class SimulatorDevice(CirqDevice):
         if not self.shots is None:
             raise qml.DeviceError("The operation BasisState is only supported in analytic mode.")
 
-        basis_state_array = np.array(basis_state_operation.parameters[0])
+        wires = basis_state_operation.wires
+
+        # expand basis state to device wires
+        basis_state_array = np.zeros(self.num_wires, dtype=int)
+        basis_state_array[wires] = basis_state_operation.parameters[0]
 
         if len(basis_state_array) != len(self.qubits):
             raise qml.DeviceError(
@@ -101,6 +107,23 @@ class SimulatorDevice(CirqDevice):
         basis_state_idx = np.sum(2 ** np.argwhere(np.flip(basis_state_array) == 1))
         self._initial_state[basis_state_idx] = 1.0
 
+    def _expand_state(self, state_vector, wires):
+        """Expands state vector to more wires"""
+        basis_states = np.array(list(it.product([0, 1], repeat=len(wires))))
+
+        # get basis states to alter on full set of qubits
+        unravelled_indices = np.zeros((2 ** len(wires), self.num_wires), dtype=int)
+        unravelled_indices[:, wires] = basis_states
+
+        # get indices for which the state is changed to input state vector elements
+        ravelled_indices = np.ravel_multi_index(unravelled_indices.T, [2] * self.num_wires)
+
+        state_vector = self._scatter(ravelled_indices, state_vector, [2 ** self.num_wires])
+        state_vector = self._reshape(state_vector, [2] * self.num_wires)
+        state_vector = self._asarray(state_vector, dtype=self.C_DTYPE)
+
+        return state_vector.flatten()
+
     def _apply_qubit_state_vector(self, qubit_state_vector_operation):
         # pylint: disable=missing-function-docstring
         if not self.shots is None:
@@ -109,11 +132,12 @@ class SimulatorDevice(CirqDevice):
             )
 
         state_vector = np.array(qubit_state_vector_operation.parameters[0], dtype=np.complex64)
+        wires = self.map_wires(qubit_state_vector_operation.wires)
 
-        if len(state_vector) != 2 ** len(self.qubits):
+        if len(state_vector) != 2 ** len(wires):
             raise qml.DeviceError(
                 "For QubitStateVector, the state has to be specified for the correct number of qubits. Got a state of length {}, expected {}.".format(
-                    len(state_vector), 2 ** len(self.qubits)
+                    len(state_vector), 2 ** len(wires)
                 )
             )
 
@@ -124,6 +148,8 @@ class SimulatorDevice(CirqDevice):
                     math.sqrt(norm_squared)
                 )
             )
+        if len(wires) != self.num_wires or sorted(wires) != wires:
+            state_vector = self._expand_state(state_vector, wires)
 
         self._initial_state = state_vector
 
