@@ -166,7 +166,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         # to support this observable.
         "Hermitian": None,
         "Identity": CirqOperation(lambda: cirq.I),
-        "Projector": CirqOperation(lambda: cirq.ProductState.projector)
+        "Projector": CirqOperation(lambda: cirq.ProductState.projector),
     }
 
     def to_paulistring(self, observable):
