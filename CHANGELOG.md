@@ -2,6 +2,9 @@
 
 ## New features
 
+* Added Projector observable to CirqDevice.
+  [(#62)](https://github.com/PennyLaneAI/pennylane-cirq/pull/62)
+
 ## Improvements
 
 ## Bug fixes
@@ -13,6 +16,8 @@
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Vincent Wong
 
 ---
 
