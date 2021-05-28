@@ -105,6 +105,33 @@ class TestApplyPureState:
         expected[np.ravel_multi_index(state, [2] * 4)] = 1
         assert np.allclose(res, expected, **tol)
 
+    @pytest.mark.parametrize(
+        "state",
+        [
+            np.array([0, 0]),
+            np.array([1, 0]),
+            np.array([0, 1]),
+            np.array([1, 1]),
+        ],
+    )
+    @pytest.mark.parametrize("device_wires", [3, 4, 5])
+    @pytest.mark.parametrize("op_wires", [[0, 1], [1, 0], [2, 0]])
+    def test_basis_state_on_wires_subset(self, state, device_wires, op_wires, tol):
+        """Test basis state initialization on a subset of device wires"""
+        dev = SimulatorDevice(device_wires)
+
+        with mimic_execution_for_apply(dev):
+            dev.apply([qml.BasisState(state, wires=op_wires)])
+
+        res = np.abs(dev.state) ** 2
+        # compute expected probabilities
+        expected = np.zeros([2 ** len(op_wires)])
+        expected[np.ravel_multi_index(state, [2] * len(op_wires))] = 1
+
+        expected = dev._expand_state(expected, op_wires)
+
+        assert np.allclose(res, expected, **tol)
+
     def test_identity_basis_state(self, shots, tol):
         """Test basis state initialization if identity"""
         dev = SimulatorDevice(4, shots=shots)
@@ -119,6 +146,7 @@ class TestApplyPureState:
         expected[np.ravel_multi_index(state, [2] * 4)] = 1
         assert np.allclose(res, expected, **tol)
 
+
     def test_qubit_state_vector(self, init_state, shots, tol):
         """Test PauliX application"""
         dev = SimulatorDevice(1, shots=shots)
@@ -129,6 +157,23 @@ class TestApplyPureState:
 
         res = dev._state
         expected = state
+        assert np.allclose(res, expected, **tol)
+
+    @pytest.mark.parametrize("device_wires", [3, 4, 5])
+    @pytest.mark.parametrize("op_wires", [[0], [2], [0, 1], [1, 0], [2, 0]])
+    def test_qubit_state_vector_on_wires_subset(
+        self, init_state, device_wires, op_wires, shots, tol
+    ):
+        """Test QubitStateVector application on a subset of device wires"""
+        dev = SimulatorDevice(device_wires, shots=shots)
+        state = init_state(len(op_wires))
+
+        with mimic_execution_for_apply(dev):
+            dev.apply([qml.QubitStateVector(state, wires=op_wires)])
+
+        res = dev.state
+        expected = dev._expand_state(state, op_wires)
+
         assert np.allclose(res, expected, **tol)
 
     def test_invalid_qubit_state_vector(self, shots):
