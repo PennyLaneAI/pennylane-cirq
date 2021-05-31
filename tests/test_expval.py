@@ -223,6 +223,25 @@ class TestExpval:
 
         assert np.allclose(res, expected, **tol)
 
+    def test_projector_expectation(self, device, shots, tol):
+        """Test that arbitrary Projector expectation values are correct"""
+        theta = 0.732
+        phi = 0.523
+
+        dev = device(2)
+        O = qml.Projector
+
+        with mimic_execution_for_expval(dev):
+            dev.apply(
+                [qml.RY(theta, wires=[0]), qml.RY(phi, wires=[1]), qml.CNOT(wires=[0, 1]),]
+            )
+
+        dev._obs_queue = [O([0, 0], wires=[0, 1], do_queue=False),]
+
+        res = dev.expval(O([0, 0], wires=[0, 1], do_queue=False))
+        expected = (np.cos(phi / 2) * np.cos(theta / 2)) ** 2
+        assert np.allclose(res, expected, **tol)
+
 
 @pytest.mark.parametrize("shots", [None, 8192])
 class TestTensorExpval:
