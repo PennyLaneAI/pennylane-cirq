@@ -289,9 +289,29 @@ class TestExpval:
         dev._obs_queue = [
             O([0, 0], wires=[0, 1], do_queue=False),
         ]
-
         res = dev.expval(O([0, 0], wires=[0, 1], do_queue=False))
         expected = (np.cos(phi / 2) * np.cos(theta / 2)) ** 2
+        assert np.allclose(res, expected, **tol)
+
+        dev._obs_queue = [
+            O([0, 1], wires=[0, 1], do_queue=False),
+        ]
+        res = dev.expval(O([0, 1], wires=[0, 1], do_queue=False))
+        expected = (np.sin(phi / 2) * np.cos(theta / 2)) ** 2
+        assert np.allclose(res, expected, **tol)
+
+        dev._obs_queue = [
+            O([1, 0], wires=[0, 1], do_queue=False),
+        ]
+        res = dev.expval(O([1, 0], wires=[0, 1], do_queue=False))
+        expected = (np.sin(phi / 2) * np.sin(theta / 2)) ** 2
+        assert np.allclose(res, expected, **tol)
+
+        dev._obs_queue = [
+            O([1, 1], wires=[0, 1], do_queue=False),
+        ]
+        res = dev.expval(O([1, 1], wires=[0, 1], do_queue=False))
+        expected = (np.cos(phi / 2) * np.sin(theta / 2)) ** 2
         assert np.allclose(res, expected, **tol)
 
 
@@ -396,4 +416,51 @@ class TestTensorExpval:
             + np.sin(phi)
         )
 
+        assert np.allclose(res, expected, **tol)
+
+    def test_projector(self, device, shots, tol):
+        """Test that a tensor product involving qml.Projector works correctly"""
+        theta = 0.732
+        phi = 0.523
+        varphi = -0.543
+
+        dev = device(3)
+
+        with mimic_execution_for_expval(dev):
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RX(phi, wires=[1]),
+                    qml.RX(varphi, wires=[2]),
+                    qml.CNOT(wires=[0, 1]),
+                    qml.CNOT(wires=[1, 2]),
+                ]
+            )
+
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector([0, 0], wires=[1, 2], do_queue=False)
+        res = dev.expval(obs)
+        expected = (np.cos(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2 - (
+            np.cos(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)
+        ) ** 2
+        assert np.allclose(res, expected, **tol)
+
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector([0, 1], wires=[1, 2], do_queue=False)
+        res = dev.expval(obs)
+        expected = (np.sin(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2 - (
+            np.sin(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)
+        ) ** 2
+        assert np.allclose(res, expected, **tol)
+
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector([1, 0], wires=[1, 2], do_queue=False)
+        res = dev.expval(obs)
+        expected = (np.sin(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2 - (
+            np.sin(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)
+        ) ** 2
+        assert np.allclose(res, expected, **tol)
+
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector([1, 1], wires=[1, 2], do_queue=False)
+        res = dev.expval(obs)
+        expected = (np.cos(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2 - (
+            np.cos(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)
+        ) ** 2
         assert np.allclose(res, expected, **tol)
