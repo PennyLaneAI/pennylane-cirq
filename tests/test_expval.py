@@ -437,28 +437,36 @@ class TestTensorExpval:
                 ]
             )
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector([0, 0], wires=[1, 2], do_queue=False)
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
+            [0, 0], wires=[1, 2], do_queue=False
+        )
         res = dev.expval(obs)
         expected = (np.cos(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2 - (
             np.cos(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)
         ) ** 2
         assert np.allclose(res, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector([0, 1], wires=[1, 2], do_queue=False)
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
+            [0, 1], wires=[1, 2], do_queue=False
+        )
         res = dev.expval(obs)
         expected = (np.sin(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2 - (
             np.sin(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)
         ) ** 2
         assert np.allclose(res, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector([1, 0], wires=[1, 2], do_queue=False)
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
+            [1, 0], wires=[1, 2], do_queue=False
+        )
         res = dev.expval(obs)
         expected = (np.sin(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2 - (
             np.sin(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)
         ) ** 2
         assert np.allclose(res, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector([1, 1], wires=[1, 2], do_queue=False)
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
+            [1, 1], wires=[1, 2], do_queue=False
+        )
         res = dev.expval(obs)
         expected = (np.cos(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2 - (
             np.cos(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)
