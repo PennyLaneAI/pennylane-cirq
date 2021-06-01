@@ -93,6 +93,36 @@ class TestSample:
         # the analytic variance is 0.25*(sin(theta)-4*cos(theta))^2
         assert np.allclose(np.var(s1), 0.25 * (np.sin(theta) - 4 * np.cos(theta)) ** 2, **tol)
 
+    def test_sample_values_projector(self, device, shots, tol):
+        """Tests if the samples of a Projector observable returned by sample have
+        the correct values
+        """
+        dev = device(1)
+
+        theta = 0.543
+
+        with mimic_execution_for_sample(dev):
+            dev.apply([qml.RX(theta, wires=[0])])
+
+        dev._obs_queue = [qml.Projector([0], wires=0, do_queue=False)]
+        dev._obs_queue[0].return_type = qml.operation.Sample
+        s1 = dev.sample(qml.Projector([0], wires=[0]))
+        # s1 should only contain 0 or 1, the eigenvalues of the projector
+        assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
+        assert np.allclose(np.mean(s1), np.cos(theta / 2) ** 2, **tol)
+        assert np.allclose(
+            np.var(s1), np.cos(theta / 2) ** 2 - (np.cos(theta / 2) ** 2) ** 2, **tol
+        )
+
+        dev._obs_queue = [qml.Projector([1], wires=0, do_queue=False)]
+        dev._obs_queue[0].return_type = qml.operation.Sample
+        s1 = dev.sample(qml.Projector([1], wires=[0]))
+        assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
+        assert np.allclose(np.mean(s1), np.sin(theta / 2) ** 2, **tol)
+        assert np.allclose(
+            np.var(s1), np.sin(theta / 2) ** 2 - (np.sin(theta / 2) ** 2) ** 2, **tol
+        )
+
     def test_sample_values_hermitian_multi_qubit(self, device, shots, tol):
         """Tests if the samples of a multi-qubit Hermitian observable returned by sample have
         the correct values
@@ -111,7 +141,11 @@ class TestSample:
 
         with mimic_execution_for_sample(dev):
             dev.apply(
-                [qml.RX(theta, wires=[0]), qml.RY(2 * theta, wires=[1]), qml.CNOT(wires=[0, 1]),],
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RY(2 * theta, wires=[1]),
+                    qml.CNOT(wires=[0, 1]),
+                ],
                 rotations=qml.Hermitian(A, wires=[0, 1], do_queue=False).diagonalizing_gates(),
             )
 
@@ -137,6 +171,51 @@ class TestSample:
             + 27 * np.cos(3 * theta)
             + 6
         ) / 32
+        assert np.allclose(np.mean(s1), expected, **tol)
+
+    def test_sample_values_projector_multi_qubit(self, device, shots, tol):
+        """Tests if the samples of a multi-qubit Projector observable returned by sample have
+        the correct values
+        """
+        dev = device(2)
+        theta = 0.543
+
+        with mimic_execution_for_sample(dev):
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RY(2 * theta, wires=[1]),
+                    qml.CNOT(wires=[0, 1]),
+                ]
+            )
+
+        dev._obs_queue = [qml.Projector([0, 0], wires=[0, 1], do_queue=False)]
+        dev._obs_queue[0].return_type = qml.operation.Sample
+        s1 = dev.sample(qml.Projector([0, 0], wires=[0, 1]))
+        # s1 should only contain 0 or 1, the eigenvalues of the projector
+        assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
+        expected = (np.cos(theta / 2) * np.cos(theta)) ** 2
+        assert np.allclose(np.mean(s1), expected, **tol)
+
+        dev._obs_queue = [qml.Projector([0, 1], wires=[0, 1], do_queue=False)]
+        dev._obs_queue[0].return_type = qml.operation.Sample
+        s1 = dev.sample(qml.Projector([0, 1], wires=[0, 1]))
+        assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
+        expected = (np.cos(theta / 2) * np.sin(theta)) ** 2
+        assert np.allclose(np.mean(s1), expected, **tol)
+
+        dev._obs_queue = [qml.Projector([1, 0], wires=[0, 1], do_queue=False)]
+        dev._obs_queue[0].return_type = qml.operation.Sample
+        s1 = dev.sample(qml.Projector([1, 0], wires=[0, 1]))
+        assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
+        expected = (np.sin(theta / 2) * np.sin(theta)) ** 2
+        assert np.allclose(np.mean(s1), expected, **tol)
+
+        dev._obs_queue = [qml.Projector([1, 1], wires=[0, 1], do_queue=False)]
+        dev._obs_queue[0].return_type = qml.operation.Sample
+        s1 = dev.sample(qml.Projector([1, 1], wires=[0, 1]))
+        assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
+        expected = (np.sin(theta / 2) * np.cos(theta)) ** 2
         assert np.allclose(np.mean(s1), expected, **tol)
 
 
