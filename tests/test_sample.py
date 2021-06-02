@@ -391,3 +391,114 @@ class TestTensorSample:
             )
         ) / 16
         assert np.allclose(var, expected, **tol)
+
+    def test_projector(self, device, shots, tol):  # WIP
+        """Test that a tensor product involving qml.Projector works correctly"""
+        theta = 0.832
+        phi = 0.123
+        varphi = -0.543
+
+        # Reseed here so that all eigenvalues are guaranteed to appear in the sample for all projected basis states
+        np.random.seed(8)
+
+        dev = device(3)
+
+        with mimic_execution_for_sample(dev):
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RX(phi, wires=[1]),
+                    qml.RX(varphi, wires=[2]),
+                    qml.CNOT(wires=[0, 1]),
+                    qml.CNOT(wires=[1, 2]),
+                ]
+            )
+
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
+            [0, 0], wires=[1, 2], do_queue=False
+        )
+        s1 = dev.sample(obs)
+        # s1 should only contain the eigenvalues of the projector matrix tensor product Z, i.e. {-1, 0, 1}
+        assert np.allclose(sorted(list(set(s1))), [-1, 0, 1], **tol)
+        mean = np.mean(s1)
+        expected = (np.cos(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2 - (
+            np.cos(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)
+        ) ** 2
+        assert np.allclose(mean, expected, **tol)
+        var = np.var(s1)
+        expected = (
+            (np.cos(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2
+            + (np.cos(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)) ** 2
+            - (
+                (np.cos(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2
+                - (np.cos(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)) ** 2
+            )
+            ** 2
+        )
+        assert np.allclose(var, expected, **tol)
+
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
+            [0, 1], wires=[1, 2], do_queue=False
+        )
+        s1 = dev.sample(obs)
+        assert np.allclose(sorted(list(set(s1))), [-1, 0, 1], **tol)
+        mean = np.mean(s1)
+        expected = (np.sin(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2 - (
+            np.sin(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)
+        ) ** 2
+        assert np.allclose(mean, expected, **tol)
+        var = np.var(s1)
+        expected = (
+            (np.sin(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2
+            + (np.sin(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)) ** 2
+            - (
+                (np.sin(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2
+                - (np.sin(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)) ** 2
+            )
+            ** 2
+        )
+        assert np.allclose(var, expected, **tol)
+
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
+            [1, 0], wires=[1, 2], do_queue=False
+        )
+        s1 = dev.sample(obs)
+        assert np.allclose(sorted(list(set(s1))), [-1, 0, 1], **tol)
+        mean = np.mean(s1)
+        expected = (np.sin(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2 - (
+            np.sin(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)
+        ) ** 2
+        assert np.allclose(mean, expected, **tol)
+        var = np.var(s1)
+        expected = (
+            (np.sin(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2
+            + (np.sin(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)) ** 2
+            - (
+                (np.sin(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2
+                - (np.sin(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)) ** 2
+            )
+            ** 2
+        )
+        assert np.allclose(var, expected, **tol)
+
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
+            [1, 1], wires=[1, 2], do_queue=False
+        )
+        s1 = dev.sample(obs)
+        assert np.allclose(sorted(list(set(s1))), [-1, 0, 1], **tol)
+        mean = np.mean(s1)
+        expected = (np.cos(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2 - (
+            np.cos(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)
+        ) ** 2
+        assert np.allclose(mean, expected, **tol)
+        var = np.var(s1)
+        expected = (
+            (np.cos(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2
+            + (np.cos(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)) ** 2
+            - (
+                (np.cos(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2
+                - (np.cos(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)) ** 2
+            )
+            ** 2
+        )
+        assert np.allclose(var, expected, **tol)
