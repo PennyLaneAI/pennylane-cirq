@@ -85,6 +85,44 @@ class TestVar:
 
         assert np.allclose(var, expected, **tol)
 
+    def test_var_projector(self, device, shots, tol):
+        """Tests for variance calculation using an arbitrary Projector observable"""
+        dev = device(2)
+
+        phi = 0.543
+        theta = 0.654
+
+        with mimic_execution_for_var(dev):
+            dev.apply([qml.RX(phi, wires=[0]), qml.RY(theta, wires=[1]), qml.CNOT(wires=[0, 1])])
+
+        obs = qml.Projector([0, 0], wires=[0, 1], do_queue=False)
+        var = dev.var(obs)
+        expected = (np.cos(phi / 2) * np.cos(theta / 2)) ** 2 - (
+            (np.cos(phi / 2) * np.cos(theta / 2)) ** 2
+        ) ** 2
+        assert np.allclose(var, expected, **tol)
+
+        obs = qml.Projector([0, 1], wires=[0, 1], do_queue=False)
+        var = dev.var(obs)
+        expected = (np.cos(phi / 2) * np.sin(theta / 2)) ** 2 - (
+            (np.cos(phi / 2) * np.sin(theta / 2)) ** 2
+        ) ** 2
+        assert np.allclose(var, expected, **tol)
+
+        obs = qml.Projector([1, 0], wires=[0, 1], do_queue=False)
+        var = dev.var(obs)
+        expected = (np.sin(phi / 2) * np.sin(theta / 2)) ** 2 - (
+            (np.sin(phi / 2) * np.sin(theta / 2)) ** 2
+        ) ** 2
+        assert np.allclose(var, expected, **tol)
+
+        obs = qml.Projector([1, 1], wires=[0, 1], do_queue=False)
+        var = dev.var(obs)
+        expected = (np.sin(phi / 2) * np.cos(theta / 2)) ** 2 - (
+            (np.sin(phi / 2) * np.cos(theta / 2)) ** 2
+        ) ** 2
+        assert np.allclose(var, expected, **tol)
+
 
 @pytest.mark.parametrize("shots", [None, 8192])
 class TestTensorVar:
@@ -224,4 +262,75 @@ class TestTensorVar:
             )
         ) / 16
 
+        assert np.allclose(res, expected, **tol)
+
+    def test_projector(self, device, shots, tol):
+        """Test that a tensor product involving qml.Projector works correctly"""
+        theta = 0.432
+        phi = 0.123
+        varphi = -0.543
+
+        dev = device(3)
+
+        with mimic_execution_for_var(dev):
+            dev.apply(
+                [
+                    qml.RX(theta, wires=[0]),
+                    qml.RX(phi, wires=[1]),
+                    qml.RX(varphi, wires=[2]),
+                    qml.CNOT(wires=[0, 1]),
+                    qml.CNOT(wires=[1, 2]),
+                ]
+            )
+
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
+            [0, 0], wires=[1, 2], do_queue=False
+        )
+        res = dev.var(obs)
+        expected = (
+            (np.cos(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2
+            + (np.cos(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)) ** 2
+        ) - (
+            (np.cos(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2
+            - (np.cos(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)) ** 2
+        ) ** 2
+        assert np.allclose(res, expected, **tol)
+
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
+            [0, 1], wires=[1, 2], do_queue=False
+        )
+        res = dev.var(obs)
+        expected = (
+            (np.sin(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2
+            + (np.sin(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)) ** 2
+        ) - (
+            (np.sin(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2
+            - (np.sin(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)) ** 2
+        ) ** 2
+        assert np.allclose(res, expected, **tol)
+
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
+            [1, 0], wires=[1, 2], do_queue=False
+        )
+        res = dev.var(obs)
+        expected = (
+            (np.sin(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2
+            + (np.sin(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)) ** 2
+        ) - (
+            (np.sin(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2
+            - (np.sin(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)) ** 2
+        ) ** 2
+        assert np.allclose(res, expected, **tol)
+
+        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
+            [1, 1], wires=[1, 2], do_queue=False
+        )
+        res = dev.var(obs)
+        expected = (
+            (np.cos(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2
+            + (np.cos(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)) ** 2
+        ) - (
+            (np.cos(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2
+            - (np.cos(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)) ** 2
+        ) ** 2
         assert np.allclose(res, expected, **tol)

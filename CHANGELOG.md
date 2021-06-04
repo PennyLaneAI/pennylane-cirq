@@ -2,6 +2,10 @@
 
 ## New features
 
+* Added support for the new `qml.Projector` observable in
+  PennyLane v0.16 to the Cirq devices.
+  [(#62)](https://github.com/PennyLaneAI/pennylane-cirq/pull/62)
+
 ## Improvements
 
 ## Bug fixes
@@ -17,7 +21,7 @@
 
 This release contains contributions from (in alphabetical order):
 
-Theodor Isacsson
+Theodor Isacsson, Vincent Wong
 
 ---
 
