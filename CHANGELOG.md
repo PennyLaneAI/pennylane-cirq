@@ -10,6 +10,9 @@
 
 ## Bug fixes
 
+* Fix data type bug for mixed simulator when using `QubitStateVector`.
+  [(#63)](https://github.com/PennyLaneAI/pennylane-cirq/pull/63)
+
 * Fixed issue when using a subset of wires with `BasisState`.
   [(#61)](https://github.com/PennyLaneAI/pennylane-cirq/pull/61)
 
@@ -21,7 +24,7 @@
 
 This release contains contributions from (in alphabetical order):
 
-Theodor Isacsson, Vincent Wong
+Theodor Isacsson, Romain Moyard, Vincent Wong
 
 ---
 
