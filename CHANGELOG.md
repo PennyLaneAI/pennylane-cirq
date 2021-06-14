@@ -2,6 +2,9 @@
 
 ## New features
 
+* Fix data type bug for mixed simulator using `QubitStateVector`.
+  [(#63)](https://github.com/PennyLaneAI/pennylane-cirq/pull/63)
+
 * Added support for the new `qml.Projector` observable in
   PennyLane v0.16 to the Cirq devices.
   [(#62)](https://github.com/PennyLaneAI/pennylane-cirq/pull/62)
@@ -21,7 +24,7 @@
 
 This release contains contributions from (in alphabetical order):
 
-Theodor Isacsson, Vincent Wong
+Theodor Isacsson, Romain Moyard, Vincent Wong
 
 ---
 
