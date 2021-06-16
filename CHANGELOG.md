@@ -6,8 +6,6 @@
   PennyLane v0.16 to the Cirq devices.
   [(#62)](https://github.com/PennyLaneAI/pennylane-cirq/pull/62)
 
-## Improvements
-
 ## Bug fixes
 
 * Fix data type bug for mixed simulator when using `QubitStateVector`.
@@ -15,10 +13,6 @@
 
 * Fixed issue when using a subset of wires with `BasisState`.
   [(#61)](https://github.com/PennyLaneAI/pennylane-cirq/pull/61)
-
-## Breaking changes
-
-## Documentation
 
 ### Contributors
 
