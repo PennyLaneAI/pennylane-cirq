@@ -24,7 +24,7 @@ with open("pennylane_cirq/_version.py") as f:
 # Requirements should be as minimal as possible.
 # Avoid pinning, and use minimum version numbers
 # only where required.
-requirements = ["pennylane @ git+https://github.com/PennyLaneAI/pennylane.git", "cirq>=0.9"]
+requirements = ["pennylane>=0.16", "cirq>=0.9"]
 
 info = {
     "name": "PennyLane-Cirq",
@@ -61,9 +61,9 @@ classifiers = [
     "Programming Language :: Python",
     # Make sure to specify here the versions of Python supported
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Scientific/Engineering :: Physics",
 ]
