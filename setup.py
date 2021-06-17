@@ -24,7 +24,7 @@ with open("pennylane_cirq/_version.py") as f:
 # Requirements should be as minimal as possible.
 # Avoid pinning, and use minimum version numbers
 # only where required.
-requirements = ["pennylane @ git+https://github.com/PennyLaneAI/pennylane.git", "cirq>=0.9"]
+requirements = ["pennylane @ git+https://github.com/PennyLaneAI/pennylane.git@v0.16.0-rc0", "cirq>=0.9"]
 
 info = {
     "name": "PennyLane-Cirq",
