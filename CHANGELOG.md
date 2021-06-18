@@ -6,6 +6,11 @@
   PennyLane v0.16 to the Cirq devices.
   [(#62)](https://github.com/PennyLaneAI/pennylane-cirq/pull/62)
 
+## Breaking changes
+
+* Deprecated Python 3.6.
+  [(#65)](https://github.com/PennyLaneAI/pennylane-qiskit/pull/65)
+
 ## Bug fixes
 
 * Fix data type bug for mixed simulator when using `QubitStateVector`.
