@@ -9,7 +9,7 @@
 ## Breaking changes
 
 * Deprecated Python 3.6.
-  [(#65)](https://github.com/PennyLaneAI/pennylane-qiskit/pull/65)
+  [(#65)](https://github.com/PennyLaneAI/pennylane-cirq/pull/65)
 
 ## Bug fixes
 
