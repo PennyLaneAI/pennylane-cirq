@@ -281,7 +281,7 @@ class TestApplyPureState:
         dev = SimulatorDevice(2, shots=shots)
         state = np.array([[0, 123.432], [-0.432, 023.4]])
 
-        with pytest.raises(ValueError, match=r"Not a unitary matrix"):
+        with pytest.raises(ValueError, match=r"Input unitary must be of shape"):
             with mimic_execution_for_apply(dev):
                 dev.apply([qml.QubitUnitary(state, wires=[0, 1])])
 
@@ -479,7 +479,7 @@ class TestApplyMixedState:
         dev = MixedStateSimulatorDevice(2, shots=shots)
         state = np.array([[0, 123.432], [-0.432, 023.4]])
 
-        with pytest.raises(ValueError, match=r"Not a unitary matrix"):
+        with pytest.raises(ValueError, match=r"Input unitary must be of shape"):
             with mimic_execution_for_apply(dev):
                 dev.apply([qml.QubitUnitary(state, wires=[0, 1])])
 
