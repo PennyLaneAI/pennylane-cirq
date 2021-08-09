@@ -207,13 +207,35 @@ class SimulatorDevice(CirqDevice):
             self.circuit.append(cirq.measure(self.qubits[wire], key=str(wire)))
 
         self._result = self._simulator.run(self.circuit, repetitions=self.shots)
-
+        print(self._result)
         # Bring measurements to a more managable form, but keep True/False as values for now
         # They will be changed in the measurement routines where the observable is available
         return np.array(
             [self._result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
         ).T.astype(int)
 
+    def expval(self, observable, shot_range=None, bin_size=None):
+
+        if self.short_name=="cirq.simulator":
+            if self.shots is None:
+                return self._simulator.simulate_expectation_values(
+                    self.circuit, cirq.PauliSum() + self.to_paulistring(observable)
+                )[0]
+            else:
+                print(self.circuit)
+                name = observable.name
+                wires = self.map_wires(observable.wires).tolist()
+                sample_slice = Ellipsis if shot_range is None else slice(*shot_range)
+
+                if isinstance(name, str) and name in {"PauliX", "PauliY", "PauliZ", "Hadamard"}:
+                    print(self._samples)
+
+            if bin_size is None:
+                return self._samples
+
+            return self._samples.reshape((bin_size, -1))
+        else:
+            return super().expval(observable, shot_range, bin_size)
 
 class MixedStateSimulatorDevice(SimulatorDevice):
     r"""Cirq mixed-state simulator device for PennyLane.
