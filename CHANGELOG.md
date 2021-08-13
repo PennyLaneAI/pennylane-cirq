@@ -4,15 +4,24 @@
 
 ### Breaking changes
 
+We do not support the new `Cirq` version `0.12.0` because of 
+compatibility problems with `qsim`.
+[(#74)](https://github.com/PennyLaneAI/pennylane-cirq/pull/74)
+
 ### Improvements
 
 ### Documentation
+
+Update `README.rst` file.
+[(#74)](https://github.com/PennyLaneAI/pennylane-cirq/pull/74)
 
 ### Bug fixes
 
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Romain Moyard
 
 ---
 
