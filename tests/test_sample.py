@@ -219,6 +219,16 @@ class TestSample:
         assert np.allclose(np.mean(s1), expected, **tol)
 
 
+@pytest.mark.parametrize("shots", [None])
+class TestNoShotSample:
+    def test_no_shot_sample(self, device, shots, tol):
+        dev = device(1)
+
+        with pytest.raises(qml.QuantumFunctionError):
+            with mimic_execution_for_sample(dev):
+                dev.apply([qml.RX(1.5708, wires=[0])])
+
+
 @pytest.mark.parametrize("shots", [8192])
 class TestTensorSample:
     """Test tensor expectation values"""
