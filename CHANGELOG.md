@@ -6,14 +6,14 @@
 
 We do not support the new `Cirq` version `0.12.0` because of 
 compatibility problems with `qsim`.
-[(#74)](https://github.com/PennyLaneAI/pennylane-cirq/pull/74)
+[(#73)](https://github.com/PennyLaneAI/pennylane-cirq/pull/73)
 
 ### Improvements
 
 ### Documentation
 
 Update `README.rst` file.
-[(#74)](https://github.com/PennyLaneAI/pennylane-cirq/pull/74)
+[(#73)](https://github.com/PennyLaneAI/pennylane-cirq/pull/73)
 
 ### Bug fixes
 
