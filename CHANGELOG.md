@@ -1,3 +1,24 @@
+# Release 0.17.0
+
+### Breaking changes
+
+We do not support the new `Cirq` version `0.12.0` because of 
+compatibility problems with `qsim`.
+[(#73)](https://github.com/PennyLaneAI/pennylane-cirq/pull/73)
+
+### Documentation
+
+Update `README.rst` file.
+[(#73)](https://github.com/PennyLaneAI/pennylane-cirq/pull/73)
+
+### Contributors
+
+This release contains contributions from (in alphabetical order):
+
+Romain Moyard
+
+---
+
 # Release 0.16.0
 
 ## New features
@@ -5,6 +26,11 @@
 * Added support for the new `qml.Projector` observable in
   PennyLane v0.16 to the Cirq devices.
   [(#62)](https://github.com/PennyLaneAI/pennylane-cirq/pull/62)
+
+## Breaking changes
+
+* Deprecated Python 3.6.
+  [(#65)](https://github.com/PennyLaneAI/pennylane-cirq/pull/65)
 
 ## Bug fixes
 

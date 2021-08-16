@@ -37,7 +37,7 @@ class TestDeviceIntegration:
 
         assert isinstance(dev, QSimhDevice)
 
-    @pytest.mark.parametrize("shots", [8192, None])
+    @pytest.mark.parametrize("shots", [8192])
     def test_one_qubit_circuit(self, shots, tol):
         """Test that devices provide correct result for a simple circuit"""
 
@@ -383,7 +383,7 @@ class TestVarEstimate:
         assert var != 1.0
 
 
-@pytest.mark.parametrize("shots", [None])
+@pytest.mark.parametrize("shots", [8192])
 class TestSample:
     """Test sampling."""
 
