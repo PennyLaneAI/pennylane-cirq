@@ -57,7 +57,7 @@ Features
 Installation
 ============
 
-This plugin requires Python version 3.6 or above, as well as PennyLane
+This plugin requires Python version 3.7 or above, as well as PennyLane
 and Cirq. Installation of this plugin, as well as all dependencies, can be done using ``pip``:
 
 .. code-block:: bash
@@ -76,13 +76,14 @@ Dependencies
 
 PennyLane-Cirq requires the following libraries be installed:
 
-* `Python <http://python.org/>`__ >= 3.6
+* `Python <http://python.org/>`__ >= 3.7
 
 as well as the following Python packages:
 
-* `PennyLane <http://pennylane.readthedocs.io/>`__ >= 0.9
-* `Cirq <https://cirq.readthedocs.io/>`__ >= 0.7
+* `PennyLane <http://pennylane.readthedocs.io/>`__ >= 0.16
+* `Cirq <https://cirq.readthedocs.io/>`__ >= 0.10.0, < 0.12.0
 
+At the moment we do not support Cirq 0.12.0, because of compatibility problems with qsim.
 To use the qsim and qsimh devices, the qsim-Cirq interface ``qsimcirq`` is required:
 
 * `qsimcirq <https://github.com/quantumlib/qsim/blob/master/docs/cirq_interface.md>`__

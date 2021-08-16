@@ -1,3 +1,3 @@
 git+https://github.com/PennyLaneAI/pennylane.git@master
-cirq>=0.10
+cirq>=0.10,<0.12
 numpy~=1.16

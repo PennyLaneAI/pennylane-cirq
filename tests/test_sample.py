@@ -34,7 +34,7 @@ def mimic_execution_for_sample(device):
         device._samples = device.generate_samples()
 
 
-@pytest.mark.parametrize("shots", [None, 8192])
+@pytest.mark.parametrize("shots", [8192])
 class TestSample:
     """Tests for the sample return type"""
 
@@ -219,7 +219,18 @@ class TestSample:
         assert np.allclose(np.mean(s1), expected, **tol)
 
 
-@pytest.mark.parametrize("shots", [None, 8192])
+@pytest.mark.parametrize("shots", [None])
+class TestNoShotSample:
+    def test_no_shot_sample(self, device, shots, tol):
+        """Test that a device with shot=None raises an error when sampling"""
+        dev = device(1)
+
+        with pytest.raises(qml.QuantumFunctionError):
+            with mimic_execution_for_sample(dev):
+                dev.apply([qml.RX(1.5708, wires=[0])])
+
+
+@pytest.mark.parametrize("shots", [8192])
 class TestTensorSample:
     """Test tensor expectation values"""
 
