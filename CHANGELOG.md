@@ -1,6 +1,4 @@
-# Release 0.17.0-dev
-
-### New features since last release
+# Release 0.17.0
 
 ### Breaking changes
 
@@ -8,14 +6,10 @@ We do not support the new `Cirq` version `0.12.0` because of
 compatibility problems with `qsim`.
 [(#73)](https://github.com/PennyLaneAI/pennylane-cirq/pull/73)
 
-### Improvements
-
 ### Documentation
 
 Update `README.rst` file.
 [(#73)](https://github.com/PennyLaneAI/pennylane-cirq/pull/73)
-
-### Bug fixes
 
 ### Contributors
 
