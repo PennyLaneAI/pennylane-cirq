@@ -222,6 +222,7 @@ class TestSample:
 @pytest.mark.parametrize("shots", [None])
 class TestNoShotSample:
     def test_no_shot_sample(self, device, shots, tol):
+        """Test that a device with shot=None raises an error when sampling"""
         dev = device(1)
 
         with pytest.raises(qml.QuantumFunctionError):
