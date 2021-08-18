@@ -109,11 +109,11 @@ class CirqDevice(QubitDevice, abc.ABC):
         # Add inverse operations
         self._inverse_operation_map = {}
         for key, value in self._operation_map.items():
-            if not self._operation_map[key]:
+            if not value:
                 continue
 
             # We have to use a new CirqOperation instance because .inv() acts in-place
-            inverted_operation = CirqOperation(self._operation_map[key].parametrization)
+            inverted_operation = CirqOperation(value.parametrization)
             inverted_operation.inv()
 
             self._inverse_operation_map[key + Operation.string_for_inverse] = inverted_operation
