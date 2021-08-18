@@ -68,7 +68,7 @@ class CirqDevice(QubitDevice, abc.ABC):
     """
 
     name = "Cirq Abstract PennyLane plugin base class"
-    pennylane_requires = ">=0.16.0"
+    pennylane_requires = ">=0.17.0"
     version = __version__
     author = "Xanadu Inc"
     _capabilities = {
@@ -108,7 +108,7 @@ class CirqDevice(QubitDevice, abc.ABC):
 
         # Add inverse operations
         self._inverse_operation_map = {}
-        for key in self._operation_map:
+        for key in self._operation_map.keys():
             if not self._operation_map[key]:
                 continue
 
