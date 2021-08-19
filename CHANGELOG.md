@@ -1,6 +1,6 @@
 # Release 0.17.1
 
-### Breaking changes
+### Improvements
 
 We support `Cirq` version `0.12.0`.
 [(#77)](https://github.com/PennyLaneAI/pennylane-cirq/pull/77)
