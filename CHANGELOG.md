@@ -1,18 +1,15 @@
-# Release 0.18.0-dev
-
-### New features since last release
+# Release 0.17.1
 
 ### Breaking changes
 
-### Improvements
-
-### Documentation
-
-### Bug fixes
+We support `Cirq` version `0.12.0`.
+[(#77)](https://github.com/PennyLaneAI/pennylane-cirq/pull/77)
 
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Romain Moyard
 
 ---
 

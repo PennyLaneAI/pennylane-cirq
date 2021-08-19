@@ -80,10 +80,9 @@ PennyLane-Cirq requires the following libraries be installed:
 
 as well as the following Python packages:
 
-* `PennyLane <http://pennylane.readthedocs.io/>`__ >= 0.16
-* `Cirq <https://cirq.readthedocs.io/>`__ >= 0.10.0, < 0.12.0
+* `PennyLane <http://pennylane.readthedocs.io/>`__ >= 0.17
+* `Cirq <https://cirq.readthedocs.io/>`__ >= 0.10.0
 
-At the moment we do not support Cirq 0.12.0, because of compatibility problems with qsim.
 To use the qsim and qsimh devices, the qsim-Cirq interface ``qsimcirq`` is required:
 
 * `qsimcirq <https://github.com/quantumlib/qsim/blob/master/docs/cirq_interface.md>`__
