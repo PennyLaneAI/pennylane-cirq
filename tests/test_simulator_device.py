@@ -825,7 +825,7 @@ class TestVarEstimate:
         assert var != 1.0
 
 
-@pytest.mark.parametrize("shots", [None])
+@pytest.mark.parametrize("shots", [8192])
 class TestSample:
     """Test sampling."""
 
