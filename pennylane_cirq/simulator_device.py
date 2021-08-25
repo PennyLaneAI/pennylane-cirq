@@ -162,9 +162,6 @@ class SimulatorDevice(CirqDevice):
         # We apply identity gates to all wires, otherwise Cirq would ignore
         # wires that are not acted upon
 
-        for q in self.qubits:
-            self.circuit.append(cirq.IdentityGate(1)(q))
-
         if self.shots is None:
             self._result = self._simulator.simulate(self.circuit, initial_state=self._initial_state)
             self._state = self._get_state_from_cirq(self._result)
@@ -207,7 +204,7 @@ class SimulatorDevice(CirqDevice):
             self.circuit.append(cirq.measure(self.qubits[wire], key=str(wire)))
 
         self._result = self._simulator.run(self.circuit, repetitions=self.shots)
-        print(self._result)
+        print("results", self._result)
         # Bring measurements to a more managable form, but keep True/False as values for now
         # They will be changed in the measurement routines where the observable is available
         return np.array(
@@ -216,24 +213,27 @@ class SimulatorDevice(CirqDevice):
 
     def expval(self, observable, shot_range=None, bin_size=None):
 
-        if self.short_name=="cirq.simulator":
+        if self.short_name=="cirq.simulator" or self.short_name=="cirq.mixedsimulator":
             if self.shots is None:
-                return self._simulator.simulate_expectation_values(
-                    self.circuit, cirq.PauliSum() + self.to_paulistring(observable)
-                )[0]
+                #Hermitian/Hamiltonian special case
+                if self._observable_map[observable.name] is None:
+                    return super().expval(observable, shot_range, bin_size)
+                else:
+                    return self._simulator.simulate_expectation_values(
+                        self.pre_rotated_circuit, cirq.PauliSum() + self.to_paulistring(observable)
+                    )[0]
             else:
-                print(self.circuit)
                 name = observable.name
                 wires = self.map_wires(observable.wires).tolist()
                 sample_slice = Ellipsis if shot_range is None else slice(*shot_range)
 
                 if isinstance(name, str) and name in {"PauliX", "PauliY", "PauliZ", "Hadamard"}:
-                    print(self._samples)
+                    print("samples", self._samples)
 
-            if bin_size is None:
-                return self._samples
+                if bin_size is None:
+                    return self._samples
 
-            return self._samples.reshape((bin_size, -1))
+                return self._samples.reshape((bin_size, -1))
         else:
             return super().expval(observable, shot_range, bin_size)
 

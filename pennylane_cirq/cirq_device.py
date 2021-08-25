@@ -104,6 +104,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         super().__init__(wires, shots)
 
         self.circuit = None
+        self.pre_rotated_circuit = None
         self.cirq_device = None
 
         # Add inverse operations
@@ -165,6 +166,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         # TODO(chase): Consider using qml.utils.decompose_hamiltonian()
         # to support this observable.
         "Hermitian": None,
+        "Hamiltonian": None,
         "Identity": CirqOperation(lambda: cirq.I),
         "Projector": CirqOperation(lambda: cirq.ProductState.projector),
     }
@@ -263,11 +265,16 @@ class CirqDevice(QubitDevice, abc.ABC):
             else:
                 self._apply_operation(operation)
 
-        # TODO: get pre rotated state here
+        self.pre_rotated_circuit = self.circuit.copy()
+        for q in self.qubits:
+            self.pre_rotated_circuit.append(cirq.IdentityGate(1)(q))
 
         # Diagonalize the given observables
         for operation in rotations:
             self._apply_operation(operation)
+
+        for q in self.qubits:
+            self.circuit.append(cirq.IdentityGate(1)(q))
 
     def define_wire_map(self, wires):  # pylint: disable=missing-function-docstring
         cirq_order = np.argsort(self._unsorted_qubits)
