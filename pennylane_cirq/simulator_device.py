@@ -204,7 +204,7 @@ class SimulatorDevice(CirqDevice):
             self.circuit.append(cirq.measure(self.qubits[wire], key=str(wire)))
 
         self._result = self._simulator.run(self.circuit, repetitions=self.shots)
-        print("results", self._result)
+
         # Bring measurements to a more managable form, but keep True/False as values for now
         # They will be changed in the measurement routines where the observable is available
         return np.array(
@@ -223,17 +223,8 @@ class SimulatorDevice(CirqDevice):
                         self.pre_rotated_circuit, cirq.PauliSum() + self.to_paulistring(observable)
                     )[0]
             else:
-                name = observable.name
-                wires = self.map_wires(observable.wires).tolist()
-                sample_slice = Ellipsis if shot_range is None else slice(*shot_range)
-
-                if isinstance(name, str) and name in {"PauliX", "PauliY", "PauliZ", "Hadamard"}:
-                    print("samples", self._samples)
-
-                if bin_size is None:
-                    return self._samples
-
-                return self._samples.reshape((bin_size, -1))
+                samples = self.sample(observable, shot_range=shot_range, bin_size=bin_size)
+                return np.squeeze(np.mean(samples, axis=0))
         else:
             return super().expval(observable, shot_range, bin_size)
 
