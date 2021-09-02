@@ -17,6 +17,7 @@ This module provides the ``QSimDevice`` and ``QSimhDevice`` from Cirq.
 """
 import cirq
 import numpy as np
+import pennylane as qml
 
 try:
     import qsimcirq
@@ -82,6 +83,22 @@ class QSimDevice(SimulatorDevice):
             supports_inverse_operations=False,
         )
         return capabilities
+
+    def expval(self, observable, shot_range=None, bin_size=None):
+        if isinstance(observable, qml.operation.Tensor):
+            if all(obs == "Identity" for obs in observable.name):
+                eigvals = self._asarray(observable.eigvals, dtype=self.R_DTYPE)
+                prob = self.probability(wires=observable.wires)
+                return self._dot(eigvals, prob)
+            else:
+                return super().expval(observable, shot_range, bin_size)
+        else:
+            if observable.name == "Identity":
+                eigvals = self._asarray(observable.eigvals, dtype=self.R_DTYPE)
+                prob = self.probability(wires=observable.wires)
+                return self._dot(eigvals, prob)
+            else:
+                return super().expval(observable, shot_range, bin_size)
 
 
 class QSimhDevice(SimulatorDevice):

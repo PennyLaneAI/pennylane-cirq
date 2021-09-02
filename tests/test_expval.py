@@ -314,7 +314,7 @@ class TestExpval:
         assert np.allclose(res, expected, **tol)
 
 
-@pytest.mark.parametrize("shots", [None, 4])
+@pytest.mark.parametrize("shots", [None, 8192])
 class TestTensorExpval:
     """Test tensor expectation values"""
 
@@ -373,7 +373,6 @@ class TestTensorExpval:
 
         res = dev.expval(obs)
         expected = -(np.cos(varphi) * np.sin(phi) + np.sin(varphi) * np.cos(theta)) / np.sqrt(2)
-
         assert np.allclose(res, expected, **tol)
 
     def test_hermitian(self, device, shots, tol):

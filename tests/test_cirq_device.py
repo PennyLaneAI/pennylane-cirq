@@ -426,7 +426,8 @@ class TestOperations:
         cirq_device_2_wires.apply([gate])
 
         ops = list(cirq_device_2_wires.circuit.all_operations())
-
+        print(ops)
+        print(expected_cirq_gates)
         assert len(ops) == len(expected_cirq_gates)
 
         for i in range(len(ops)):

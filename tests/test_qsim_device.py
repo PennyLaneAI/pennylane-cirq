@@ -330,16 +330,18 @@ class TestExpval:
     ):
         """Tests that expectation values are properly calculated for single-wire observables without parameters."""
 
-        op = operation(0, do_queue=False)
+        op = operation(0)
 
         qsim_device_1_wire.reset()
 
-        if input:
-            qsim_device_1_wire.apply([qml.PauliX(0)])
-        qsim_device_1_wire.apply(op.diagonalizing_gates())
-
-        res = qsim_device_1_wire.expval(op)
-
+        @qml.qnode(qsim_device_1_wire)
+        def circuit(input):
+            if input:
+                qml.PauliX(wires=[0])
+            return qml.expval(op)
+        res = circuit(input)
+        print("res", res)
+        print("exp", expected_output)
         assert np.isclose(res, expected_output, **tol)
 
     @pytest.mark.parametrize(

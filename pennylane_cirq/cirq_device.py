@@ -156,6 +156,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         ),
         "CSWAP": CirqOperation(lambda: cirq.CSWAP),
         "Toffoli": CirqOperation(lambda: cirq.TOFFOLI),
+        "Identity": CirqOperation(lambda: cirq.I),
     }
 
     _observable_map = {
@@ -176,7 +177,6 @@ class CirqDevice(QubitDevice, abc.ABC):
         if isinstance(observable, Tensor):
             obs = [self.to_paulistring(o) for o in observable.obs]
             return functools.reduce(operator.mul, obs)
-
         cirq_op = self._observable_map[observable.name]
         if cirq_op is None:
             raise NotImplementedError(f"{observable.name} is not currently supported.")
@@ -266,15 +266,10 @@ class CirqDevice(QubitDevice, abc.ABC):
                 self._apply_operation(operation)
 
         self.pre_rotated_circuit = self.circuit.copy()
-        for q in self.qubits:
-            self.pre_rotated_circuit.append(cirq.IdentityGate(1)(q))
 
         # Diagonalize the given observables
         for operation in rotations:
             self._apply_operation(operation)
-
-        for q in self.qubits:
-            self.circuit.append(cirq.IdentityGate(1)(q))
 
     def define_wire_map(self, wires):  # pylint: disable=missing-function-docstring
         cirq_order = np.argsort(self._unsorted_qubits)
