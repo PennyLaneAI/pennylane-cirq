@@ -239,8 +239,7 @@ class SimulatorDevice(CirqDevice):
 
                     return self._simulator.simulate_expectation_values(
                         program=self.circuit,
-                        observables=cirq.PauliSum()
-                                    + self.to_paulistring(T),
+                        observables=cirq.PauliSum() + self.to_paulistring(T),
                         initial_state=self._initial_state,
                     )[0]
 
