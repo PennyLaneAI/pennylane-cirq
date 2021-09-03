@@ -23,6 +23,7 @@ from pennylane_cirq.qsim_device import QSimhDevice
 
 qsimh_options = {"k": [0], "w": 0, "p": 0, "r": 0}
 
+
 class TestDeviceIntegration:
     """Tests that the QSimhDevice integrates well with PennyLane"""
 
@@ -59,9 +60,7 @@ class TestDeviceIntegration:
 
     @pytest.mark.parametrize("shots", [8192])
     @pytest.mark.parametrize(
-        "op, params",
-        [(qml.QubitStateVector, np.array([0, 1])),
-         (qml.BasisState, np.array([1]))]
+        "op, params", [(qml.QubitStateVector, np.array([0, 1])), (qml.BasisState, np.array([1]))]
     )
     def test_decomposition(self, shots, op, params, mocker):
         """Test that QubitStateVector and BasisState are decomposed"""
@@ -86,13 +85,17 @@ class TestDeviceIntegration:
 
         assert not dev.capabilities()["supports_inverse_operations"]
 
-    @pytest.mark.parametrize("gate", [
-        "QubitStateVector",
-        "BasisState",
-        "CRX",
-        "CRY",
-        "CRZ",
-        "CRot",])
+    @pytest.mark.parametrize(
+        "gate",
+        [
+            "QubitStateVector",
+            "BasisState",
+            "CRX",
+            "CRY",
+            "CRZ",
+            "CRot",
+        ],
+    )
     def test_incompatible_gates_not_in_operations(self, gate):
         """Test that QSimhDevice does not support inverse operations"""
         dev = qml.device("cirq.qsimh", wires=1, qsimh_options=qsimh_options)
@@ -135,7 +138,7 @@ class TestApply:
         self, qsimh_device_1_wire, tol, op, expected_output
     ):
         """Tests that applying an operation yields the expected output state for single wire
-           operations that have no parameters."""
+        operations that have no parameters."""
 
         qsimh_device_1_wire.reset()
         qsimh_device_1_wire.apply([op(wires=[0])])
@@ -148,10 +151,8 @@ class TestApply:
             (qml.CNOT, [0, 0], [1, 0, 0, 0]),
             (qml.SWAP, [0, 0], [1, 0, 0, 0]),
             (qml.CZ, [0, 0], [1, 0, 0, 0]),
-
             (qml.CNOT, [1, 0], [0, 0, 0, 1]),
             (qml.SWAP, [1, 0], [0, 1, 0, 0]),
-
             (qml.CZ, [1, 1], [0, 0, 0, -1]),
         ],
     )
@@ -159,7 +160,7 @@ class TestApply:
         self, qsimh_device_2_wires, tol, op, input, expected_output
     ):
         """Tests that applying an operation yields the expected output state for two wire
-           operations that have no parameters."""
+        operations that have no parameters."""
 
         qsimh_device_2_wires.reset()
 
@@ -182,8 +183,18 @@ class TestApply:
             (qml.RY, 0, [0, 1], [math.pi]),
             (qml.RZ, 0, [1, 0], [math.pi / 2]),
             (qml.RZ, 1, [0, 1], [math.pi]),
-            (qml.Rot, 0, [1, 0], [math.pi / 2, 0, 0],),
-            (qml.Rot, 0, [0.5, 0.5], [0, math.pi / 2, 0],),
+            (
+                qml.Rot,
+                0,
+                [1, 0],
+                [math.pi / 2, 0, 0],
+            ),
+            (
+                qml.Rot,
+                0,
+                [0.5, 0.5],
+                [0, math.pi / 2, 0],
+            ),
             (
                 qml.Rot,
                 0,
@@ -222,7 +233,7 @@ class TestApply:
         self, qsimh_device_1_wire, tol, op, input, expected_output, par
     ):
         """Tests that applying an operation yields the expected output probabilities for single wire
-           operations that have no parameters."""
+        operations that have no parameters."""
 
         qsimh_device_1_wire.reset()
 

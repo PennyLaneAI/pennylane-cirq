@@ -20,7 +20,6 @@ import math
 import pennylane as qml
 import numpy as np
 from pennylane_cirq import MixedStateSimulatorDevice
-import cirq
 
 
 class TestDeviceIntegration:
@@ -89,7 +88,7 @@ class TestApply:
         self, simulator_device_1_wire, tol, op, input, expected_pure_state
     ):
         """Tests that applying an operation yields the expected output state for single wire
-           operations that have no parameters."""
+        operations that have no parameters."""
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
@@ -130,7 +129,7 @@ class TestApply:
         self, simulator_device_2_wires, tol, op, input, expected_pure_state
     ):
         """Tests that applying an operation yields the expected output state for two wire
-           operations that have no parameters."""
+        operations that have no parameters."""
 
         simulator_device_2_wires.reset()
         simulator_device_2_wires._initial_state = np.array(input, dtype=np.complex64)
@@ -166,7 +165,7 @@ class TestApply:
         self, simulator_device_2_wires, tol, op, expected_pure_state, par
     ):
         """Tests that applying an operation yields the expected output state for single wire
-           operations that have no parameters."""
+        operations that have no parameters."""
 
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply([op(np.array(par), wires=[0, 1])])
@@ -206,8 +205,18 @@ class TestApply:
                 [1 / 2 - 1j / 2, 1 / 2 + 1j / 2],
                 [math.pi / 2],
             ),
-            (qml.Rot, [1, 0], [1 / math.sqrt(2) - 1j / math.sqrt(2), 0], [math.pi / 2, 0, 0],),
-            (qml.Rot, [1, 0], [1 / math.sqrt(2), 1 / math.sqrt(2)], [0, math.pi / 2, 0],),
+            (
+                qml.Rot,
+                [1, 0],
+                [1 / math.sqrt(2) - 1j / math.sqrt(2), 0],
+                [math.pi / 2, 0, 0],
+            ),
+            (
+                qml.Rot,
+                [1, 0],
+                [1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [0, math.pi / 2, 0],
+            ),
             (
                 qml.Rot,
                 [1 / math.sqrt(2), 1 / math.sqrt(2)],
@@ -271,7 +280,7 @@ class TestApply:
         self, simulator_device_1_wire, tol, op, input, expected_pure_state, par
     ):
         """Tests that applying an operation yields the expected output state for single wire
-           operations that have no parameters."""
+        operations that have no parameters."""
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
@@ -293,7 +302,12 @@ class TestApply:
                 [0, 1 / math.sqrt(2), 1 / 2, -1j / 2],
                 [math.pi / 2],
             ),
-            (qml.CRY, [0, 0, 0, 1], [0, 0, -1 / math.sqrt(2), 1 / math.sqrt(2)], [math.pi / 2],),
+            (
+                qml.CRY,
+                [0, 0, 0, 1],
+                [0, 0, -1 / math.sqrt(2), 1 / math.sqrt(2)],
+                [math.pi / 2],
+            ),
             (qml.CRY, [0, 0, 0, 1], [0, 0, -1, 0], [math.pi]),
             (
                 qml.CRY,
@@ -395,7 +409,7 @@ class TestApply:
         self, simulator_device_2_wires, tol, op, input, expected_pure_state, par
     ):
         """Tests that applying an operation yields the expected output state for single wire
-           operations that have no parameters."""
+        operations that have no parameters."""
 
         simulator_device_2_wires.reset()
         simulator_device_2_wires._initial_state = np.array(input, dtype=np.complex64)
@@ -499,7 +513,8 @@ class TestStatePreparationErrorsNonAnalytic:
         simulator_device_1_wire.reset()
 
         with pytest.raises(
-            qml.DeviceError, match="The operation BasisState is only supported in analytic mode.",
+            qml.DeviceError,
+            match="The operation BasisState is only supported in analytic mode.",
         ):
             simulator_device_1_wire.apply([qml.BasisState(np.array([0]), wires=[0])])
 
@@ -605,7 +620,16 @@ class TestExpval:
                 qml.Hermitian,
                 [0, 1, 0, 0],
                 -1,
-                [np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1],])],
+                [
+                    np.array(
+                        [
+                            [1, 0, 0, 0],
+                            [0, -1, 0, 0],
+                            [0, 0, -1, 0],
+                            [0, 0, 0, 1],
+                        ]
+                    )
+                ],
             ),
             (
                 qml.Hermitian,
@@ -627,9 +651,23 @@ class TestExpval:
             ),
             (
                 qml.Hermitian,
-                [1 / math.sqrt(3), -1 / math.sqrt(3), 1 / math.sqrt(6), 1 / math.sqrt(6),],
+                [
+                    1 / math.sqrt(3),
+                    -1 / math.sqrt(3),
+                    1 / math.sqrt(6),
+                    1 / math.sqrt(6),
+                ],
                 1,
-                [np.array([[1, 1j, 0, 0.5j], [-1j, 1, 0, 0], [0, 0, 1, -1j], [-0.5j, 0, 1j, 1],])],
+                [
+                    np.array(
+                        [
+                            [1, 1j, 0, 0.5j],
+                            [-1j, 1, 0, 0],
+                            [0, 0, 1, -1j],
+                            [-0.5j, 0, 1j, 1],
+                        ]
+                    )
+                ],
             ),
             (
                 qml.Hermitian,
@@ -709,7 +747,12 @@ class TestVar:
             (qml.Identity, [1 / math.sqrt(2), -1 / math.sqrt(2)], 0, []),
             (qml.Hermitian, [1, 0], 1, [[[1, 1j], [-1j, 1]]]),
             (qml.Hermitian, [0, 1], 1, [[[1, 1j], [-1j, 1]]]),
-            (qml.Hermitian, [1 / math.sqrt(2), -1 / math.sqrt(2)], 1, [[[1, 1j], [-1j, 1]]],),
+            (
+                qml.Hermitian,
+                [1 / math.sqrt(2), -1 / math.sqrt(2)],
+                1,
+                [[[1, 1j], [-1j, 1]]],
+            ),
         ],
     )
     def test_var_single_wire_with_parameters(

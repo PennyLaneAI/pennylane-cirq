@@ -16,23 +16,11 @@ import pytest
 
 import numpy as np
 import pennylane as qml
-from contextlib import contextmanager
 
-from conftest import U, U2, A, B
+from conftest import A, B
 
 
 np.random.seed(42)
-
-
-@contextmanager
-def mimic_execution_for_expval(device):
-    device.reset()
-
-    with device.execution_context():
-        yield
-
-        if not device.shots is None:
-            device._samples = device.generate_samples()
 
 
 @pytest.mark.parametrize("shots", [None, 8192])
@@ -46,26 +34,21 @@ class TestExpval:
 
         dev = device(2)
 
-        with mimic_execution_for_expval(dev):
-            dev.apply(
-                [
-                    qml.RX(theta, wires=[0]),
-                    qml.RX(phi, wires=[1]),
-                    qml.CNOT(wires=[0, 1]),
-                ]
-            )
+        @qml.qnode(dev)
+        def circuit0(phi, theta):
+            qml.RX(theta, wires=[0])
+            qml.RX(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.Identity(wires=[0]))
 
-        O = qml.Identity
-        name = "Identity"
+        @qml.qnode(dev)
+        def circuit1(phi, theta):
+            qml.RX(theta, wires=[0])
+            qml.RX(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.Identity(wires=[1]))
 
-        dev._obs_queue = [O(wires=[0], do_queue=False), O(wires=[1], do_queue=False)]
-
-        res = np.array(
-            [
-                dev.expval(O(wires=[0], do_queue=False)),
-                dev.expval(O(wires=[1], do_queue=False)),
-            ]
-        )
+        res = [circuit0(phi, theta), circuit1(phi, theta)]
 
         assert np.allclose(res, np.array([1, 1]), **tol)
 
@@ -76,26 +59,22 @@ class TestExpval:
 
         dev = device(2)
 
-        with mimic_execution_for_expval(dev):
-            dev.apply(
-                [
-                    qml.RX(theta, wires=[0]),
-                    qml.RX(phi, wires=[1]),
-                    qml.CNOT(wires=[0, 1]),
-                ]
-            )
+        @qml.qnode(dev)
+        def circuit0(phi, theta):
+            qml.RX(theta, wires=[0])
+            qml.RX(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.PauliZ(wires=[0]))
 
-        O = qml.PauliZ
-        name = "PauliZ"
+        @qml.qnode(dev)
+        def circuit1(phi, theta):
+            qml.RX(theta, wires=[0])
+            qml.RX(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.PauliZ(wires=[1]))
 
-        dev._obs_queue = [O(wires=[0], do_queue=False), O(wires=[1], do_queue=False)]
+        res = [circuit0(phi, theta), circuit1(phi, theta)]
 
-        res = np.array(
-            [
-                dev.expval(O(wires=[0], do_queue=False)),
-                dev.expval(O(wires=[1], do_queue=False)),
-            ]
-        )
         assert np.allclose(res, np.array([np.cos(theta), np.cos(theta) * np.cos(phi)]), **tol)
 
     def test_paulix_expectation(self, device, shots, tol):
@@ -104,27 +83,22 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        O = qml.PauliX
 
-        with mimic_execution_for_expval(dev):
-            dev.apply(
-                [
-                    qml.RY(theta, wires=[0]),
-                    qml.RY(phi, wires=[1]),
-                    qml.CNOT(wires=[0, 1]),
-                ],
-                rotations=O(wires=[0], do_queue=False).diagonalizing_gates()
-                + O(wires=[1], do_queue=False).diagonalizing_gates(),
-            )
+        @qml.qnode(dev)
+        def circuit0(phi, theta):
+            qml.RY(theta, wires=[0])
+            qml.RY(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.PauliX(wires=[0]))
 
-        dev._obs_queue = [O(wires=[0], do_queue=False), O(wires=[1], do_queue=False)]
+        @qml.qnode(dev)
+        def circuit1(phi, theta):
+            qml.RY(theta, wires=[0])
+            qml.RY(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.PauliX(wires=[1]))
 
-        res = np.array(
-            [
-                dev.expval(O(wires=[0], do_queue=False)),
-                dev.expval(O(wires=[1], do_queue=False)),
-            ]
-        )
+        res = [circuit0(phi, theta), circuit1(phi, theta)]
         assert np.allclose(res, np.array([np.sin(theta) * np.sin(phi), np.sin(phi)]), **tol)
 
     def test_pauliy_expectation(self, device, shots, tol):
@@ -135,25 +109,21 @@ class TestExpval:
         dev = device(2)
         O = qml.PauliY
 
-        with mimic_execution_for_expval(dev):
-            dev.apply(
-                [
-                    qml.RX(theta, wires=[0]),
-                    qml.RX(phi, wires=[1]),
-                    qml.CNOT(wires=[0, 1]),
-                ],
-                rotations=O(wires=[0], do_queue=False).diagonalizing_gates()
-                + O(wires=[1], do_queue=False).diagonalizing_gates(),
-            )
+        @qml.qnode(dev)
+        def circuit0(phi, theta):
+            qml.RX(theta, wires=[0])
+            qml.RX(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.PauliY(wires=[0]))
 
-        dev._obs_queue = [O(wires=[0], do_queue=False), O(wires=[1], do_queue=False)]
+        @qml.qnode(dev)
+        def circuit1(phi, theta):
+            qml.RX(theta, wires=[0])
+            qml.RX(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.PauliY(wires=[1]))
 
-        res = np.array(
-            [
-                dev.expval(O(wires=[0], do_queue=False)),
-                dev.expval(O(wires=[1], do_queue=False)),
-            ]
-        )
+        res = [circuit0(phi, theta), circuit1(phi, theta)]
         assert np.allclose(res, np.array([0, -(np.cos(theta)) * np.sin(phi)]), **tol)
 
     def test_hadamard_expectation(self, device, shots, tol):
@@ -162,27 +132,22 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        O = qml.Hadamard
 
-        with mimic_execution_for_expval(dev):
-            dev.apply(
-                [
-                    qml.RY(theta, wires=[0]),
-                    qml.RY(phi, wires=[1]),
-                    qml.CNOT(wires=[0, 1]),
-                ],
-                rotations=O(wires=[0], do_queue=False).diagonalizing_gates()
-                + O(wires=[1], do_queue=False).diagonalizing_gates(),
-            )
+        @qml.qnode(dev)
+        def circuit0(phi, theta):
+            qml.RY(theta, wires=[0])
+            qml.RY(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.Hadamard(wires=[0]))
 
-        dev._obs_queue = [O(wires=[0], do_queue=False), O(wires=[1], do_queue=False)]
+        @qml.qnode(dev)
+        def circuit1(phi, theta):
+            qml.RY(theta, wires=[0])
+            qml.RY(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.Hadamard(wires=[1]))
 
-        res = np.array(
-            [
-                dev.expval(O(wires=[0], do_queue=False)),
-                dev.expval(O(wires=[1], do_queue=False)),
-            ]
-        )
+        res = [circuit0(phi, theta), circuit1(phi, theta)]
         expected = (
             np.array(
                 [
@@ -200,30 +165,22 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        O = qml.Hermitian
 
-        with mimic_execution_for_expval(dev):
-            dev.apply(
-                [
-                    qml.RY(theta, wires=[0]),
-                    qml.RY(phi, wires=[1]),
-                    qml.CNOT(wires=[0, 1]),
-                ],
-                rotations=O(A, wires=[0], do_queue=False).diagonalizing_gates()
-                + O(A, wires=[1], do_queue=False).diagonalizing_gates(),
-            )
+        @qml.qnode(dev)
+        def circuit0(phi, theta):
+            qml.RY(theta, wires=[0])
+            qml.RY(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.Hermitian(A, wires=[0]))
 
-        dev._obs_queue = [
-            O(A, wires=[0], do_queue=False),
-            O(A, wires=[1], do_queue=False),
-        ]
+        @qml.qnode(dev)
+        def circuit1(phi, theta):
+            qml.RY(theta, wires=[0])
+            qml.RY(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.Hermitian(A, wires=[1]))
 
-        res = np.array(
-            [
-                dev.expval(O(A, wires=[0], do_queue=False)),
-                dev.expval(O(A, wires=[1], do_queue=False)),
-            ]
-        )
+        res = [circuit0(phi, theta), circuit1(phi, theta)]
 
         a = A[0, 0]
         re_b = A[0, 1].real
@@ -240,24 +197,15 @@ class TestExpval:
         phi = 0.123
 
         dev = device(2)
-        O = qml.Hermitian
 
-        with mimic_execution_for_expval(dev):
-            dev.apply(
-                [
-                    qml.RY(theta, wires=[0]),
-                    qml.RY(phi, wires=[1]),
-                    qml.CNOT(wires=[0, 1]),
-                ],
-                rotations=O(B, wires=[0, 1], do_queue=False).diagonalizing_gates(),
-            )
+        @qml.qnode(dev)
+        def circuit(phi, theta):
+            qml.RY(theta, wires=[0])
+            qml.RY(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.Hermitian(B, wires=[0, 1]))
 
-        dev._obs_queue = [O(B, wires=[0, 1], do_queue=False)]
-
-        res = np.array([dev.expval(O(B, wires=[0, 1], do_queue=False))])
-
-        # below is the analytic expectation value for this circuit with arbitrary
-        # Hermitian observable B
+        res = circuit(phi, theta)
         expected = 0.5 * (
             6 * np.cos(theta) * np.sin(phi)
             - np.sin(theta) * (8 * np.sin(phi) + 7 * np.cos(phi) + 3)
@@ -274,43 +222,53 @@ class TestExpval:
         phi = 0.523
 
         dev = device(2)
-        O = qml.Projector
 
-        with mimic_execution_for_expval(dev):
-            dev.apply(
-                [
-                    qml.RY(theta, wires=[0]),
-                    qml.RY(phi, wires=[1]),
-                    qml.CNOT(wires=[0, 1]),
-                ]
-            )
+        @qml.qnode(dev)
+        def circuit(phi, theta):
+            qml.RY(theta, wires=[0])
+            qml.RY(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.Projector([0, 0], wires=[0, 1]))
 
-        dev._obs_queue = [
-            O([0, 0], wires=[0, 1], do_queue=False),
-        ]
-        res = dev.expval(O([0, 0], wires=[0, 1], do_queue=False))
+        res = circuit(phi, theta)
         expected = (np.cos(phi / 2) * np.cos(theta / 2)) ** 2
+
         assert np.allclose(res, expected, **tol)
 
-        dev._obs_queue = [
-            O([0, 1], wires=[0, 1], do_queue=False),
-        ]
-        res = dev.expval(O([0, 1], wires=[0, 1], do_queue=False))
+        @qml.qnode(dev)
+        def circuit(phi, theta):
+            qml.RY(theta, wires=[0])
+            qml.RY(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.Projector([0, 1], wires=[0, 1]))
+
+        res = circuit(phi, theta)
         expected = (np.sin(phi / 2) * np.cos(theta / 2)) ** 2
+
         assert np.allclose(res, expected, **tol)
 
-        dev._obs_queue = [
-            O([1, 0], wires=[0, 1], do_queue=False),
-        ]
-        res = dev.expval(O([1, 0], wires=[0, 1], do_queue=False))
+        @qml.qnode(dev)
+        def circuit(phi, theta):
+            qml.RY(theta, wires=[0])
+            qml.RY(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.Projector([1, 0], wires=[0, 1]))
+
+        res = circuit(phi, theta)
+
         expected = (np.sin(phi / 2) * np.sin(theta / 2)) ** 2
         assert np.allclose(res, expected, **tol)
 
-        dev._obs_queue = [
-            O([1, 1], wires=[0, 1], do_queue=False),
-        ]
-        res = dev.expval(O([1, 1], wires=[0, 1], do_queue=False))
+        @qml.qnode(dev)
+        def circuit(phi, theta):
+            qml.RY(theta, wires=[0])
+            qml.RY(phi, wires=[1])
+            qml.CNOT(wires=[0, 1])
+            return qml.expval(qml.Projector([1, 1], wires=[0, 1]))
+
+        res = circuit(phi, theta)
         expected = (np.cos(phi / 2) * np.sin(theta / 2)) ** 2
+
         assert np.allclose(res, expected, **tol)
 
 
@@ -326,21 +284,16 @@ class TestTensorExpval:
 
         dev = device(3)
 
-        obs = qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
+        @qml.qnode(dev)
+        def circuit(theta, phi, varphi):
+            qml.RX(theta, wires=[0])
+            qml.RX(phi, wires=[1])
+            qml.RX(varphi, wires=[2])
+            qml.CNOT(wires=[0, 1])
+            qml.CNOT(wires=[1, 2])
+            return qml.expval(qml.PauliX(wires=[0]) @ qml.PauliY(wires=[2]))
 
-        with mimic_execution_for_expval(dev):
-            dev.apply(
-                [
-                    qml.RX(theta, wires=[0]),
-                    qml.RX(phi, wires=[1]),
-                    qml.RX(varphi, wires=[2]),
-                    qml.CNOT(wires=[0, 1]),
-                    qml.CNOT(wires=[1, 2]),
-                ],
-                rotations=obs.diagonalizing_gates(),
-            )
-
-        res = dev.expval(obs)
+        res = circuit(theta, phi, varphi)
         expected = np.sin(theta) * np.sin(phi) * np.sin(varphi)
 
         assert np.allclose(res, expected, **tol)
@@ -353,26 +306,20 @@ class TestTensorExpval:
 
         dev = device(3)
 
-        obs = (
-            qml.PauliZ(wires=[0], do_queue=False)
-            @ qml.Hadamard(wires=[1], do_queue=False)
-            @ qml.PauliY(wires=[2], do_queue=False)
-        )
-
-        with mimic_execution_for_expval(dev):
-            dev.apply(
-                [
-                    qml.RX(theta, wires=[0]),
-                    qml.RX(phi, wires=[1]),
-                    qml.RX(varphi, wires=[2]),
-                    qml.CNOT(wires=[0, 1]),
-                    qml.CNOT(wires=[1, 2]),
-                ],
-                rotations=obs.diagonalizing_gates(),
+        @qml.qnode(dev)
+        def circuit(theta, phi, varphi):
+            qml.RX(theta, wires=[0])
+            qml.RX(phi, wires=[1])
+            qml.RX(varphi, wires=[2])
+            qml.CNOT(wires=[0, 1])
+            qml.CNOT(wires=[1, 2])
+            return qml.expval(
+                qml.PauliZ(wires=[0]) @ qml.Hadamard(wires=[1]) @ qml.PauliY(wires=[2])
             )
 
-        res = dev.expval(obs)
+        res = circuit(theta, phi, varphi)
         expected = -(np.cos(varphi) * np.sin(phi) + np.sin(varphi) * np.cos(theta)) / np.sqrt(2)
+
         assert np.allclose(res, expected, **tol)
 
     def test_hermitian(self, device, shots, tol):
@@ -391,22 +338,17 @@ class TestTensorExpval:
                 [-5 - 2j, -5 - 4j, -4 - 3j, -6],
             ]
         )
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(A, wires=[1, 2], do_queue=False)
 
-        with mimic_execution_for_expval(dev):
-            dev.apply(
-                [
-                    qml.RX(theta, wires=[0]),
-                    qml.RX(phi, wires=[1]),
-                    qml.RX(varphi, wires=[2]),
-                    qml.CNOT(wires=[0, 1]),
-                    qml.CNOT(wires=[1, 2]),
-                ],
-                rotations=obs.diagonalizing_gates(),
-            )
+        @qml.qnode(dev)
+        def circuit(theta, phi, varphi):
+            qml.RX(theta, wires=[0])
+            qml.RX(phi, wires=[1])
+            qml.RX(varphi, wires=[2])
+            qml.CNOT(wires=[0, 1])
+            qml.CNOT(wires=[1, 2])
+            return qml.expval(qml.PauliZ(wires=[0]) @ qml.Hermitian(A, wires=[1, 2]))
 
-        res = dev.expval(obs)
-
+        res = circuit(theta, phi, varphi)
         expected = 0.5 * (
             -6 * np.cos(theta) * (np.cos(varphi) + 1)
             - 2 * np.sin(varphi) * (np.cos(theta) + np.sin(phi) - 2 * np.cos(phi))
@@ -424,50 +366,62 @@ class TestTensorExpval:
 
         dev = device(3)
 
-        with mimic_execution_for_expval(dev):
-            dev.apply(
-                [
-                    qml.RX(theta, wires=[0]),
-                    qml.RX(phi, wires=[1]),
-                    qml.RX(varphi, wires=[2]),
-                    qml.CNOT(wires=[0, 1]),
-                    qml.CNOT(wires=[1, 2]),
-                ]
-            )
+        @qml.qnode(dev)
+        def circuit(theta, phi, varphi):
+            qml.RX(theta, wires=[0])
+            qml.RX(phi, wires=[1])
+            qml.RX(varphi, wires=[2])
+            qml.CNOT(wires=[0, 1])
+            qml.CNOT(wires=[1, 2])
+            return qml.expval(qml.PauliZ(wires=[0]) @ qml.Projector([0, 0], wires=[1, 2]))
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
-            [0, 0], wires=[1, 2], do_queue=False
-        )
-        res = dev.expval(obs)
+        res = circuit(theta, phi, varphi)
         expected = (np.cos(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2 - (
             np.cos(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)
         ) ** 2
         assert np.allclose(res, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
-            [0, 1], wires=[1, 2], do_queue=False
-        )
-        res = dev.expval(obs)
+        @qml.qnode(dev)
+        def circuit(theta, phi, varphi):
+            qml.RX(theta, wires=[0])
+            qml.RX(phi, wires=[1])
+            qml.RX(varphi, wires=[2])
+            qml.CNOT(wires=[0, 1])
+            qml.CNOT(wires=[1, 2])
+            return qml.expval(qml.PauliZ(wires=[0]) @ qml.Projector([0, 1], wires=[1, 2]))
+
+        res = circuit(theta, phi, varphi)
         expected = (np.sin(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2 - (
             np.sin(varphi / 2) * np.sin(phi / 2) * np.sin(theta / 2)
         ) ** 2
         assert np.allclose(res, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
-            [1, 0], wires=[1, 2], do_queue=False
-        )
-        res = dev.expval(obs)
+        @qml.qnode(dev)
+        def circuit(theta, phi, varphi):
+            qml.RX(theta, wires=[0])
+            qml.RX(phi, wires=[1])
+            qml.RX(varphi, wires=[2])
+            qml.CNOT(wires=[0, 1])
+            qml.CNOT(wires=[1, 2])
+            return qml.expval(qml.PauliZ(wires=[0]) @ qml.Projector([1, 0], wires=[1, 2]))
+
+        res = circuit(theta, phi, varphi)
         expected = (np.sin(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2 - (
             np.sin(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)
         ) ** 2
         assert np.allclose(res, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
-            [1, 1], wires=[1, 2], do_queue=False
-        )
-        res = dev.expval(obs)
+        @qml.qnode(dev)
+        def circuit(theta, phi, varphi):
+            qml.RX(theta, wires=[0])
+            qml.RX(phi, wires=[1])
+            qml.RX(varphi, wires=[2])
+            qml.CNOT(wires=[0, 1])
+            qml.CNOT(wires=[1, 2])
+            return qml.expval(qml.PauliZ(wires=[0]) @ qml.Projector([1, 1], wires=[1, 2]))
+
+        res = circuit(theta, phi, varphi)
         expected = (np.cos(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2 - (
             np.cos(varphi / 2) * np.cos(phi / 2) * np.sin(theta / 2)
         ) ** 2
         assert np.allclose(res, expected, **tol)
-
