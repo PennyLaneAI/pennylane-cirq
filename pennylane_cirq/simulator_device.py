@@ -221,15 +221,17 @@ class SimulatorDevice(CirqDevice):
             return super().expval(observable, shot_range, bin_size)
         if self.shots is None:
             if isinstance(observable, qml.operation.Tensor):
+
                 for name in observable.name:
                     if self._observable_map[name] is None:
                         return super().expval(observable, shot_range, bin_size)
+
                 if "Projector" in observable.name:
                     eigvals = self._asarray(observable.eigvals, dtype=self.R_DTYPE)
                     prob = self.analytic_probability(wires=observable.wires)
                     return self._dot(eigvals, prob)
 
-                elif "Hadamard" in observable.name:
+                if "Hadamard" in observable.name:
                         T = qml.operation.Tensor()
                         for obs in observable.obs:
                             T = qml.operation.Tensor(T, qml.PauliZ(wires=obs.wires))
@@ -240,32 +242,32 @@ class SimulatorDevice(CirqDevice):
                                         + self.to_paulistring(T),
                             initial_state=self._initial_state,
                         )[0]
-                else:
-                    return self._simulator.simulate_expectation_values(
-                        program=self.pre_rotated_circuit,
-                        observables=cirq.PauliSum() + self.to_paulistring(observable),
-                        initial_state=self._initial_state,
-                    )[0]
+
+                return self._simulator.simulate_expectation_values(
+                    program=self.pre_rotated_circuit,
+                    observables=cirq.PauliSum() + self.to_paulistring(observable),
+                    initial_state=self._initial_state,
+                )[0]
+
+            if self._observable_map[observable.name] is None:
+                return super().expval(observable, shot_range, bin_size)
+            elif observable.name == "Projector":
+                idx = int("".join(str(i) for i in observable.parameters[0]), 2)
+                probs = self._get_computational_basis_probs()
+                return probs[idx]
             else:
-                if self._observable_map[observable.name] is None:
-                    return super().expval(observable, shot_range, bin_size)
-                elif observable.name == "Projector":
-                    idx = int("".join(str(i) for i in observable.parameters[0]), 2)
-                    probs = self._get_computational_basis_probs()
-                    return probs[idx]
-                else:
-                    if observable.name == "Hadamard":
-                        return self._simulator.simulate_expectation_values(
-                            program=self.circuit,
-                            observables=cirq.PauliSum()
-                            + self.to_paulistring(qml.PauliZ(wires=observable.wires)),
-                            initial_state=self._initial_state,
-                        )[0]
+                if observable.name == "Hadamard":
                     return self._simulator.simulate_expectation_values(
-                        program=self.pre_rotated_circuit,
-                        observables=cirq.PauliSum() + self.to_paulistring(observable),
+                        program=self.circuit,
+                        observables=cirq.PauliSum()
+                        + self.to_paulistring(qml.PauliZ(wires=observable.wires)),
                         initial_state=self._initial_state,
                     )[0]
+                return self._simulator.simulate_expectation_values(
+                    program=self.pre_rotated_circuit,
+                    observables=cirq.PauliSum() + self.to_paulistring(observable),
+                    initial_state=self._initial_state,
+                )[0]
         samples = self.sample(observable, shot_range=shot_range, bin_size=bin_size)
         return np.squeeze(np.mean(samples, axis=0))
 
