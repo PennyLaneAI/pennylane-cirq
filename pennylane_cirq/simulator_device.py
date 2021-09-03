@@ -241,13 +241,13 @@ class SimulatorDevice(CirqDevice):
                         program=self.circuit,
                         observables=cirq.PauliSum() + self.to_paulistring(T),
                         initial_state=self._initial_state,
-                    )[0]
+                    )[0].real
 
                 return self._simulator.simulate_expectation_values(
                     program=self.pre_rotated_circuit,
                     observables=cirq.PauliSum() + self.to_paulistring(observable),
                     initial_state=self._initial_state,
-                )[0]
+                )[0].real
 
             if self._observable_map[observable.name] is None:
                 return super().expval(observable, shot_range, bin_size)
@@ -261,12 +261,12 @@ class SimulatorDevice(CirqDevice):
                     observables=cirq.PauliSum()
                     + self.to_paulistring(qml.PauliZ(wires=observable.wires)),
                     initial_state=self._initial_state,
-                )[0]
+                )[0].real
             return self._simulator.simulate_expectation_values(
                 program=self.pre_rotated_circuit,
                 observables=cirq.PauliSum() + self.to_paulistring(observable),
                 initial_state=self._initial_state,
-            )[0]
+            )[0].real
         samples = self.sample(observable, shot_range=shot_range, bin_size=bin_size)
         return np.squeeze(np.mean(samples, axis=0))
 
