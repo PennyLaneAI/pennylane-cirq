@@ -217,7 +217,7 @@ class SimulatorDevice(CirqDevice):
 
     def expval(self, observable, shot_range=None, bin_size=None):
         # pylint: disable=missing-function-docstring
-        # pylint: disable=too-many-arguments
+        # pylint: disable=too-many-return-statements
         if self.short_name == "cirq.qsimh":
             return super().expval(observable, shot_range, bin_size)
         if self.shots is None:
