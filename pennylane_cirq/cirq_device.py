@@ -156,7 +156,6 @@ class CirqDevice(QubitDevice, abc.ABC):
         ),
         "CSWAP": CirqOperation(lambda: cirq.CSWAP),
         "Toffoli": CirqOperation(lambda: cirq.TOFFOLI),
-        "Identity": CirqOperation(lambda: cirq.I),
     }
 
     _observable_map = {
@@ -164,10 +163,10 @@ class CirqDevice(QubitDevice, abc.ABC):
         "PauliY": CirqOperation(lambda: cirq.Y),
         "PauliZ": CirqOperation(lambda: cirq.Z),
         "Hadamard": CirqOperation(lambda: cirq.H),
-        # TODO(chase): Consider using qml.utils.decompose_hamiltonian()
-        # to support this observable.
         "Hermitian": None,
+        # TODO: Consider using qml.utils.decompose_hamiltonian() to support this observable.
         "Hamiltonian": None,
+        # TODO: Consider using qml.utils.decompose_hamiltonian() to support this observable.
         "Identity": CirqOperation(lambda: cirq.I),
         "Projector": CirqOperation(lambda: cirq.ProductState.projector),
     }

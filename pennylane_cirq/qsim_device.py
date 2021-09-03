@@ -90,15 +90,13 @@ class QSimDevice(SimulatorDevice):
                 eigvals = self._asarray(observable.eigvals, dtype=self.R_DTYPE)
                 prob = self.probability(wires=observable.wires)
                 return self._dot(eigvals, prob)
-            else:
-                return super().expval(observable, shot_range, bin_size)
+            return super().expval(observable, shot_range, bin_size)
         else:
             if observable.name == "Identity":
                 eigvals = self._asarray(observable.eigvals, dtype=self.R_DTYPE)
                 prob = self.probability(wires=observable.wires)
                 return self._dot(eigvals, prob)
-            else:
-                return super().expval(observable, shot_range, bin_size)
+            return super().expval(observable, shot_range, bin_size)
 
 
 class QSimhDevice(SimulatorDevice):
