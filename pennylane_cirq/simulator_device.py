@@ -217,6 +217,7 @@ class SimulatorDevice(CirqDevice):
 
     def expval(self, observable, shot_range=None, bin_size=None):
         # pylint: disable=missing-function-docstring
+        # pylint: disable=too-many-arguments
         if self.short_name == "cirq.qsimh":
             return super().expval(observable, shot_range, bin_size)
         if self.shots is None:
@@ -232,16 +233,16 @@ class SimulatorDevice(CirqDevice):
                     return self._dot(eigvals, prob)
 
                 if "Hadamard" in observable.name:
-                        T = qml.operation.Tensor()
-                        for obs in observable.obs:
-                            T = qml.operation.Tensor(T, qml.PauliZ(wires=obs.wires))
+                    T = qml.operation.Tensor()
+                    for obs in observable.obs:
+                        T = qml.operation.Tensor(T, qml.PauliZ(wires=obs.wires))
 
-                        return self._simulator.simulate_expectation_values(
-                            program=self.circuit,
-                            observables=cirq.PauliSum()
-                                        + self.to_paulistring(T),
-                            initial_state=self._initial_state,
-                        )[0]
+                    return self._simulator.simulate_expectation_values(
+                        program=self.circuit,
+                        observables=cirq.PauliSum()
+                                    + self.to_paulistring(T),
+                        initial_state=self._initial_state,
+                    )[0]
 
                 return self._simulator.simulate_expectation_values(
                     program=self.pre_rotated_circuit,
