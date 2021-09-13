@@ -85,17 +85,9 @@ class QSimDevice(SimulatorDevice):
         return capabilities
 
     def expval(self, observable, shot_range=None, bin_size=None):
-        if isinstance(observable, qml.operation.Tensor):
-            if all(obs == "Identity" for obs in observable.name):
-                eigvals = self._asarray(observable.eigvals, dtype=self.R_DTYPE)
-                prob = self.probability(wires=observable.wires)
-                return self._dot(eigvals, prob)
-            return super().expval(observable, shot_range, bin_size)
-
-        if observable.name == "Identity":
-            eigvals = self._asarray(observable.eigvals, dtype=self.R_DTYPE)
-            prob = self.probability(wires=observable.wires)
-            return self._dot(eigvals, prob)
+        is_tensor = isinstance(observable, qml.operation.Tensor)
+        if  (is_tensor and all(obs == "Identity" for obs in observable.name)) or observable.name == "Identity":
+            return QubitDevice.expval(observable, shot_range, bin_size)
 
         return super().expval(observable, shot_range, bin_size)
 
