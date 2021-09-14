@@ -217,56 +217,51 @@ class SimulatorDevice(CirqDevice):
 
     def expval(self, observable, shot_range=None, bin_size=None):
         # pylint: disable=missing-function-docstring
-        # pylint: disable=too-many-return-statements
-        if self.short_name == "cirq.qsimh":
-            return super().expval(observable, shot_range, bin_size)
+        # Analytic mode
         if self.shots is None:
+            # Observables are in tensor form
             if isinstance(observable, qml.operation.Tensor):
-
+                # Projector, Hamiltonian, Hermitian
                 for name in observable.name:
-                    if self._observable_map[name] is None:
+                    if self._observable_map[name] is None or name == "Projector":
                         return super().expval(observable, shot_range, bin_size)
-
-                if "Projector" in observable.name:
-                    eigvals = self._asarray(observable.eigvals, dtype=self.R_DTYPE)
-                    prob = self.analytic_probability(wires=observable.wires)
-                    return self._dot(eigvals, prob)
 
                 if "Hadamard" in observable.name:
                     T = qml.operation.Tensor()
                     for obs in observable.obs:
                         T = qml.operation.Tensor(T, qml.PauliZ(wires=obs.wires))
 
-                    return self._simulator.simulate_expectation_values(
-                        program=self.circuit,
-                        observables=cirq.PauliSum() + self.to_paulistring(T),
-                        initial_state=self._initial_state,
-                    )[0].real
+                    circuit = self.circuit
+                    obs = cirq.PauliSum() + self.to_paulistring(T)
+                else:
+                    circuit = self.pre_rotated_circuit
+                    obs = cirq.PauliSum() + self.to_paulistring(observable)
 
                 return self._simulator.simulate_expectation_values(
-                    program=self.pre_rotated_circuit,
-                    observables=cirq.PauliSum() + self.to_paulistring(observable),
+                    program=circuit,
+                    observables=obs,
                     initial_state=self._initial_state,
                 )[0].real
 
-            if self._observable_map[observable.name] is None:
+            # Observable on a single wire
+            # Projector, Hamiltonian, Hermitian
+            if self._observable_map[observable.name] is None or observable.name == "Projector":
                 return super().expval(observable, shot_range, bin_size)
-            if observable.name == "Projector":
-                idx = int("".join(str(i) for i in observable.parameters[0]), 2)
-                probs = self._get_computational_basis_probs()
-                return probs[idx]
+
             if observable.name == "Hadamard":
-                return self._simulator.simulate_expectation_values(
-                    program=self.circuit,
-                    observables=cirq.PauliSum()
-                    + self.to_paulistring(qml.PauliZ(wires=observable.wires)),
-                    initial_state=self._initial_state,
-                )[0].real
+                circuit = self.circuit
+                obs = cirq.PauliSum() + self.to_paulistring(qml.PauliZ(wires=observable.wires))
+            else:
+                circuit = self.pre_rotated_circuit
+                obs = cirq.PauliSum() + self.to_paulistring(observable)
+
             return self._simulator.simulate_expectation_values(
-                program=self.pre_rotated_circuit,
-                observables=cirq.PauliSum() + self.to_paulistring(observable),
+                program=circuit,
+                observables=obs,
                 initial_state=self._initial_state,
             )[0].real
+
+        # Shots mode
         samples = self.sample(observable, shot_range=shot_range, bin_size=bin_size)
         return np.squeeze(np.mean(samples, axis=0))
 

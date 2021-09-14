@@ -86,8 +86,13 @@ class QSimDevice(SimulatorDevice):
 
     def expval(self, observable, shot_range=None, bin_size=None):
         is_tensor = isinstance(observable, qml.operation.Tensor)
-        if  (is_tensor and all(obs == "Identity" for obs in observable.name)) or observable.name == "Identity":
-            return QubitDevice.expval(observable, shot_range, bin_size)
+
+        if (
+            is_tensor and all(obs == "Identity" for obs in observable.name)
+        ) or observable.name == "Identity":
+            eigvals = self._asarray(observable.eigvals, dtype=self.R_DTYPE)
+            prob = self.probability(wires=observable.wires)
+            return self._dot(eigvals, prob)
 
         return super().expval(observable, shot_range, bin_size)
 
@@ -140,6 +145,9 @@ class QSimhDevice(SimulatorDevice):
             supports_inverse_operations=False,
         )
         return capabilities
+
+    def expval(self, observable, shot_range=None, bin_size=None):
+        return qml.QubitDevice.expval(self, observable, shot_range, bin_size)
 
     def apply(self, operations, **kwargs):
         # pylint: disable=missing-function-docstring
