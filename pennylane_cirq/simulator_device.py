@@ -301,6 +301,12 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         self._result = None
         self._state = None
 
+    def expval(self, observable, shot_range=None, bin_size=None):
+        try:
+            return super().expval(observable, shot_range, bin_size)
+        except:
+            return qml.QubitDevice.expval(self, observable, shot_range, bin_size)
+
     def _apply_basis_state(self, basis_state_operation):
         super()._apply_basis_state(basis_state_operation)
         self._initial_state = self._convert_to_density_matrix(self._initial_state)

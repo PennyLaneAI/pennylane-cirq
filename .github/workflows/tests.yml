@@ -81,7 +81,7 @@ jobs:
         run: |
           pl-device-test --device=cirq.simulator --tb=short --skip-ops --analytic=True --cov=pennylane_cirq --cov-report=xml
           pl-device-test --device=cirq.simulator --tb=short --skip-ops --analytic=False --shots=20000 --cov=pennylane_cirq --cov-report=xml
-          pl-device-test -k "not test_four_qubit_random_circuit" --device=cirq.mixedsimulator --tb=short --skip-ops --analytic=True --cov=pennylane_cirq --cov-report=xml
+          pl-device-test --device=cirq.mixedsimulator --tb=short --skip-ops --analytic=True --cov=pennylane_cirq --cov-report=xml
           pl-device-test --device=cirq.mixedsimulator --tb=short --skip-ops --analytic=False --shots=20000 --cov=pennylane_cirq --cov-report=xml
 
       - name: Upload coverage to Codecov
