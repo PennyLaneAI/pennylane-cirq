@@ -19,6 +19,7 @@ import math
 
 import pennylane as qml
 import numpy as np
+from pennylane import numpy as pnp
 from pennylane_cirq import MixedStateSimulatorDevice
 
 
@@ -699,6 +700,58 @@ class TestExpval:
         res = simulator_device_2_wires.expval(op)
 
         assert np.isclose(res, expected_output, **tol)
+
+    def test_four_qubit_random_circuit(self, shots):
+        """Test a four-qubit random circuit with the whole set of possible gates"""
+        dev = qml.device("cirq.mixedsimulator", wires=4)
+
+        gates = [
+            qml.PauliX,
+            qml.PauliY,
+            qml.PauliZ,
+            qml.S,
+            qml.T,
+            qml.RX,
+            qml.RY,
+            qml.RZ,
+            qml.Hadamard,
+            qml.Rot,
+            qml.CRot,
+            qml.Toffoli,
+            qml.SWAP,
+            qml.CSWAP,
+            qml.U1,
+            qml.U2,
+            qml.U3,
+            qml.CRX,
+            qml.CRY,
+            qml.CRZ,
+        ]
+
+        layers = 3
+        np.random.seed(1967)
+        gates_per_layers = [pnp.random.permutation(gates).numpy() for _ in range(layers)]
+
+        def circuit():
+            """4-qubit circuit with layers of randomly selected gates and random connections for
+            multi-qubit gates."""
+            np.random.seed(1967)
+            for gates in gates_per_layers:
+                for gate in gates:
+                    params = list(np.pi * np.random.rand(gate.num_params))
+                    rnd_wires = np.random.choice(range(4), size=gate.num_wires, replace=False)
+                    gate(
+                        *params,
+                        wires=[
+                            int(w) for w in rnd_wires
+                        ]  # make sure we do not address wires as 0-d arrays
+                    )
+            return qml.expval(qml.PauliZ(0))
+
+        qnode = qml.QNode(circuit, dev)
+        assert np.allclose(qnode(), 0.01160413)
+
+
 
 
 @pytest.mark.parametrize("shots", [None])

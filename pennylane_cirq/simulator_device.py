@@ -304,7 +304,7 @@ class MixedStateSimulatorDevice(SimulatorDevice):
     def expval(self, observable, shot_range=None, bin_size=None):
         try:
             return super().expval(observable, shot_range, bin_size)
-        except:
+        except ValueError:
             return qml.QubitDevice.expval(self, observable, shot_range, bin_size)
 
     def _apply_basis_state(self, basis_state_operation):
