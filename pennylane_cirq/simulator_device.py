@@ -240,10 +240,11 @@ class SimulatorDevice(CirqDevice):
                         return super().expval(observable, shot_range, bin_size)
 
                 if "Hadamard" in observable.name:
-                    T = qml.operation.Tensor()
+                    list_obs = []
                     for obs in observable.obs:
-                        T = qml.operation.Tensor(T, qml.PauliZ(wires=obs.wires))
+                        list_obs.append(qml.PauliZ(wires=obs.wires))
 
+                    T = qml.operation.Tensor(*list_obs)
                     circuit = self.circuit
                     obs = cirq.PauliSum() + self.to_paulistring(T)
                 else:
