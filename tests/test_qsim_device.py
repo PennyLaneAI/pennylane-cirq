@@ -378,6 +378,26 @@ class TestExpval:
         assert np.isclose(res, expected_output, **tol)
 
     @pytest.mark.parametrize(
+        "observable1,expected_output",
+        [
+            (qml.Identity, 1),
+        ],
+    )
+    def test_expval_identity(
+            self, qsim_device_2_wires, tol, observable1, expected_output
+    ):
+        """Tests that expectation values are properly calculated for single-wire identity."""
+
+        obs = observable1(wires=[0])
+
+        qsim_device_2_wires.reset()
+
+        qsim_device_2_wires.apply([qml.PauliX(0), qml.PauliX(1)])
+
+        res = qsim_device_2_wires.expval(obs)
+        assert np.isclose(res, expected_output, **tol)
+
+    @pytest.mark.parametrize(
         "observable1,observable2,expected_output",
         [
             (qml.Identity, qml.PauliZ, -1),
@@ -387,7 +407,7 @@ class TestExpval:
     def test_expval_multiple_wire_identity(
             self, qsim_device_2_wires, tol, observable1, observable2, expected_output
     ):
-        """Tests that expectation values are properly calculated for single-wire observables with parameters."""
+        """Tests that expectation values are properly calculated for multi-wire observables identity."""
 
         obs = observable1(wires=[0]) @ observable2(wires=[1])
 
