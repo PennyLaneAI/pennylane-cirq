@@ -219,8 +219,21 @@ class SimulatorDevice(CirqDevice):
         # pylint: disable=missing-function-docstring
         # Analytic mode
         if self.shots is None:
+            if not isinstance(observable, qml.operation.Tensor):
+                # Observable on a single wire
+                # Projector, Hamiltonian, Hermitian
+                if self._observable_map[observable.name] is None or observable.name == "Projector":
+                    return super().expval(observable, shot_range, bin_size)
+
+                if observable.name == "Hadamard":
+                    circuit = self.circuit
+                    obs = cirq.PauliSum() + self.to_paulistring(qml.PauliZ(wires=observable.wires))
+                else:
+                    circuit = self.pre_rotated_circuit
+                    obs = cirq.PauliSum() + self.to_paulistring(observable)
+
             # Observables are in tensor form
-            if isinstance(observable, qml.operation.Tensor):
+            else:
                 # Projector, Hamiltonian, Hermitian
                 for name in observable.name:
                     if self._observable_map[name] is None or name == "Projector":
@@ -236,24 +249,6 @@ class SimulatorDevice(CirqDevice):
                 else:
                     circuit = self.pre_rotated_circuit
                     obs = cirq.PauliSum() + self.to_paulistring(observable)
-
-                return self._simulator.simulate_expectation_values(
-                    program=circuit,
-                    observables=obs,
-                    initial_state=self._initial_state,
-                )[0].real
-
-            # Observable on a single wire
-            # Projector, Hamiltonian, Hermitian
-            if self._observable_map[observable.name] is None or observable.name == "Projector":
-                return super().expval(observable, shot_range, bin_size)
-
-            if observable.name == "Hadamard":
-                circuit = self.circuit
-                obs = cirq.PauliSum() + self.to_paulistring(qml.PauliZ(wires=observable.wires))
-            else:
-                circuit = self.pre_rotated_circuit
-                obs = cirq.PauliSum() + self.to_paulistring(observable)
 
             return self._simulator.simulate_expectation_values(
                 program=circuit,
@@ -302,6 +297,10 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         self._state = None
 
     def expval(self, observable, shot_range=None, bin_size=None):
+        """The simulate_expectation_values from Cirq for mixed states involves
+        a density matrix check, which does not always pass because the tolerance
+         is too low. If the error is raised we use the PennyLane function for
+         expectation value."""
         try:
             return super().expval(observable, shot_range, bin_size)
         except ValueError:

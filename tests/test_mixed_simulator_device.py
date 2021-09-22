@@ -702,7 +702,9 @@ class TestExpval:
         assert np.isclose(res, expected_output, **tol)
 
     def test_four_qubit_random_circuit(self, shots):
-        """Test a four-qubit random circuit with the whole set of possible gates"""
+        """Test a four-qubit random circuit with the whole set of possible gates,
+        the test is analog to a failing device test and is used to check the try/except
+        expval function from the mixed_simulator device."""
         dev = qml.device("cirq.mixedsimulator", wires=4)
 
         gates = [

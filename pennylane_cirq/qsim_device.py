@@ -90,9 +90,7 @@ class QSimDevice(SimulatorDevice):
         if (
             is_tensor and all(obs == "Identity" for obs in observable.name)
         ) or observable.name == "Identity":
-            eigvals = self._asarray(observable.eigvals, dtype=self.R_DTYPE)
-            prob = self.probability(wires=observable.wires)
-            return self._dot(eigvals, prob)
+            return 1
 
         return super().expval(observable, shot_range, bin_size)
 

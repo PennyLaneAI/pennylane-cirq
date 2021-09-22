@@ -205,6 +205,8 @@ class TestExpval:
             qml.CNOT(wires=[0, 1])
             return qml.expval(qml.Hermitian(B, wires=[0, 1]))
 
+        # Below is the analytic expectation value for this circuit with arbitrary
+        # Hermitian observable B
         res = circuit(phi, theta)
         expected = 0.5 * (
             6 * np.cos(theta) * np.sin(phi)
