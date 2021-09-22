@@ -298,10 +298,10 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         self._state = None
 
     def expval(self, observable, shot_range=None, bin_size=None):
-        """The simulate_expectation_values from Cirq for mixed states involves
-        a density matrix check, which does not always pass because the tolerance
-         is too low. If the error is raised we use the PennyLane function for
-         expectation value."""
+        # The simulate_expectation_values from Cirq for mixed states involves
+        # a density matrix check, which does not always pass because the tolerance
+        # is too low. If the error is raised we use the PennyLane function for
+        # expectation value.
         try:
             return super().expval(observable, shot_range, bin_size)
         except ValueError:
