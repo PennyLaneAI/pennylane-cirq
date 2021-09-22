@@ -165,8 +165,6 @@ class CirqDevice(QubitDevice, abc.ABC):
         "Hadamard": CirqOperation(lambda: cirq.H),
         "Hermitian": None,
         # TODO: Consider using qml.utils.decompose_hamiltonian() to support this observable.
-        "Hamiltonian": None,
-        # TODO: Consider using qml.utils.decompose_hamiltonian() to support this observable.
         "Identity": CirqOperation(lambda: cirq.I),
         "Projector": CirqOperation(lambda: cirq.ProductState.projector),
     }

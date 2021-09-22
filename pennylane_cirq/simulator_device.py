@@ -221,7 +221,7 @@ class SimulatorDevice(CirqDevice):
         if self.shots is None:
             if not isinstance(observable, qml.operation.Tensor):
                 # Observable on a single wire
-                # Projector, Hamiltonian, Hermitian
+                # Projector, Hermitian
                 if self._observable_map[observable.name] is None or observable.name == "Projector":
                     return super().expval(observable, shot_range, bin_size)
 
