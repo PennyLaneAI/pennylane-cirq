@@ -351,8 +351,6 @@ class TestExpval:
             return qml.expval(op)
 
         res = circuit(input)
-        print("res", res)
-        print("exp", expected_output)
         assert np.isclose(res, expected_output, **tol)
 
     @pytest.mark.parametrize(
