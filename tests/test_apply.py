@@ -19,7 +19,7 @@ import pennylane as qml
 from pennylane_cirq import SimulatorDevice, MixedStateSimulatorDevice
 from scipy.linalg import block_diag
 
-from conftest import U, U2, A
+from conftest import U, U2
 from contextlib import contextmanager
 
 np.random.seed(42)
@@ -146,7 +146,6 @@ class TestApplyPureState:
         expected[np.ravel_multi_index(state, [2] * 4)] = 1
         assert np.allclose(res, expected, **tol)
 
-
     def test_qubit_state_vector(self, init_state, shots, tol):
         """Test PauliX application"""
         dev = SimulatorDevice(1, shots=shots)
@@ -197,7 +196,10 @@ class TestApplyPureState:
 
         with mimic_execution_for_apply(dev):
             dev.apply(
-                [qml.QubitStateVector(state, wires=[0]), qml.__getattribute__(name)(wires=[0]),]
+                [
+                    qml.QubitStateVector(state, wires=[0]),
+                    qml.__getattribute__(name)(wires=[0]),
+                ]
             )
 
         res = dev._state
@@ -390,7 +392,10 @@ class TestApplyMixedState:
 
         with mimic_execution_for_apply(dev):
             dev.apply(
-                [qml.QubitStateVector(state, wires=[0]), qml.__getattribute__(name)(wires=[0]),]
+                [
+                    qml.QubitStateVector(state, wires=[0]),
+                    qml.__getattribute__(name)(wires=[0]),
+                ]
             )
 
         res = dev._state

@@ -15,7 +15,7 @@
 Unit tests for the CirqDevice class
 """
 import math
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import cirq
 import pennylane as qml
@@ -51,7 +51,8 @@ class TestCirqDeviceInit:
         assert dev.qubits[2] == cirq.LineQubit(2)
 
     def test_outer_init_of_qubits_ordered(self):
-        """Tests that giving qubits as parameters to CirqDevice works when the qubits are already ordered consistently with Cirq's convention."""
+        """Tests that giving qubits as parameters to CirqDevice works when the qubits are already
+        ordered consistently with Cirq's convention."""
 
         qubits = [
             cirq.GridQubit(0, 0),
@@ -65,7 +66,8 @@ class TestCirqDeviceInit:
         assert dev.qubits == qubits
 
     def test_outer_init_of_qubits_unordered(self):
-        """Tests that giving qubits as parameters to CirqDevice works when the qubits are not ordered consistently with Cirq's convention."""
+        """Tests that giving qubits as parameters to CirqDevice works when the qubits are not
+        ordered consistently with Cirq's convention."""
 
         qubits = [
             cirq.GridQubit(0, 1),
@@ -113,7 +115,8 @@ class TestCirqDeviceIntegration:
         assert dev.qubits == sorted(unordered_qubits)
 
     def test_outer_init_of_qubits_with_wire_label_strings(self):
-        """Tests that giving qubits as parameters to CirqDevice works when the user also provides custom string wire labels."""
+        """Tests that giving qubits as parameters to CirqDevice works when the user also
+         provides custom string wire labels."""
 
         unordered_qubits = [
             cirq.GridQubit(0, 1),
@@ -133,7 +136,8 @@ class TestCirqDeviceIntegration:
         )
 
     def test_outer_init_of_qubits_with_wire_label_ints(self):
-        """Tests that giving qubits as parameters to CirqDevice works when the user also provides custom integer wire labels."""
+        """Tests that giving qubits as parameters to CirqDevice works when the user also provides
+         custom integer wire labels."""
 
         unordered_qubits = [
             cirq.GridQubit(0, 1),
@@ -221,8 +225,14 @@ class TestOperations:
             (qml.PhaseShift(1.4, wires=[0]), [cirq.ZPowGate(exponent=1.4 / np.pi)]),
             (qml.PhaseShift(-1.2, wires=[0]), [cirq.ZPowGate(exponent=-1.2 / np.pi)]),
             (qml.PhaseShift(2, wires=[0]), [cirq.ZPowGate(exponent=2 / np.pi)]),
-            (qml.PhaseShift(1.4, wires=[0]).inv(), [cirq.ZPowGate(exponent=-1.4 / np.pi)],),
-            (qml.PhaseShift(-1.2, wires=[0]).inv(), [cirq.ZPowGate(exponent=1.2 / np.pi)],),
+            (
+                qml.PhaseShift(1.4, wires=[0]).inv(),
+                [cirq.ZPowGate(exponent=-1.4 / np.pi)],
+            ),
+            (
+                qml.PhaseShift(-1.2, wires=[0]).inv(),
+                [cirq.ZPowGate(exponent=1.2 / np.pi)],
+            ),
             (qml.PhaseShift(2, wires=[0]).inv(), [cirq.ZPowGate(exponent=-2 / np.pi)]),
             (qml.RX(1.4, wires=[0]), [cirq.rx(1.4)]),
             (qml.RX(-1.2, wires=[0]), [cirq.rx(-1.2)]),
@@ -242,15 +252,27 @@ class TestOperations:
             (qml.RZ(1.4, wires=[0]).inv(), [cirq.rz(-1.4)]),
             (qml.RZ(-1.1, wires=[0]).inv(), [cirq.rz(1.1)]),
             (qml.RZ(1, wires=[0]).inv(), [cirq.rz(-1)]),
-            (qml.Rot(1.4, 2.3, -1.2, wires=[0]), [cirq.rz(1.4), cirq.ry(2.3), cirq.rz(-1.2)],),
+            (
+                qml.Rot(1.4, 2.3, -1.2, wires=[0]),
+                [cirq.rz(1.4), cirq.ry(2.3), cirq.rz(-1.2)],
+            ),
             (qml.Rot(1, 2, -1, wires=[0]), [cirq.rz(1), cirq.ry(2), cirq.rz(-1)]),
-            (qml.Rot(-1.1, 0.2, -1, wires=[0]), [cirq.rz(-1.1), cirq.ry(0.2), cirq.rz(-1)],),
+            (
+                qml.Rot(-1.1, 0.2, -1, wires=[0]),
+                [cirq.rz(-1.1), cirq.ry(0.2), cirq.rz(-1)],
+            ),
             (
                 qml.Rot(1.4, 2.3, -1.2, wires=[0]).inv(),
                 [cirq.rz(1.2), cirq.ry(-2.3), cirq.rz(-1.4)],
             ),
-            (qml.Rot(1, 2, -1, wires=[0]).inv(), [cirq.rz(1), cirq.ry(-2), cirq.rz(-1)],),
-            (qml.Rot(-1.1, 0.2, -1, wires=[0]).inv(), [cirq.rz(1), cirq.ry(-0.2), cirq.rz(1.1)],),
+            (
+                qml.Rot(1, 2, -1, wires=[0]).inv(),
+                [cirq.rz(1), cirq.ry(-2), cirq.rz(-1)],
+            ),
+            (
+                qml.Rot(-1.1, 0.2, -1, wires=[0]).inv(),
+                [cirq.rz(1), cirq.ry(-0.2), cirq.rz(1.1)],
+            ),
             (
                 qml.QubitUnitary(np.array([[1, 0], [0, 1]]), wires=[0]),
                 [cirq.MatrixGate(np.array([[1, 0], [0, 1]]))],
@@ -385,12 +407,22 @@ class TestOperations:
                 ),
                 [
                     cirq.MatrixGate(
-                        np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1],])
+                        np.array(
+                            [
+                                [1, -1, -1, 1],
+                                [-1, -1, 1, 1],
+                                [-1, 1, -1, 1],
+                                [1, 1, 1, 1],
+                            ]
+                        )
                         / 2
                     )
                 ],
             ),
-            (qml.QubitUnitary(np.eye(4), wires=[0, 1]).inv(), [cirq.MatrixGate(np.eye(4)) ** -1],),
+            (
+                qml.QubitUnitary(np.eye(4), wires=[0, 1]).inv(),
+                [cirq.MatrixGate(np.eye(4)) ** -1],
+            ),
             (
                 qml.QubitUnitary(
                     np.array([[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0]]),
@@ -410,7 +442,14 @@ class TestOperations:
                 ).inv(),
                 [
                     cirq.MatrixGate(
-                        np.array([[1, -1, -1, 1], [-1, -1, 1, 1], [-1, 1, -1, 1], [1, 1, 1, 1],])
+                        np.array(
+                            [
+                                [1, -1, -1, 1],
+                                [-1, -1, 1, 1],
+                                [-1, 1, -1, 1],
+                                [1, 1, 1, 1],
+                            ]
+                        )
                         / 2
                     )
                     ** -1
@@ -426,17 +465,18 @@ class TestOperations:
         cirq_device_2_wires.apply([gate])
 
         ops = list(cirq_device_2_wires.circuit.all_operations())
-
         assert len(ops) == len(expected_cirq_gates)
 
         for i in range(len(ops)):
             assert ops[i].gate == expected_cirq_gates[i]
+
 
 def test_to_paulistring_sanity_check():
     with patch.multiple(CirqDevice, __abstractmethods__=set()):
         device = CirqDevice(2, shots=None)
         result = device.to_paulistring(qml.PauliX(0) @ qml.PauliZ(1))
         assert result == cirq.X(cirq.LineQubit(0)) * cirq.Z(cirq.LineQubit(1))
+
 
 def test_to_paulistring_single_gate():
     with patch.multiple(CirqDevice, __abstractmethods__=set()):

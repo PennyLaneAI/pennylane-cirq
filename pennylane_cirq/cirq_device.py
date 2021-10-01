@@ -104,6 +104,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         super().__init__(wires, shots)
 
         self.circuit = None
+        self.pre_rotated_circuit = None
         self.cirq_device = None
 
         # Add inverse operations
@@ -162,9 +163,8 @@ class CirqDevice(QubitDevice, abc.ABC):
         "PauliY": CirqOperation(lambda: cirq.Y),
         "PauliZ": CirqOperation(lambda: cirq.Z),
         "Hadamard": CirqOperation(lambda: cirq.H),
-        # TODO(chase): Consider using qml.utils.decompose_hamiltonian()
-        # to support this observable.
         "Hermitian": None,
+        # TODO: Consider using qml.utils.decompose_hamiltonian() to support this observable.
         "Identity": CirqOperation(lambda: cirq.I),
         "Projector": CirqOperation(lambda: cirq.ProductState.projector),
     }
@@ -174,7 +174,6 @@ class CirqDevice(QubitDevice, abc.ABC):
         if isinstance(observable, Tensor):
             obs = [self.to_paulistring(o) for o in observable.obs]
             return functools.reduce(operator.mul, obs)
-
         cirq_op = self._observable_map[observable.name]
         if cirq_op is None:
             raise NotImplementedError(f"{observable.name} is not currently supported.")
@@ -263,7 +262,7 @@ class CirqDevice(QubitDevice, abc.ABC):
             else:
                 self._apply_operation(operation)
 
-        # TODO: get pre rotated state here
+        self.pre_rotated_circuit = self.circuit.copy()
 
         # Diagonalize the given observables
         for operation in rotations:

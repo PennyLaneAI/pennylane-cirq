@@ -163,6 +163,9 @@ class SimulatorDevice(CirqDevice):
         # wires that are not acted upon
 
         for q in self.qubits:
+            self.pre_rotated_circuit.append(cirq.IdentityGate(1)(q))
+
+        for q in self.qubits:
             self.circuit.append(cirq.IdentityGate(1)(q))
 
         if self.shots is None:
@@ -208,11 +211,55 @@ class SimulatorDevice(CirqDevice):
 
         self._result = self._simulator.run(self.circuit, repetitions=self.shots)
 
-        # Bring measurements to a more managable form, but keep True/False as values for now
-        # They will be changed in the measurement routines where the observable is available
         return np.array(
             [self._result.measurements[str(wire)].flatten() for wire in range(self.num_wires)]
         ).T.astype(int)
+
+    def expval(self, observable, shot_range=None, bin_size=None):
+        # pylint: disable=missing-function-docstring
+        # Analytic mode
+        if self.shots is None:
+            if not isinstance(observable, qml.operation.Tensor):
+                # Observable on a single wire
+                # Projector, Hermitian
+                if self._observable_map[observable.name] is None or observable.name == "Projector":
+                    return super().expval(observable, shot_range, bin_size)
+
+                if observable.name == "Hadamard":
+                    circuit = self.circuit
+                    obs = cirq.PauliSum() + self.to_paulistring(qml.PauliZ(wires=observable.wires))
+                else:
+                    circuit = self.pre_rotated_circuit
+                    obs = cirq.PauliSum() + self.to_paulistring(observable)
+
+            # Observables are in tensor form
+            else:
+                # Projector, Hamiltonian, Hermitian
+                for name in observable.name:
+                    if self._observable_map[name] is None or name == "Projector":
+                        return super().expval(observable, shot_range, bin_size)
+
+                if "Hadamard" in observable.name:
+                    list_obs = []
+                    for obs in observable.obs:
+                        list_obs.append(qml.PauliZ(wires=obs.wires))
+
+                    T = qml.operation.Tensor(*list_obs)
+                    circuit = self.circuit
+                    obs = cirq.PauliSum() + self.to_paulistring(T)
+                else:
+                    circuit = self.pre_rotated_circuit
+                    obs = cirq.PauliSum() + self.to_paulistring(observable)
+
+            return self._simulator.simulate_expectation_values(
+                program=circuit,
+                observables=obs,
+                initial_state=self._initial_state,
+            )[0].real
+
+        # Shots mode
+        samples = self.sample(observable, shot_range=shot_range, bin_size=bin_size)
+        return np.squeeze(np.mean(samples, axis=0))
 
 
 class MixedStateSimulatorDevice(SimulatorDevice):
@@ -249,6 +296,16 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         self._initial_state = None
         self._result = None
         self._state = None
+
+    def expval(self, observable, shot_range=None, bin_size=None):
+        # The simulate_expectation_values from Cirq for mixed states involves
+        # a density matrix check, which does not always pass because the tolerance
+        # is too low. If the error is raised we use the PennyLane function for
+        # expectation value.
+        try:
+            return super().expval(observable, shot_range, bin_size)
+        except ValueError:
+            return qml.QubitDevice.expval(self, observable, shot_range, bin_size)
 
     def _apply_basis_state(self, basis_state_operation):
         super()._apply_basis_state(basis_state_operation)
