@@ -1,3 +1,4 @@
+"""This module implements the logic required to automatically bump the version number in the version file and update the changelog accordingly."""
 # Copyright 2018-2021 Xanadu Quantum Technologies Inc.
 
 # Licensed under the Apache License, Version 2.0 (the "License");
