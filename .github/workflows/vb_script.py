@@ -22,6 +22,18 @@ def bump_version(version_line, pre_release):
     replaces it with the bumped version depending on the pre/post
     release flag.
 
+    Example:
+        Assume that we have PennyLane version 0.18.0 as the latest release on PyPi.
+
+        Pre-release:
+        We gather the version number for the latest of PennyLane release (i.e., v0.18.0) and increment the middle value
+        to obtain the version of the plugin that we'll release: v0.19.0.
+
+        Post-release:
+        We have just released the v0.19.0 version of the plugin and have v0.19.0 set as the version number.
+        We are entering a new development phase of the plugin attached to the next release, so we increment the
+        version number (0.20.0) and add the "-dev" suffix (0.20.0-dev).
+
     Args:
          version_line (string): The string containing the current
             version of the plugin.
