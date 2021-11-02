@@ -14,7 +14,7 @@
 """This module implements the logic required to automatically bump the version number in the version file and update the changelog accordingly."""
 import argparse
 import pennylane as qml
-pl_version = '"' + qml.version() + '"'
+pl_version = '"' + qml.version() + '"' # we expect PL v0.X.0 here if we're releasing v0.X+1.0 of the plugin
 
 
 def bump_version(version_line, pre_release):
