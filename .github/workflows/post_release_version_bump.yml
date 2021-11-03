@@ -36,4 +36,4 @@ jobs:
           body: updated changelog and _version.py
           branch: post-release-version-bump
           reviewers: rmoyard
-          base: main
+          base: master
