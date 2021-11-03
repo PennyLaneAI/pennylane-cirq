@@ -1,18 +1,16 @@
-# Release 0.18.0-dev
-
-### New features since last release
-
-### Breaking changes
+# Release 0.19.0
 
 ### Improvements
 
-### Documentation
-
-### Bug fixes
+* Expectation values are now computed using the `simulate_expectation_values`
+  function from Cirq for `cirq.simulator` and `cirq.mixedsimulator`.
+  [(#81)](https://github.com/PennyLaneAI/pennylane-cirq/pull/81)
 
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Romain Moyard
 
 ---
 
