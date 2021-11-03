@@ -1,14 +1,4 @@
-# Release 0.18.0-dev
-
-### New features since last release
-
-### Breaking changes
-
-### Improvements
-
-### Documentation
-
-### Bug fixes
+# Release "0.19.0"
 
 ### Contributors
 
