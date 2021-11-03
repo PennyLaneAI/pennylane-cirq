@@ -4,7 +4,7 @@
 
 * Expectation values are now computed using the `simulate_expectation_values`
   function from Cirq for `cirq.simulator` and `cirq.mixedsimulator`.
-  [(#77)](https://github.com/PennyLaneAI/pennylane-cirq/pull/77)
+  [(#81)](https://github.com/PennyLaneAI/pennylane-cirq/pull/81)
 
 ### Contributors
 
