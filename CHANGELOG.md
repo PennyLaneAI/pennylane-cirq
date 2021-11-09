@@ -1,6 +1,5 @@
 # Release "0.20.0-dev"
 
-
 ### New features since last release
 
 ### Breaking changes
