@@ -708,26 +708,26 @@ class TestExpval:
         dev = qml.device("cirq.mixedsimulator", wires=4)
 
         gates = [
-            qml.PauliX,
-            qml.PauliY,
-            qml.PauliZ,
-            qml.S,
-            qml.T,
-            qml.RX,
-            qml.RY,
-            qml.RZ,
-            qml.Hadamard,
-            qml.Rot,
-            qml.CRot,
-            qml.Toffoli,
-            qml.SWAP,
-            qml.CSWAP,
-            qml.U1,
-            qml.U2,
-            qml.U3,
-            qml.CRX,
-            qml.CRY,
-            qml.CRZ,
+            qml.PauliX(wires=0),
+            qml.PauliY(wires=1),
+            qml.PauliZ(wires=2),
+            qml.S(wires=3),
+            qml.T(wires=0),
+            qml.RX(2.3, wires=1),
+            qml.RY(1.3, wires=2),
+            qml.RZ(3.3, wires=3),
+            qml.Hadamard(wires=0),
+            qml.Rot(0.1, 0.2, 0.3, wires=1),
+            qml.CRot(0.1, 0.2, 0.3, wires=[2, 3]),
+            qml.Toffoli(wires=[0, 1, 2]),
+            qml.SWAP(wires=[1, 2]),
+            qml.CSWAP(wires=[1, 2, 3]),
+            qml.U1(1.0, wires=0),
+            qml.U2(1.0, 2.0, wires=2),
+            qml.U3(1.0, 2.0, 3.0, wires=3),
+            qml.CRX(0.1, wires=[1, 2]),
+            qml.CRY(0.2, wires=[2, 3]),
+            qml.CRZ(0.3, wires=[3, 1]),
         ]
 
         layers = 3
@@ -740,21 +740,11 @@ class TestExpval:
             np.random.seed(1967)
             for gates in gates_per_layers:
                 for gate in gates:
-                    params = list(np.pi * np.random.rand(gate.num_params))
-                    rnd_wires = np.random.choice(range(4), size=gate.num_wires, replace=False)
-                    gate(
-                        *params,
-                        wires=[
-                            int(w) for w in rnd_wires
-                        ]  # make sure we do not address wires as 0-d arrays
-                    )
+                    qml.apply(gate)
             return qml.expval(qml.PauliZ(0))
 
         qnode = qml.QNode(circuit, dev)
-        assert np.allclose(qnode(), 0.01160413)
-
-
-
+        assert np.allclose(qnode(), 0.0)
 
 @pytest.mark.parametrize("shots", [None])
 class TestVar:
