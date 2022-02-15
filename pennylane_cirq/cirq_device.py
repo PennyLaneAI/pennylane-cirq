@@ -41,7 +41,7 @@ import cirq
 import numpy as np
 import pennylane as qml
 from pennylane import QubitDevice
-from pennylane.operation import Operation, Tensor
+from pennylane.operation import Tensor
 from pennylane.wires import Wires
 
 from ._version import __version__
@@ -89,9 +89,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         if qubits:
             if num_wires != len(qubits):
                 raise qml.DeviceError(
-                    "The number of given qubits and the specified number of wires have to match. Got {} wires and {} qubits.".format(
-                        wires, len(qubits)
-                    )
+                    f"The number of given qubits and the specified number of wires have to match. Got {wires} wires and {len(qubits)} qubits."
                 )
         else:
             qubits = [cirq.LineQubit(idx) for idx in range(num_wires)]
@@ -117,7 +115,7 @@ class CirqDevice(QubitDevice, abc.ABC):
             inverted_operation = CirqOperation(value.parametrization)
             inverted_operation.inv()
 
-            self._inverse_operation_map[key + Operation.string_for_inverse] = inverted_operation
+            self._inverse_operation_map[key + ".inv"] = inverted_operation
 
         self._complete_operation_map = {
             **self._operation_map,
@@ -250,9 +248,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         for i, operation in enumerate(operations):
             if i > 0 and operation.name in {"BasisState", "QubitStateVector"}:
                 raise qml.DeviceError(
-                    "The operation {} is only supported at the beginning of a circuit.".format(
-                        operation.name
-                    )
+                    f"The operation {operation.name} is only supported at the beginning of a circuit."
                 )
 
             if operation.name == "BasisState":
