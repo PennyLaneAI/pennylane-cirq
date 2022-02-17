@@ -118,7 +118,7 @@ class SimulatorDevice(CirqDevice):
         # get indices for which the state is changed to input state vector elements
         ravelled_indices = np.ravel_multi_index(unravelled_indices.T, [2] * self.num_wires)
 
-        state = np.zeros([2 ** self.num_wires], dtype=np.complex64)
+        state = np.zeros([2**self.num_wires], dtype=np.complex64)
         state[ravelled_indices] = state_vector
         state_vector = state.reshape([2] * self.num_wires)
 
@@ -317,7 +317,7 @@ class MixedStateSimulatorDevice(SimulatorDevice):
 
     def _convert_to_density_matrix(self, state_vec):
         """Convert ``state_vec`` into a density matrix."""
-        dim = 2 ** self.num_wires
+        dim = 2**self.num_wires
         return np.kron(state_vec, state_vec.conj()).reshape((dim, dim))
 
     @staticmethod

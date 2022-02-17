@@ -165,7 +165,7 @@ class QSimhDevice(SimulatorDevice):
 
     def generate_samples(self):
         # pylint: disable=missing-function-docstring
-        number_of_states = 2 ** self.num_wires
+        number_of_states = 2**self.num_wires
 
         rotated_prob = self.analytic_probability()
         if rotated_prob is not None:
