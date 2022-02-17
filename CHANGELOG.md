@@ -6,6 +6,10 @@
 
 ### Improvements
 
+* Changed to using `cirq_pasqal` instead of `cirq.pasqal` as per a deprecation
+  cycle in Cirq.
+  [(#XX)](https://github.com/PennyLaneAI/pennylane-cirq/pull/XX)
+
 ### Documentation
 
 ### Bug fixes
@@ -13,6 +17,8 @@
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Antal Száva
 
 ---
 

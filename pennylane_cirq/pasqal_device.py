@@ -15,7 +15,7 @@
 """
 This module provides the ``PasqalDevice`` from Cirq.
 """
-from cirq import pasqal
+import cirq_pasqal
 
 from .simulator_device import SimulatorDevice
 
@@ -42,9 +42,9 @@ class PasqalDevice(SimulatorDevice):
     def __init__(self, wires, control_radius, shots=None, qubits=None):
 
         if not qubits:
-            qubits = [pasqal.ThreeDQubit(wire * control_radius / 2, 0, 0) for wire in range(wires)]
+            qubits = [cirq_pasqal.ThreeDQubit(wire * control_radius / 2, 0, 0) for wire in range(wires)]
         self.control_radius = float(control_radius)
         if self.control_radius < 0:
             raise ValueError("The control_radius must be a non-negative real number.")
         super().__init__(wires, shots, qubits)
-        self.cirq_device = pasqal.PasqalVirtualDevice(self.control_radius, qubits)
+        self.cirq_device = cirq_pasqal.PasqalVirtualDevice(self.control_radius, qubits)
