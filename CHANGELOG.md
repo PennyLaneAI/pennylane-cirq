@@ -8,7 +8,7 @@
 
 * Changed to using `cirq_pasqal` instead of `cirq.pasqal` as per a deprecation
   cycle in Cirq.
-  [(#XX)](https://github.com/PennyLaneAI/pennylane-cirq/pull/XX)
+  [(#90)](https://github.com/PennyLaneAI/pennylane-cirq/pull/90)
 
 ### Documentation
 
