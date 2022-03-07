@@ -101,7 +101,7 @@ class TestApplyPureState:
 
         res = dev._state
 
-        expected = np.zeros([2 ** 4])
+        expected = np.zeros([2**4])
         expected[np.ravel_multi_index(state, [2] * 4)] = 1
         assert np.allclose(res, expected, **tol)
 
@@ -142,7 +142,7 @@ class TestApplyPureState:
 
         res = dev._state
 
-        expected = np.zeros([2 ** 4])
+        expected = np.zeros([2**4])
         expected[np.ravel_multi_index(state, [2] * 4)] = 1
         assert np.allclose(res, expected, **tol)
 
@@ -340,7 +340,7 @@ class TestApplyMixedState:
 
         expected = np.zeros([16])
         expected[np.ravel_multi_index(state, [2] * 4)] = 1
-        expected = np.kron(expected, expected.conj()).reshape([2 ** 4, 2 ** 4])
+        expected = np.kron(expected, expected.conj()).reshape([2**4, 2**4])
         assert np.allclose(res, expected, **tol)
 
     def test_identity_basis_state(self, shots, tol):
@@ -475,7 +475,7 @@ class TestApplyMixedState:
 
         res = dev._state
         expected = mat @ state
-        expected = np.kron(expected, expected.conj()).reshape([2 ** N, 2 ** N])
+        expected = np.kron(expected, expected.conj()).reshape([2**N, 2**N])
         assert np.allclose(res, expected, **tol)
 
     def test_invalid_qubit_state_unitary(self, shots):

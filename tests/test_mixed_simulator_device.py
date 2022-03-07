@@ -746,6 +746,7 @@ class TestExpval:
         qnode = qml.QNode(circuit, dev)
         assert np.allclose(qnode(), 0.0)
 
+
 @pytest.mark.parametrize("shots", [None])
 class TestVar:
     """Tests that variances are properly calculated."""
@@ -937,7 +938,7 @@ class TestSample:
 
         # s1 should only contain 1 and -1, which is guaranteed if
         # they square to 1
-        assert np.allclose(s1 ** 2, 1, **tol)
+        assert np.allclose(s1**2, 1, **tol)
 
 
 class TestState:
