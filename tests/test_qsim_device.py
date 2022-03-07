@@ -567,10 +567,17 @@ class TestSample:
         qsim_device_2_wires.reset()
         qsim_device_2_wires.apply([qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])])
 
+        print(qsim_device_2_wires.circuit)
+
         qsim_device_2_wires.shots = 10
         qsim_device_2_wires._samples = qsim_device_2_wires.generate_samples()
         s1 = qsim_device_2_wires.sample(qml.PauliZ(0))
         assert np.array_equal(s1.shape, (10,))
+
+        print(qsim_device_2_wires.circuit)
+        # qsim_device_2_wires.reset()
+        # qsim_device_2_wires.apply([qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])])
+        # print(qsim_device_2_wires.circuit)
 
         qsim_device_2_wires.shots = 12
         qsim_device_2_wires._samples = qsim_device_2_wires.generate_samples()
