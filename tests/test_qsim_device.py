@@ -574,16 +574,21 @@ class TestSample:
         s1 = qsim_device_2_wires.sample(qml.PauliZ(0))
         assert np.array_equal(s1.shape, (10,))
 
-        print(qsim_device_2_wires.circuit)
-        # qsim_device_2_wires.reset()
-        # qsim_device_2_wires.apply([qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])])
-        # print(qsim_device_2_wires.circuit)
+        print(f"\n{qsim_device_2_wires.circuit}")
+        qsim_device_2_wires.reset()
+        qsim_device_2_wires.apply([qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])])
+        print(f"\n{qsim_device_2_wires.circuit}")
 
         qsim_device_2_wires.shots = 12
         qsim_device_2_wires._samples = qsim_device_2_wires.generate_samples()
         s2 = qsim_device_2_wires.sample(qml.PauliZ(1))
         assert np.array_equal(s2.shape, (12,))
 
+        print(f"\n{qsim_device_2_wires.circuit}")
+        qsim_device_2_wires.reset()
+        qsim_device_2_wires.apply([qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])])
+        print(f"\n{qsim_device_2_wires.circuit}")
+        
         qsim_device_2_wires.shots = 17
         qsim_device_2_wires._samples = qsim_device_2_wires.generate_samples()
         s3 = qsim_device_2_wires.sample(qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1]))
