@@ -116,7 +116,7 @@ class TestCirqDeviceIntegration:
 
     def test_outer_init_of_qubits_with_wire_label_strings(self):
         """Tests that giving qubits as parameters to CirqDevice works when the user also
-         provides custom string wire labels."""
+        provides custom string wire labels."""
 
         unordered_qubits = [
             cirq.GridQubit(0, 1),
@@ -137,7 +137,7 @@ class TestCirqDeviceIntegration:
 
     def test_outer_init_of_qubits_with_wire_label_ints(self):
         """Tests that giving qubits as parameters to CirqDevice works when the user also provides
-         custom integer wire labels."""
+        custom integer wire labels."""
 
         unordered_qubits = [
             cirq.GridQubit(0, 1),
@@ -215,13 +215,13 @@ class TestOperations:
             (qml.PauliX(wires=[0]), [cirq.X]),
             (qml.PauliY(wires=[0]), [cirq.Y]),
             (qml.PauliZ(wires=[0]), [cirq.Z]),
-            (qml.PauliX(wires=[0]).inv(), [cirq.X ** -1]),
-            (qml.PauliY(wires=[0]).inv(), [cirq.Y ** -1]),
-            (qml.PauliZ(wires=[0]).inv(), [cirq.Z ** -1]),
+            (qml.PauliX(wires=[0]).inv(), [cirq.X**-1]),
+            (qml.PauliY(wires=[0]).inv(), [cirq.Y**-1]),
+            (qml.PauliZ(wires=[0]).inv(), [cirq.Z**-1]),
             (qml.Hadamard(wires=[0]), [cirq.H]),
-            (qml.Hadamard(wires=[0]).inv(), [cirq.H ** -1]),
+            (qml.Hadamard(wires=[0]).inv(), [cirq.H**-1]),
             (qml.S(wires=[0]), [cirq.S]),
-            (qml.S(wires=[0]).inv(), [cirq.S ** -1]),
+            (qml.S(wires=[0]).inv(), [cirq.S**-1]),
             (qml.PhaseShift(1.4, wires=[0]), [cirq.ZPowGate(exponent=1.4 / np.pi)]),
             (qml.PhaseShift(-1.2, wires=[0]), [cirq.ZPowGate(exponent=-1.2 / np.pi)]),
             (qml.PhaseShift(2, wires=[0]), [cirq.ZPowGate(exponent=2 / np.pi)]),
@@ -317,11 +317,11 @@ class TestOperations:
         "gate,expected_cirq_gates",
         [
             (qml.CNOT(wires=[0, 1]), [cirq.CNOT]),
-            (qml.CNOT(wires=[0, 1]).inv(), [cirq.CNOT ** -1]),
+            (qml.CNOT(wires=[0, 1]).inv(), [cirq.CNOT**-1]),
             (qml.SWAP(wires=[0, 1]), [cirq.SWAP]),
-            (qml.SWAP(wires=[0, 1]).inv(), [cirq.SWAP ** -1]),
+            (qml.SWAP(wires=[0, 1]).inv(), [cirq.SWAP**-1]),
             (qml.CZ(wires=[0, 1]), [cirq.CZ]),
-            (qml.CZ(wires=[0, 1]).inv(), [cirq.CZ ** -1]),
+            (qml.CZ(wires=[0, 1]).inv(), [cirq.CZ**-1]),
             (qml.CRX(1.4, wires=[0, 1]), [cirq.ControlledGate(cirq.rx(1.4))]),
             (qml.CRX(-1.2, wires=[0, 1]), [cirq.ControlledGate(cirq.rx(-1.2))]),
             (qml.CRX(2, wires=[0, 1]), [cirq.ControlledGate(cirq.rx(2))]),
