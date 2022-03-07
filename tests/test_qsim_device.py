@@ -383,9 +383,7 @@ class TestExpval:
             (qml.Identity, 1),
         ],
     )
-    def test_expval_identity(
-            self, qsim_device_2_wires, tol, observable1, expected_output
-    ):
+    def test_expval_identity(self, qsim_device_2_wires, tol, observable1, expected_output):
         """Tests that expectation values are properly calculated for single-wire identity."""
 
         obs = observable1(wires=[0])
@@ -405,7 +403,7 @@ class TestExpval:
         ],
     )
     def test_expval_multiple_wire_identity(
-            self, qsim_device_2_wires, tol, observable1, observable2, expected_output
+        self, qsim_device_2_wires, tol, observable1, observable2, expected_output
     ):
         """Tests that expectation values are properly calculated for multi-wire observables identity."""
 
@@ -560,7 +558,14 @@ class TestVarEstimate:
 class TestSample:
     """Test sampling."""
 
-    @pytest.mark.parametrize("custom_shots, obs", [(10, qml.PauliZ(0)), (12, qml.PauliZ(1)), (17, qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1]))])
+    @pytest.mark.parametrize(
+        "custom_shots, obs",
+        [
+            (10, qml.PauliZ(0)),
+            (12, qml.PauliZ(1)),
+            (17, qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1])),
+        ],
+    )
     def test_sample_dimensions(self, qsim_device_2_wires, custom_shots, obs):
         """Tests if the samples returned by the sample function have
         the correct dimensions
@@ -587,7 +592,7 @@ class TestSample:
 
         # s1 should only contain 1 and -1, which is guaranteed if
         # they square to 1
-        assert np.allclose(s1 ** 2, 1, **tol)
+        assert np.allclose(s1**2, 1, **tol)
 
 
 class TestState:
