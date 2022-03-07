@@ -560,39 +560,18 @@ class TestVarEstimate:
 class TestSample:
     """Test sampling."""
 
-    def test_sample_dimensions(self, qsim_device_2_wires):
+    @pytest.mark.parametrize("custom_shots, obs", [(10, qml.PauliZ(0)), (12, qml.PauliZ(1)), (17, qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1]))])
+    def test_sample_dimensions(self, qsim_device_2_wires, custom_shots, obs):
         """Tests if the samples returned by the sample function have
         the correct dimensions
         """
         qsim_device_2_wires.reset()
         qsim_device_2_wires.apply([qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])])
 
-        print(qsim_device_2_wires.circuit)
-
-        qsim_device_2_wires.shots = 10
+        qsim_device_2_wires.shots = custom_shots
         qsim_device_2_wires._samples = qsim_device_2_wires.generate_samples()
-        s1 = qsim_device_2_wires.sample(qml.PauliZ(0))
-        assert np.array_equal(s1.shape, (10,))
-
-        print(f"\n{qsim_device_2_wires.circuit}")
-        qsim_device_2_wires.reset()
-        qsim_device_2_wires.apply([qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])])
-        print(f"\n{qsim_device_2_wires.circuit}")
-
-        qsim_device_2_wires.shots = 12
-        qsim_device_2_wires._samples = qsim_device_2_wires.generate_samples()
-        s2 = qsim_device_2_wires.sample(qml.PauliZ(1))
-        assert np.array_equal(s2.shape, (12,))
-
-        print(f"\n{qsim_device_2_wires.circuit}")
-        qsim_device_2_wires.reset()
-        qsim_device_2_wires.apply([qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])])
-        print(f"\n{qsim_device_2_wires.circuit}")
-        
-        qsim_device_2_wires.shots = 17
-        qsim_device_2_wires._samples = qsim_device_2_wires.generate_samples()
-        s3 = qsim_device_2_wires.sample(qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1]))
-        assert np.array_equal(s3.shape, (17,))
+        s1 = qsim_device_2_wires.sample(obs)
+        assert np.array_equal(s1.shape, (custom_shots,))
 
     def test_sample_values(self, qsim_device_2_wires, tol):
         """Tests if the samples returned by sample have
