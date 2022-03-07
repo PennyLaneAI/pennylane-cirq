@@ -113,10 +113,10 @@ class TestCirqOperation:
         gate_applications = list(operation.apply(qubit))
 
         assert gate_applications[0] == cirq.rz(-0.3).on(qubit)
-        assert gate_applications[1] == (cirq.Z ** -1).on(qubit)
+        assert gate_applications[1] == (cirq.Z**-1).on(qubit)
         assert gate_applications[2] == cirq.rx(-0.2).on(qubit)
         assert gate_applications[3] == cirq.ry(-0.1).on(qubit)
-        assert gate_applications[4] == (cirq.X ** -1).on(qubit)
+        assert gate_applications[4] == (cirq.X**-1).on(qubit)
 
     def test_inv_error(self):
         """Test that inv raises an error if the CirqOperation was already parametrized."""
