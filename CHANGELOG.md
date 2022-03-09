@@ -6,6 +6,10 @@
   cycle in Cirq.
   [(#90)](https://github.com/PennyLaneAI/pennylane-cirq/pull/90)
 
+* Changed the requirements to require only `cirq-core` and `cirq-pasqal` by
+  PennyLane-Cirq.
+  [(#94)](https://github.com/PennyLaneAI/pennylane-cirq/pull/94)
+
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
