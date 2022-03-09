@@ -14,7 +14,7 @@
 
 This release contains contributions from (in alphabetical order):
 
-Antal Száva
+Jay Soni, Antal Száva
 
 ---
 
