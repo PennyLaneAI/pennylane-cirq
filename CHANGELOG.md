@@ -1,4 +1,4 @@
-# Release "0.22.0"
+# Release 0.22.0
 
 ### Improvements
 
