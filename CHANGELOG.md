@@ -1,18 +1,10 @@
-# Release 0.20.0-dev
-
-### New features since last release
-
-### Breaking changes
+# Release "0.22.0"
 
 ### Improvements
 
 * Changed to using `cirq_pasqal` instead of `cirq.pasqal` as per a deprecation
   cycle in Cirq.
   [(#90)](https://github.com/PennyLaneAI/pennylane-cirq/pull/90)
-
-### Documentation
-
-### Bug fixes
 
 ### Contributors
 
