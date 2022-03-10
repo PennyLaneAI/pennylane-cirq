@@ -18,14 +18,14 @@ import pytest
 
 import pennylane as qml
 from pennylane_cirq import PasqalDevice, SimulatorDevice
-from cirq.pasqal import ThreeDQubit, PasqalVirtualDevice
+from cirq_pasqal import ThreeDQubit, PasqalVirtualDevice
 
 
 class TestDeviceIntegration:
     """Tests that the SimulatorDevice integrates well with PennyLane"""
 
     def test_device_loading(self):
-        """Tests that the cirq.pasqal device is properly loaded"""
+        """Tests that the cirq_pasqal device is properly loaded"""
 
         control_radius = 1.0
         dev = qml.device("cirq.pasqal", wires=2, control_radius=1.0)
@@ -44,7 +44,7 @@ class TestDevice:
 
     @pytest.mark.parametrize("control_radius", [1.0, 2.0, 99.99])
     def test_device_creation(self, control_radius):
-        """Tests that the cirq.pasqal device is properly created"""
+        """Tests that the cirq_pasqal device is properly created"""
 
         dev = PasqalDevice(wires=2, shots=123, control_radius=control_radius)
 

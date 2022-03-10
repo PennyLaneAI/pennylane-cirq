@@ -148,15 +148,12 @@ class TestExpval:
             return qml.expval(qml.Hadamard(wires=[1]))
 
         res = [circuit0(phi, theta), circuit1(phi, theta)]
-        expected = (
-            np.array(
-                [
-                    np.sin(theta) * np.sin(phi) + np.cos(theta),
-                    np.cos(theta) * np.cos(phi) + np.sin(phi),
-                ]
-            )
-            / np.sqrt(2)
-        )
+        expected = np.array(
+            [
+                np.sin(theta) * np.sin(phi) + np.cos(theta),
+                np.cos(theta) * np.cos(phi) + np.sin(phi),
+            ]
+        ) / np.sqrt(2)
         assert np.allclose(res, expected, **tol)
 
     def test_hermitian_expectation(self, device, shots, tol):

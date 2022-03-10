@@ -932,7 +932,7 @@ class TestSample:
 
         # s1 should only contain 1 and -1, which is guaranteed if
         # they square to 1
-        assert np.allclose(s1 ** 2, 1, **tol)
+        assert np.allclose(s1**2, 1, **tol)
 
 
 class TestState:

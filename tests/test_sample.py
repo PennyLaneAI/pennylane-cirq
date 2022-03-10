@@ -58,7 +58,7 @@ class TestSample:
         s1 = dev.sample(qml.PauliZ(wires=[0]))
 
         # s1 should only contain 1 and -1
-        assert np.allclose(s1 ** 2, 1, **tol)
+        assert np.allclose(s1**2, 1, **tol)
 
     def test_sample_values_hermitian(self, device, shots, tol):
         """Tests if the samples of a Hermitian observable returned by sample have
@@ -258,7 +258,7 @@ class TestTensorSample:
         s1 = dev.sample(obs)
 
         # s1 should only contain 1 and -1
-        assert np.allclose(s1 ** 2, 1, **tol)
+        assert np.allclose(s1**2, 1, **tol)
 
         mean = np.mean(s1)
         expected = np.sin(theta) * np.sin(phi) * np.sin(varphi)
@@ -304,7 +304,7 @@ class TestTensorSample:
         s1 = dev.sample(obs)
 
         # s1 should only contain 1 and -1
-        assert np.allclose(s1 ** 2, 1, **tol)
+        assert np.allclose(s1**2, 1, **tol)
 
         mean = np.mean(s1)
         expected = -(np.cos(varphi) * np.sin(phi) + np.sin(varphi) * np.cos(theta)) / np.sqrt(2)
