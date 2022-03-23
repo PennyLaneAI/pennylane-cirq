@@ -1,14 +1,10 @@
-# Release 0.20.0-dev
+# Release "0.23.0-dev"
 
 ### New features since last release
 
 ### Breaking changes
 
 ### Improvements
-
-* Changed to using `cirq_pasqal` instead of `cirq.pasqal` as per a deprecation
-  cycle in Cirq.
-  [(#90)](https://github.com/PennyLaneAI/pennylane-cirq/pull/90)
 
 ### Documentation
 
@@ -18,7 +14,24 @@
 
 This release contains contributions from (in alphabetical order):
 
-Antal Száva
+---
+# Release 0.22.0
+
+### Improvements
+
+* Changed to using `cirq_pasqal` instead of `cirq.pasqal` as per a deprecation
+  cycle in Cirq.
+  [(#90)](https://github.com/PennyLaneAI/pennylane-cirq/pull/90)
+
+* Changed the requirements of PennyLane-Cirq to only contain `cirq-core` and
+  `cirq-pasqal`.
+  [(#94)](https://github.com/PennyLaneAI/pennylane-cirq/pull/94)
+
+### Contributors
+
+This release contains contributions from (in alphabetical order):
+
+Jay Soni, Antal Száva
 
 ---
 
