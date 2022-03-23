@@ -292,11 +292,11 @@ html_theme_options = {
     "table_header_border": "#19b37b",
     "download_button": "#19b37b",
     # gallery options
-    # "github_repo": "XanaduAI/PennyLane",
+    # "github_repo": "PennyLaneAI/PennyLane",
     # "gallery_dirs": "tutorials",
 }
 
-edit_on_github_project = 'XanaduAI/pennylane-cirq'
+edit_on_github_project = 'PennyLaneAI/pennylane-cirq'
 edit_on_github_branch = 'master/doc'
 
 # -- Options for LaTeX output ---------------------------------------------
