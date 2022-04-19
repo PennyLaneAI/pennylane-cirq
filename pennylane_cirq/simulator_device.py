@@ -169,13 +169,6 @@ class SimulatorDevice(CirqDevice):
             self.circuit.append(cirq.IdentityGate(1)(q))
 
         if self.shots is None:
-            if (
-                isinstance(self._simulator, cirq.DensityMatrixSimulator)
-                and self._initial_state is not None
-            ):
-                if np.shape(self._initial_state) == (2**self.num_wires,):
-                    self._initial_state = self._convert_to_density_matrix(self._initial_state)
-
             self._result = self._simulator.simulate(self.circuit, initial_state=self._initial_state)
             self._state = self._get_state_from_cirq(self._result)
 
@@ -186,11 +179,6 @@ class SimulatorDevice(CirqDevice):
 
         probs = self._get_computational_basis_probs()
         return self.marginal_prob(probs, wires)
-
-    def _convert_to_density_matrix(self, state_vec):
-        """Convert ``state_vec`` into a density matrix."""
-        dim = 2**self.num_wires
-        return np.kron(state_vec, state_vec.conj()).reshape((dim, dim))
 
     @staticmethod
     def _get_state_from_cirq(result):
@@ -326,6 +314,11 @@ class MixedStateSimulatorDevice(SimulatorDevice):
     def _apply_qubit_state_vector(self, qubit_state_vector_operation):
         super()._apply_qubit_state_vector(qubit_state_vector_operation)
         self._initial_state = self._convert_to_density_matrix(self._initial_state)
+
+    def _convert_to_density_matrix(self, state_vec):
+        """Convert ``state_vec`` into a density matrix."""
+        dim = 2**self.num_wires
+        return np.kron(state_vec, state_vec.conj()).reshape((dim, dim))
 
     @staticmethod
     def _get_state_from_cirq(result):
