@@ -118,7 +118,7 @@ class SimulatorDevice(CirqDevice):
         # get indices for which the state is changed to input state vector elements
         ravelled_indices = np.ravel_multi_index(unravelled_indices.T, [2] * self.num_wires)
 
-        state = np.zeros([2**self.num_wires], dtype=np.complex64)
+        state = np.zeros([2 ** self.num_wires], dtype=np.complex64)
         state[ravelled_indices] = state_vector
         state_vector = state.reshape([2] * self.num_wires)
 
@@ -169,12 +169,15 @@ class SimulatorDevice(CirqDevice):
             self.circuit.append(cirq.IdentityGate(1)(q))
 
         if self.shots is None:
-            self._initial_state = self.refresh_initial_state()
+            if (
+                isinstance(self._simulator, cirq.DensityMatrixSimulator)
+                and self._initial_state is not None
+            ):
+                if np.shape(self._initial_state) == (2 ** self.num_wires,):
+                    self._initial_state = self._convert_to_density_matrix(self._initial_state)
+
             self._result = self._simulator.simulate(self.circuit, initial_state=self._initial_state)
             self._state = self._get_state_from_cirq(self._result)
-
-    def refresh_initial_state(self):
-        return self._initial_state
 
     def analytic_probability(self, wires=None):
         # pylint: disable=missing-function-docstring
@@ -183,6 +186,11 @@ class SimulatorDevice(CirqDevice):
 
         probs = self._get_computational_basis_probs()
         return self.marginal_prob(probs, wires)
+
+    def _convert_to_density_matrix(self, state_vec):
+        """Convert ``state_vec`` into a density matrix."""
+        dim = 2 ** self.num_wires
+        return np.kron(state_vec, state_vec.conj()).reshape((dim, dim))
 
     @staticmethod
     def _get_state_from_cirq(result):
@@ -318,18 +326,6 @@ class MixedStateSimulatorDevice(SimulatorDevice):
     def _apply_qubit_state_vector(self, qubit_state_vector_operation):
         super()._apply_qubit_state_vector(qubit_state_vector_operation)
         self._initial_state = self._convert_to_density_matrix(self._initial_state)
-
-    def _convert_to_density_matrix(self, state_vec):
-        """Convert ``state_vec`` into a density matrix."""
-        dim = 2**self.num_wires
-        return np.kron(state_vec, state_vec.conj()).reshape((dim, dim))
-
-    def refresh_initial_state(self):
-        if self._initial_state is not None:
-            if np.shape(self._initial_state) == (2**self.num_wires,):
-                return self._convert_to_density_matrix(self._initial_state)
-            else:
-                return self._initial_state
 
     @staticmethod
     def _get_state_from_cirq(result):
