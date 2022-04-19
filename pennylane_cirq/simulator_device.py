@@ -169,8 +169,12 @@ class SimulatorDevice(CirqDevice):
             self.circuit.append(cirq.IdentityGate(1)(q))
 
         if self.shots is None:
+            self._initial_state = self.refresh_initial_state()
             self._result = self._simulator.simulate(self.circuit, initial_state=self._initial_state)
             self._state = self._get_state_from_cirq(self._result)
+
+    def refresh_initial_state(self):
+        return self._initial_state
 
     def analytic_probability(self, wires=None):
         # pylint: disable=missing-function-docstring
@@ -319,6 +323,13 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         """Convert ``state_vec`` into a density matrix."""
         dim = 2**self.num_wires
         return np.kron(state_vec, state_vec.conj()).reshape((dim, dim))
+
+    def refresh_initial_state(self):
+        if self._initial_state is not None:
+            if np.shape(self._initial_state) == (2**self.num_wires,):
+                return self._convert_to_density_matrix(self._initial_state)
+            else:
+                return self._initial_state
 
     @staticmethod
     def _get_state_from_cirq(result):
