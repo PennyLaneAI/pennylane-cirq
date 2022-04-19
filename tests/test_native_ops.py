@@ -53,7 +53,8 @@ class TestApply:
         """Tests that applying a depolarizing operation yields the expected output state for single wire."""
 
         simulator_device_1_wire.reset()
-        simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
+        init_state = np.array(input, dtype=np.complex64)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
         simulator_device_1_wire.apply([ops.Depolarize(*par, wires=[0])])
 
         assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
@@ -81,7 +82,8 @@ class TestApply:
         """Tests that applying a bit flip operation yields the expected output state for single wire."""
 
         simulator_device_1_wire.reset()
-        simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
+        init_state = np.array(input, dtype=np.complex64)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
         simulator_device_1_wire.apply([ops.BitFlip(*par, wires=[0])])
 
         assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
@@ -109,7 +111,8 @@ class TestApply:
         """Tests that applying a phase flip operation yields the expected output state for single wire."""
 
         simulator_device_1_wire.reset()
-        simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
+        init_state = np.array(input, dtype=np.complex64)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
         simulator_device_1_wire.apply([ops.PhaseFlip(*par, wires=[0])])
 
         assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
@@ -145,7 +148,8 @@ class TestApply:
         """Tests that applying a phase damping operation yields the expected output state for single wire."""
 
         simulator_device_1_wire.reset()
-        simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
+        init_state = np.array(input, dtype=np.complex64)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
         simulator_device_1_wire.apply([ops.PhaseDamp(*par, wires=[0])])
 
         assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
@@ -181,7 +185,8 @@ class TestApply:
         """Tests that applying an amplitude damping operation yields the expected output state for single wire."""
 
         simulator_device_1_wire.reset()
-        simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
+        init_state = np.array(input, dtype=np.complex64)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
         simulator_device_1_wire.apply([ops.AmplitudeDamp(*par, wires=[0])])
 
         assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)

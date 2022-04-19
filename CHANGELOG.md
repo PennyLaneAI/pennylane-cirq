@@ -1,4 +1,4 @@
-# Release "0.23.0-dev"
+# Release 0.23.0-dev
 
 ### New features since last release
 
@@ -15,6 +15,7 @@
 This release contains contributions from (in alphabetical order):
 
 ---
+
 # Release 0.22.0
 
 ### Improvements
