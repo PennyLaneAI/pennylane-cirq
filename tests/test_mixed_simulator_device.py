@@ -92,7 +92,8 @@ class TestApply:
         operations that have no parameters."""
 
         simulator_device_1_wire.reset()
-        simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
+        init_state = np.array(input, dtype=np.complex64)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
         simulator_device_1_wire.apply([op(wires=[0])])
 
         state = np.array(expected_pure_state)
@@ -133,7 +134,8 @@ class TestApply:
         operations that have no parameters."""
 
         simulator_device_2_wires.reset()
-        simulator_device_2_wires._initial_state = np.array(input, dtype=np.complex64)
+        init_state = np.array(input, dtype=np.complex64)
+        simulator_device_2_wires._initial_state = simulator_device_2_wires._convert_to_density_matrix(init_state)
         simulator_device_2_wires.apply([op(wires=[0, 1])])
 
         state = np.array(expected_pure_state)
@@ -284,7 +286,8 @@ class TestApply:
         operations that have no parameters."""
 
         simulator_device_1_wire.reset()
-        simulator_device_1_wire._initial_state = np.array(input, dtype=np.complex64)
+        init_state = np.array(input, dtype=np.complex64)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
         simulator_device_1_wire.apply([op(*par, wires=[0])])
 
         state = np.array(expected_pure_state)
@@ -413,7 +416,8 @@ class TestApply:
         operations that have no parameters."""
 
         simulator_device_2_wires.reset()
-        simulator_device_2_wires._initial_state = np.array(input, dtype=np.complex64)
+        init_state = np.array(input, dtype=np.complex64)
+        simulator_device_2_wires._initial_state = simulator_device_2_wires._convert_to_density_matrix(init_state)
         simulator_device_2_wires.apply([op(*par, wires=[0, 1])])
 
         state = np.array(expected_pure_state)
