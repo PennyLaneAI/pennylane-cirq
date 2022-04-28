@@ -41,7 +41,7 @@ openfermionpyscf==0.5
 packaging==21.0
 pandas==1.3.5
 git+https://github.com/XanaduAI/pennylane.git#egg=pennylane
-PennyLane-Lightning==0.22.1
+PennyLane-Lightning==0.23
 Pillow==9.1.0
 pluggy==1.0.0
 protobuf==3.20.0
