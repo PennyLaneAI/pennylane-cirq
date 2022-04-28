@@ -37,7 +37,7 @@ nbformat==5.1.3
 networkx==2.6.3
 ninja==1.10.2.3
 numpy==1.21.6
-openfermion==1.1.0
+openfermion==1.3.0
 openfermionpyscf==0.5
 packaging==21.0
 pandas==1.3.5
