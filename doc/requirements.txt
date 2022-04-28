@@ -8,6 +8,7 @@ Babel==2.9.1
 cachetools==4.2.4
 certifi==2021.5.30
 charset-normalizer==2.0.12
+cirq==0.14.1
 cirq-core==0.14.1
 cirq-pasqal==0.14.1
 cycler==0.10.0
