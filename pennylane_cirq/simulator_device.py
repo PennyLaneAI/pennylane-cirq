@@ -78,6 +78,14 @@ class SimulatorDevice(CirqDevice):
         self._result = None
         self._state = None
 
+    @classmethod
+    def capabilities(cls):  # pylint: disable=missing-function-docstring
+        capabilities = super().capabilities().copy()
+        capabilities.update(
+            returns_state=True,
+        )
+        return capabilities
+
     def _apply_basis_state(self, basis_state_operation):
         # pylint: disable=missing-function-docstring
         if not self.shots is None:
