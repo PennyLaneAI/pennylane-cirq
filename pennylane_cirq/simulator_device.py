@@ -305,6 +305,14 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         self._result = None
         self._state = None
 
+    @classmethod
+    def capabilities(cls):  # pylint: disable=missing-function-docstring
+        capabilities = super().capabilities().copy()
+        capabilities.update(
+            returns_state=True,
+        )
+        return capabilities
+
     def expval(self, observable, shot_range=None, bin_size=None):
         # The simulate_expectation_values from Cirq for mixed states involves
         # a density matrix check, which does not always pass because the tolerance
