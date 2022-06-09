@@ -78,11 +78,10 @@ class SimulatorDevice(CirqDevice):
         self._result = None
         self._state = None
 
-    @classmethod
-    def capabilities(cls):  # pylint: disable=missing-function-docstring
+    def capabilities(self):  # pylint: disable=missing-function-docstring
         capabilities = super().capabilities().copy()
         capabilities.update(
-            returns_state=True,
+            returns_state=(self.shots is None) # State information is only set if obtaining shots
         )
         return capabilities
 
@@ -305,11 +304,11 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         self._result = None
         self._state = None
 
-    @classmethod
-    def capabilities(cls):  # pylint: disable=missing-function-docstring
+
+    def capabilities(self):  # pylint: disable=missing-function-docstring
         capabilities = super().capabilities().copy()
         capabilities.update(
-            returns_state=True,
+            returns_state=(self.shots is None) # State information is only set if obtaining shots
         )
         return capabilities
 
