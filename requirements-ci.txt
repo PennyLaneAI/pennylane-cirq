@@ -1,4 +1,4 @@
-pennylane
+git+git://github.com/PennyLaneAI/pennylane
 cirq-core
 cirq-pasqal
 numpy
