@@ -10,9 +10,15 @@
 
 ### Bug fixes
 
+* Defines the missing `returns_state` entry of the
+  `capabilities` dictionary for devices.
+  [(#107)](https://github.com/PennyLaneAI/pennylane-cirq/pull/107)
+
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Antal Száva
 
 ---
 

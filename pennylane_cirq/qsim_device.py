@@ -75,9 +75,11 @@ class QSimDevice(SimulatorDevice):
         }
         return ops
 
-    @classmethod
-    def capabilities(cls):
+    def capabilities(self):
         # pylint: disable=missing-function-docstring
+
+        # Note: this is an instance method as parent's capabilities is an
+        # instance method too
         capabilities = super().capabilities().copy()
         capabilities.update(
             supports_inverse_operations=False,
@@ -135,11 +137,10 @@ class QSimhDevice(SimulatorDevice):
         }
         return ops
 
-    @classmethod
-    def capabilities(cls):
-        # pylint: disable=missing-function-docstring
+    def capabilities(self):  # pylint: disable=missing-function-docstring
         capabilities = super().capabilities().copy()
         capabilities.update(
+            returns_state=(self.shots is None),  # State information is only set if obtaining shots
             supports_inverse_operations=False,
         )
         return capabilities

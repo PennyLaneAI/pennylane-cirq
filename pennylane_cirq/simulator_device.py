@@ -78,6 +78,13 @@ class SimulatorDevice(CirqDevice):
         self._result = None
         self._state = None
 
+    def capabilities(self):  # pylint: disable=missing-function-docstring
+        capabilities = super().capabilities().copy()
+        capabilities.update(
+            returns_state=(self.shots is None)  # State information is only set if obtaining shots
+        )
+        return capabilities
+
     def _apply_basis_state(self, basis_state_operation):
         # pylint: disable=missing-function-docstring
         if not self.shots is None:
@@ -296,6 +303,13 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         self._initial_state = None
         self._result = None
         self._state = None
+
+    def capabilities(self):  # pylint: disable=missing-function-docstring
+        capabilities = super().capabilities().copy()
+        capabilities.update(
+            returns_state=(self.shots is None)  # State information is only set if obtaining shots
+        )
+        return capabilities
 
     def expval(self, observable, shot_range=None, bin_size=None):
         # The simulate_expectation_values from Cirq for mixed states involves
