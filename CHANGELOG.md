@@ -1,12 +1,4 @@
-# Release 0.23.0-dev
-
-### New features since last release
-
-### Breaking changes
-
-### Improvements
-
-### Documentation
+# Release 0.24.0
 
 ### Bug fixes
 
