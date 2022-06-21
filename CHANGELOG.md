@@ -14,7 +14,7 @@
 
 This release contains contributions from (in alphabetical order):
 
----
+--- 
 # Release 0.24.0
 
 ### Bug fixes
