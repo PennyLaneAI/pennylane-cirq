@@ -166,7 +166,9 @@ class SimulatorDevice(CirqDevice):
         super().apply(operations, **kwargs)
 
         if self.shots is None:
-            self._result = self._simulator.simulate(self.circuit, qubit_order=self.qubits, initial_state=self._initial_state)
+            self._result = self._simulator.simulate(
+                self.circuit, qubit_order=self.qubits, initial_state=self._initial_state
+            )
             self._state = self._get_state_from_cirq(self._result)
 
     def analytic_probability(self, wires=None):
