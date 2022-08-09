@@ -1,4 +1,4 @@
-# Release 0.23.0-dev
+# Release 0.25.0-dev
 
 ### New features since last release
 
@@ -7,6 +7,15 @@
 ### Improvements
 
 ### Documentation
+
+### Bug fixes
+
+### Contributors
+
+This release contains contributions from (in alphabetical order):
+
+---
+# Release 0.24.0
 
 ### Bug fixes
 
