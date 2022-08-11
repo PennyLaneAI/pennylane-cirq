@@ -165,18 +165,10 @@ class SimulatorDevice(CirqDevice):
         # pylint: disable=missing-function-docstring
         super().apply(operations, **kwargs)
 
-        # TODO: remove the need for this hack by keeping better track of unused wires
-        # We apply identity gates to all wires, otherwise Cirq would ignore
-        # wires that are not acted upon
-
-        for q in self.qubits:
-            self.pre_rotated_circuit.append(cirq.IdentityGate(1)(q))
-
-        for q in self.qubits:
-            self.circuit.append(cirq.IdentityGate(1)(q))
-
         if self.shots is None:
-            self._result = self._simulator.simulate(self.circuit, initial_state=self._initial_state)
+            self._result = self._simulator.simulate(
+                self.circuit, qubit_order=self.qubits, initial_state=self._initial_state
+            )
             self._state = self._get_state_from_cirq(self._result)
 
     def analytic_probability(self, wires=None):
@@ -260,6 +252,7 @@ class SimulatorDevice(CirqDevice):
 
             return self._simulator.simulate_expectation_values(
                 program=circuit,
+                qubit_order=self.qubits,
                 observables=obs,
                 initial_state=self._initial_state,
             )[0].real
