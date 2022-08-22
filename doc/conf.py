@@ -267,7 +267,7 @@ html_theme_options = {
     # "disqus_comments_shortname": "pennylane-1",
 
     # Set you GA account ID to enable tracking
-    "google_analytics_account": "UA-130507810-2",
+    "google_analytics_account": "UA-130507810-1",
 
     # Path to a touch icon
     "touch_icon": "logo_new.png",
