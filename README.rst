@@ -15,7 +15,7 @@ PennyLane-Cirq Plugin
 
 .. image:: https://img.shields.io/readthedocs/pennylane-cirq.svg?logo=read-the-docs&style=flat-square
     :alt: Read the Docs
-    :target: https://pennylane-cirq.readthedocs.io
+    :target: https://docs.pennylane.ai/projects/cirq
 
 .. image:: https://img.shields.io/pypi/v/PennyLane-cirq.svg?style=flat-square
     :alt: PyPI
@@ -39,7 +39,7 @@ learning, automatic differentiation, and optimization of hybrid quantum-classica
 
 .. header-end-inclusion-marker-do-not-remove
 
-The plugin documentation can be found here: `<https://pennylane-cirq.readthedocs.io/en/latest/>`__.
+The plugin documentation can be found here: `<https://docs.pennylane.ai/projects/cirq>`__.
 
 Features
 ========
