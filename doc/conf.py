@@ -70,7 +70,7 @@ automodapi_toctreedirnm = "code/api"
 automodsumm_inherited_members = True
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates', 'xanadu_theme']
+templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -189,14 +189,14 @@ html_static_path = ['_static']
 #        'donate.html',
 #    ]
 # }
-html_sidebars = {
-    "**": [
-        "logo-text.html",
-        "searchbox.html",
-        "globaltoc.html",
-        # 'sourcelink.html'
-    ]
-}
+# html_sidebars = {
+#     "**": [
+#         "logo-text.html",
+#         "searchbox.html",
+#         "globaltoc.html",
+#         # 'sourcelink.html'
+#     ]
+# }
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -247,7 +247,6 @@ html_sidebars = {
 # Output file base name for HTML help builder.
 htmlhelp_basename = "PennyLane-Cirqdoc"
 
-# # -- Xanadu theme ---------------------------------------------------------
 # # -- Xanadu theme ---------------------------------------------------------
 html_theme = 'xanadu'
 
