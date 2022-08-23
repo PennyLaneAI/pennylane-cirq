@@ -13,7 +13,7 @@ PennyLane-Cirq Plugin
     :alt: CodeFactor Grade
     :target: https://www.codefactor.io/repository/github/pennylaneai/pennylane-cirq
 
-.. image:: https://img.shields.io/readthedocs/pennylane-cirq.svg?logo=read-the-docs&style=flat-square
+.. image:: https://readthedocs.com/projects/xanaduai-pennylane-cirq/badge/?version=latest&style=flat-square
     :alt: Read the Docs
     :target: https://docs.pennylane.ai/projects/cirq
 
