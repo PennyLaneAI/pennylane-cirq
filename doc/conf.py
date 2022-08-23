@@ -250,6 +250,13 @@ htmlhelp_basename = "PennyLane-Cirqdoc"
 # # -- Xanadu theme ---------------------------------------------------------
 html_theme = 'xanadu'
 
+html_sidebars = {
+    '**' : [
+        'searchbox.html',
+        'globaltoc.html',
+    ]
+}
+
 # Register the theme as an extension to generate a sitemap.xml
 # extensions.append("guzzle_sphinx_theme")
 
