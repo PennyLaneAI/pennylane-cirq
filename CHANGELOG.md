@@ -2,6 +2,9 @@
 
 ### New features since last release
 
+* Support `ISWAP`, `SISWAP`, and their adjoints.
+  [(#114)](https://github.com/PennyLaneAI/pennylane-cirq/pull/114)
+
 ### Breaking changes
 
 ### Improvements
@@ -18,7 +21,7 @@
 
 This release contains contributions from (in alphabetical order):
 
-Oumarou Oumarou
+Oumarou Oumarou, Matthew Silverman
 
 ---
 # Release 0.24.0
