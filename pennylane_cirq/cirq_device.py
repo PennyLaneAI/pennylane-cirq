@@ -169,6 +169,15 @@ class CirqDevice(QubitDevice, abc.ABC):
         "Identity": CirqOperation(lambda: cirq.I),
         "Projector": CirqOperation(lambda: cirq.ProductState.projector),
     }
+      
+    def supports_operation(self, operation):
+       op_with_power = operation.split("**")
+       if (
+           len(op_with_power) == 2
+           and op_with_power[0]+"**" in self.operations
+       ):
+           return True
+       return super().supports_operation(operation)
 
     def to_paulistring(self, observable):
         """Convert an observable to a cirq.PauliString"""
