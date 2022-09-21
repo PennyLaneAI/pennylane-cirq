@@ -184,10 +184,11 @@ class CirqDevice(QubitDevice, abc.ABC):
 
     def supports_operation(self, operation):
         # pylint: disable=missing-function-docstring
-        if isinstance(operation, type) and issubclass(operation, Operation):
-            operation = operation.name
-        if isinstance(operation, str):
-            op_with_power = operation.split("**")
+        op = operation
+        if isinstance(op, type) and issubclass(op, Operation):
+            op = op.name
+        if isinstance(op, str):
+            op_with_power = op.split("**")
             if len(op_with_power) == 2 and "Pow_" + op_with_power[0] in self._pow_operation_map:
                 return True
         return super().supports_operation(operation)
