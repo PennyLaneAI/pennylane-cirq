@@ -119,6 +119,7 @@ class CirqDevice(QubitDevice, abc.ABC):
 
         self._complete_operation_map = {
             **self._operation_map,
+            **self._pow_operation_map,
             **self._inverse_operation_map,
         }
 
@@ -159,6 +160,12 @@ class CirqDevice(QubitDevice, abc.ABC):
         "Toffoli": CirqOperation(lambda: cirq.TOFFOLI),
     }
 
+    _pow_operation_map = {
+        "Pow_PauliX": CirqOperation(lambda exp: cirq.XPowGate(exponent=exp)),
+        "Pow_PauliY": CirqOperation(lambda exp: cirq.YPowGate(exponent=exp)),
+        "Pow_PauliZ": CirqOperation(lambda exp: cirq.ZPowGate(exponent=exp)),
+    }
+
     _observable_map = {
         "PauliX": CirqOperation(lambda: cirq.X),
         "PauliY": CirqOperation(lambda: cirq.Y),
@@ -169,6 +176,12 @@ class CirqDevice(QubitDevice, abc.ABC):
         "Identity": CirqOperation(lambda: cirq.I),
         "Projector": CirqOperation(lambda: cirq.ProductState.projector),
     }
+
+    def supports_operation(self, operation):
+        op_with_power = operation.split("**")
+        if len(op_with_power) == 2 and "Pow_"+op_with_power[0] in self._pow_operation_map:
+            return True
+        return super().supports_operation(operation)
 
     def to_paulistring(self, observable):
         """Convert an observable to a cirq.PauliString"""
@@ -233,11 +246,18 @@ class CirqDevice(QubitDevice, abc.ABC):
         Args:
             operation (pennylane.Operation): the operation that shall be applied
         """
-        cirq_operation = self._complete_operation_map[operation.name]
+        if isinstance(operation, qml.ops.Pow):
+            op_name = "Pow_"+operation.base.name
+            params = [operation.z, *operation.parameters]
+        else:
+            op_name = operation.name
+            params = operation.parameters
+
+        cirq_operation = self._complete_operation_map[op_name]
 
         # If command is None do nothing
         if cirq_operation:
-            cirq_operation.parametrize(*operation.parameters)
+            cirq_operation.parametrize(*params)
 
             device_wires = self.map_wires(operation.wires)
             self.circuit.append(
