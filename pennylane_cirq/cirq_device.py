@@ -164,6 +164,11 @@ class CirqDevice(QubitDevice, abc.ABC):
         "Pow_PauliX": CirqOperation(lambda exp: cirq.XPowGate(exponent=exp)),
         "Pow_PauliY": CirqOperation(lambda exp: cirq.YPowGate(exponent=exp)),
         "Pow_PauliZ": CirqOperation(lambda exp: cirq.ZPowGate(exponent=exp)),
+        "Pow_Hadamard": CirqOperation(lambda exp: cirq.HPowGate(exponent=exp)),
+        "Pow_SWAP": CirqOperation(lambda exp: cirq.SwapPowGate(exponent=exp)),
+        "Pow_ISWAP": CirqOperation(lambda exp: cirq.ISwapPowGate(exponent=exp)),
+        "Pow_CNOT": CirqOperation(lambda exp: cirq.CXPowGate(exponent=exp)),
+        "Pow_CZ": CirqOperation(lambda exp: cirq.CZPowGate(exponent=exp)),
     }
 
     _observable_map = {
@@ -179,7 +184,7 @@ class CirqDevice(QubitDevice, abc.ABC):
 
     def supports_operation(self, operation):
         op_with_power = operation.split("**")
-        if len(op_with_power) == 2 and "Pow_"+op_with_power[0] in self._pow_operation_map:
+        if len(op_with_power) == 2 and "Pow_" + op_with_power[0] in self._pow_operation_map:
             return True
         return super().supports_operation(operation)
 
@@ -247,7 +252,7 @@ class CirqDevice(QubitDevice, abc.ABC):
             operation (pennylane.Operation): the operation that shall be applied
         """
         if isinstance(operation, qml.ops.Pow):
-            op_name = "Pow_"+operation.base.name
+            op_name = "Pow_" + operation.base.name
             params = [operation.z, *operation.parameters]
         else:
             op_name = operation.name
