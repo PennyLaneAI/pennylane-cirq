@@ -141,7 +141,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         "Adjoint(SISWAP)": CirqOperation(lambda: cirq.SQRT_ISWAP_INV),
         "CZ": CirqOperation(lambda: cirq.CZ),
         "PhaseShift": CirqOperation(lambda phi: cirq.ZPowGate(exponent=phi / np.pi)),
-        "CPhase": CirqOperation(lambda phi: cirq.CZPowGate(exponent=phi / np.pi)),
+        "ControlledPhaseShift": CirqOperation(lambda phi: cirq.CZPowGate(exponent=phi / np.pi)),
         "RX": CirqOperation(cirq.rx),
         "RY": CirqOperation(cirq.ry),
         "RZ": CirqOperation(cirq.rz),
