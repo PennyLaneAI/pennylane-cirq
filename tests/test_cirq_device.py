@@ -156,6 +156,22 @@ class TestCirqDeviceIntegration:
             dev.map_wires(Wires(label)) == Wires(idx) for label, idx in zip(user_labels, sort_order)
         )
 
+    @pytest.mark.parametrize(
+        "op,expected",
+        [
+            (qml.PauliX, True),
+            ((qml.PauliX(0)**1.1).name, True),
+            ("PauliX**1.1", True),
+            (qml.IsingXX, False),
+            ("IsingXX", False)
+        ],
+    )
+    def test_supports_operation(self, op, expected):
+        """Test that the override of supports_operation works."""
+        dev = qml.device("cirq.simulator", wires=1)
+
+        assert dev.supports_operation(op) == expected
+
 
 @pytest.fixture(scope="function")
 def cirq_device_1_wire(shots):
