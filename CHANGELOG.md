@@ -10,15 +10,15 @@
 
 ### Breaking changes
 
+* Removed the unnecessary `CPhase` and `ISWAP` operations from the
+  plugin's custom support because PennyLane supports them.
+  [(#115)](https://github.com/PennyLaneAI/pennylane-cirq/pull/115)
+
 ### Improvements
 
 * Pass all the qubits as `qubit_order` parameter to force 
   the simulator not to ignore idle qubits. 
   [(#111)](https://github.com/PennyLaneAI/pennylane-cirq/pull/111) 
-
-* Removed the unnecessary `CPhase` and `ISWAP` operations from the
-  plugin's custom support because PennyLane supports them.
-  [(#115)](https://github.com/PennyLaneAI/pennylane-cirq/pull/115)
 
 ### Documentation
 
