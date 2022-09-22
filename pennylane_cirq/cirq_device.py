@@ -184,14 +184,13 @@ class CirqDevice(QubitDevice, abc.ABC):
 
     def supports_operation(self, operation):
         # pylint: disable=missing-function-docstring
-        op = operation
-        if isinstance(op, type) and issubclass(op, Operation):
-            op = op.name
-        if isinstance(op, str):
-            op_with_power = op.split("**")
-            if len(op_with_power) == 2 and "Pow_" + op_with_power[0] in self._pow_operation_map:
-                return True
-        return super().supports_operation(operation)
+        is_supported_pow = False
+        if isinstance(operation, str):
+            op_with_power = operation.split("**")
+            is_supported_pow = (
+                len(op_with_power) == 2 and "Pow_" + op_with_power[0] in self._pow_operation_map
+            )
+        return is_supported_pow or super().supports_operation(operation)
 
     def to_paulistring(self, observable):
         """Convert an observable to a cirq.PauliString"""
