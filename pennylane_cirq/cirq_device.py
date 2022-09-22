@@ -41,7 +41,7 @@ import cirq
 import numpy as np
 import pennylane as qml
 from pennylane import QubitDevice
-from pennylane.operation import Tensor, Operation
+from pennylane.operation import Tensor
 from pennylane.wires import Wires
 
 from ._version import __version__
