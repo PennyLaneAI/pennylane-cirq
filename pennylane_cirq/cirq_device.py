@@ -168,7 +168,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         ),
         "CSWAP": CirqOperation(lambda: cirq.CSWAP),
         "Toffoli": CirqOperation(lambda: cirq.TOFFOLI),
-        **{f"Pow({k})": v for k,v in _pow_operation_map.items()},
+        **{f"Pow({k})": v for k, v in _pow_operation_map.items()},
     }
 
     _observable_map = {
