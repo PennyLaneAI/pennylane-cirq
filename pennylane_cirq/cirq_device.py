@@ -119,9 +119,19 @@ class CirqDevice(QubitDevice, abc.ABC):
 
         self._complete_operation_map = {
             **self._operation_map,
-            **self._pow_operation_map,
             **self._inverse_operation_map,
         }
+
+    _pow_operation_map = {
+        "PauliX": CirqOperation(lambda exp: cirq.XPowGate(exponent=exp)),
+        "PauliY": CirqOperation(lambda exp: cirq.YPowGate(exponent=exp)),
+        "PauliZ": CirqOperation(lambda exp: cirq.ZPowGate(exponent=exp)),
+        "Hadamard": CirqOperation(lambda exp: cirq.HPowGate(exponent=exp)),
+        "SWAP": CirqOperation(lambda exp: cirq.SwapPowGate(exponent=exp)),
+        "ISWAP": CirqOperation(lambda exp: cirq.ISwapPowGate(exponent=exp)),
+        "CNOT": CirqOperation(lambda exp: cirq.CXPowGate(exponent=exp)),
+        "CZ": CirqOperation(lambda exp: cirq.CZPowGate(exponent=exp)),
+    }
 
     _operation_map = {
         "BasisState": None,
@@ -158,17 +168,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         ),
         "CSWAP": CirqOperation(lambda: cirq.CSWAP),
         "Toffoli": CirqOperation(lambda: cirq.TOFFOLI),
-    }
-
-    _pow_operation_map = {
-        "Pow_PauliX": CirqOperation(lambda exp: cirq.XPowGate(exponent=exp)),
-        "Pow_PauliY": CirqOperation(lambda exp: cirq.YPowGate(exponent=exp)),
-        "Pow_PauliZ": CirqOperation(lambda exp: cirq.ZPowGate(exponent=exp)),
-        "Pow_Hadamard": CirqOperation(lambda exp: cirq.HPowGate(exponent=exp)),
-        "Pow_SWAP": CirqOperation(lambda exp: cirq.SwapPowGate(exponent=exp)),
-        "Pow_ISWAP": CirqOperation(lambda exp: cirq.ISwapPowGate(exponent=exp)),
-        "Pow_CNOT": CirqOperation(lambda exp: cirq.CXPowGate(exponent=exp)),
-        "Pow_CZ": CirqOperation(lambda exp: cirq.CZPowGate(exponent=exp)),
+        **{f"Pow({k})": v for k,v in _pow_operation_map.items()},
     }
 
     _observable_map = {
@@ -184,13 +184,10 @@ class CirqDevice(QubitDevice, abc.ABC):
 
     def supports_operation(self, operation):
         # pylint: disable=missing-function-docstring
-        is_supported_pow = False
         if isinstance(operation, str):
             op_with_power = operation.split("**")
-            is_supported_pow = (
-                len(op_with_power) == 2 and "Pow_" + op_with_power[0] in self._pow_operation_map
-            )
-        return is_supported_pow or super().supports_operation(operation)
+            operation = f"Pow({op_with_power[0]})" if len(op_with_power) == 2 else operation
+        return super().supports_operation(operation)
 
     def to_paulistring(self, observable):
         """Convert an observable to a cirq.PauliString"""
@@ -256,7 +253,7 @@ class CirqDevice(QubitDevice, abc.ABC):
             operation (pennylane.Operation): the operation that shall be applied
         """
         if isinstance(operation, qml.ops.Pow):
-            op_name = "Pow_" + operation.base.name
+            op_name = f"Pow({operation.base.name})"
             params = [operation.z, *operation.parameters]
         else:
             op_name = operation.name
