@@ -49,6 +49,46 @@ class TestDeviceIntegration:
 
         assert circuit() == 0.0
 
+    @pytest.mark.parametrize(
+        "operation,expected_output",
+        [
+            (qml.PauliX, -0.95105648),
+            (qml.PauliY, -0.95105648),
+            (qml.PauliZ, 1),
+            (qml.Hadamard, 0.02447175),
+        ],
+    )
+    def test_native_power_support_single_wire(self, operation, expected_output):
+        """Test that supported one-wire operators can be raised to a power on a cirq device."""
+        dev = qml.device("cirq.simulator", wires=1)
+
+        @qml.qnode(dev)
+        def circuit():
+            operation(wires=[0])**1.1
+            return qml.expval(qml.PauliZ(0))
+
+        assert np.isclose(circuit(), expected_output)
+
+    @pytest.mark.parametrize(
+        "operation,expected_output",
+        [
+            (qml.SWAP, 0.0244717),
+            (qml.ISWAP, 0.02447164),
+            (qml.CNOT, 0.0244717),
+            (qml.CZ, 1),
+        ],
+    )
+    def test_native_power_support_two_wires(self, operation, expected_output):
+        """Test that supported two-wire operators can be raised to a power on a cirq device."""
+        dev = qml.device("cirq.simulator", wires=2)
+
+        @qml.qnode(dev)
+        def circuit():
+            qml.Hadamard(0)
+            operation(wires=[0,1])**1.1
+            return qml.expval(qml.PauliZ(1))
+
+        assert np.isclose(circuit(), expected_output)
 
 @pytest.fixture(scope="function")
 def simulator_device_1_wire(shots):

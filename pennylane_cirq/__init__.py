@@ -18,5 +18,5 @@ Plugin overview
 from .simulator_device import SimulatorDevice, MixedStateSimulatorDevice
 from .pasqal_device import PasqalDevice
 
-from .ops import BitFlip, PhaseFlip, PhaseDamp, AmplitudeDamp, Depolarize, ISWAP, CPhase
+from .ops import BitFlip, PhaseFlip, PhaseDamp, AmplitudeDamp, Depolarize
 from ._version import __version__

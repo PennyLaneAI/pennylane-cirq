@@ -18,6 +18,7 @@ import pytest
 
 import numpy as np
 from pennylane_cirq import ops, MixedStateSimulatorDevice, SimulatorDevice
+from pennylane.ops import CPhase, ISWAP
 
 
 @pytest.fixture(scope="function")
@@ -190,56 +191,3 @@ class TestApply:
         simulator_device_1_wire.apply([ops.AmplitudeDamp(*par, wires=[0])])
 
         assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
-
-    @pytest.mark.parametrize(
-        "input",
-        [
-            np.array([1, 0, 0, 0]),
-            np.array([2, 1, 0, 1]) / np.sqrt(6),
-            np.array([0, 0, 1, 0]),
-            np.array([0, 1, 0, 1]) / np.sqrt(2),
-            np.array([0, 0, 0, 1]),
-            np.array([2, 1, 2, 1]) / np.sqrt(10),
-        ],
-    )
-    def test_apply_iswap(self, tol, input, shots):
-        """Tests that applying the iSWAP gate yields the expected output."""
-        device = SimulatorDevice(2, shots=shots)
-
-        iswap_mat = np.array([[1, 0, 0, 0], [0, 0, 1j, 0], [0, 1j, 0, 0], [0, 0, 0, 1]])
-
-        expected = iswap_mat @ input
-
-        device.reset()
-        device._initial_state = np.array(input, dtype=np.complex64)
-        device.apply([ops.ISWAP(wires=[0, 1])])
-
-        assert np.allclose(device.state, expected, **tol)
-
-    @pytest.mark.parametrize("par", [0, 0.5, 1.42, np.pi / 4, np.pi / 2, np.pi])
-    @pytest.mark.parametrize(
-        "input",
-        [
-            np.array([1, 0, 0, 0]),
-            np.array([2, 1, 0, 1]) / np.sqrt(6),
-            np.array([0, 0, 1, 0]),
-            np.array([0, 1, 0, 1]) / np.sqrt(2),
-            np.array([0, 0, 0, 1]),
-            np.array([2, 1, 2, 1]) / np.sqrt(10),
-        ],
-    )
-    def test_apply_cphase(self, tol, par, input, shots):
-        """Tests that applying the CPhase gate yields the expected output."""
-        device = SimulatorDevice(2, shots=shots)
-
-        cphase_mat = np.array(
-            [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, np.exp(1j * par)]]
-        )
-
-        expected = cphase_mat @ input
-
-        device.reset()
-        device._initial_state = np.array(input, dtype=np.complex64)
-        device.apply([ops.CPhase(par, wires=[0, 1])])
-
-        assert np.allclose(device.state, expected, **tol)

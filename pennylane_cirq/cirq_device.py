@@ -122,7 +122,19 @@ class CirqDevice(QubitDevice, abc.ABC):
             **self._inverse_operation_map,
         }
 
+    _pow_operation_map = {
+        "PauliX": CirqOperation(lambda exp: cirq.XPowGate(exponent=exp)),
+        "PauliY": CirqOperation(lambda exp: cirq.YPowGate(exponent=exp)),
+        "PauliZ": CirqOperation(lambda exp: cirq.ZPowGate(exponent=exp)),
+        "Hadamard": CirqOperation(lambda exp: cirq.HPowGate(exponent=exp)),
+        "SWAP": CirqOperation(lambda exp: cirq.SwapPowGate(exponent=exp)),
+        "ISWAP": CirqOperation(lambda exp: cirq.ISwapPowGate(exponent=exp)),
+        "CNOT": CirqOperation(lambda exp: cirq.CXPowGate(exponent=exp)),
+        "CZ": CirqOperation(lambda exp: cirq.CZPowGate(exponent=exp)),
+    }
+
     _operation_map = {
+        **{f"Pow({k})": v for k, v in _pow_operation_map.items()},
         "BasisState": None,
         "QubitStateVector": None,
         "QubitUnitary": CirqOperation(cirq.MatrixGate),
@@ -140,7 +152,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         "Adjoint(SISWAP)": CirqOperation(lambda: cirq.SQRT_ISWAP_INV),
         "CZ": CirqOperation(lambda: cirq.CZ),
         "PhaseShift": CirqOperation(lambda phi: cirq.ZPowGate(exponent=phi / np.pi)),
-        "CPhase": CirqOperation(lambda phi: cirq.CZPowGate(exponent=phi / np.pi)),
+        "ControlledPhaseShift": CirqOperation(lambda phi: cirq.CZPowGate(exponent=phi / np.pi)),
         "RX": CirqOperation(cirq.rx),
         "RY": CirqOperation(cirq.ry),
         "RZ": CirqOperation(cirq.rz),
@@ -169,6 +181,13 @@ class CirqDevice(QubitDevice, abc.ABC):
         "Identity": CirqOperation(lambda: cirq.I),
         "Projector": CirqOperation(lambda: cirq.ProductState.projector),
     }
+
+    def supports_operation(self, operation):
+        # pylint: disable=missing-function-docstring
+        if isinstance(operation, str):
+            op_with_power = operation.split("**")
+            operation = f"Pow({op_with_power[0]})" if len(op_with_power) == 2 else operation
+        return super().supports_operation(operation)
 
     def to_paulistring(self, observable):
         """Convert an observable to a cirq.PauliString"""
@@ -233,11 +252,18 @@ class CirqDevice(QubitDevice, abc.ABC):
         Args:
             operation (pennylane.Operation): the operation that shall be applied
         """
-        cirq_operation = self._complete_operation_map[operation.name]
+        if isinstance(operation, qml.ops.Pow):
+            op_name = f"Pow({operation.base.name})"
+            params = [operation.z, *operation.parameters]
+        else:
+            op_name = operation.name
+            params = operation.parameters
+
+        cirq_operation = self._complete_operation_map[op_name]
 
         # If command is None do nothing
         if cirq_operation:
-            cirq_operation.parametrize(*operation.parameters)
+            cirq_operation.parametrize(*params)
 
             device_wires = self.map_wires(operation.wires)
             self.circuit.append(

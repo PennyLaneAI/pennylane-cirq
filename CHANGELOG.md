@@ -5,7 +5,14 @@
 * Support `ISWAP`, `SISWAP`, and their adjoints.
   [(#114)](https://github.com/PennyLaneAI/pennylane-cirq/pull/114)
 
+* Support a variety of operations raised to a power.
+  [(#115)](https://github.com/PennyLaneAI/pennylane-cirq/pull/115)
+
 ### Breaking changes
+
+* Removed the unnecessary `CPhase` and `ISWAP` operations from the
+  plugin's custom support because PennyLane supports them.
+  [(#115)](https://github.com/PennyLaneAI/pennylane-cirq/pull/115)
 
 ### Improvements
 

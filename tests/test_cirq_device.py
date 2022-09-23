@@ -156,6 +156,22 @@ class TestCirqDeviceIntegration:
             dev.map_wires(Wires(label)) == Wires(idx) for label, idx in zip(user_labels, sort_order)
         )
 
+    @pytest.mark.parametrize(
+        "op,expected",
+        [
+            (qml.PauliX, True),
+            ((qml.PauliX(0)**1.1).name, True),
+            ("PauliX**1.1", True),
+            (qml.IsingXX, False),
+            ("IsingXX", False)
+        ],
+    )
+    def test_supports_operation(self, op, expected):
+        """Test that the override of supports_operation works."""
+        dev = qml.device("cirq.simulator", wires=1)
+
+        assert dev.supports_operation(op) == expected
+
 
 @pytest.fixture(scope="function")
 def cirq_device_1_wire(shots):
@@ -218,6 +234,12 @@ class TestOperations:
             (qml.PauliX(wires=[0]).inv(), [cirq.X**-1]),
             (qml.PauliY(wires=[0]).inv(), [cirq.Y**-1]),
             (qml.PauliZ(wires=[0]).inv(), [cirq.Z**-1]),
+            (qml.PauliX(wires=[0])**1, [cirq.XPowGate(exponent=1)]),
+            (qml.PauliY(wires=[0])**1, [cirq.YPowGate(exponent=1)]),
+            (qml.PauliZ(wires=[0])**1, [cirq.ZPowGate(exponent=1)]),
+            (qml.PauliX(wires=[0])**1.1, [cirq.XPowGate(exponent=1.1)]),
+            (qml.PauliY(wires=[0])**1.1, [cirq.YPowGate(exponent=1.1)]),
+            (qml.PauliZ(wires=[0])**1.1, [cirq.ZPowGate(exponent=1.1)]),
             (qml.Hadamard(wires=[0]), [cirq.H]),
             (qml.Hadamard(wires=[0]).inv(), [cirq.H**-1]),
             (qml.S(wires=[0]), [cirq.S]),
@@ -326,6 +348,10 @@ class TestOperations:
             (qml.adjoint(qml.SISWAP)(wires=[0, 1]), [cirq.SQRT_ISWAP_INV]),
             (qml.CZ(wires=[0, 1]), [cirq.CZ]),
             (qml.CZ(wires=[0, 1]).inv(), [cirq.CZ**-1]),
+            (qml.CPhase(0, [0,1]), [cirq.CZPowGate(exponent=0)]),
+            (qml.CPhase(1.42, [0,1]), [cirq.CZPowGate(exponent=1.42/np.pi)]),
+            (qml.CPhase(np.pi/2, [0,1]), [cirq.CZPowGate(exponent=0.5)]),
+            (qml.ControlledPhaseShift(np.pi, [0,1]), [cirq.CZPowGate()]),
             (qml.CRX(1.4, wires=[0, 1]), [cirq.ControlledGate(cirq.rx(1.4))]),
             (qml.CRX(-1.2, wires=[0, 1]), [cirq.ControlledGate(cirq.rx(-1.2))]),
             (qml.CRX(2, wires=[0, 1]), [cirq.ControlledGate(cirq.rx(2))]),
