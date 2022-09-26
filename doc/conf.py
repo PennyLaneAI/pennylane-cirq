@@ -70,7 +70,8 @@ automodapi_toctreedirnm = "code/api"
 automodsumm_inherited_members = True
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+from pennylane_sphinx_theme import templates_dir
+templates_path = [templates_dir()]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -83,7 +84,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "PennyLane-Cirq"
-copyright = "Copyright 2019-2020."
+copyright = "2022."
 author = "Xanadu"
 
 add_module_names = False
@@ -248,85 +249,20 @@ html_static_path = ['_static']
 htmlhelp_basename = "PennyLane-Cirqdoc"
 
 # # -- Xanadu theme ---------------------------------------------------------
-html_theme = 'xanadu'
-
-html_sidebars = {
-    '**' : [
-        'searchbox.html',
-        'globaltoc.html',
-    ]
-}
+html_theme = 'pennylane'
 
 # Register the theme as an extension to generate a sitemap.xml
 # extensions.append("guzzle_sphinx_theme")
 
 # xanadu theme options (see theme.conf for more information)
 html_theme_options = {
-    "navbar_logo_path": "_static/logo.png",
-    "navbar_wordmark_path": "_static/pennylane.svg",
-    # Specifying #19b37b is more correct but does not match the other PL websites.
-
-    "navbar_logo_colour": "#2d7c7f",
-
-    "navbar_home_link": "https://pennylane.ai",
-
-    "navbar_left_links": [
-        {
-            "name": "Quantum machine learning",
-            "href": "https://pennylane.ai/qml/",
-        },
-        {
-            "name": "Demos",
-            "href": "https://pennylane.ai/qml/demonstrations.html",
-        },
-        {
-            "name": "Install",
-            "href": "https://pennylane.ai/install.html",
-        },
-        {
-            "name": "Plugins",
-            "href": "https://pennylane.ai/plugins.html",
-            "active": True,
-        },
-        {
-            "name": "Documentation",
-            "href": "https://pennylane.readthedocs.io/",
-        },
-        {
-            "name": "Blog",
-            "href": "https://pennylane.ai/blog/",
-        }
-    ],
-
-    "navbar_right_links": [
-        {
-            "name": "FAQ",
-            "href": "https://pennylane.ai/faq.html",
-            "icon": "fas fa-question",
-        },
-        {
-            "name": "Support",
-            "href": "https://discuss.pennylane.ai/",
-            "icon": "fab fa-discourse",
-        },
-        {
-            "name": "GitHub",
-            "href": "https://github.com/PennyLaneAI/pennylane-qiskit",
-            "icon": "fab fa-github",
-        }
-    ],
-
+    "navbar_name": "PennyLane-Cirq",
     "extra_copyrights": [
         "TensorFlow, the TensorFlow logo, and any related marks are trademarks "
         "of Google Inc."
     ],
-    "google_analytics_tracking_id": "UA-130507810-1",
-    "border_colour": "#19b37b",
-    "prev_next_button_colour": "#19b37b",
-    "prev_next_button_hover_colour": "#0e714d",
-    "table_header_background_colour": "#edf7f4",
-    "text_accent_colour": "#19b37b",
-    "toc_marker_colour": "#19b37b",
+    "toc_overview": True,
+    "navbar_active_link": 3
 }
 
 edit_on_github_project = 'PennyLaneAI/pennylane-cirq'
@@ -394,9 +330,3 @@ inheritance_node_attrs = dict(color='lightskyblue1', style='filled')
 
 #autodoc_default_flags = ['members']
 autosummary_generate = True
-
-from directives import CustomDeviceGalleryItemDirective, CustomDemoGalleryItemDirective
-
-def setup(app):
-    app.add_directive('devicegalleryitem', CustomDeviceGalleryItemDirective)
-    app.add_directive('demogalleryitem', CustomDemoGalleryItemDirective)

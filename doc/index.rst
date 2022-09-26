@@ -15,22 +15,22 @@ Devices
 
 Currently, PennyLane-Cirq provides four Cirq devices for PennyLane:
 
-.. devicegalleryitem::
+.. title-card::
     :name: 'cirq.simulator'
     :description: Cirq's simulator backend.
     :link: devices/simulator.html
 
-.. devicegalleryitem::
+.. title-card::
     :name: 'cirq.mixedsimulator'
     :description: Cirq's density matrix simulator backend.
     :link: devices/mixed_simulator.html
 
-.. devicegalleryitem::
+.. title-card::
     :name: 'cirq.qsim' and 'cirq.qsimh'
     :description: The qsim and qsimh simulator backends.
     :link: devices/qsim.html
 
-.. devicegalleryitem::
+.. title-card::
     :name: 'cirq.pasqal'
     :description: Simulator for Pasqal's neutral atom devices.
     :link: devices/pasqal.html
@@ -49,35 +49,30 @@ Check out these demos to see the PennyLane-Cirq plugin in action:
 
     <div class="row">
 
-.. demogalleryitem::
+.. title-card::
     :name: Optimizing noisy circuits with Cirq
-    :figure: https://pennylane.ai/qml/_images/noisy_circuit_optimization_thumbnail.png
+    :description: <img src="https://pennylane.ai/qml/_images/noisy_circuit_optimization_thumbnail.png" width="100%" />
     :link: https://pennylane.ai/qml/demos/tutorial_noisy_circuit_optimization.html
-    :tooltip: Learn how noise can affect the optimization and training of quantum computations.
 
-.. demogalleryitem::
+.. title-card::
     :name: Quantum Generative Adversarial Networks with Cirq + TensorFlow
-    :figure: https://pennylane.ai/qml/_images/qgan3.png
+    :description: <img src="https://pennylane.ai/qml/_images/qgan3.png" width="100%" />
     :link:  https://pennylane.ai/qml/demos/tutorial_QGAN.html
-    :tooltip: Create a simple QGAN with Cirq and TensorFlow.
 
-.. demogalleryitem::
+.. title-card::
     :name: Quantum computation with neutral atoms
-    :figure: https://pennylane.ai/qml/_images/pasqal_thumbnail.png
+    :description: <img src="https://pennylane.ai/qml/_images/pasqal_thumbnail.png" width="100%" />
     :link: https://pennylane.ai/qml/demos/tutorial_pasqal.html
-    :tooltip: Making a quantum machine learning model using neutral atoms.
 
-.. demogalleryitem::
+.. title-card::
     :name: Variationally optimizing measurement protocols
-    :figure: https://pennylane.ai/qml/_images/illustration.png
+    :description: <img src="https://pennylane.ai/qml/_images/illustration.png" width="100%" />
     :link: https://pennylane.ai/qml/demos/tutorial_quantum_metrology.html
-    :tooltip: Optimizing measurement protocols with variational methods.
 
-.. demogalleryitem::
+.. title-card::
     :name: Beyond classical computing with qsim
-    :figure: https://pennylane.ai/qml/_images/sycamore.png
+    :description: <img src="https://pennylane.ai/qml/_images/sycamore.png" width="100%" />
     :link:  https://pennylane.ai/qml/demos/qsim_beyond_classical.html
-    :tooltip: Beyond classical computing with qsim.
 
 .. raw:: html
 
