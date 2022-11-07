@@ -1,4 +1,4 @@
-# Release 0.25.0-dev
+# Release 0.27.0
 
 ### New features since last release
 
@@ -19,10 +19,6 @@
 * Pass all the qubits as `qubit_order` parameter to force 
   the simulator not to ignore idle qubits. 
   [(#111)](https://github.com/PennyLaneAI/pennylane-cirq/pull/111) 
-
-### Documentation
-
-### Bug fixes
 
 ### Contributors
 
