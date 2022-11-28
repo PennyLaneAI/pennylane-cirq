@@ -2,7 +2,13 @@
 
 ### New features since last release
 
+* Adds support for Python 3.10.
+  [(#123)](https://github.com/PennyLaneAI/pennylane-cirq/pull/123)
+
 ### Breaking changes
+
+* Removes support for Python 3.7.
+  [(#123)](https://github.com/PennyLaneAI/pennylane-cirq/pull/123)
 
 ### Improvements
 
@@ -13,6 +19,8 @@
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Christina Lee
 
 ---
 # Release 0.27.0
