@@ -1,4 +1,4 @@
-# Release 0.28.0-dev
+# Release 0.28.0
 
 ### New features since last release
 
@@ -9,12 +9,6 @@
 
 * Removes support for Python 3.7.
   [(#123)](https://github.com/PennyLaneAI/pennylane-cirq/pull/123)
-
-### Improvements
-
-### Documentation
-
-### Bug fixes
 
 ### Contributors
 
