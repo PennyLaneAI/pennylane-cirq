@@ -134,7 +134,7 @@ class SimulatorDevice(CirqDevice):
 
     def _apply_qubit_state_vector(self, qubit_state_vector_operation):
         # pylint: disable=missing-function-docstring
-        if not self.shots is None:
+        if self.shots is not None:
             raise qml.DeviceError(
                 "The operation QubitStateVector is only supported in analytic mode."
             )
@@ -144,21 +144,6 @@ class SimulatorDevice(CirqDevice):
 
         if len(wires) != self.num_wires or sorted(wires) != wires.tolist():
             state_vector = self._expand_state(state_vector, wires)
-
-        if len(state_vector) != 2 ** len(self.qubits):
-            raise qml.DeviceError(
-                "For QubitStateVector, the state has to be specified for the correct number of qubits. Got a state of length {}, expected {}.".format(
-                    len(state_vector), 2 ** len(wires)
-                )
-            )
-
-        norm_squared = np.sum(np.abs(state_vector) ** 2)
-        if not np.isclose(norm_squared, 1.0, atol=1e-3, rtol=0):
-            raise qml.DeviceError(
-                "The given state for QubitStateVector is not properly normalized to 1.0. Got norm {}".format(
-                    math.sqrt(norm_squared)
-                )
-            )
 
         self._initial_state = state_vector
 

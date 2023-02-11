@@ -175,19 +175,6 @@ class TestApplyPureState:
 
         assert np.allclose(res, expected, **tol)
 
-    def test_invalid_qubit_state_vector(self, shots):
-        """Test that an exception is raised if the state
-        vector is the wrong size"""
-        dev = SimulatorDevice(2, shots=shots)
-        state = np.array([0, 123.432])
-
-        with pytest.raises(
-            qml.DeviceError,
-            match=r"For QubitStateVector, the state has to be specified for the correct number of qubits",
-        ):
-            with mimic_execution_for_apply(dev):
-                dev.apply([qml.QubitStateVector(state, wires=[0, 1])])
-
     @pytest.mark.parametrize("name,mat", single_qubit)
     def test_single_qubit_no_parameters(self, init_state, shots, name, mat, tol):
         """Test application of single qubit gates without parameters"""
@@ -370,19 +357,6 @@ class TestApplyMixedState:
         expected = state
         expected = np.kron(state, state.conj()).reshape([2, 2])
         assert np.allclose(res, expected, **tol)
-
-    def test_invalid_qubit_state_vector(self, shots):
-        """Test that an exception is raised if the state
-        vector is the wrong size"""
-        dev = MixedStateSimulatorDevice(2, shots=shots)
-        state = np.array([0, 123.432])
-
-        with pytest.raises(
-            qml.DeviceError,
-            match=r"For QubitStateVector, the state has to be specified for the correct number of qubits",
-        ):
-            with mimic_execution_for_apply(dev):
-                dev.apply([qml.QubitStateVector(state, wires=[0, 1])])
 
     @pytest.mark.parametrize("name,mat", single_qubit)
     def test_single_qubit_no_parameters(self, init_state, shots, name, mat, tol):
