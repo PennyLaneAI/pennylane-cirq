@@ -116,7 +116,7 @@ Supported operations
 The ``cirq.qsim`` and ``cirq.qsimh`` devices support most PennyLane `operations
 and observables
 <https://pennylane.readthedocs.io/en/stable/introduction/operations.html>`_,
-with the exceptions of inverse operations and ``QubitUnitary`` gates on 3 or
+with the exceptions of most adjoint operations and ``QubitUnitary`` gates on 3 or
 more qubits.
 
 For state preparation qsim relies on decomposing ``BasisState`` into a set of

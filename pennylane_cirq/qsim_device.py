@@ -65,7 +65,7 @@ class QSimDevice(SimulatorDevice):
     @property
     def operations(self):
         # pylint: disable=missing-function-docstring
-        ops = set(self._operation_map.keys()) - {
+        return set(self._base_operation_map) - {
             "QubitStateVector",
             "BasisState",
             "CRX",
@@ -73,18 +73,11 @@ class QSimDevice(SimulatorDevice):
             "CRZ",
             "CRot",
         }
-        return ops
 
-    def capabilities(self):
+    @property
+    def observables(self):
         # pylint: disable=missing-function-docstring
-
-        # Note: this is an instance method as parent's capabilities is an
-        # instance method too
-        capabilities = super().capabilities().copy()
-        capabilities.update(
-            supports_inverse_operations=False,
-        )
-        return capabilities
+        return set(self._base_observable_map)
 
     def expval(self, observable, shot_range=None, bin_size=None):
         is_tensor = isinstance(observable, qml.operation.Tensor)
@@ -127,7 +120,7 @@ class QSimhDevice(SimulatorDevice):
     @property
     def operations(self):
         # pylint: disable=missing-function-docstring
-        ops = set(self._operation_map.keys()) - {
+        return set(self._base_operation_map) - {
             "QubitStateVector",
             "BasisState",
             "CRX",
@@ -135,13 +128,16 @@ class QSimhDevice(SimulatorDevice):
             "CRZ",
             "CRot",
         }
-        return ops
+
+    @property
+    def observables(self):
+        # pylint: disable=missing-function-docstring
+        return set(self._base_observable_map)
 
     def capabilities(self):  # pylint: disable=missing-function-docstring
         capabilities = super().capabilities().copy()
         capabilities.update(
             returns_state=(self.shots is None),  # State information is only set if obtaining shots
-            supports_inverse_operations=False,
         )
         return capabilities
 

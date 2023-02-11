@@ -39,7 +39,7 @@ class CirqOperation:
     """A helper class that wraps the native Cirq operations and provides an
     interface for parametrization and application."""
 
-    def __init__(self, parametrization):
+    def __init__(self, parametrization, adjoint=False):
         """Initializes the CirqOperation
 
         Args:
@@ -49,7 +49,7 @@ class CirqOperation:
 
         self.parametrization = parametrization
         self.parametrized_cirq_gates = None
-        self.is_inverse = False
+        self._is_adjoint = adjoint
 
     def parametrize(self, *args):
         """Parametrizes the CirqOperation.
@@ -62,7 +62,7 @@ class CirqOperation:
         if not isinstance(self.parametrized_cirq_gates, Sequence):
             self.parametrized_cirq_gates = [self.parametrized_cirq_gates]
 
-        if self.is_inverse:
+        if self._is_adjoint:
             # Cirq automatically reverses the order if it gets an iterable
             self.parametrized_cirq_gates = cirq.inverse(self.parametrized_cirq_gates)
 
@@ -76,13 +76,3 @@ class CirqOperation:
             raise qml.DeviceError("CirqOperation must be parametrized before it can be applied.")
 
         return (parametrized_gate(*qubits) for parametrized_gate in self.parametrized_cirq_gates)
-
-    def inv(self):
-        """Inverses the CirqOperation."""
-        # We can also support inversion after parametrization, but this is not necessary for the
-        # PennyLane-Cirq codebase at the moment.
-
-        if self.parametrized_cirq_gates:
-            raise qml.DeviceError("CirqOperation can't be inverted after it was parametrized.")
-
-        self.is_inverse = not self.is_inverse
