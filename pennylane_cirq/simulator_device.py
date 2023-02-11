@@ -60,6 +60,7 @@ class SimulatorDevice(CirqDevice):
     """
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
+
     # pylint: disable=too-many-arguments
     def __init__(self, wires, shots=None, qubits=None, simulator=None):
         super().__init__(wires, shots, qubits)

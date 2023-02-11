@@ -79,7 +79,6 @@ class CirqDevice(QubitDevice, abc.ABC):
     short_name = "cirq.base_device"
 
     def __init__(self, wires, shots, qubits=None):
-
         if not isinstance(wires, Iterable):
             # interpret wires as the number of consecutive wires
             wires = range(wires)
