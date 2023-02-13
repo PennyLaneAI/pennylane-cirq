@@ -100,7 +100,9 @@ class SimulatorDevice(CirqDevice):
                 "The operation QubitStateVector is only supported in analytic mode."
             )
 
-        self._initial_state = qubit_state_vector_operation.state_vector(wire_order=self.wires).flatten()
+        self._initial_state = qubit_state_vector_operation.state_vector(
+            wire_order=self.wires
+        ).flatten()
 
     def apply(self, operations, **kwargs):
         # pylint: disable=missing-function-docstring
