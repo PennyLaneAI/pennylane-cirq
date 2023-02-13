@@ -88,49 +88,10 @@ class SimulatorDevice(CirqDevice):
 
     def _apply_basis_state(self, basis_state_operation):
         # pylint: disable=missing-function-docstring
-        if not self.shots is None:
+        if self.shots is not None:
             raise qml.DeviceError("The operation BasisState is only supported in analytic mode.")
 
-        wires = basis_state_operation.wires
-
-        if len(basis_state_operation.parameters[0]) != len(wires):
-            raise qml.DeviceError(
-                "For BasisState, the state has to be specified for the correct number of qubits. Got a state for {} qubits, expected {}.".format(
-                    len(basis_state_operation.parameters[0]), len(self.qubits)
-                )
-            )
-
-        if not np.all(np.isin(basis_state_operation.parameters[0], np.array([0, 1]))):
-            raise qml.DeviceError(
-                "Argument for BasisState can only contain 0 and 1. Got {}".format(
-                    basis_state_operation.parameters[0]
-                )
-            )
-
-        # expand basis state to device wires
-        basis_state_array = np.zeros(self.num_wires, dtype=int)
-        basis_state_array[wires] = basis_state_operation.parameters[0]
-
-        self._initial_state = np.zeros(2 ** len(self.qubits), dtype=np.complex64)
-        basis_state_idx = np.sum(2 ** np.argwhere(np.flip(basis_state_array) == 1))
-        self._initial_state[basis_state_idx] = 1.0
-
-    def _expand_state(self, state_vector, wires):
-        """Expands state vector to more wires"""
-        basis_states = np.array(list(it.product([0, 1], repeat=len(wires))))
-
-        # get basis states to alter on full set of qubits
-        unravelled_indices = np.zeros((2 ** len(wires), self.num_wires), dtype=int)
-        unravelled_indices[:, wires] = basis_states
-
-        # get indices for which the state is changed to input state vector elements
-        ravelled_indices = np.ravel_multi_index(unravelled_indices.T, [2] * self.num_wires)
-
-        state = np.zeros([2**self.num_wires], dtype=np.complex64)
-        state[ravelled_indices] = state_vector
-        state_vector = state.reshape([2] * self.num_wires)
-
-        return state_vector.flatten()
+        self._initial_state = basis_state_operation.state_vector(wire_order=self.wires).flatten()
 
     def _apply_qubit_state_vector(self, qubit_state_vector_operation):
         # pylint: disable=missing-function-docstring
@@ -139,13 +100,7 @@ class SimulatorDevice(CirqDevice):
                 "The operation QubitStateVector is only supported in analytic mode."
             )
 
-        state_vector = np.array(qubit_state_vector_operation.parameters[0], dtype=np.complex64)
-        wires = self.map_wires(qubit_state_vector_operation.wires)
-
-        if len(wires) != self.num_wires or sorted(wires) != wires.tolist():
-            state_vector = self._expand_state(state_vector, wires)
-
-        self._initial_state = state_vector
+        self._initial_state = qubit_state_vector_operation.state_vector(wire_order=self.wires).flatten()
 
     def apply(self, operations, **kwargs):
         # pylint: disable=missing-function-docstring
