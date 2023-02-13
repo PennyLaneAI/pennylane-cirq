@@ -754,11 +754,7 @@ class TestVar:
             rotations=op.diagonalizing_gates(),
         )
 
-        if par:
-            res = simulator_device_1_wire.var(op)
-        else:
-            res = simulator_device_1_wire.var(op)
-
+        res = simulator_device_1_wire.var(op)
         assert np.isclose(res, expected_output, **tol)
 
     @pytest.mark.parametrize(
@@ -837,29 +833,25 @@ class TestVarEstimate:
 class TestSample:
     """Test sampling."""
 
-    def test_sample_dimensions(self, simulator_device_2_wires):
+    @pytest.mark.parametrize(
+        "new_shots,obs",
+        [
+            (10, qml.PauliZ(0)),
+            (12, qml.PauliZ(1)),
+            (17, qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1]))
+        ]
+    )
+    def test_sample_dimensions(self, simulator_device_2_wires, new_shots, obs):
         """Tests if the samples returned by the sample function have
         the correct dimensions
         """
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply([qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])])
 
-        simulator_device_2_wires.shots = 10
+        simulator_device_2_wires.shots = new_shots
         simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
-        s1 = simulator_device_2_wires.sample(qml.PauliZ(0))
-        assert np.array_equal(s1.shape, (10,))
-
-        simulator_device_2_wires.reset()
-        simulator_device_2_wires.shots = 12
-        simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
-        s2 = simulator_device_2_wires.sample(qml.PauliZ(1))
-        assert np.array_equal(s2.shape, (12,))
-
-        simulator_device_2_wires.reset()
-        simulator_device_2_wires.shots = 17
-        simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
-        s3 = simulator_device_2_wires.sample(qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1]))
-        assert np.array_equal(s3.shape, (17,))
+        s1 = simulator_device_2_wires.sample(obs)
+        assert np.array_equal(s1.shape, (new_shots,))
 
     def test_sample_values(self, simulator_device_2_wires, tol):
         """Tests if the samples returned by sample have
