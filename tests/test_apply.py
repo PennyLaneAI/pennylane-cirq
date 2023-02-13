@@ -39,7 +39,7 @@ T = np.diag([1, np.exp(1j * np.pi / 4)])
 SWAP = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])
 CNOT = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]])
 CZ = np.diag([1, 1, 1, -1])
-toffoli = np.diag([1 for i in range(8)])
+toffoli = np.eye(8)
 toffoli[6:8, 6:8] = np.array([[0, 1], [1, 0]])
 CSWAP = block_diag(I, I, SWAP)
 

@@ -31,9 +31,6 @@ Classes
 
 ----
 """
-import math
-import itertools as it
-
 import cirq
 import numpy as np
 import pennylane as qml
