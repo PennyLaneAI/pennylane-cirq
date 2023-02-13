@@ -59,7 +59,7 @@ PyYAML==6.0
 requests==2.27.1
 retworkx==0.11.0
 scipy==1.7.3
-semantic-version==2.6.0
+semantic-version==2.10
 six==1.16.0
 snowballstemmer==2.2.0
 sortedcontainers==2.4.0
