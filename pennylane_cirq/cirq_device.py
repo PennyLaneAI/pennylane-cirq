@@ -157,7 +157,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         **{
             f"Adjoint({key})": CirqOperation(value.parametrization, adjoint=True)
             for key, value in _base_operation_map.items()
-            if value and key[:8] != "Adjoint("
+            if value is not None and key[:8] != "Adjoint("
         },
     }
 
@@ -177,7 +177,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         **{
             f"Adjoint({key})": CirqOperation(value.parametrization, adjoint=True)
             for key, value in _base_observable_map.items()
-            if value
+            if value is not None
         },
     }
 
