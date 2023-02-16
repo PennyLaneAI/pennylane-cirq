@@ -1,3 +1,20 @@
+# Release 0.29.0
+
+### New features since last release
+
+* Support for adjoint operators has been added.
+
+### Breaking changes
+
+* Support for inverse operators has been removed.
+  Note that the `inv()` method and `inverse` property are removed from PennyLane operators as of PennyLane 0.29.
+
+### Contributors
+
+This release contains contributions from (in alphabetical order):
+
+Matthew Silverman
+
 # Release 0.28.0
 
 ### New features since last release

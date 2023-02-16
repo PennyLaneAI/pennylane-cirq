@@ -88,11 +88,15 @@ class TestDeviceIntegration:
 
         spy.assert_called_once()
 
-    def test_inverse_not_in_capabilites(self):
-        """Test that QSimDevice does not support inverse operations"""
+    def test_adjoint_ops_not_supported(self):
+        """Test that QSimDevice does not support adjoint operations"""
         dev = qml.device("cirq.qsim", wires=1)
 
-        assert not dev.capabilities()["supports_inverse_operations"]
+        supported_ops = dev.operations
+        # ISWAP and SISWAP have native support
+        supported_ops.remove("Adjoint(ISWAP)")
+        supported_ops.remove("Adjoint(SISWAP)")
+        assert all(op[:8] != "Adjoint(" for op in supported_ops)
 
     @pytest.mark.parametrize(
         "gate",
@@ -106,7 +110,7 @@ class TestDeviceIntegration:
         ],
     )
     def test_incompatible_gates_not_in_operations(self, gate):
-        """Test that QSimDevice does not support inverse operations"""
+        """Test that QSimDevice does not support certain operations"""
         dev = qml.device("cirq.qsim", wires=1)
 
         assert gate not in dev.operations

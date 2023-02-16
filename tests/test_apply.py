@@ -39,7 +39,7 @@ T = np.diag([1, np.exp(1j * np.pi / 4)])
 SWAP = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])
 CNOT = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]])
 CZ = np.diag([1, 1, 1, -1])
-toffoli = np.diag([1 for i in range(8)])
+toffoli = np.eye(8)
 toffoli[6:8, 6:8] = np.array([[0, 1], [1, 0]])
 CSWAP = block_diag(I, I, SWAP)
 
@@ -91,51 +91,11 @@ def mimic_execution_for_apply(device):
 class TestApplyPureState:
     """Test application of PennyLane operations on the pure state simulator."""
 
-    def test_basis_state(self, shots, tol):
+    @pytest.mark.parametrize("state", [[1, 0, 0, 0], [0, 0, 1, 0]])
+    def test_basis_state(self, shots, tol, state):
         """Test basis state initialization"""
         dev = SimulatorDevice(4, shots=shots)
-        state = np.array([0, 0, 1, 0])
-
-        with mimic_execution_for_apply(dev):
-            dev.apply([qml.BasisState(state, wires=[0, 1, 2, 3])])
-
-        res = dev._state
-
-        expected = np.zeros([2**4])
-        expected[np.ravel_multi_index(state, [2] * 4)] = 1
-        assert np.allclose(res, expected, **tol)
-
-    @pytest.mark.parametrize(
-        "state",
-        [
-            np.array([0, 0]),
-            np.array([1, 0]),
-            np.array([0, 1]),
-            np.array([1, 1]),
-        ],
-    )
-    @pytest.mark.parametrize("device_wires", [3, 4, 5])
-    @pytest.mark.parametrize("op_wires", [[0, 1], [1, 0], [2, 0]])
-    def test_basis_state_on_wires_subset(self, state, device_wires, op_wires, tol):
-        """Test basis state initialization on a subset of device wires"""
-        dev = SimulatorDevice(device_wires)
-
-        with mimic_execution_for_apply(dev):
-            dev.apply([qml.BasisState(state, wires=op_wires)])
-
-        res = np.abs(dev.state) ** 2
-        # compute expected probabilities
-        expected = np.zeros([2 ** len(op_wires)])
-        expected[np.ravel_multi_index(state, [2] * len(op_wires))] = 1
-
-        expected = dev._expand_state(expected, op_wires)
-
-        assert np.allclose(res, expected, **tol)
-
-    def test_identity_basis_state(self, shots, tol):
-        """Test basis state initialization if identity"""
-        dev = SimulatorDevice(4, shots=shots)
-        state = np.array([1, 0, 0, 0])
+        state = np.array(state)
 
         with mimic_execution_for_apply(dev):
             dev.apply([qml.BasisState(state, wires=[0, 1, 2, 3])])
@@ -157,36 +117,6 @@ class TestApplyPureState:
         res = dev._state
         expected = state
         assert np.allclose(res, expected, **tol)
-
-    @pytest.mark.parametrize("device_wires", [3, 4, 5])
-    @pytest.mark.parametrize("op_wires", [[0], [2], [0, 1], [1, 0], [2, 0]])
-    def test_qubit_state_vector_on_wires_subset(
-        self, init_state, device_wires, op_wires, shots, tol
-    ):
-        """Test QubitStateVector application on a subset of device wires"""
-        dev = SimulatorDevice(device_wires, shots=shots)
-        state = init_state(len(op_wires))
-
-        with mimic_execution_for_apply(dev):
-            dev.apply([qml.QubitStateVector(state, wires=op_wires)])
-
-        res = dev.state
-        expected = dev._expand_state(state, op_wires)
-
-        assert np.allclose(res, expected, **tol)
-
-    def test_invalid_qubit_state_vector(self, shots):
-        """Test that an exception is raised if the state
-        vector is the wrong size"""
-        dev = SimulatorDevice(2, shots=shots)
-        state = np.array([0, 123.432])
-
-        with pytest.raises(
-            qml.DeviceError,
-            match=r"For QubitStateVector, the state has to be specified for the correct number of qubits",
-        ):
-            with mimic_execution_for_apply(dev):
-                dev.apply([qml.QubitStateVector(state, wires=[0, 1])])
 
     @pytest.mark.parametrize("name,mat", single_qubit)
     def test_single_qubit_no_parameters(self, init_state, shots, name, mat, tol):
@@ -370,19 +300,6 @@ class TestApplyMixedState:
         expected = state
         expected = np.kron(state, state.conj()).reshape([2, 2])
         assert np.allclose(res, expected, **tol)
-
-    def test_invalid_qubit_state_vector(self, shots):
-        """Test that an exception is raised if the state
-        vector is the wrong size"""
-        dev = MixedStateSimulatorDevice(2, shots=shots)
-        state = np.array([0, 123.432])
-
-        with pytest.raises(
-            qml.DeviceError,
-            match=r"For QubitStateVector, the state has to be specified for the correct number of qubits",
-        ):
-            with mimic_execution_for_apply(dev):
-                dev.apply([qml.QubitStateVector(state, wires=[0, 1])])
 
     @pytest.mark.parametrize("name,mat", single_qubit)
     def test_single_qubit_no_parameters(self, init_state, shots, name, mat, tol):

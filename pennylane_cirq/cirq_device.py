@@ -74,13 +74,11 @@ class CirqDevice(QubitDevice, abc.ABC):
     _capabilities = {
         "model": "qubit",
         "tensor_observables": True,
-        "inverse_operations": True,
     }
 
     short_name = "cirq.base_device"
 
     def __init__(self, wires, shots, qubits=None):
-
         if not isinstance(wires, Iterable):
             # interpret wires as the number of consecutive wires
             wires = range(wires)
@@ -105,23 +103,6 @@ class CirqDevice(QubitDevice, abc.ABC):
         self.pre_rotated_circuit = None
         self.cirq_device = None
 
-        # Add inverse operations
-        self._inverse_operation_map = {}
-        for key, value in self._operation_map.items():
-            if not value:
-                continue
-
-            # We have to use a new CirqOperation instance because .inv() acts in-place
-            inverted_operation = CirqOperation(value.parametrization)
-            inverted_operation.inv()
-
-            self._inverse_operation_map[key + ".inv"] = inverted_operation
-
-        self._complete_operation_map = {
-            **self._operation_map,
-            **self._inverse_operation_map,
-        }
-
     _pow_operation_map = {
         "PauliX": CirqOperation(lambda exp: cirq.XPowGate(exponent=exp)),
         "PauliY": CirqOperation(lambda exp: cirq.YPowGate(exponent=exp)),
@@ -133,7 +114,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         "CZ": CirqOperation(lambda exp: cirq.CZPowGate(exponent=exp)),
     }
 
-    _operation_map = {
+    _base_operation_map = {
         **{f"Pow({k})": v for k, v in _pow_operation_map.items()},
         "BasisState": None,
         "QubitStateVector": None,
@@ -171,7 +152,16 @@ class CirqDevice(QubitDevice, abc.ABC):
         "Toffoli": CirqOperation(lambda: cirq.TOFFOLI),
     }
 
-    _observable_map = {
+    _operation_map = {
+        **_base_operation_map,
+        **{
+            f"Adjoint({key})": CirqOperation(value.parametrization, adjoint=True)
+            for key, value in _base_operation_map.items()
+            if value is not None and key[:8] != "Adjoint("
+        },
+    }
+
+    _base_observable_map = {
         "PauliX": CirqOperation(lambda: cirq.X),
         "PauliY": CirqOperation(lambda: cirq.Y),
         "PauliZ": CirqOperation(lambda: cirq.Z),
@@ -180,6 +170,15 @@ class CirqDevice(QubitDevice, abc.ABC):
         # TODO: Consider using qml.utils.decompose_hamiltonian() to support this observable.
         "Identity": CirqOperation(lambda: cirq.I),
         "Projector": CirqOperation(lambda: cirq.ProductState.projector),
+    }
+
+    _observable_map = {
+        **_base_observable_map,
+        **{
+            f"Adjoint({key})": CirqOperation(value.parametrization, adjoint=True)
+            for key, value in _base_observable_map.items()
+            if value is not None
+        },
     }
 
     def supports_operation(self, operation):
@@ -215,12 +214,12 @@ class CirqDevice(QubitDevice, abc.ABC):
     @property
     def observables(self):
         # pylint: disable=missing-function-docstring
-        return set(self._observable_map.keys())
+        return set(self._observable_map)
 
     @property
     def operations(self):
         # pylint: disable=missing-function-docstring
-        return set(self._operation_map.keys())
+        return set(self._operation_map)
 
     @abc.abstractmethod
     def _apply_basis_state(self, basis_state_operation):
@@ -259,10 +258,7 @@ class CirqDevice(QubitDevice, abc.ABC):
             op_name = operation.name
             params = operation.parameters
 
-        cirq_operation = self._complete_operation_map[op_name]
-
-        # If command is None do nothing
-        if cirq_operation:
+        if cirq_operation := self._operation_map[op_name]:
             cirq_operation.parametrize(*params)
 
             device_wires = self.map_wires(operation.wires)

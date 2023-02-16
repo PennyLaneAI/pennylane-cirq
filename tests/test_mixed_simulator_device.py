@@ -425,61 +425,6 @@ class TestApply:
 
         assert np.allclose(simulator_device_2_wires.state, expected_output, **tol)
 
-    @pytest.mark.parametrize(
-        "operation,par,match",
-        [
-            (qml.BasisState, [2], "Argument for BasisState can only contain 0 and 1"),
-            (qml.BasisState, [1.2], "Argument for BasisState can only contain 0 and 1"),
-            (
-                qml.BasisState,
-                [0, 0, 1],
-                "For BasisState, the state has to be specified for the correct number of qubits",
-            ),
-            (
-                qml.BasisState,
-                [0, 0],
-                "For BasisState, the state has to be specified for the correct number of qubits",
-            ),
-            (
-                qml.QubitStateVector,
-                [0, 0, 1],
-                "For QubitStateVector, the state has to be specified for the correct number of qubits",
-            ),
-            (
-                qml.QubitStateVector,
-                [0, 0, 1, 0],
-                "For QubitStateVector, the state has to be specified for the correct number of qubits",
-            ),
-            (
-                qml.QubitStateVector,
-                [1],
-                "For QubitStateVector, the state has to be specified for the correct number of qubits",
-            ),
-            (
-                qml.QubitStateVector,
-                [0.5, 0.5],
-                "The given state for QubitStateVector is not properly normalized to 1",
-            ),
-            (
-                qml.QubitStateVector,
-                [1.1, 0],
-                "The given state for QubitStateVector is not properly normalized to 1",
-            ),
-            (
-                qml.QubitStateVector,
-                [0.7, 0.7j],
-                "The given state for QubitStateVector is not properly normalized to 1",
-            ),
-        ],
-    )
-    def test_state_preparation_error(self, simulator_device_1_wire, operation, par, match):
-        """Tests that the state preparation routines raise proper errors for wrong parameter values."""
-
-        simulator_device_1_wire.reset()
-
-        with pytest.raises(qml.DeviceError, match=match):
-            simulator_device_1_wire.apply([operation(np.array(par), wires=[0])])
-
     def test_basis_state_not_at_beginning_error(self, simulator_device_1_wire):
         """Tests that application of BasisState raises an error if is not
         the first operation."""

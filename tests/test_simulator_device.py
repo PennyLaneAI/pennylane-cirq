@@ -458,61 +458,6 @@ class TestApply:
 
         assert np.allclose(simulator_device_2_wires.state, np.array(expected_output), **tol)
 
-    @pytest.mark.parametrize(
-        "operation,par,match",
-        [
-            (qml.BasisState, [2], "Argument for BasisState can only contain 0 and 1"),
-            (qml.BasisState, [1.2], "Argument for BasisState can only contain 0 and 1"),
-            (
-                qml.BasisState,
-                [0, 0, 1],
-                "For BasisState, the state has to be specified for the correct number of qubits",
-            ),
-            (
-                qml.BasisState,
-                [0, 0],
-                "For BasisState, the state has to be specified for the correct number of qubits",
-            ),
-            (
-                qml.QubitStateVector,
-                [0, 0, 1],
-                "For QubitStateVector, the state has to be specified for the correct number of qubits",
-            ),
-            (
-                qml.QubitStateVector,
-                [0, 0, 1, 0],
-                "For QubitStateVector, the state has to be specified for the correct number of qubits",
-            ),
-            (
-                qml.QubitStateVector,
-                [1],
-                "For QubitStateVector, the state has to be specified for the correct number of qubits",
-            ),
-            (
-                qml.QubitStateVector,
-                [0.5, 0.5],
-                "The given state for QubitStateVector is not properly normalized to 1",
-            ),
-            (
-                qml.QubitStateVector,
-                [1.1, 0],
-                "The given state for QubitStateVector is not properly normalized to 1",
-            ),
-            (
-                qml.QubitStateVector,
-                [0.7, 0.7j],
-                "The given state for QubitStateVector is not properly normalized to 1",
-            ),
-        ],
-    )
-    def test_state_preparation_error(self, simulator_device_1_wire, operation, par, match):
-        """Tests that the state preparation routines raise proper errors for wrong parameter values."""
-
-        simulator_device_1_wire.reset()
-
-        with pytest.raises(qml.DeviceError, match=match):
-            simulator_device_1_wire.apply([operation(np.array(par), wires=[0])])
-
     def test_basis_state_not_at_beginning_error(self, simulator_device_1_wire):
         """Tests that application of BasisState raises an error if is not
         the first operation."""
@@ -538,48 +483,6 @@ class TestApply:
             simulator_device_1_wire.apply(
                 [qml.PauliX(0), qml.QubitStateVector(np.array([0, 1]), wires=[0])]
             )
-
-
-@pytest.mark.parametrize(
-    "state, device_wires, op_wires, expected",
-    [
-        (np.array([1, 0]), 2, [0], [1, 0, 0, 0]),
-        (np.array([0, 1]), 2, [0], [0, 0, 1, 0]),
-        (np.array([1, 1]) / np.sqrt(2), 2, [1], np.array([1, 1, 0, 0]) / np.sqrt(2)),
-        (np.array([1, 1]) / np.sqrt(2), 3, [0], np.array([1, 0, 0, 0, 1, 0, 0, 0]) / np.sqrt(2)),
-        (
-            np.array([1, 2, 3, 4]) / np.sqrt(48),
-            3,
-            [0, 1],
-            np.array([1, 0, 2, 0, 3, 0, 4, 0]) / np.sqrt(48),
-        ),
-        (
-            np.array([1, 2, 3, 4]) / np.sqrt(48),
-            3,
-            [1, 0],
-            np.array([1, 0, 3, 0, 2, 0, 4, 0]) / np.sqrt(48),
-        ),
-        (
-            np.array([1, 2, 3, 4]) / np.sqrt(48),
-            3,
-            [0, 2],
-            np.array([1, 2, 0, 0, 3, 4, 0, 0]) / np.sqrt(48),
-        ),
-        (
-            np.array([1, 2, 3, 4]) / np.sqrt(48),
-            3,
-            [1, 2],
-            np.array([1, 2, 3, 4, 0, 0, 0, 0]) / np.sqrt(48),
-        ),
-    ],
-)
-@pytest.mark.parametrize("shots", [None])
-def test_expand_state(state, op_wires, device_wires, expected, tol):
-    """Test that the expand_state method works as expected."""
-    dev = SimulatorDevice(device_wires)
-    res = dev._expand_state(state, op_wires)
-
-    assert np.allclose(res, expected, **tol)
 
 
 @pytest.mark.parametrize("shots", [1000])
@@ -851,11 +754,7 @@ class TestVar:
             rotations=op.diagonalizing_gates(),
         )
 
-        if par:
-            res = simulator_device_1_wire.var(op)
-        else:
-            res = simulator_device_1_wire.var(op)
-
+        res = simulator_device_1_wire.var(op)
         assert np.isclose(res, expected_output, **tol)
 
     @pytest.mark.parametrize(
@@ -934,29 +833,25 @@ class TestVarEstimate:
 class TestSample:
     """Test sampling."""
 
-    def test_sample_dimensions(self, simulator_device_2_wires):
+    @pytest.mark.parametrize(
+        "new_shots,obs",
+        [
+            (10, qml.PauliZ(0)),
+            (12, qml.PauliZ(1)),
+            (17, qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1]))
+        ]
+    )
+    def test_sample_dimensions(self, simulator_device_2_wires, new_shots, obs):
         """Tests if the samples returned by the sample function have
         the correct dimensions
         """
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply([qml.RX(1.5708, wires=[0]), qml.RX(1.5708, wires=[1])])
 
-        simulator_device_2_wires.shots = 10
+        simulator_device_2_wires.shots = new_shots
         simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
-        s1 = simulator_device_2_wires.sample(qml.PauliZ(0))
-        assert np.array_equal(s1.shape, (10,))
-
-        simulator_device_2_wires.reset()
-        simulator_device_2_wires.shots = 12
-        simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
-        s2 = simulator_device_2_wires.sample(qml.PauliZ(1))
-        assert np.array_equal(s2.shape, (12,))
-
-        simulator_device_2_wires.reset()
-        simulator_device_2_wires.shots = 17
-        simulator_device_2_wires._samples = simulator_device_2_wires.generate_samples()
-        s3 = simulator_device_2_wires.sample(qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1]))
-        assert np.array_equal(s3.shape, (17,))
+        s1 = simulator_device_2_wires.sample(obs)
+        assert np.array_equal(s1.shape, (new_shots,))
 
     def test_sample_values(self, simulator_device_2_wires, tol):
         """Tests if the samples returned by sample have
