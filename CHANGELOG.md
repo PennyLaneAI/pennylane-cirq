@@ -3,11 +3,13 @@
 ### New features since last release
 
 * Support for adjoint operators has been added.
+  [(#130)](https://github.com/PennyLaneAI/pennylane-cirq/pull/130)
 
 ### Breaking changes
 
 * Support for inverse operators has been removed.
   Note that the `inv()` method and `inverse` property are removed from PennyLane operators as of PennyLane 0.29.
+  [(#130)](https://github.com/PennyLaneAI/pennylane-cirq/pull/130)
 
 ### Contributors
 
