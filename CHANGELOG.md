@@ -12,6 +12,7 @@
   [(#130)](https://github.com/PennyLaneAI/pennylane-cirq/pull/130)
 
 * Bumps the required PennyLane version to v0.29.0.
+  [(#137)](https://github.com/PennyLaneAI/pennylane-cirq/pull/137)
 
 ### Contributors
 
