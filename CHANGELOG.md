@@ -11,12 +11,16 @@
   Note that the `inv()` method and `inverse` property are removed from PennyLane operators as of PennyLane 0.29.
   [(#130)](https://github.com/PennyLaneAI/pennylane-cirq/pull/130)
 
+* Bumps the required PennyLane version to v0.29.0.
+  [(#137)](https://github.com/PennyLaneAI/pennylane-cirq/pull/137)
+
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
 
-Matthew Silverman
+Christina Lee, Matthew Silverman
 
+---
 # Release 0.28.0
 
 ### New features since last release
@@ -52,8 +56,6 @@ Christina Lee
   plugin's custom support because PennyLane supports them.
   [(#115)](https://github.com/PennyLaneAI/pennylane-cirq/pull/115)
 
-* Require PennyLane of at least v0.29.
-
 ### Improvements
 
 * Pass all the qubits as `qubit_order` parameter to force 
@@ -64,7 +66,7 @@ Christina Lee
 
 This release contains contributions from (in alphabetical order):
 
-Christina Lee, Oumarou Oumarou, Matthew Silverman
+Oumarou Oumarou, Matthew Silverman
 
 ---
 # Release 0.24.0
