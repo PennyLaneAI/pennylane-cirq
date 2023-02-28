@@ -11,12 +11,15 @@
   Note that the `inv()` method and `inverse` property are removed from PennyLane operators as of PennyLane 0.29.
   [(#130)](https://github.com/PennyLaneAI/pennylane-cirq/pull/130)
 
+* Bumps the required PennyLane version to v0.29.0.
+
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
 
-Matthew Silverman
+Christina Lee, Matthew Silverman
 
+---
 # Release 0.28.0
 
 ### New features since last release
