@@ -52,6 +52,8 @@ Christina Lee
   plugin's custom support because PennyLane supports them.
   [(#115)](https://github.com/PennyLaneAI/pennylane-cirq/pull/115)
 
+* Require PennyLane of at least v0.29.
+
 ### Improvements
 
 * Pass all the qubits as `qubit_order` parameter to force 
@@ -62,7 +64,7 @@ Christina Lee
 
 This release contains contributions from (in alphabetical order):
 
-Oumarou Oumarou, Matthew Silverman
+Christina Lee, Oumarou Oumarou, Matthew Silverman
 
 ---
 # Release 0.24.0
