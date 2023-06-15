@@ -452,7 +452,7 @@ class TestApply:
             )
 
 
-@pytest.mark.parametrize("shots", [(100, False)])
+@pytest.mark.parametrize("shots", [100])
 class TestStatePreparationErrorsNonAnalytic:
     """Tests state preparation errors that occur for non-analytic devices."""
 
