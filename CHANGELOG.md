@@ -7,7 +7,7 @@
 ### Improvements
 
 * Failing tests corrected to reflect the new shots validation in PennyLane
-  [(138)](https://github.com/PennyLaneAI/pennylane-cirq/pull/138)
+  [(#138)](https://github.com/PennyLaneAI/pennylane-cirq/pull/138)
 
 ### Documentation
 
