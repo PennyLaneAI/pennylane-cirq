@@ -6,6 +6,9 @@
 
 ### Improvements
 
+* Failing tests corrected to reflect the new shots validation in PennyLane
+  [(#138)](https://github.com/PennyLaneAI/pennylane-cirq/pull/138)
+
 ### Documentation
 
 ### Bug fixes
@@ -13,6 +16,8 @@
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Matthew Silverman
 
 ---
 # Release 0.29.0
