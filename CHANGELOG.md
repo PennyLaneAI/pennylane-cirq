@@ -1,17 +1,9 @@
-# Release 0.30.0-dev
-
-### New features since last release
-
-### Breaking changes
+# Release 0.31.0
 
 ### Improvements
 
 * Failing tests corrected to reflect the new shots validation in PennyLane
   [(#138)](https://github.com/PennyLaneAI/pennylane-cirq/pull/138)
-
-### Documentation
-
-### Bug fixes
 
 ### Contributors
 
