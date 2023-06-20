@@ -16,6 +16,7 @@
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
 Matthew Silverman
 
 ---
