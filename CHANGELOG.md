@@ -1,18 +1,34 @@
-# Release 0.30.0-dev
+# Release 0.32.0-dev
 
 ### New features since last release
 
-### Breaking changes
+### Improvements 🛠
+
+### Breaking changes 💔
+
+### Deprecations 👋
+
+### Documentation 📝
+
+### Bug fixes 🐛
+
+### Contributors ✍️
+
+This release contains contributions from (in alphabetical order):
+
+---
+# Release 0.31.0
 
 ### Improvements
 
-### Documentation
-
-### Bug fixes
+* Failing tests corrected to reflect the new shots validation in PennyLane
+  [(#138)](https://github.com/PennyLaneAI/pennylane-cirq/pull/138)
 
 ### Contributors
 
 This release contains contributions from (in alphabetical order):
+
+Matthew Silverman
 
 ---
 # Release 0.29.0
