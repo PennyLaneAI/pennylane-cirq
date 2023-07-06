@@ -283,9 +283,7 @@ class TestTensorVar:
                 ]
             )
 
-        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
-            [0, 0], wires=[1, 2]
-        )
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector([0, 0], wires=[1, 2])
         res = dev.var(obs)
         expected = (
             (np.cos(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2
@@ -296,9 +294,7 @@ class TestTensorVar:
         ) ** 2
         assert np.allclose(res, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
-            [0, 1], wires=[1, 2]
-        )
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector([0, 1], wires=[1, 2])
         res = dev.var(obs)
         expected = (
             (np.sin(varphi / 2) * np.cos(phi / 2) * np.cos(theta / 2)) ** 2
@@ -309,9 +305,7 @@ class TestTensorVar:
         ) ** 2
         assert np.allclose(res, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
-            [1, 0], wires=[1, 2]
-        )
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector([1, 0], wires=[1, 2])
         res = dev.var(obs)
         expected = (
             (np.sin(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2
@@ -322,9 +316,7 @@ class TestTensorVar:
         ) ** 2
         assert np.allclose(res, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
-            [1, 1], wires=[1, 2]
-        )
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector([1, 1], wires=[1, 2])
         res = dev.var(obs)
         expected = (
             (np.cos(varphi / 2) * np.sin(phi / 2) * np.cos(theta / 2)) ** 2

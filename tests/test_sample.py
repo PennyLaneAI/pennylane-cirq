@@ -425,9 +425,7 @@ class TestTensorSample:
                 ]
             )
 
-        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
-            [0, 0], wires=[1, 2]
-        )
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector([0, 0], wires=[1, 2])
         s1 = dev.sample(obs)
         # s1 should only contain the eigenvalues of the projector matrix tensor product Z, i.e. {-1, 0, 1}
         assert np.allclose(sorted(list(set(s1))), [-1, 0, 1], **tol)
@@ -448,9 +446,7 @@ class TestTensorSample:
         )
         assert np.allclose(var, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
-            [0, 1], wires=[1, 2]
-        )
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector([0, 1], wires=[1, 2])
         s1 = dev.sample(obs)
         assert np.allclose(sorted(list(set(s1))), [-1, 0, 1], **tol)
         mean = np.mean(s1)
@@ -470,9 +466,7 @@ class TestTensorSample:
         )
         assert np.allclose(var, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
-            [1, 0], wires=[1, 2]
-        )
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector([1, 0], wires=[1, 2])
         s1 = dev.sample(obs)
         assert np.allclose(sorted(list(set(s1))), [-1, 0, 1], **tol)
         mean = np.mean(s1)
@@ -492,9 +486,7 @@ class TestTensorSample:
         )
         assert np.allclose(var, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
-            [1, 1], wires=[1, 2]
-        )
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector([1, 1], wires=[1, 2])
         s1 = dev.sample(obs)
         assert np.allclose(sorted(list(set(s1))), [-1, 0, 1], **tol)
         mean = np.mean(s1)
