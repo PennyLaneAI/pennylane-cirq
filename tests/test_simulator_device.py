@@ -556,7 +556,7 @@ class TestExpval:
     ):
         """Tests that expectation values are properly calculated for single-wire observables without parameters."""
 
-        op = operation(0, do_queue=False)
+        op = operation(0)
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
@@ -585,7 +585,7 @@ class TestExpval:
     ):
         """Tests that expectation values are properly calculated for single-wire observables with parameters."""
 
-        op = operation(par[0], 0, do_queue=False)
+        op = operation(par[0], 0)
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
@@ -671,7 +671,7 @@ class TestExpval:
     ):
         """Tests that expectation values are properly calculated for two-wire observables with parameters."""
 
-        op = operation(par[0], [0, 1], do_queue=False)
+        op = operation(par[0], [0, 1])
 
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply(
@@ -710,7 +710,7 @@ class TestVar:
     ):
         """Tests that variances are properly calculated for single-wire observables without parameters."""
 
-        op = operation(0, do_queue=False)
+        op = operation(0)
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
@@ -744,9 +744,9 @@ class TestVar:
         """Tests that expectation values are properly calculated for single-wire observables with parameters."""
 
         if par:
-            op = operation(np.array(*par), 0, do_queue=False)
+            op = operation(np.array(*par), 0)
         else:
-            op = operation(0, do_queue=False)
+            op = operation(0)
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
@@ -797,7 +797,7 @@ class TestVar:
     ):
         """Tests that variances are properly calculated for two-wire observables with parameters."""
 
-        op = operation(np.array(*par), [0, 1], do_queue=False)
+        op = operation(np.array(*par), [0, 1])
 
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply(
