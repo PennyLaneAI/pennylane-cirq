@@ -50,7 +50,7 @@ class TestSample:
         with mimic_execution_for_sample(dev):
             dev.apply([qml.RX(1.5708, wires=[0])])
 
-        dev._obs_queue = [qml.PauliZ(wires=[0], do_queue=False)]
+        dev._obs_queue = [qml.PauliZ(wires=[0])]
 
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.measurements.Sample
@@ -72,10 +72,10 @@ class TestSample:
         with mimic_execution_for_sample(dev):
             dev.apply(
                 [qml.RX(theta, wires=[0])],
-                rotations=qml.Hermitian(A, wires=[0], do_queue=False).diagonalizing_gates(),
+                rotations=qml.Hermitian(A, wires=[0]).diagonalizing_gates(),
             )
 
-        dev._obs_queue = [qml.Hermitian(A, wires=[0], do_queue=False)]
+        dev._obs_queue = [qml.Hermitian(A, wires=[0])]
 
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.measurements.Sample
@@ -104,7 +104,7 @@ class TestSample:
         with mimic_execution_for_sample(dev):
             dev.apply([qml.RX(theta, wires=[0])])
 
-        dev._obs_queue = [qml.Projector([0], wires=0, do_queue=False)]
+        dev._obs_queue = [qml.Projector([0], wires=0)]
         dev._obs_queue[0].return_type = qml.measurements.Sample
         s1 = dev.sample(qml.Projector([0], wires=[0]))
         # s1 should only contain 0 or 1, the eigenvalues of the projector
@@ -114,7 +114,7 @@ class TestSample:
             np.var(s1), np.cos(theta / 2) ** 2 - (np.cos(theta / 2) ** 2) ** 2, **tol
         )
 
-        dev._obs_queue = [qml.Projector([1], wires=0, do_queue=False)]
+        dev._obs_queue = [qml.Projector([1], wires=0)]
         dev._obs_queue[0].return_type = qml.measurements.Sample
         s1 = dev.sample(qml.Projector([1], wires=[0]))
         assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
@@ -146,10 +146,10 @@ class TestSample:
                     qml.RY(2 * theta, wires=[1]),
                     qml.CNOT(wires=[0, 1]),
                 ],
-                rotations=qml.Hermitian(A, wires=[0, 1], do_queue=False).diagonalizing_gates(),
+                rotations=qml.Hermitian(A, wires=[0, 1]).diagonalizing_gates(),
             )
 
-        dev._obs_queue = [qml.Hermitian(A, wires=[0, 1], do_queue=False)]
+        dev._obs_queue = [qml.Hermitian(A, wires=[0, 1])]
 
         for idx in range(len(dev._obs_queue)):
             dev._obs_queue[idx].return_type = qml.measurements.Sample
@@ -189,7 +189,7 @@ class TestSample:
                 ]
             )
 
-        dev._obs_queue = [qml.Projector([0, 0], wires=[0, 1], do_queue=False)]
+        dev._obs_queue = [qml.Projector([0, 0], wires=[0, 1])]
         dev._obs_queue[0].return_type = qml.measurements.Sample
         s1 = dev.sample(qml.Projector([0, 0], wires=[0, 1]))
         # s1 should only contain 0 or 1, the eigenvalues of the projector
@@ -197,21 +197,21 @@ class TestSample:
         expected = (np.cos(theta / 2) * np.cos(theta)) ** 2
         assert np.allclose(np.mean(s1), expected, **tol)
 
-        dev._obs_queue = [qml.Projector([0, 1], wires=[0, 1], do_queue=False)]
+        dev._obs_queue = [qml.Projector([0, 1], wires=[0, 1])]
         dev._obs_queue[0].return_type = qml.measurements.Sample
         s1 = dev.sample(qml.Projector([0, 1], wires=[0, 1]))
         assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
         expected = (np.cos(theta / 2) * np.sin(theta)) ** 2
         assert np.allclose(np.mean(s1), expected, **tol)
 
-        dev._obs_queue = [qml.Projector([1, 0], wires=[0, 1], do_queue=False)]
+        dev._obs_queue = [qml.Projector([1, 0], wires=[0, 1])]
         dev._obs_queue[0].return_type = qml.measurements.Sample
         s1 = dev.sample(qml.Projector([1, 0], wires=[0, 1]))
         assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
         expected = (np.sin(theta / 2) * np.sin(theta)) ** 2
         assert np.allclose(np.mean(s1), expected, **tol)
 
-        dev._obs_queue = [qml.Projector([1, 1], wires=[0, 1], do_queue=False)]
+        dev._obs_queue = [qml.Projector([1, 1], wires=[0, 1])]
         dev._obs_queue[0].return_type = qml.measurements.Sample
         s1 = dev.sample(qml.Projector([1, 1], wires=[0, 1]))
         assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
@@ -241,7 +241,7 @@ class TestTensorSample:
         varphi = -0.543
 
         dev = device(3)
-        obs = qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
+        obs = qml.PauliX(wires=[0]) @ qml.PauliY(wires=[2])
 
         with mimic_execution_for_sample(dev):
             dev.apply(
@@ -284,9 +284,9 @@ class TestTensorSample:
         dev = device(3)
 
         obs = (
-            qml.PauliZ(wires=[0], do_queue=False)
-            @ qml.Hadamard(wires=[1], do_queue=False)
-            @ qml.PauliY(wires=[2], do_queue=False)
+            qml.PauliZ(wires=[0])
+            @ qml.Hadamard(wires=[1])
+            @ qml.PauliY(wires=[2])
         )
 
         with mimic_execution_for_sample(dev):
@@ -339,7 +339,7 @@ class TestTensorSample:
             ]
         )
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(A, wires=[1, 2], do_queue=False)
+        obs = qml.PauliZ(wires=[0]) @ qml.Hermitian(A, wires=[1, 2])
 
         with mimic_execution_for_sample(dev):
             dev.apply(
@@ -425,8 +425,8 @@ class TestTensorSample:
                 ]
             )
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
-            [0, 0], wires=[1, 2], do_queue=False
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
+            [0, 0], wires=[1, 2]
         )
         s1 = dev.sample(obs)
         # s1 should only contain the eigenvalues of the projector matrix tensor product Z, i.e. {-1, 0, 1}
@@ -448,8 +448,8 @@ class TestTensorSample:
         )
         assert np.allclose(var, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
-            [0, 1], wires=[1, 2], do_queue=False
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
+            [0, 1], wires=[1, 2]
         )
         s1 = dev.sample(obs)
         assert np.allclose(sorted(list(set(s1))), [-1, 0, 1], **tol)
@@ -470,8 +470,8 @@ class TestTensorSample:
         )
         assert np.allclose(var, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
-            [1, 0], wires=[1, 2], do_queue=False
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
+            [1, 0], wires=[1, 2]
         )
         s1 = dev.sample(obs)
         assert np.allclose(sorted(list(set(s1))), [-1, 0, 1], **tol)
@@ -492,8 +492,8 @@ class TestTensorSample:
         )
         assert np.allclose(var, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
-            [1, 1], wires=[1, 2], do_queue=False
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
+            [1, 1], wires=[1, 2]
         )
         s1 = dev.sample(obs)
         assert np.allclose(sorted(list(set(s1))), [-1, 0, 1], **tol)

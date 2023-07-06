@@ -52,7 +52,7 @@ class TestVar:
             dev.apply([qml.RX(phi, wires=[0]), qml.RY(theta, wires=[0])])
 
         # Here the observable is already diagonal
-        var = dev.var(qml.PauliZ(wires=[0], do_queue=False))
+        var = dev.var(qml.PauliZ(wires=[0]))
         expected = 0.25 * (3 - np.cos(2 * theta) - 2 * np.cos(theta) ** 2 * np.cos(2 * phi))
 
         assert np.allclose(var, expected, **tol)
@@ -67,7 +67,7 @@ class TestVar:
 
         # test correct variance for <H> of a rotated state
         H = np.array([[4, -1 + 6j], [-1 - 6j, 2]])
-        obs = qml.Hermitian(H, wires=[0], do_queue=False)
+        obs = qml.Hermitian(H, wires=[0])
 
         with mimic_execution_for_var(dev):
             dev.apply(
@@ -95,28 +95,28 @@ class TestVar:
         with mimic_execution_for_var(dev):
             dev.apply([qml.RX(phi, wires=[0]), qml.RY(theta, wires=[1]), qml.CNOT(wires=[0, 1])])
 
-        obs = qml.Projector([0, 0], wires=[0, 1], do_queue=False)
+        obs = qml.Projector([0, 0], wires=[0, 1])
         var = dev.var(obs)
         expected = (np.cos(phi / 2) * np.cos(theta / 2)) ** 2 - (
             (np.cos(phi / 2) * np.cos(theta / 2)) ** 2
         ) ** 2
         assert np.allclose(var, expected, **tol)
 
-        obs = qml.Projector([0, 1], wires=[0, 1], do_queue=False)
+        obs = qml.Projector([0, 1], wires=[0, 1])
         var = dev.var(obs)
         expected = (np.cos(phi / 2) * np.sin(theta / 2)) ** 2 - (
             (np.cos(phi / 2) * np.sin(theta / 2)) ** 2
         ) ** 2
         assert np.allclose(var, expected, **tol)
 
-        obs = qml.Projector([1, 0], wires=[0, 1], do_queue=False)
+        obs = qml.Projector([1, 0], wires=[0, 1])
         var = dev.var(obs)
         expected = (np.sin(phi / 2) * np.sin(theta / 2)) ** 2 - (
             (np.sin(phi / 2) * np.sin(theta / 2)) ** 2
         ) ** 2
         assert np.allclose(var, expected, **tol)
 
-        obs = qml.Projector([1, 1], wires=[0, 1], do_queue=False)
+        obs = qml.Projector([1, 1], wires=[0, 1])
         var = dev.var(obs)
         expected = (np.sin(phi / 2) * np.cos(theta / 2)) ** 2 - (
             (np.sin(phi / 2) * np.cos(theta / 2)) ** 2
@@ -135,7 +135,7 @@ class TestTensorVar:
         varphi = -0.543
 
         dev = device(3)
-        obs = qml.PauliX(wires=[0], do_queue=False) @ qml.PauliY(wires=[2], do_queue=False)
+        obs = qml.PauliX(wires=[0]) @ qml.PauliY(wires=[2])
 
         with mimic_execution_for_var(dev):
             dev.apply(
@@ -171,9 +171,9 @@ class TestTensorVar:
         dev = device(3)
 
         obs = (
-            qml.PauliZ(wires=[0], do_queue=False)
-            @ qml.Hadamard(wires=[1], do_queue=False)
-            @ qml.PauliY(wires=[2], do_queue=False)
+            qml.PauliZ(wires=[0])
+            @ qml.Hadamard(wires=[1])
+            @ qml.PauliY(wires=[2])
         )
 
         with mimic_execution_for_var(dev):
@@ -215,7 +215,7 @@ class TestTensorVar:
                 [-5 - 2j, -5 - 4j, -4 - 3j, -6],
             ]
         )
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Hermitian(A, wires=[1, 2], do_queue=False)
+        obs = qml.PauliZ(wires=[0]) @ qml.Hermitian(A, wires=[1, 2])
 
         with mimic_execution_for_var(dev):
             dev.apply(
@@ -283,8 +283,8 @@ class TestTensorVar:
                 ]
             )
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
-            [0, 0], wires=[1, 2], do_queue=False
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
+            [0, 0], wires=[1, 2]
         )
         res = dev.var(obs)
         expected = (
@@ -296,8 +296,8 @@ class TestTensorVar:
         ) ** 2
         assert np.allclose(res, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
-            [0, 1], wires=[1, 2], do_queue=False
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
+            [0, 1], wires=[1, 2]
         )
         res = dev.var(obs)
         expected = (
@@ -309,8 +309,8 @@ class TestTensorVar:
         ) ** 2
         assert np.allclose(res, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
-            [1, 0], wires=[1, 2], do_queue=False
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
+            [1, 0], wires=[1, 2]
         )
         res = dev.var(obs)
         expected = (
@@ -322,8 +322,8 @@ class TestTensorVar:
         ) ** 2
         assert np.allclose(res, expected, **tol)
 
-        obs = qml.PauliZ(wires=[0], do_queue=False) @ qml.Projector(
-            [1, 1], wires=[1, 2], do_queue=False
+        obs = qml.PauliZ(wires=[0]) @ qml.Projector(
+            [1, 1], wires=[1, 2]
         )
         res = dev.var(obs)
         expected = (
