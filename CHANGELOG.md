@@ -1,4 +1,4 @@
-# Release 0.32.0-dev
+# Release 0.32.0
 
 ### New features since last release
 
@@ -12,9 +12,13 @@
 
 ### Bug fixes 🐛
 
+* The plugin is updated to take `qml.StatePrep` operators, the new name for `qml.QubitStateVector`.
+
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
+
+Christina Lee
 
 ---
 # Release 0.31.0

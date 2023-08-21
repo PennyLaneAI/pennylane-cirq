@@ -149,16 +149,16 @@ class TestApply:
             (qml.BasisState, [0, 0, 1, 0], [1, 0]),
             (qml.BasisState, [0, 0, 1, 0], [1, 0]),
             (qml.BasisState, [0, 0, 0, 1], [1, 1]),
-            (qml.QubitStateVector, [0, 0, 1, 0], [0, 0, 1, 0]),
-            (qml.QubitStateVector, [0, 0, 1, 0], [0, 0, 1, 0]),
-            (qml.QubitStateVector, [0, 0, 0, 1], [0, 0, 0, 1]),
+            (qml.StatePrep, [0, 0, 1, 0], [0, 0, 1, 0]),
+            (qml.StatePrep, [0, 0, 1, 0], [0, 0, 1, 0]),
+            (qml.StatePrep, [0, 0, 0, 1], [0, 0, 0, 1]),
             (
-                qml.QubitStateVector,
+                qml.StatePrep,
                 [1 / math.sqrt(3), 0, 1 / math.sqrt(3), 1 / math.sqrt(3)],
                 [1 / math.sqrt(3), 0, 1 / math.sqrt(3), 1 / math.sqrt(3)],
             ),
             (
-                qml.QubitStateVector,
+                qml.StatePrep,
                 [1 / math.sqrt(3), 0, -1 / math.sqrt(3), 1 / math.sqrt(3)],
                 [1 / math.sqrt(3), 0, -1 / math.sqrt(3), 1 / math.sqrt(3)],
             ),
@@ -438,17 +438,17 @@ class TestApply:
             simulator_device_1_wire.apply([qml.PauliX(0), qml.BasisState(np.array([0]), wires=[0])])
 
     def test_qubit_state_vector_not_at_beginning_error(self, simulator_device_1_wire):
-        """Tests that application of QubitStateVector raises an error if is not
+        """Tests that application of StatePrep raises an error if is not
         the first operation."""
 
         simulator_device_1_wire.reset()
 
         with pytest.raises(
             qml.DeviceError,
-            match="The operation QubitStateVector is only supported at the beginning of a circuit.",
+            match="The operation StatePrep is only supported at the beginning of a circuit.",
         ):
             simulator_device_1_wire.apply(
-                [qml.PauliX(0), qml.QubitStateVector(np.array([0, 1]), wires=[0])]
+                [qml.PauliX(0), qml.StatePrep(np.array([0, 1]), wires=[0])]
             )
 
 
@@ -469,16 +469,16 @@ class TestStatePreparationErrorsNonAnalytic:
             simulator_device_1_wire.apply([qml.BasisState(np.array([0]), wires=[0])])
 
     def test_qubit_state_vector_not_analytic_error(self, simulator_device_1_wire):
-        """Tests that application of QubitStateVector raises an error if the device
+        """Tests that application of StatePrep raises an error if the device
         is not in analytic mode."""
 
         simulator_device_1_wire.reset()
 
         with pytest.raises(
             qml.DeviceError,
-            match="The operation QubitStateVector is only supported in analytic mode.",
+            match="The operation StatePrep is only supported in analytic mode.",
         ):
-            simulator_device_1_wire.apply([qml.QubitStateVector(np.array([0, 1]), wires=[0])])
+            simulator_device_1_wire.apply([qml.StatePrep(np.array([0, 1]), wires=[0])])
 
 
 @pytest.mark.parametrize("shots", [None])
@@ -527,7 +527,7 @@ class TestExpval:
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0])], rotations=op.diagonalizing_gates()
+            [qml.StatePrep(np.array(input), wires=[0])], rotations=op.diagonalizing_gates()
         )
 
         res = simulator_device_1_wire.expval(op)
@@ -556,7 +556,7 @@ class TestExpval:
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0])], rotations=op.diagonalizing_gates()
+            [qml.StatePrep(np.array(input), wires=[0])], rotations=op.diagonalizing_gates()
         )
 
         res = simulator_device_1_wire.expval(op)
@@ -642,7 +642,7 @@ class TestExpval:
 
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0, 1])],
+            [qml.StatePrep(np.array(input), wires=[0, 1])],
             rotations=op.diagonalizing_gates(),
         )
 
@@ -726,7 +726,7 @@ class TestVar:
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0])],
+            [qml.StatePrep(np.array(input), wires=[0])],
             rotations=op.diagonalizing_gates(),
         )
 
@@ -762,7 +762,7 @@ class TestVar:
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0])],
+            [qml.StatePrep(np.array(input), wires=[0])],
             rotations=op.diagonalizing_gates(),
         )
 
@@ -817,7 +817,7 @@ class TestVar:
 
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0, 1])],
+            [qml.StatePrep(np.array(input), wires=[0, 1])],
             rotations=op.diagonalizing_gates(),
         )
 
