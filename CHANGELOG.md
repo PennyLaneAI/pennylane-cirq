@@ -7,7 +7,7 @@
 ### Breaking changes 💔
 
 * Python 3.8 support is dropped and Python 3.11 support is added.
-  [(#126)](https://github.com/PennyLaneAI/pennylane-cirq/pull/146)
+  [(#146)](https://github.com/PennyLaneAI/pennylane-cirq/pull/146)
 
 ### Deprecations 👋
 
@@ -16,7 +16,7 @@
 ### Bug fixes 🐛
 
 * The plugin is updated to take `qml.StatePrep` operators, the new name for `qml.QubitStateVector`.
-  [(#126)](https://github.com/PennyLaneAI/pennylane-cirq/pull/146)
+  [(#146)](https://github.com/PennyLaneAI/pennylane-cirq/pull/146)
 
 ### Contributors ✍️
 
