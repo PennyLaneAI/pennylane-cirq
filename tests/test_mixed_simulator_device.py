@@ -446,7 +446,7 @@ class TestApply:
 
         with pytest.raises(
             qml.DeviceError,
-            match="The operation StatePrep is only supported at the beginning of a circuit.",
+            match=f"The operation {stateprep.__name__} is only supported at the beginning of a circuit.",
         ):
             simulator_device_1_wire.apply(
                 [qml.PauliX(0), stateprep(np.array([0, 1]), wires=[0])]
