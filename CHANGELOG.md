@@ -13,6 +13,7 @@
 ### Bug fixes 🐛
 
 * The plugin is updated to take `qml.StatePrep` operators, the new name for `qml.QubitStateVector`.
+  [(#126)](https://github.com/PennyLaneAI/pennylane-cirq/pull/146)
 
 ### Contributors ✍️
 
