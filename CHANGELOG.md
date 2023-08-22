@@ -6,6 +6,9 @@
 
 ### Breaking changes 💔
 
+* Python 3.8 support is dropped and Python 3.11 support is added.
+  [(#126)](https://github.com/PennyLaneAI/pennylane-cirq/pull/146)
+
 ### Deprecations 👋
 
 ### Documentation 📝

@@ -69,7 +69,7 @@ class TestDeviceIntegration:
 
     @pytest.mark.parametrize("shots", [8192, None])
     @pytest.mark.parametrize(
-        "op, params", [(qml.StatePrep, np.array([0, 1])), (qml.BasisState, np.array([1]))]
+        "op, params", [(qml.StatePrep, np.array([0, 1])), (qml.QubitStateVector, np.array([0, 1])), (qml.BasisState, np.array([1]))]
     )
     def test_decomposition(self, shots, op, params, mocker):
         """Test that StatePrep and BasisState are decomposed"""
@@ -103,6 +103,7 @@ class TestDeviceIntegration:
         [
             "StatePrep",
             "BasisState",
+            "QubitStateVector",
             "CRX",
             "CRY",
             "CRZ",
