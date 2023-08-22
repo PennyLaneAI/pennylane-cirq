@@ -79,7 +79,7 @@ class SimulatorDevice(CirqDevice):
     def capabilities(self):  # pylint: disable=missing-function-docstring
         capabilities = super().capabilities().copy()
         capabilities.update(
-            returns_state=(self.shots is None)  # State information is only set if obtaining shots
+            returns_state=self.shots is None  # State information is only set if obtaining shots
         )
         return capabilities
 
@@ -94,7 +94,7 @@ class SimulatorDevice(CirqDevice):
         # pylint: disable=missing-function-docstring
         if self.shots is not None:
             raise qml.DeviceError(
-                "The operation QubitStateVector is only supported in analytic mode."
+                "The operations StatePrep and QubitStateVector are only supported in analytic mode."
             )
 
         self._initial_state = qubit_state_vector_operation.state_vector(
@@ -240,7 +240,7 @@ class MixedStateSimulatorDevice(SimulatorDevice):
     def capabilities(self):  # pylint: disable=missing-function-docstring
         capabilities = super().capabilities().copy()
         capabilities.update(
-            returns_state=(self.shots is None)  # State information is only set if obtaining shots
+            returns_state=self.shots is None  # State information is only set if obtaining shots
         )
         return capabilities
 
