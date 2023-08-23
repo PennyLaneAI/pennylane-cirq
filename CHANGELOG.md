@@ -1,17 +1,9 @@
-# Release 0.32.0-dev
-
-### New features since last release
-
-### Improvements 🛠
+# Release 0.32.0
 
 ### Breaking changes 💔
 
 * Python 3.8 support is dropped and Python 3.11 support is added.
   [(#146)](https://github.com/PennyLaneAI/pennylane-cirq/pull/146)
-
-### Deprecations 👋
-
-### Documentation 📝
 
 ### Bug fixes 🐛
 
