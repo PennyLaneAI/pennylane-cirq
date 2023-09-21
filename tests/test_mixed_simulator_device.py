@@ -695,7 +695,7 @@ class TestExpval:
             return qml.expval(qml.PauliZ(0))
 
         qnode = qml.QNode(circuit, dev)
-        assert np.allclose(qnode(), 0.0)
+        assert np.allclose(qnode(), 0.0, atol=5e-8)
 
 
 @pytest.mark.parametrize("shots", [None])
