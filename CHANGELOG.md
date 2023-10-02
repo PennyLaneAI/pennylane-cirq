@@ -12,7 +12,8 @@
 
 ### Bug fixes 🐛
 
-* Fixes the pasqal device when more than one circuit is executed.
+* Fixes the pasqal device when more than one circuit is executed and adds support
+  for specifying `wires` an iterable of wire labels.
   [(#151)](https://github.com/PennyLaneAI/pennylane-cirq/pull/151)
 
 ### Contributors ✍️
