@@ -13,6 +13,7 @@
 ### Bug fixes 🐛
 
 * Fixes the pasqal device when more than one circuit is executed.
+  [(#151)](https://github.com/PennyLaneAI/pennylane-cirq/pull/151)
 
 ### Contributors ✍️
 
