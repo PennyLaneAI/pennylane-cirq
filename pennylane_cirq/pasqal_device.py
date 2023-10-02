@@ -42,7 +42,7 @@ class PasqalDevice(SimulatorDevice):
     def __init__(self, wires, control_radius, shots=None, qubits=None):
         if not qubits:
             qubits = [
-                cirq_pasqal.ThreeDQubit(wire * control_radius / 2, 0, 0) for wire in range(wires)
+                cirq_pasqal.ThreeDQubit(wire * float(control_radius) / 2, 0, 0) for wire in range(wires)
             ]
         self.control_radius = float(control_radius)
         if self.control_radius < 0:
