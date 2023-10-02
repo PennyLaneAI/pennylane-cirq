@@ -17,7 +17,7 @@ the ``ThreeDQubit`` and the notion of a ``control_radius``.
 
 .. code-block:: python
 
-    from cirq.pasqal import ThreeDQubit
+    from cirq_pasqal import ThreeDQubit
     qubits = [ThreeDQubit(x, y, z)
               for x in range(2)
               for y in range(2)

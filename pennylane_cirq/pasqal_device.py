@@ -30,7 +30,7 @@ class PasqalDevice(SimulatorDevice):
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need
             to be >= 1. If ``None``, expecation values are calculated analytically.
-        qubits (List[cirq.ThreeDGridQubit]): A list of Cirq ThreeDGridQubits that are used
+        qubits (List[cirq_pasqal.ThreeDGridQubit]): A list of Cirq ThreeDGridQubits that are used
             as wires. If not specified, the ThreeDGridQubits are put in a linear
             arrangement along the first coordinate axis, separated by a distance of
             ``control_radius / 2``.

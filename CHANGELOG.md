@@ -12,9 +12,13 @@
 
 ### Bug fixes 🐛
 
+* Fixes the pasqal device when more than one circuit is executed.
+
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
+
+Christina Lee
 
 ---
 # Release 0.32.0
