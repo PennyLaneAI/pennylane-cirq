@@ -652,7 +652,8 @@ class TestExpval:
 
         assert np.isclose(res, expected_output, **tol)
 
-    def test_four_qubit_random_circuit(self, shots):
+    @pytest.mark.parametrize("use_super", [False, True])
+    def test_four_qubit_random_circuit(self, shots, use_super, mocker):
         """Test a four-qubit random circuit with the whole set of possible gates,
         the test is analog to a failing device test and is used to check the try/except
         expval function from the mixed_simulator device."""
@@ -694,8 +695,15 @@ class TestExpval:
                     qml.apply(gate)
             return qml.expval(qml.PauliZ(0))
 
+        spy = mocker.spy(qml.QubitDevice, "expval")
+
+        if use_super:
+            mock_simulate = mocker.patch("cirq.DensityMatrixSimulator.simulate_expectation_values")
+            mock_simulate.side_effect = ValueError("mock error")
+
         qnode = qml.QNode(circuit, dev)
         assert np.allclose(qnode(), 0.0, atol=5e-8)
+        assert spy.call_count == (1 if use_super else 0)
 
 
 @pytest.mark.parametrize("shots", [None])
