@@ -40,12 +40,17 @@ class PasqalDevice(SimulatorDevice):
     short_name = "cirq.pasqal"
 
     def __init__(self, wires, control_radius, shots=None, qubits=None):
-        super().__init__(wires, shots, qubits)
+        if isinstance(wires, int):
+            # interpret wires as the number of consecutive wires
+            wires = range(wires)
         if not qubits:
             qubits = [
-                cirq_pasqal.ThreeDQubit(wire * float(control_radius) / 2, 0, 0) for wire in range(len(self.wires))
+                cirq_pasqal.ThreeDQubit(wire * control_radius / 2, 0, 0)
+                for wire in range(len(wires))
             ]
         self.control_radius = float(control_radius)
         if self.control_radius < 0:
             raise ValueError("The control_radius must be a non-negative real number.")
+        super().__init__(wires, shots, qubits)
+
         self.cirq_device = cirq_pasqal.PasqalVirtualDevice(self.control_radius, qubits)
