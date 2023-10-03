@@ -207,10 +207,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         # pylint: disable=missing-function-docstring
         super().reset()
 
-        if self.cirq_device:
-            self.circuit = cirq.Circuit(device=self.cirq_device)
-        else:
-            self.circuit = cirq.Circuit()
+        self.circuit = cirq.Circuit()
 
     @property
     def observables(self):
