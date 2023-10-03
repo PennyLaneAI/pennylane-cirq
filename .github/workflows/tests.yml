@@ -83,6 +83,7 @@ jobs:
           pl-device-test --device=cirq.simulator --tb=short --skip-ops --analytic=False --shots=20000 --cov=pennylane_cirq --cov-report=xml
           pl-device-test --device=cirq.mixedsimulator --tb=short --skip-ops --analytic=True --cov=pennylane_cirq --cov-report=xml
           pl-device-test --device=cirq.mixedsimulator --tb=short --skip-ops --analytic=False --shots=20000 --cov=pennylane_cirq --cov-report=xml
+          pl-device-test --device=cirq.pasqal --tb=short --skip-ops --analytic=False --shots=20000 --device-kwargs control_radius=2.
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
