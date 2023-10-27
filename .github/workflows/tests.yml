@@ -70,7 +70,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-ci.txt
           pip install qsimcirq
-          pip install wheel pytest pytest-cov pytest-mock flaky --upgrade
+          pip install wheel pytest pytest-cov pytest-mock pytest-benchmark flaky --upgrade
 
       - name: Install Plugin
         run: |
