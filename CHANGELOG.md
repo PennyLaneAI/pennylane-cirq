@@ -5,7 +5,7 @@
 ### Improvements 🛠
 
 * Sample tests have been updated to not use the deprecated `Observable.return_type` property.
-  [(#)]()
+  [(#158)](https://github.com/PennyLaneAI/pennylane-cirq/pull/158)
 
 ### Breaking changes 💔
 
