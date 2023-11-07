@@ -4,6 +4,9 @@
 
 ### Improvements 🛠
 
+* Sample tests have been updated to not use the deprecated `Observable.return_type` property.
+  [(#)]()
+
 ### Breaking changes 💔
 
 ### Deprecations 👋
@@ -15,6 +18,8 @@
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
+
+Matthew Silverman
 
 ---
 # Release 0.33.0
