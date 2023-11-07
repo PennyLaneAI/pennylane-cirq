@@ -50,11 +50,6 @@ class TestSample:
         with mimic_execution_for_sample(dev):
             dev.apply([qml.RX(1.5708, wires=[0])])
 
-        dev._obs_queue = [qml.PauliZ(wires=[0])]
-
-        for idx in range(len(dev._obs_queue)):
-            dev._obs_queue[idx].return_type = qml.measurements.Sample
-
         s1 = dev.sample(qml.PauliZ(wires=[0]))
 
         # s1 should only contain 1 and -1
@@ -75,10 +70,6 @@ class TestSample:
                 rotations=qml.Hermitian(A, wires=[0]).diagonalizing_gates(),
             )
 
-        dev._obs_queue = [qml.Hermitian(A, wires=[0])]
-
-        for idx in range(len(dev._obs_queue)):
-            dev._obs_queue[idx].return_type = qml.measurements.Sample
 
         s1 = dev.sample(qml.Hermitian(A, wires=[0]))
 
@@ -104,8 +95,6 @@ class TestSample:
         with mimic_execution_for_sample(dev):
             dev.apply([qml.RX(theta, wires=[0])])
 
-        dev._obs_queue = [qml.Projector([0], wires=0)]
-        dev._obs_queue[0].return_type = qml.measurements.Sample
         s1 = dev.sample(qml.Projector([0], wires=[0]))
         # s1 should only contain 0 or 1, the eigenvalues of the projector
         assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
@@ -114,8 +103,6 @@ class TestSample:
             np.var(s1), np.cos(theta / 2) ** 2 - (np.cos(theta / 2) ** 2) ** 2, **tol
         )
 
-        dev._obs_queue = [qml.Projector([1], wires=0)]
-        dev._obs_queue[0].return_type = qml.measurements.Sample
         s1 = dev.sample(qml.Projector([1], wires=[0]))
         assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
         assert np.allclose(np.mean(s1), np.sin(theta / 2) ** 2, **tol)
@@ -148,11 +135,6 @@ class TestSample:
                 ],
                 rotations=qml.Hermitian(A, wires=[0, 1]).diagonalizing_gates(),
             )
-
-        dev._obs_queue = [qml.Hermitian(A, wires=[0, 1])]
-
-        for idx in range(len(dev._obs_queue)):
-            dev._obs_queue[idx].return_type = qml.measurements.Sample
 
         s1 = dev.sample(qml.Hermitian(A, wires=[0, 1]))
 
@@ -189,30 +171,22 @@ class TestSample:
                 ]
             )
 
-        dev._obs_queue = [qml.Projector([0, 0], wires=[0, 1])]
-        dev._obs_queue[0].return_type = qml.measurements.Sample
         s1 = dev.sample(qml.Projector([0, 0], wires=[0, 1]))
         # s1 should only contain 0 or 1, the eigenvalues of the projector
         assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
         expected = (np.cos(theta / 2) * np.cos(theta)) ** 2
         assert np.allclose(np.mean(s1), expected, **tol)
 
-        dev._obs_queue = [qml.Projector([0, 1], wires=[0, 1])]
-        dev._obs_queue[0].return_type = qml.measurements.Sample
         s1 = dev.sample(qml.Projector([0, 1], wires=[0, 1]))
         assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
         expected = (np.cos(theta / 2) * np.sin(theta)) ** 2
         assert np.allclose(np.mean(s1), expected, **tol)
 
-        dev._obs_queue = [qml.Projector([1, 0], wires=[0, 1])]
-        dev._obs_queue[0].return_type = qml.measurements.Sample
         s1 = dev.sample(qml.Projector([1, 0], wires=[0, 1]))
         assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
         expected = (np.sin(theta / 2) * np.sin(theta)) ** 2
         assert np.allclose(np.mean(s1), expected, **tol)
 
-        dev._obs_queue = [qml.Projector([1, 1], wires=[0, 1])]
-        dev._obs_queue[0].return_type = qml.measurements.Sample
         s1 = dev.sample(qml.Projector([1, 1], wires=[0, 1]))
         assert np.allclose(sorted(list(set(s1))), [0, 1], **tol)
         expected = (np.sin(theta / 2) * np.cos(theta)) ** 2
