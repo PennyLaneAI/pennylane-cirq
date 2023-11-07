@@ -12,9 +12,16 @@
 
 ### Bug fixes 🐛
 
+### Tests
+
+* The sampling tests no longer set the `_obs_queue` proprerty, as setting it has no effect on the behaviour of the plugin.
+  [(#159)](https://github.com/PennyLaneAI/pennylane-cirq/pull/159)
+
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
+
+Christina Lee
 
 ---
 # Release 0.33.0
