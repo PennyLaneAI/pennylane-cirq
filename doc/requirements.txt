@@ -32,7 +32,7 @@ jupyter-core==4.11.2
 kiwisolver==1.4.2
 MarkupSafe==2.1.1
 matplotlib==3.5.1
-mpmath==1.2.1
+mpmath==1.3.0
 nbformat==5.1.3
 networkx==2.6.3
 ninja==1.10.2.3
