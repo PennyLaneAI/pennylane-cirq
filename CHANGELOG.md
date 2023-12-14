@@ -1,3 +1,77 @@
+# Release 0.34.0-dev
+
+### New features since last release
+
+### Improvements 🛠
+
+### Breaking changes 💔
+
+### Deprecations 👋
+
+### Documentation 📝
+
+### Bug fixes 🐛
+
+### Tests
+
+* The sampling tests no longer set the `_obs_queue` proprerty, as setting it has no effect on the behaviour of the plugin.
+  [(#159)](https://github.com/PennyLaneAI/pennylane-cirq/pull/159)
+
+### Contributors ✍️
+
+This release contains contributions from (in alphabetical order):
+
+Christina Lee
+
+---
+# Release 0.33.0
+
+### Bug fixes 🐛
+
+* Fixes the pasqal device when more than one circuit is executed and adds support
+  for specifying `wires` an iterable of wire labels.
+  [(#151)](https://github.com/PennyLaneAI/pennylane-cirq/pull/151)
+
+### Contributors ✍️
+
+This release contains contributions from (in alphabetical order):
+
+Christina Lee
+
+---
+# Release 0.32.0
+
+### Breaking changes 💔
+
+* Python 3.8 support is dropped and Python 3.11 support is added.
+  [(#146)](https://github.com/PennyLaneAI/pennylane-cirq/pull/146)
+
+### Bug fixes 🐛
+
+* The plugin is updated to take `qml.StatePrep` operators, the new name for `qml.QubitStateVector`.
+  [(#146)](https://github.com/PennyLaneAI/pennylane-cirq/pull/146)
+
+### Contributors ✍️
+
+This release contains contributions from (in alphabetical order):
+
+Christina Lee
+
+---
+# Release 0.31.0
+
+### Improvements
+
+* Failing tests corrected to reflect the new shots validation in PennyLane
+  [(#138)](https://github.com/PennyLaneAI/pennylane-cirq/pull/138)
+
+### Contributors
+
+This release contains contributions from (in alphabetical order):
+
+Matthew Silverman
+
+---
 # Release 0.29.0
 
 ### New features since last release
