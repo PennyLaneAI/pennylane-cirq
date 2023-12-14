@@ -9,7 +9,7 @@ cirq-pasqal==0.14.1
 cycler==0.10.0
 deprecation==2.1.0
 duet==0.2.5
-future==0.18.2
+future==0.18.3
 google-api-core==1.31.2
 googleapis-common-protos==1.53.0
 idna==3.3
