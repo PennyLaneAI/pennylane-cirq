@@ -45,7 +45,7 @@ pennylane==0.28.0
 PennyLane-Lightning==0.28
 Pillow==9.1.1
 pluggy==1.0.0
-protobuf==3.15.0
+protobuf==3.18.3
 PubChemPy==1.0.4
 py==1.11.0
 Pygments==2.11.2
