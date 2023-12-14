@@ -149,16 +149,16 @@ class TestApply:
             (qml.BasisState, [0, 0, 1, 0], [1, 0]),
             (qml.BasisState, [0, 0, 1, 0], [1, 0]),
             (qml.BasisState, [0, 0, 0, 1], [1, 1]),
-            (qml.QubitStateVector, [0, 0, 1, 0], [0, 0, 1, 0]),
-            (qml.QubitStateVector, [0, 0, 1, 0], [0, 0, 1, 0]),
-            (qml.QubitStateVector, [0, 0, 0, 1], [0, 0, 0, 1]),
+            (qml.StatePrep, [0, 0, 1, 0], [0, 0, 1, 0]),
+            (qml.StatePrep, [0, 0, 1, 0], [0, 0, 1, 0]),
+            (qml.StatePrep, [0, 0, 0, 1], [0, 0, 0, 1]),
             (
-                qml.QubitStateVector,
+                qml.StatePrep,
                 [1 / math.sqrt(3), 0, 1 / math.sqrt(3), 1 / math.sqrt(3)],
                 [1 / math.sqrt(3), 0, 1 / math.sqrt(3), 1 / math.sqrt(3)],
             ),
             (
-                qml.QubitStateVector,
+                qml.StatePrep,
                 [1 / math.sqrt(3), 0, -1 / math.sqrt(3), 1 / math.sqrt(3)],
                 [1 / math.sqrt(3), 0, -1 / math.sqrt(3), 1 / math.sqrt(3)],
             ),
@@ -437,22 +437,23 @@ class TestApply:
         ):
             simulator_device_1_wire.apply([qml.PauliX(0), qml.BasisState(np.array([0]), wires=[0])])
 
-    def test_qubit_state_vector_not_at_beginning_error(self, simulator_device_1_wire):
-        """Tests that application of QubitStateVector raises an error if is not
+    @pytest.mark.parametrize("stateprep", (qml.QubitStateVector, qml.StatePrep))
+    def test_qubit_state_vector_not_at_beginning_error(self, simulator_device_1_wire, stateprep):
+        """Tests that application of StatePrep raises an error if is not
         the first operation."""
 
         simulator_device_1_wire.reset()
 
         with pytest.raises(
             qml.DeviceError,
-            match="The operation QubitStateVector is only supported at the beginning of a circuit.",
+            match=f"The operation {stateprep.__name__} is only supported at the beginning of a circuit.",
         ):
             simulator_device_1_wire.apply(
-                [qml.PauliX(0), qml.QubitStateVector(np.array([0, 1]), wires=[0])]
+                [qml.PauliX(0), stateprep(np.array([0, 1]), wires=[0])]
             )
 
 
-@pytest.mark.parametrize("shots", [(100, False)])
+@pytest.mark.parametrize("shots", [100])
 class TestStatePreparationErrorsNonAnalytic:
     """Tests state preparation errors that occur for non-analytic devices."""
 
@@ -468,17 +469,18 @@ class TestStatePreparationErrorsNonAnalytic:
         ):
             simulator_device_1_wire.apply([qml.BasisState(np.array([0]), wires=[0])])
 
-    def test_qubit_state_vector_not_analytic_error(self, simulator_device_1_wire):
-        """Tests that application of QubitStateVector raises an error if the device
+    @pytest.mark.parametrize("stateprep", (qml.QubitStateVector, qml.StatePrep))
+    def test_qubit_state_vector_not_analytic_error(self, simulator_device_1_wire, stateprep):
+        """Tests that application of StatePrep raises an error if the device
         is not in analytic mode."""
 
         simulator_device_1_wire.reset()
 
         with pytest.raises(
             qml.DeviceError,
-            match="The operation QubitStateVector is only supported in analytic mode.",
+            match="The operations StatePrep and QubitStateVector are only supported in analytic mode.",
         ):
-            simulator_device_1_wire.apply([qml.QubitStateVector(np.array([0, 1]), wires=[0])])
+            simulator_device_1_wire.apply([stateprep(np.array([0, 1]), wires=[0])])
 
 
 @pytest.mark.parametrize("shots", [None])
@@ -523,11 +525,11 @@ class TestExpval:
     ):
         """Tests that expectation values are properly calculated for single-wire observables without parameters."""
 
-        op = operation(0, do_queue=False)
+        op = operation(0)
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0])], rotations=op.diagonalizing_gates()
+            [qml.StatePrep(np.array(input), wires=[0])], rotations=op.diagonalizing_gates()
         )
 
         res = simulator_device_1_wire.expval(op)
@@ -552,11 +554,11 @@ class TestExpval:
     ):
         """Tests that expectation values are properly calculated for single-wire observables with parameters."""
 
-        op = operation(par[0], 0, do_queue=False)
+        op = operation(par[0], 0)
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0])], rotations=op.diagonalizing_gates()
+            [qml.StatePrep(np.array(input), wires=[0])], rotations=op.diagonalizing_gates()
         )
 
         res = simulator_device_1_wire.expval(op)
@@ -638,11 +640,11 @@ class TestExpval:
     ):
         """Tests that expectation values are properly calculated for two-wire observables with parameters."""
 
-        op = operation(par[0], [0, 1], do_queue=False)
+        op = operation(par[0], [0, 1])
 
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0, 1])],
+            [qml.StatePrep(np.array(input), wires=[0, 1])],
             rotations=op.diagonalizing_gates(),
         )
 
@@ -650,7 +652,8 @@ class TestExpval:
 
         assert np.isclose(res, expected_output, **tol)
 
-    def test_four_qubit_random_circuit(self, shots):
+    @pytest.mark.parametrize("use_super", [False, True])
+    def test_four_qubit_random_circuit(self, shots, use_super, mocker):
         """Test a four-qubit random circuit with the whole set of possible gates,
         the test is analog to a failing device test and is used to check the try/except
         expval function from the mixed_simulator device."""
@@ -692,8 +695,15 @@ class TestExpval:
                     qml.apply(gate)
             return qml.expval(qml.PauliZ(0))
 
+        spy = mocker.spy(qml.QubitDevice, "expval")
+
+        if use_super:
+            mock_simulate = mocker.patch("cirq.DensityMatrixSimulator.simulate_expectation_values")
+            mock_simulate.side_effect = ValueError("mock error")
+
         qnode = qml.QNode(circuit, dev)
-        assert np.allclose(qnode(), 0.0)
+        assert np.allclose(qnode(), 0.0, atol=5e-8)
+        assert spy.call_count == (1 if use_super else 0)
 
 
 @pytest.mark.parametrize("shots", [None])
@@ -722,11 +732,11 @@ class TestVar:
     ):
         """Tests that variances are properly calculated for single-wire observables without parameters."""
 
-        op = operation(0, do_queue=False)
+        op = operation(0)
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0])],
+            [qml.StatePrep(np.array(input), wires=[0])],
             rotations=op.diagonalizing_gates(),
         )
 
@@ -756,13 +766,13 @@ class TestVar:
         """Tests that expectation values are properly calculated for single-wire observables with parameters."""
 
         if par:
-            op = operation(np.array(*par), 0, do_queue=False)
+            op = operation(np.array(*par), 0)
         else:
-            op = operation(0, do_queue=False)
+            op = operation(0)
 
         simulator_device_1_wire.reset()
         simulator_device_1_wire.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0])],
+            [qml.StatePrep(np.array(input), wires=[0])],
             rotations=op.diagonalizing_gates(),
         )
 
@@ -813,11 +823,11 @@ class TestVar:
     ):
         """Tests that variances are properly calculated for two-wire observables with parameters."""
 
-        op = operation(np.array(*par), [0, 1], do_queue=False)
+        op = operation(np.array(*par), [0, 1])
 
         simulator_device_2_wires.reset()
         simulator_device_2_wires.apply(
-            [qml.QubitStateVector(np.array(input), wires=[0, 1])],
+            [qml.StatePrep(np.array(input), wires=[0, 1])],
             rotations=op.diagonalizing_gates(),
         )
 

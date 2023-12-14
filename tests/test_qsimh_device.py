@@ -60,10 +60,10 @@ class TestDeviceIntegration:
 
     @pytest.mark.parametrize("shots", [8192])
     @pytest.mark.parametrize(
-        "op, params", [(qml.QubitStateVector, np.array([0, 1])), (qml.BasisState, np.array([1]))]
+        "op, params", [(qml.StatePrep, np.array([0, 1])), (qml.QubitStateVector, np.array([0, 1])), (qml.BasisState, np.array([1]))]
     )
     def test_decomposition(self, shots, op, params, mocker):
-        """Test that QubitStateVector and BasisState are decomposed"""
+        """Test that StatePrep and BasisState are decomposed"""
 
         dev = qml.device("cirq.qsimh", wires=1, shots=shots, qsimh_options=qsimh_options)
 
@@ -92,6 +92,7 @@ class TestDeviceIntegration:
     @pytest.mark.parametrize(
         "gate",
         [
+            "StatePrep",
             "QubitStateVector",
             "BasisState",
             "CRX",
@@ -284,7 +285,7 @@ class TestExpval:
     ):
         """Tests that expectation values are properly calculated for single-wire observables without parameters."""
 
-        op = operation(0, do_queue=False)
+        op = operation(0)
 
         qsimh_device_1_wire.reset()
 
@@ -308,7 +309,7 @@ class TestExpval:
     ):
         """Tests that expectation values are properly calculated for single-wire observables with parameters."""
 
-        op = operation(par[0], 0, do_queue=False)
+        op = operation(par[0], 0)
 
         qsimh_device_1_wire.reset()
 
@@ -339,7 +340,7 @@ class TestVar:
     ):
         """Tests that variances are properly calculated for single-wire observables without parameters."""
 
-        op = operation(0, do_queue=False)
+        op = operation(0)
 
         qsimh_device_1_wire.reset()
         qsimh_device_1_wire.apply(op.diagonalizing_gates())
@@ -362,9 +363,9 @@ class TestVar:
         """Tests that expectation values are properly calculated for single-wire observables with parameters."""
 
         if par:
-            op = operation(np.array(*par), 0, do_queue=False)
+            op = operation(np.array(*par), 0)
         else:
-            op = operation(0, do_queue=False)
+            op = operation(0)
 
         qsimh_device_1_wire.reset()
         if basis_state:

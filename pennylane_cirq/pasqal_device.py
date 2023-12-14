@@ -30,7 +30,7 @@ class PasqalDevice(SimulatorDevice):
         shots (int): Number of circuit evaluations/random samples used
             to estimate expectation values of observables. Shots need
             to be >= 1. If ``None``, expecation values are calculated analytically.
-        qubits (List[cirq.ThreeDGridQubit]): A list of Cirq ThreeDGridQubits that are used
+        qubits (List[cirq_pasqal.ThreeDGridQubit]): A list of Cirq ThreeDGridQubits that are used
             as wires. If not specified, the ThreeDGridQubits are put in a linear
             arrangement along the first coordinate axis, separated by a distance of
             ``control_radius / 2``.
@@ -40,12 +40,17 @@ class PasqalDevice(SimulatorDevice):
     short_name = "cirq.pasqal"
 
     def __init__(self, wires, control_radius, shots=None, qubits=None):
+        if isinstance(wires, int):
+            # interpret wires as the number of consecutive wires
+            wires = range(wires)
         if not qubits:
             qubits = [
-                cirq_pasqal.ThreeDQubit(wire * control_radius / 2, 0, 0) for wire in range(wires)
+                cirq_pasqal.ThreeDQubit(wire * control_radius / 2, 0, 0)
+                for wire in range(len(wires))
             ]
         self.control_radius = float(control_radius)
         if self.control_radius < 0:
             raise ValueError("The control_radius must be a non-negative real number.")
         super().__init__(wires, shots, qubits)
+
         self.cirq_device = cirq_pasqal.PasqalVirtualDevice(self.control_radius, qubits)
