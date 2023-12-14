@@ -118,6 +118,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         **{f"Pow({k})": v for k, v in _pow_operation_map.items()},
         "BasisState": None,
         "QubitStateVector": None,
+        "StatePrep": None,
         "QubitUnitary": CirqOperation(cirq.MatrixGate),
         "PauliX": CirqOperation(lambda: cirq.X),
         "PauliY": CirqOperation(lambda: cirq.Y),
@@ -206,10 +207,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         # pylint: disable=missing-function-docstring
         super().reset()
 
-        if self.cirq_device:
-            self.circuit = cirq.Circuit(device=self.cirq_device)
-        else:
-            self.circuit = cirq.Circuit()
+        self.circuit = cirq.Circuit()
 
     @property
     def observables(self):
@@ -271,14 +269,14 @@ class CirqDevice(QubitDevice, abc.ABC):
         rotations = kwargs.pop("rotations", [])
 
         for i, operation in enumerate(operations):
-            if i > 0 and operation.name in {"BasisState", "QubitStateVector"}:
+            if i > 0 and operation.name in {"BasisState", "QubitStateVector", "StatePrep"}:
                 raise qml.DeviceError(
                     f"The operation {operation.name} is only supported at the beginning of a circuit."
                 )
 
             if operation.name == "BasisState":
                 self._apply_basis_state(operation)
-            elif operation.name == "QubitStateVector":
+            elif operation.name in {"StatePrep", "QubitStateVector"}:
                 self._apply_qubit_state_vector(operation)
             else:
                 self._apply_operation(operation)
