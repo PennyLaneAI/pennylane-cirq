@@ -4,7 +4,7 @@ autoray==0.3.1
 cachetools==5.0.0
 certifi==2021.10.8
 charset-normalizer==2.0.12
-cirq-core==0.14.1
+cirq-core==1.0.0
 cirq-pasqal==0.14.1
 cycler==0.10.0
 deprecation==2.1.0
