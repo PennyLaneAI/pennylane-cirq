@@ -56,7 +56,7 @@ Check out these demos to see the PennyLane-Cirq plugin in action:
 
 .. title-card::
     :name: Quantum Generative Adversarial Networks with Cirq + TensorFlow
-    :description: <img src="https://pennylane.ai/_images/qgan3.png" width="100%" />
+    :description: <img src="https://pennylane.ai/_static/demonstration_assets/QGAN/qgan3.png" width="100%" />
     :link:  https://pennylane.ai/qml/demos/tutorial_QGAN.html
 
 .. title-card::
