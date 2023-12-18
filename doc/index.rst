@@ -66,7 +66,7 @@ Check out these demos to see the PennyLane-Cirq plugin in action:
 
 .. title-card::
     :name: Variationally optimizing measurement protocols
-    :description: <img src="https://pennylane.ai/_images/illustration.png" width="100%" />
+    :description: <img src="https://pennylane.ai/_static/demonstration_assets/quantum_metrology/illustration.png" width="100%" />
     :link: https://pennylane.ai/qml/demos/tutorial_quantum_metrology.html
 
 .. title-card::
