@@ -51,7 +51,7 @@ Check out these demos to see the PennyLane-Cirq plugin in action:
 
 .. title-card::
     :name: Optimizing noisy circuits with Cirq
-    :description: <img src="https://pennylane.ai/_images/noisy_circuit_optimization_thumbnail.png" width="100%" />
+    :description: <img src="https://pennylane.ai/_static/demonstration_assets/noisy_circuit_optimization/noisy_circuit_optimization_thumbnail.png" width="100%" />
     :link: https://pennylane.ai/qml/demos/tutorial_noisy_circuit_optimization.html
 
 .. title-card::
