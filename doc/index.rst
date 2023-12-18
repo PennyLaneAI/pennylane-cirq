@@ -51,27 +51,27 @@ Check out these demos to see the PennyLane-Cirq plugin in action:
 
 .. title-card::
     :name: Optimizing noisy circuits with Cirq
-    :description: <img src="https://pennylane.ai/_images/noisy_circuit_optimization_thumbnail.png" width="100%" />
+    :description: <img src="https://pennylane.ai/_static/demonstration_assets/noisy_circuit_optimization/noisy_circuit_optimization_thumbnail.png" width="100%" />
     :link: https://pennylane.ai/qml/demos/tutorial_noisy_circuit_optimization.html
 
 .. title-card::
     :name: Quantum Generative Adversarial Networks with Cirq + TensorFlow
-    :description: <img src="https://pennylane.ai/_images/qgan3.png" width="100%" />
+    :description: <img src="https://pennylane.ai/_static/demonstration_assets/QGAN/qgan3.png" width="100%" />
     :link:  https://pennylane.ai/qml/demos/tutorial_QGAN.html
 
 .. title-card::
     :name: Quantum computation with neutral atoms
-    :description: <img src="https://pennylane.ai/_images/pasqal_thumbnail.png" width="100%" />
+    :description: <img src="https://pennylane.ai/_static/demonstration_assets/pasqal/pasqal_thumbnail.png" width="100%" />
     :link: https://pennylane.ai/qml/demos/tutorial_pasqal.html
 
 .. title-card::
     :name: Variationally optimizing measurement protocols
-    :description: <img src="https://pennylane.ai/_images/illustration.png" width="100%" />
+    :description: <img src="https://pennylane.ai/_static/demonstration_assets/quantum_metrology/illustration.png" width="100%" />
     :link: https://pennylane.ai/qml/demos/tutorial_quantum_metrology.html
 
 .. title-card::
     :name: Beyond classical computing with qsim
-    :description: <img src="https://pennylane.ai/_images/sycamore.png" width="100%" />
+    :description: <img src="https://pennylane.ai/_static/demonstration_assets/qsim_beyond_classical/sycamore.png" width="100%" />
     :link:  https://pennylane.ai/qml/demos/qsim_beyond_classical.html
 
 .. raw:: html
