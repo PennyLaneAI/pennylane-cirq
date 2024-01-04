@@ -33,7 +33,7 @@ pennylane==0.29.0
 PennyLane-Lightning==0.29.0
 Pillow==10.0.1
 pluggy==1.0.0
-protobuf==3.19.0
+protobuf==3.19.5
 PubChemPy==1.0.4
 py==1.10.0
 pyparsing==2.4.7
