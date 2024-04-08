@@ -93,7 +93,9 @@ class TestApply:
 
         simulator_device_1_wire.reset()
         init_state = np.array(input, dtype=np.complex64)
-        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(
+            init_state
+        )
         simulator_device_1_wire.apply([op(wires=[0])])
 
         state = np.array(expected_pure_state)
@@ -135,7 +137,9 @@ class TestApply:
 
         simulator_device_2_wires.reset()
         init_state = np.array(input, dtype=np.complex64)
-        simulator_device_2_wires._initial_state = simulator_device_2_wires._convert_to_density_matrix(init_state)
+        simulator_device_2_wires._initial_state = (
+            simulator_device_2_wires._convert_to_density_matrix(init_state)
+        )
         simulator_device_2_wires.apply([op(wires=[0, 1])])
 
         state = np.array(expected_pure_state)
@@ -287,7 +291,9 @@ class TestApply:
 
         simulator_device_1_wire.reset()
         init_state = np.array(input, dtype=np.complex64)
-        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(
+            init_state
+        )
         simulator_device_1_wire.apply([op(*par, wires=[0])])
 
         state = np.array(expected_pure_state)
@@ -417,7 +423,9 @@ class TestApply:
 
         simulator_device_2_wires.reset()
         init_state = np.array(input, dtype=np.complex64)
-        simulator_device_2_wires._initial_state = simulator_device_2_wires._convert_to_density_matrix(init_state)
+        simulator_device_2_wires._initial_state = (
+            simulator_device_2_wires._convert_to_density_matrix(init_state)
+        )
         simulator_device_2_wires.apply([op(*par, wires=[0, 1])])
 
         state = np.array(expected_pure_state)
@@ -448,9 +456,7 @@ class TestApply:
             qml.DeviceError,
             match=f"The operation {stateprep.__name__} is only supported at the beginning of a circuit.",
         ):
-            simulator_device_1_wire.apply(
-                [qml.PauliX(0), stateprep(np.array([0, 1]), wires=[0])]
-            )
+            simulator_device_1_wire.apply([qml.PauliX(0), stateprep(np.array([0, 1]), wires=[0])])
 
 
 @pytest.mark.parametrize("shots", [100])

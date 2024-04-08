@@ -55,6 +55,7 @@ class SimulatorDevice(CirqDevice):
         simulator (Optional[cirq.Simulator]): Optional custom simulator object to use. If
             None, the default ``cirq.Simulator()`` will be used instead.
     """
+
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
 
@@ -216,6 +217,7 @@ class MixedStateSimulatorDevice(SimulatorDevice):
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
     """
+
     name = "Cirq Mixed-State Simulator device for PennyLane"
     short_name = "cirq.mixedsimulator"
 

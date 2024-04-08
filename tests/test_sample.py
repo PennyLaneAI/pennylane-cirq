@@ -70,7 +70,6 @@ class TestSample:
                 rotations=qml.Hermitian(A, wires=[0]).diagonalizing_gates(),
             )
 
-
         s1 = dev.sample(qml.Hermitian(A, wires=[0]))
 
         # s1 should only contain the eigenvalues of
@@ -257,11 +256,7 @@ class TestTensorSample:
 
         dev = device(3)
 
-        obs = (
-            qml.PauliZ(wires=[0])
-            @ qml.Hadamard(wires=[1])
-            @ qml.PauliY(wires=[2])
-        )
+        obs = qml.PauliZ(wires=[0]) @ qml.Hadamard(wires=[1]) @ qml.PauliY(wires=[2])
 
         with mimic_execution_for_sample(dev):
             dev.apply(
