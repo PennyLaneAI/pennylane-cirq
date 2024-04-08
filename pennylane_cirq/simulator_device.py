@@ -188,12 +188,12 @@ class SimulatorDevice(CirqDevice):
 
                 if "Hadamard" in ob_names:
                     list_obs = []
-                    obs = (
+                    observables = (
                         observable.operands
                         if isinstance(observable, qml.ops.Prod)
                         else observable.obs
                     )
-                    for obs in obs:
+                    for obs in observables:
                         list_obs.append(qml.PauliZ(wires=obs.wires))
 
                     T = qml.operation.Tensor(*list_obs)
