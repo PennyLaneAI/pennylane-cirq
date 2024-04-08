@@ -158,7 +158,7 @@ class SimulatorDevice(CirqDevice):
         # pylint: disable=missing-function-docstring
         # Analytic mode
         if self.shots is None:
-            if not isinstance(observable, qml.operation.Tensor):
+            if not isinstance(observable, (qml.operation.Tensor, qml.ops.Prod)):
                 # Observable on a single wire
                 # Projector, Hermitian
                 if self._observable_map[observable.name] is None or observable.name == "Projector":
@@ -173,14 +173,23 @@ class SimulatorDevice(CirqDevice):
 
             # Observables are in tensor form
             else:
+
+                ob_names = [op.name for op in observable.operands] if isinstance(
+                    observable, qml.ops.Prod) else observable.name
+
                 # Projector, Hamiltonian, Hermitian
-                for name in observable.name:
+                for name in ob_names:
                     if self._observable_map[name] is None or name == "Projector":
                         return super().expval(observable, shot_range, bin_size)
 
-                if "Hadamard" in observable.name:
+                if "Hadamard" in ob_names:
                     list_obs = []
-                    for obs in observable.obs:
+                    obs = (
+                        observable.operands
+                        if isinstance(observable, qml.ops.Prod)
+                        else observable.obs
+                    )
+                    for obs in obs:
                         list_obs.append(qml.PauliZ(wires=obs.wires))
 
                     T = qml.operation.Tensor(*list_obs)
@@ -264,7 +273,7 @@ class MixedStateSimulatorDevice(SimulatorDevice):
 
     def _convert_to_density_matrix(self, state_vec):
         """Convert ``state_vec`` into a density matrix."""
-        dim = 2**self.num_wires
+        dim = 2 ** self.num_wires
         return np.kron(state_vec, state_vec.conj()).reshape((dim, dim))
 
     @staticmethod
