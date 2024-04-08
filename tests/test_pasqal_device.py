@@ -97,15 +97,12 @@ class TestDevice:
 
         with pytest.raises(ValueError, match="must be a non-negative real number"):
             dev = PasqalDevice(wires=2, shots=123, control_radius=-5.0)
-        
+
     def test_executing_batch(self):
         """Test that executing a batch of circuits works properly."""
 
-        qubits = [ThreeDQubit(x, y, z)
-                for x in range(2)
-                for y in range(2)
-                for z in range(2)]
-        dev = qml.device("cirq.pasqal", control_radius = 2., qubits=qubits, wires=len(qubits))
+        qubits = [ThreeDQubit(x, y, z) for x in range(2) for y in range(2) for z in range(2)]
+        dev = qml.device("cirq.pasqal", control_radius=2.0, qubits=qubits, wires=len(qubits))
 
         @qml.qnode(dev)
         def circuit(x):

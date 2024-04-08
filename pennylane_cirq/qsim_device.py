@@ -49,6 +49,7 @@ class QSimDevice(SimulatorDevice):
             usage documentation <https://github.com/quantumlib/qsim/blob/master/docs/usage.md>`__
             for further details.
     """
+
     name = "QSim device for PennyLane"
     short_name = "cirq.qsim"
 
@@ -83,8 +84,11 @@ class QSimDevice(SimulatorDevice):
     def expval(self, observable, shot_range=None, bin_size=None):
         is_tensor = isinstance(observable, (qml.operation.Tensor, qml.ops.Prod))
 
-        ob_names = [obs.name for obs in observable.operands] if isinstance(
-            observable, qml.ops.Prod) else observable.name
+        ob_names = (
+            [obs.name for obs in observable.operands]
+            if isinstance(observable, qml.ops.Prod)
+            else observable.name
+        )
         if (
             is_tensor and all(obs == "Identity" for obs in ob_names)
         ) or observable.name == "Identity":
@@ -110,6 +114,7 @@ class QSimhDevice(SimulatorDevice):
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
     """
+
     name = "qsimh device for PennyLane"
     short_name = "cirq.qsimh"
 
@@ -166,7 +171,7 @@ class QSimhDevice(SimulatorDevice):
 
     def generate_samples(self):
         # pylint: disable=missing-function-docstring
-        number_of_states = 2 ** self.num_wires
+        number_of_states = 2**self.num_wires
 
         rotated_prob = self.analytic_probability()
         if rotated_prob is not None:

@@ -55,6 +55,7 @@ class SimulatorDevice(CirqDevice):
         simulator (Optional[cirq.Simulator]): Optional custom simulator object to use. If
             None, the default ``cirq.Simulator()`` will be used instead.
     """
+
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
 
@@ -174,8 +175,11 @@ class SimulatorDevice(CirqDevice):
             # Observables are in tensor form
             else:
 
-                ob_names = [op.name for op in observable.operands] if isinstance(
-                    observable, qml.ops.Prod) else observable.name
+                ob_names = (
+                    [op.name for op in observable.operands]
+                    if isinstance(observable, qml.ops.Prod)
+                    else observable.name
+                )
 
                 # Projector, Hamiltonian, Hermitian
                 for name in ob_names:
@@ -225,6 +229,7 @@ class MixedStateSimulatorDevice(SimulatorDevice):
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
     """
+
     name = "Cirq Mixed-State Simulator device for PennyLane"
     short_name = "cirq.mixedsimulator"
 
@@ -273,7 +278,7 @@ class MixedStateSimulatorDevice(SimulatorDevice):
 
     def _convert_to_density_matrix(self, state_vec):
         """Convert ``state_vec`` into a density matrix."""
-        dim = 2 ** self.num_wires
+        dim = 2**self.num_wires
         return np.kron(state_vec, state_vec.conj()).reshape((dim, dim))
 
     @staticmethod

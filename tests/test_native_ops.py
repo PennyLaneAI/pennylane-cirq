@@ -55,7 +55,9 @@ class TestApply:
 
         simulator_device_1_wire.reset()
         init_state = np.array(input, dtype=np.complex64)
-        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(
+            init_state
+        )
         simulator_device_1_wire.apply([ops.Depolarize(*par, wires=[0])])
 
         assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
@@ -84,7 +86,9 @@ class TestApply:
 
         simulator_device_1_wire.reset()
         init_state = np.array(input, dtype=np.complex64)
-        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(
+            init_state
+        )
         simulator_device_1_wire.apply([ops.BitFlip(*par, wires=[0])])
 
         assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
@@ -113,7 +117,9 @@ class TestApply:
 
         simulator_device_1_wire.reset()
         init_state = np.array(input, dtype=np.complex64)
-        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(
+            init_state
+        )
         simulator_device_1_wire.apply([ops.PhaseFlip(*par, wires=[0])])
 
         assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
@@ -150,7 +156,9 @@ class TestApply:
 
         simulator_device_1_wire.reset()
         init_state = np.array(input, dtype=np.complex64)
-        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(
+            init_state
+        )
         simulator_device_1_wire.apply([ops.PhaseDamp(*par, wires=[0])])
 
         assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)
@@ -187,7 +195,9 @@ class TestApply:
 
         simulator_device_1_wire.reset()
         init_state = np.array(input, dtype=np.complex64)
-        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(init_state)
+        simulator_device_1_wire._initial_state = simulator_device_1_wire._convert_to_density_matrix(
+            init_state
+        )
         simulator_device_1_wire.apply([ops.AmplitudeDamp(*par, wires=[0])])
 
         assert np.allclose(simulator_device_1_wire.state, expected_density_matrix, **tol)

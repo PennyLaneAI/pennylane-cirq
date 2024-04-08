@@ -64,7 +64,7 @@ class TestDeviceIntegration:
 
         @qml.qnode(dev)
         def circuit():
-            operation(wires=[0])**1.1
+            operation(wires=[0]) ** 1.1
             return qml.expval(qml.PauliZ(0))
 
         assert np.isclose(circuit(), expected_output)
@@ -85,10 +85,11 @@ class TestDeviceIntegration:
         @qml.qnode(dev)
         def circuit():
             qml.Hadamard(0)
-            operation(wires=[0,1])**1.1
+            operation(wires=[0, 1]) ** 1.1
             return qml.expval(qml.PauliZ(1))
 
         assert np.isclose(circuit(), expected_output)
+
 
 @pytest.fixture(scope="function")
 def simulator_device_1_wire(shots):
@@ -481,9 +482,7 @@ class TestApply:
             qml.DeviceError,
             match=f"The operation {stateprep.__name__} is only supported at the beginning of a circuit.",
         ):
-            simulator_device_1_wire.apply(
-                [qml.PauliX(0), stateprep(np.array([0, 1]), wires=[0])]
-            )
+            simulator_device_1_wire.apply([qml.PauliX(0), stateprep(np.array([0, 1]), wires=[0])])
 
 
 @pytest.mark.parametrize("shots", [1000])
@@ -840,8 +839,8 @@ class TestSample:
         [
             (10, qml.PauliZ(0)),
             (12, qml.PauliZ(1)),
-            (17, qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1]))
-        ]
+            (17, qml.Hermitian(np.diag([1, 1, 1, -1]), wires=[0, 1])),
+        ],
     )
     def test_sample_dimensions(self, simulator_device_2_wires, new_shots, obs):
         """Tests if the samples returned by the sample function have
