@@ -43,8 +43,9 @@ jobs:
         run: python -m pytest tests --cov=pennylane_cirq --cov-report=term-missing --cov-report=xml -p no:warnings --tb=native
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
+          token: ${{ secrets.codecov_token }}
           file: ./coverage.xml
 
   integration-tests:
@@ -86,6 +87,7 @@ jobs:
           pl-device-test --device=cirq.pasqal --tb=short --skip-ops --analytic=False --shots=20000 --device-kwargs control_radius=2. --cov=pennylane_cirq --cov-report=xml
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
+          token: ${{ secrets.codecov_token }}
           file: ./coverage.xml
