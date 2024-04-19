@@ -55,6 +55,7 @@ class SimulatorDevice(CirqDevice):
         simulator (Optional[cirq.Simulator]): Optional custom simulator object to use. If
             None, the default ``cirq.Simulator()`` will be used instead.
     """
+
     name = "Cirq Simulator device for PennyLane"
     short_name = "cirq.simulator"
 
@@ -158,7 +159,7 @@ class SimulatorDevice(CirqDevice):
         # pylint: disable=missing-function-docstring
         # Analytic mode
         if self.shots is None:
-            if not isinstance(observable, qml.operation.Tensor):
+            if not isinstance(observable, (qml.operation.Tensor, qml.ops.Prod)):
                 # Observable on a single wire
                 # Projector, Hermitian
                 if self._observable_map[observable.name] is None or observable.name == "Projector":
@@ -173,14 +174,26 @@ class SimulatorDevice(CirqDevice):
 
             # Observables are in tensor form
             else:
+
+                ob_names = (
+                    [op.name for op in observable.operands]
+                    if isinstance(observable, qml.ops.Prod)
+                    else observable.name
+                )
+
                 # Projector, Hamiltonian, Hermitian
-                for name in observable.name:
+                for name in ob_names:
                     if self._observable_map[name] is None or name == "Projector":
                         return super().expval(observable, shot_range, bin_size)
 
-                if "Hadamard" in observable.name:
+                if "Hadamard" in ob_names:
                     list_obs = []
-                    for obs in observable.obs:
+                    observables = (
+                        observable.operands
+                        if isinstance(observable, qml.ops.Prod)
+                        else observable.obs
+                    )
+                    for obs in observables:
                         list_obs.append(qml.PauliZ(wires=obs.wires))
 
                     T = qml.operation.Tensor(*list_obs)
@@ -216,6 +229,7 @@ class MixedStateSimulatorDevice(SimulatorDevice):
             as wires. The wire number corresponds to the index in the list.
             By default, an array of ``cirq.LineQubit`` instances is created.
     """
+
     name = "Cirq Mixed-State Simulator device for PennyLane"
     short_name = "cirq.mixedsimulator"
 

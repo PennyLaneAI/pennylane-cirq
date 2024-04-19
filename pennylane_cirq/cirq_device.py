@@ -42,6 +42,7 @@ import numpy as np
 import pennylane as qml
 from pennylane import QubitDevice
 from pennylane.operation import Tensor
+from pennylane.ops import Prod
 from pennylane.wires import Wires
 
 from ._version import __version__
@@ -169,6 +170,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         "Hadamard": CirqOperation(lambda: cirq.H),
         "Hermitian": None,
         # TODO: Consider using qml.utils.decompose_hamiltonian() to support this observable.
+        "Prod": None,
         "Identity": CirqOperation(lambda: cirq.I),
         "Projector": CirqOperation(lambda: cirq.ProductState.projector),
     }
@@ -191,8 +193,9 @@ class CirqDevice(QubitDevice, abc.ABC):
 
     def to_paulistring(self, observable):
         """Convert an observable to a cirq.PauliString"""
-        if isinstance(observable, Tensor):
-            obs = [self.to_paulistring(o) for o in observable.obs]
+        if isinstance(observable, (Tensor, Prod)):
+            obs = observable.obs if isinstance(observable, Tensor) else observable.operands
+            obs = [self.to_paulistring(o) for o in obs]
             return functools.reduce(operator.mul, obs)
         cirq_op = self._observable_map[observable.name]
         if cirq_op is None:

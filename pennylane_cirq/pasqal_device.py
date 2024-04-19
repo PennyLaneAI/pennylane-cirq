@@ -36,6 +36,7 @@ class PasqalDevice(SimulatorDevice):
             ``control_radius / 2``.
             i.e., ``(0,0,0), (control_radius/2,0,0), (control_radius,0,0)``, etc.
     """
+
     name = "Cirq Pasqal device for PennyLane"
     short_name = "cirq.pasqal"
 
