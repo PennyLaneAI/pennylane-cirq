@@ -171,7 +171,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         "Hermitian": None,
         # TODO: Consider using qml.utils.decompose_hamiltonian() to support this observable.
         "Prod": None,
-        "Identity": CirqOperation(lambda: cirq.I),
+        "Identity": CirqOperation(lambda *args: cirq.IdentityGate(*args)),
         "Projector": CirqOperation(lambda: cirq.ProductState.projector),
     }
 
@@ -200,7 +200,12 @@ class CirqDevice(QubitDevice, abc.ABC):
         cirq_op = self._observable_map[observable.name]
         if cirq_op is None:
             raise NotImplementedError(f"{observable.name} is not currently supported.")
-        cirq_op.parametrize(*observable.parameters)
+        parameters = (
+            [len(observable.wires)]
+            if isinstance(observable, qml.Identity)
+            else observable.parameters
+        )
+        cirq_op.parametrize(*parameters)
         device_wires = self.map_wires(observable.wires)
         return functools.reduce(
             operator.mul, cirq_op.apply(*[self.qubits[w] for w in device_wires.labels])
