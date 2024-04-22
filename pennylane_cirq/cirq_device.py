@@ -171,7 +171,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         "Hermitian": None,
         # TODO: Consider using qml.utils.decompose_hamiltonian() to support this observable.
         "Prod": None,
-        "Identity": CirqOperation(lambda *args: cirq.IdentityGate(*args)),
+        "Identity": CirqOperation(cirq.IdentityGate),
         "Projector": CirqOperation(lambda: cirq.ProductState.projector),
     }
 
