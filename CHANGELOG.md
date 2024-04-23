@@ -1,8 +1,20 @@
 # Release 0.36.0
 
+### New features since last release
+
+* Added support for `expval` of `Prod` observables.
+  [(#183)](https://github.com/PennyLaneAI/pennylane-cirq/pull/183)
+
+### Bug fixes 🐛
+
+* Fixes a bug where an error is raised from applying `qml.Identity` on multiple wires.
+  [(#186)](https://github.com/PennyLaneAI/pennylane-cirq/pull/186)
+
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
+
+Astral Cai
 
 ---
 # Release 0.34.0
