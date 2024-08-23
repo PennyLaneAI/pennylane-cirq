@@ -33,7 +33,7 @@ class TestDeviceIntegration:
         dev = qml.device("cirq.qsimh", wires=2, qsimh_options=qsimh_options)
 
         assert dev.num_wires == 2
-        assert dev.shots is None
+        assert not dev.shots
         assert dev.short_name == "cirq.qsimh"
 
         assert isinstance(dev, QSimhDevice)
