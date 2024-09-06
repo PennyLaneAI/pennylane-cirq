@@ -1,4 +1,4 @@
-# Release 0.37.0-dev.post0
+# Release 0.37.0-dev
 
 ### New features since last release
 
