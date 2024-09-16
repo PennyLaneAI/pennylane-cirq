@@ -37,8 +37,8 @@ from collections import OrderedDict
 import functools
 import operator
 
-import cirq
 import numpy as np
+import cirq
 import pennylane as qml
 from pennylane.devices import QubitDevice
 from pennylane.operation import Tensor
