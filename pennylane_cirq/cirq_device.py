@@ -40,7 +40,7 @@ import operator
 import cirq
 import numpy as np
 import pennylane as qml
-from pennylane import QubitDevice
+from pennylane.devices import QubitDevice
 from pennylane.operation import Tensor
 from pennylane.ops import Prod
 from pennylane.wires import Wires
