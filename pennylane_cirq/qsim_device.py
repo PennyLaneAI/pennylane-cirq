@@ -151,7 +151,7 @@ class QSimhDevice(SimulatorDevice):
         return capabilities
 
     def expval(self, observable, shot_range=None, bin_size=None):
-        return qml.QubitDevice.expval(self, observable, shot_range, bin_size)
+        return qml.devices.QubitDevice.expval(self, observable, shot_range, bin_size)
 
     def apply(self, operations, **kwargs):
         # pylint: disable=missing-function-docstring
