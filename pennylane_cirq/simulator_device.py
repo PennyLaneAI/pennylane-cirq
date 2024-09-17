@@ -31,8 +31,8 @@ Classes
 
 ----
 """
-import cirq
 import numpy as np
+import cirq
 import pennylane as qml
 
 from .cirq_device import CirqDevice
