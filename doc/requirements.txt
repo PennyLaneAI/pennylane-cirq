@@ -43,7 +43,7 @@ packaging>=24
 pandas==1.3.5
 pennylane==0.28.0
 PennyLane-Lightning==0.28
-Pillow==10.0.1
+Pillow==10.3.0
 pluggy==1.0.0
 protobuf==3.19.5
 PubChemPy==1.0.4
