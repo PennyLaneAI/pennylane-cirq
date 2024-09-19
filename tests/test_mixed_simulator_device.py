@@ -445,8 +445,7 @@ class TestApply:
         ):
             simulator_device_1_wire.apply([qml.PauliX(0), qml.BasisState(np.array([0]), wires=[0])])
 
-    @pytest.mark.parametrize("stateprep", (qml.QubitStateVector, qml.StatePrep))
-    def test_qubit_state_vector_not_at_beginning_error(self, simulator_device_1_wire, stateprep):
+    def test_qubit_state_vector_not_at_beginning_error(self, simulator_device_1_wire):
         """Tests that application of StatePrep raises an error if is not
         the first operation."""
 
@@ -454,9 +453,9 @@ class TestApply:
 
         with pytest.raises(
             qml.DeviceError,
-            match=f"The operation {stateprep.__name__} is only supported at the beginning of a circuit.",
+            match=f"The operation StatePrep is only supported at the beginning of a circuit.",
         ):
-            simulator_device_1_wire.apply([qml.PauliX(0), stateprep(np.array([0, 1]), wires=[0])])
+            simulator_device_1_wire.apply([qml.PauliX(0), qml.StatePrep(np.array([0, 1]), wires=[0])])
 
 
 @pytest.mark.parametrize("shots", [100])
@@ -475,8 +474,7 @@ class TestStatePreparationErrorsNonAnalytic:
         ):
             simulator_device_1_wire.apply([qml.BasisState(np.array([0]), wires=[0])])
 
-    @pytest.mark.parametrize("stateprep", (qml.QubitStateVector, qml.StatePrep))
-    def test_qubit_state_vector_not_analytic_error(self, simulator_device_1_wire, stateprep):
+    def test_qubit_state_vector_not_analytic_error(self, simulator_device_1_wire):
         """Tests that application of StatePrep raises an error if the device
         is not in analytic mode."""
 
@@ -486,7 +484,7 @@ class TestStatePreparationErrorsNonAnalytic:
             qml.DeviceError,
             match="The operations StatePrep and QubitStateVector are only supported in analytic mode.",
         ):
-            simulator_device_1_wire.apply([stateprep(np.array([0, 1]), wires=[0])])
+            simulator_device_1_wire.apply([qml.StatePrep(np.array([0, 1]), wires=[0])])
 
 
 @pytest.mark.parametrize("shots", [None])
