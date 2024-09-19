@@ -699,7 +699,7 @@ class TestExpval:
                     qml.apply(gate)
             return qml.expval(qml.PauliZ(0))
 
-        spy = mocker.spy(qml.QubitDevice, "expval")
+        spy = mocker.spy(qml.devices.QubitDevice, "expval")
 
         if use_super:
             mock_simulate = mocker.patch("cirq.DensityMatrixSimulator.simulate_expectation_values")
