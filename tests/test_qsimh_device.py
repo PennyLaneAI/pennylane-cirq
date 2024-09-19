@@ -63,7 +63,6 @@ class TestDeviceIntegration:
         "op, params",
         [
             (qml.StatePrep, np.array([0, 1])),
-            (qml.QubitStateVector, np.array([0, 1])),
             (qml.BasisState, np.array([1])),
         ],
     )
@@ -98,7 +97,6 @@ class TestDeviceIntegration:
         "gate",
         [
             "StatePrep",
-            "QubitStateVector",
             "BasisState",
             "CRX",
             "CRY",
