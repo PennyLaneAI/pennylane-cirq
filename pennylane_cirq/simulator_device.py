@@ -196,7 +196,7 @@ class SimulatorDevice(CirqDevice):
                     for obs in observables:
                         list_obs.append(qml.PauliZ(wires=obs.wires))
 
-                    T = qml.operation.Tensor(*list_obs)
+                    T = qml.prod(*list_obs)
                     circuit = self.circuit
                     obs = cirq.PauliSum() + self.to_paulistring(T)
                 else:
