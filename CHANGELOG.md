@@ -12,7 +12,7 @@
 
 ### Bug fixes 🐛
 
-* Remove deprecated `qml.operation.Tensor` from codebase.
+* Remove deprecated `qml.operation.Tensor` from codebase in favour of `qml.prod`.
   [(#197)](https://github.com/PennyLaneAI/pennylane-cirq/pull/197)
 
 * Fix deprecated import path for `QubitDevice`.
