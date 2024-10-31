@@ -12,9 +12,19 @@
 
 ### Bug fixes 🐛
 
+* Remove deprecated `qml.operation.Tensor` from codebase.
+  [(#197)](https://github.com/PennyLaneAI/pennylane-cirq/pull/197)
+
+* Fix deprecated import path for `QubitDevice`.
+  [(#194)](https://github.com/PennyLaneAI/pennylane-cirq/pull/194)
+  [(#195)](https://github.com/PennyLaneAI/pennylane-cirq/pull/195)
+
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
+
+Astral Cai
+Alex Preciado
 
 ---
 # Release 0.36.0
