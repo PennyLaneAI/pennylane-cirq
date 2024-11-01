@@ -1,4 +1,0 @@
-pennylane
-cirq-core
-cirq-pasqal
-numpy
