@@ -12,7 +12,7 @@
 ### Breaking changes 💔
 
 * Removed support for Python 3.9
-  []()
+  [(#200)](https://github.com/PennyLaneAI/pennylane-cirq/pull/200)
 
 ### Contributors ✍️
 
