@@ -8,12 +8,17 @@
 * Fix deprecated import path for `QubitDevice`.
   [(#194)](https://github.com/PennyLaneAI/pennylane-cirq/pull/194)
   [(#195)](https://github.com/PennyLaneAI/pennylane-cirq/pull/195)
+  
+### Breaking changes 💔
+
+* Removed support for Python 3.9
+  [(#200)](https://github.com/PennyLaneAI/pennylane-cirq/pull/200)
 
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
 
-Astral Cai
+Astral Cai,
 Alex Preciado
 
 ---

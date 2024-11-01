@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 import sys
 import os
@@ -35,12 +35,15 @@ info = {
     "url": "http://xanadu.ai",
     "license": "Apache License 2.0",
     "packages": ["pennylane_cirq"],
-    "entry_points": {"pennylane.plugins": ["cirq.simulator = pennylane_cirq:SimulatorDevice",
-                                           "cirq.mixedsimulator = pennylane_cirq:MixedStateSimulatorDevice",
-                                           "cirq.qsim = pennylane_cirq.qsim_device:QSimDevice",
-                                           "cirq.qsimh = pennylane_cirq.qsim_device:QSimhDevice",
-                                           "cirq.pasqal = pennylane_cirq:PasqalDevice"],},
-    # Place a one line description here. This will be shown by pip
+    "entry_points": {
+        "pennylane.plugins": [
+            "cirq.simulator = pennylane_cirq:SimulatorDevice",
+            "cirq.mixedsimulator = pennylane_cirq:MixedStateSimulatorDevice",
+            "cirq.qsim = pennylane_cirq.qsim_device:QSimDevice",
+            "cirq.qsimh = pennylane_cirq.qsim_device:QSimhDevice",
+            "cirq.pasqal = pennylane_cirq:PasqalDevice"
+        ],
+    },
     "description": "PennyLane plugin for Cirq",
     "long_description": open("README.rst").read(),
     "long_description_content_type": "text/x-rst",
@@ -62,9 +65,9 @@ classifiers = [
     "Programming Language :: Python",
     # Make sure to specify here the versions of Python supported
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Scientific/Engineering :: Physics",
 ]
