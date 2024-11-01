@@ -76,11 +76,11 @@ Dependencies
 
 PennyLane-Cirq requires the following libraries be installed:
 
-* `Python <http://python.org/>`__ >= 3.9
+* `Python <http://python.org/>`__ >= 3.10
 
 as well as the following Python packages:
 
-* `PennyLane <http://pennylane.readthedocs.io/>`__ >= 0.17
+* `PennyLane <http://pennylane.readthedocs.io/>`__ >= 0.29
 * `Cirq <https://cirq.readthedocs.io/>`__ >= 0.10.0
 
 To use the qsim and qsimh devices, the qsim-Cirq interface ``qsimcirq`` is required:
