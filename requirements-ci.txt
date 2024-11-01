@@ -1,0 +1,2 @@
+cirq-core
+cirq-pasqal
