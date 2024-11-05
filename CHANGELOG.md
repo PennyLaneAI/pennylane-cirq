@@ -14,6 +14,9 @@
 * Removed support for Python 3.9
   [(#200)](https://github.com/PennyLaneAI/pennylane-cirq/pull/200)
 
+* Upgrade minimum supported version of PennyLane to 0.38.0.
+  [(#)]()
+
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
