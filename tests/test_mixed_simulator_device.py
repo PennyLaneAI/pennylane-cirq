@@ -482,7 +482,7 @@ class TestStatePreparationErrorsNonAnalytic:
 
         with pytest.raises(
             qml.DeviceError,
-            match="The operations StatePrep and QubitStateVector are only supported in analytic mode.",
+            match="The operator StatePrep is only supported in analytic mode.",
         ):
             simulator_device_1_wire.apply([qml.StatePrep(np.array([0, 1]), wires=[0])])
 

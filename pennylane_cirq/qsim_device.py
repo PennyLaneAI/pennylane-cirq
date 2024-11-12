@@ -67,7 +67,6 @@ class QSimDevice(SimulatorDevice):
     def operations(self):
         # pylint: disable=missing-function-docstring
         return set(self._base_operation_map) - {
-            "QubitStateVector",
             "StatePrep",
             "BasisState",
             "CRX",
@@ -129,7 +128,6 @@ class QSimhDevice(SimulatorDevice):
     def operations(self):
         # pylint: disable=missing-function-docstring
         return set(self._base_operation_map) - {
-            "QubitStateVector",
             "StatePrep",
             "BasisState",
             "CRX",
