@@ -94,9 +94,7 @@ class SimulatorDevice(CirqDevice):
     def _apply_qubit_state_vector(self, qubit_state_vector_operation):
         # pylint: disable=missing-function-docstring
         if self.shots is not None:
-            raise qml.DeviceError(
-                "The operator StatePrep is only supported in analytic mode."
-            )
+            raise qml.DeviceError("The operator StatePrep is only supported in analytic mode.")
 
         self._initial_state = qubit_state_vector_operation.state_vector(
             wire_order=self.wires
