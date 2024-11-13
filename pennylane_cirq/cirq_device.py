@@ -239,7 +239,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _apply_qubit_state_vector(self, qubit_state_vector_operation):
+    def _apply_state_prep(self, state_prep_operation):
         """Apply a state vector preparation.
 
         Args:
@@ -284,7 +284,7 @@ class CirqDevice(QubitDevice, abc.ABC):
             if operation.name == "BasisState":
                 self._apply_basis_state(operation)
             elif operation.name == "StatePrep":
-                self._apply_qubit_state_vector(operation)
+                self._apply_state_prep(operation)
             else:
                 self._apply_operation(operation)
 
