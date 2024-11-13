@@ -243,7 +243,7 @@ class CirqDevice(QubitDevice, abc.ABC):
         """Apply a state vector preparation.
 
         Args:
-            qubit_state_vector_operation (pennylane.StatePrep): the StatePrep operation instance that shall be applied
+            state_prep_operation (pennylane.StatePrep): the StatePrep operation instance that shall be applied
 
         Raises:
             NotImplementedError: when not implemented in the subclass
