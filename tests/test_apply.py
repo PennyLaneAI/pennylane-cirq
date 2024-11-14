@@ -106,7 +106,7 @@ class TestApplyPureState:
         expected[np.ravel_multi_index(state, [2] * 4)] = 1
         assert np.allclose(res, expected, **tol)
 
-    def test_qubit_state_vector(self, init_state, shots, tol):
+    def test_state_prep(self, init_state, shots, tol):
         """Test PauliX application"""
         dev = SimulatorDevice(1, shots=shots)
         state = init_state(1)
@@ -288,7 +288,7 @@ class TestApplyMixedState:
         expected = np.kron(expected, expected.conj()).reshape([16, 16])
         assert np.allclose(res, expected, **tol)
 
-    def test_qubit_state_vector(self, init_state, shots, tol):
+    def test_state_prep(self, init_state, shots, tol):
         """Test PauliX application"""
         dev = MixedStateSimulatorDevice(1, shots=shots)
         state = init_state(1)

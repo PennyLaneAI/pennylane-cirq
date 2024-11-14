@@ -6,6 +6,9 @@
 
 ### Breaking changes 💔
 
+* The ``qml.QubitStateVector`` template has been removed. Instead, use :class:`~pennylane.StatePrep`.
+  [(#203)](https://github.com/PennyLaneAI/pennylane-cirq/pull/203)
+
 ### Deprecations 👋
 
 ### Documentation 📝
@@ -15,6 +18,8 @@
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
+
+Andrija Paurevic
 
 ---
 # Release 0.39.0

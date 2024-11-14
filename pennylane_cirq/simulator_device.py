@@ -91,16 +91,12 @@ class SimulatorDevice(CirqDevice):
 
         self._initial_state = basis_state_operation.state_vector(wire_order=self.wires).flatten()
 
-    def _apply_qubit_state_vector(self, qubit_state_vector_operation):
+    def _apply_state_prep(self, state_prep_operation):
         # pylint: disable=missing-function-docstring
         if self.shots is not None:
-            raise qml.DeviceError(
-                "The operations StatePrep and QubitStateVector are only supported in analytic mode."
-            )
+            raise qml.DeviceError("The operator StatePrep is only supported in analytic mode.")
 
-        self._initial_state = qubit_state_vector_operation.state_vector(
-            wire_order=self.wires
-        ).flatten()
+        self._initial_state = state_prep_operation.state_vector(wire_order=self.wires).flatten()
 
     def apply(self, operations, **kwargs):
         # pylint: disable=missing-function-docstring
@@ -272,8 +268,8 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         super()._apply_basis_state(basis_state_operation)
         self._initial_state = self._convert_to_density_matrix(self._initial_state)
 
-    def _apply_qubit_state_vector(self, qubit_state_vector_operation):
-        super()._apply_qubit_state_vector(qubit_state_vector_operation)
+    def _apply_state_prep(self, state_prep_operation):
+        super()._apply_state_prep(state_prep_operation)
         self._initial_state = self._convert_to_density_matrix(self._initial_state)
 
     def _convert_to_density_matrix(self, state_vec):

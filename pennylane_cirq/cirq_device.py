@@ -118,7 +118,6 @@ class CirqDevice(QubitDevice, abc.ABC):
     _base_operation_map = {
         **{f"Pow({k})": v for k, v in _pow_operation_map.items()},
         "BasisState": None,
-        "QubitStateVector": None,
         "StatePrep": None,
         "QubitUnitary": CirqOperation(cirq.MatrixGate),
         "PauliX": CirqOperation(lambda: cirq.X),
@@ -240,11 +239,11 @@ class CirqDevice(QubitDevice, abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def _apply_qubit_state_vector(self, qubit_state_vector_operation):
+    def _apply_state_prep(self, state_prep_operation):
         """Apply a state vector preparation.
 
         Args:
-            qubit_state_vector_operation (pennylane.QubitStateVector): the QubitStateVector operation instance that shall be applied
+            state_prep_operation (pennylane.StatePrep): the StatePrep operation instance that shall be applied
 
         Raises:
             NotImplementedError: when not implemented in the subclass
@@ -277,15 +276,15 @@ class CirqDevice(QubitDevice, abc.ABC):
         rotations = kwargs.pop("rotations", [])
 
         for i, operation in enumerate(operations):
-            if i > 0 and operation.name in {"BasisState", "QubitStateVector", "StatePrep"}:
+            if i > 0 and operation.name in {"BasisState", "StatePrep"}:
                 raise qml.DeviceError(
                     f"The operation {operation.name} is only supported at the beginning of a circuit."
                 )
 
             if operation.name == "BasisState":
                 self._apply_basis_state(operation)
-            elif operation.name in {"StatePrep", "QubitStateVector"}:
-                self._apply_qubit_state_vector(operation)
+            elif operation.name == "StatePrep":
+                self._apply_state_prep(operation)
             else:
                 self._apply_operation(operation)
 

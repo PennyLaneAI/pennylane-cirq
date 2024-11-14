@@ -122,7 +122,7 @@ more qubits.
 For state preparation qsim relies on decomposing ``BasisState`` into a set of
 `PauliX
 <https://pennylane.readthedocs.io/en/stable/code/api/pennylane.PauliX.html>`__
-gates and `QubitStateVector
-<https://pennylane.readthedocs.io/en/stable/code/api/pennylane.QubitStateVector.html>`__
+gates and `StatePrep
+<https://pennylane.readthedocs.io/en/stable/code/api/pennylane.StatePrep.html>`__
 via `Möttönen state preparation
 <https://pennylane.readthedocs.io/en/stable/code/api/pennylane.templates.state_preparations.MottonenStatePreparation.html>`__.
