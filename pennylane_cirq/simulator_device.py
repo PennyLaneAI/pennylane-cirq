@@ -155,7 +155,9 @@ class SimulatorDevice(CirqDevice):
         # pylint: disable=missing-function-docstring
         # Analytic mode
         if self.shots is None:
-            all_observables = list(observable.operands) if isinstance(observable, qml.ops.Prod) else [op]
+            all_observables = (
+                list(observable.operands) if isinstance(observable, qml.ops.Prod) else [observable]
+            )
 
             for obs in all_observables:
                 if self._observable_map[obs.name] is None or name == "Projector":
