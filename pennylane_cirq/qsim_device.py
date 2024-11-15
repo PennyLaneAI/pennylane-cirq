@@ -81,16 +81,8 @@ class QSimDevice(SimulatorDevice):
         return set(self._base_observable_map)
 
     def expval(self, observable, shot_range=None, bin_size=None):
-        is_tensor = isinstance(observable, (qml.operation.Tensor, qml.ops.Prod))
 
-        ob_names = (
-            [obs.name for obs in observable.operands]
-            if isinstance(observable, qml.ops.Prod)
-            else observable.name
-        )
-        if (
-            is_tensor and all(obs == "Identity" for obs in ob_names)
-        ) or observable.name == "Identity":
+        if isinstance(observable.simplify(), qml.Identity):
             return 1
 
         return super().expval(observable, shot_range, bin_size)

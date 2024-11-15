@@ -155,49 +155,26 @@ class SimulatorDevice(CirqDevice):
         # pylint: disable=missing-function-docstring
         # Analytic mode
         if self.shots is None:
-            if not isinstance(observable, (qml.operation.Tensor, qml.ops.Prod)):
-                # Observable on a single wire
-                # Projector, Hermitian
-                if self._observable_map[observable.name] is None or observable.name == "Projector":
+            all_observables = list(observable.operands) if isinstance(observable, qml.ops.Prod) else [op]
+
+            for obs in all_observables:
+                if self._observable_map[obs.name] is None or name == "Projector":
                     return super().expval(observable, shot_range, bin_size)
 
-                if observable.name == "Hadamard":
-                    circuit = self.circuit
-                    obs = cirq.PauliSum() + self.to_paulistring(qml.PauliZ(wires=observable.wires))
-                else:
-                    circuit = self.pre_rotated_circuit
-                    obs = cirq.PauliSum() + self.to_paulistring(observable)
+            if "Hadamard" in [op.name for op in all_observables]:
+                list_obs = []
 
-            # Observables are in tensor form
+                for obs in all_observables:
+                    list_obs.append(qml.PauliZ(wires=obs.wires))
+
+                T = qml.prod(*list_obs)
+
+                circuit = self.circuit
+                obs = cirq.PauliSum() + self.to_paulistring(T)
+
             else:
-
-                ob_names = (
-                    [op.name for op in observable.operands]
-                    if isinstance(observable, qml.ops.Prod)
-                    else observable.name
-                )
-
-                # Projector, Hamiltonian, Hermitian
-                for name in ob_names:
-                    if self._observable_map[name] is None or name == "Projector":
-                        return super().expval(observable, shot_range, bin_size)
-
-                if "Hadamard" in ob_names:
-                    list_obs = []
-                    observables = (
-                        observable.operands
-                        if isinstance(observable, qml.ops.Prod)
-                        else observable.obs
-                    )
-                    for obs in observables:
-                        list_obs.append(qml.PauliZ(wires=obs.wires))
-
-                    T = qml.prod(*list_obs)
-                    circuit = self.circuit
-                    obs = cirq.PauliSum() + self.to_paulistring(T)
-                else:
-                    circuit = self.pre_rotated_circuit
-                    obs = cirq.PauliSum() + self.to_paulistring(observable)
+                circuit = self.pre_rotated_circuit
+                obs = cirq.PauliSum() + self.to_paulistring(observable)
 
             return self._simulator.simulate_expectation_values(
                 program=circuit,
