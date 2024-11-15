@@ -155,6 +155,8 @@ class SimulatorDevice(CirqDevice):
         # pylint: disable=missing-function-docstring
         # Analytic mode
         if self.shots is None:
+            if isinstance(observable, qml.ops.Prod):
+                raise RuntimeError
             all_observables = (
                 list(observable.operands) if isinstance(observable, qml.ops.Prod) else [observable]
             )
