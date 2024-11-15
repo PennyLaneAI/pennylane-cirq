@@ -160,7 +160,7 @@ class SimulatorDevice(CirqDevice):
             )
 
             for obs in all_observables:
-                if self._observable_map[obs.name] is None or name == "Projector":
+                if self._observable_map[obs.name] is None or obs.name == "Projector":
                     return super().expval(observable, shot_range, bin_size)
 
             if "Hadamard" in [op.name for op in all_observables]:
