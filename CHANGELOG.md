@@ -9,6 +9,10 @@
 * The ``qml.QubitStateVector`` template has been removed. Instead, use :class:`~pennylane.StatePrep`.
   [(#203)](https://github.com/PennyLaneAI/pennylane-cirq/pull/203)
 
+* Support for the `pennylane.operation.Tensor` observable is removed. This observable was deprecated
+  in PennyLane 0.39, and is removed in PennyLane 0.40.
+  [(#204)](https://github.com/PennyLaneAI/pennylane-cirq/pull/204)
+
 ### Deprecations 👋
 
 ### Documentation 📝

@@ -41,7 +41,6 @@ import numpy as np
 import cirq
 import pennylane as qml
 from pennylane.devices import QubitDevice
-from pennylane.operation import Tensor
 from pennylane.ops import Prod
 from pennylane.wires import Wires
 
@@ -192,9 +191,8 @@ class CirqDevice(QubitDevice, abc.ABC):
 
     def to_paulistring(self, observable):
         """Convert an observable to a cirq.PauliString"""
-        if isinstance(observable, (Tensor, Prod)):
-            obs = observable.obs if isinstance(observable, Tensor) else observable.operands
-            obs = [self.to_paulistring(o) for o in obs]
+        if isinstance(observable, Prod):
+            obs = [self.to_paulistring(o) for o in observable.operands]
             return functools.reduce(operator.mul, obs)
         cirq_op = self._observable_map[observable.name]
         if cirq_op is None:
