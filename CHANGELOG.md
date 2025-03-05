@@ -12,6 +12,11 @@
 
 ### Bug fixes 🐛
 
+### Internal changes
+
+* Pinning `setuptools` in the CI to update how the plugin is installed.
+  [(#208)](https://github.com/PennyLaneAI/pennylane-cirq/pull/208)
+
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
