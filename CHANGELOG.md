@@ -1,18 +1,6 @@
-# Release 0.41.0-dev
+# Release 0.41.0
 
-### New features since last release
-
-### Improvements 🛠
-
-### Breaking changes 💔
-
-### Deprecations 👋
-
-### Documentation 📝
-
-### Bug fixes 🐛
-
-### Internal changes
+### Internal changes ⚙️
 
 * Pinning `setuptools` in the CI to update how the plugin is installed.
   [(#208)](https://github.com/PennyLaneAI/pennylane-cirq/pull/208)
