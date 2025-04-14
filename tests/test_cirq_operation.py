@@ -75,7 +75,7 @@ class TestCirqOperation:
         qubit = cirq.LineQubit(1)
 
         with pytest.raises(
-            qml.DeviceError,
+            qml.exceptions.DeviceError,
             match="CirqOperation must be parametrized before it can be applied.",
         ):
             operation.apply(qubit)
