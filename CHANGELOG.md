@@ -30,6 +30,8 @@
 
 This release contains contributions from (in alphabetical order):
 
+Pietropaolo Frisoni
+
 ---
 # Release 0.40.0
 
