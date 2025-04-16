@@ -91,7 +91,7 @@ class TestCirqDeviceInit:
         ]
 
         with pytest.raises(
-            qml.DeviceError,
+            qml.exceptions.DeviceError,
             match="The number of given qubits and the specified number of wires have to match",
         ):
             dev = CirqDevice(3, 100, qubits=qubits)

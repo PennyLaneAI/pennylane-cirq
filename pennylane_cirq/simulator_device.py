@@ -87,14 +87,18 @@ class SimulatorDevice(CirqDevice):
     def _apply_basis_state(self, basis_state_operation):
         # pylint: disable=missing-function-docstring
         if self.shots is not None:
-            raise qml.DeviceError("The operation BasisState is only supported in analytic mode.")
+            raise qml.exceptions.DeviceError(
+                "The operation BasisState is only supported in analytic mode."
+            )
 
         self._initial_state = basis_state_operation.state_vector(wire_order=self.wires).flatten()
 
     def _apply_state_prep(self, state_prep_operation):
         # pylint: disable=missing-function-docstring
         if self.shots is not None:
-            raise qml.DeviceError("The operator StatePrep is only supported in analytic mode.")
+            raise qml.exceptions.DeviceError(
+                "The operator StatePrep is only supported in analytic mode."
+            )
 
         self._initial_state = state_prep_operation.state_vector(wire_order=self.wires).flatten()
 

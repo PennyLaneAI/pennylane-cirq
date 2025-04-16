@@ -440,7 +440,7 @@ class TestApply:
         simulator_device_1_wire.reset()
 
         with pytest.raises(
-            qml.DeviceError,
+            qml.exceptions.DeviceError,
             match="The operation BasisState is only supported at the beginning of a circuit.",
         ):
             simulator_device_1_wire.apply([qml.PauliX(0), qml.BasisState(np.array([0]), wires=[0])])
@@ -452,7 +452,7 @@ class TestApply:
         simulator_device_1_wire.reset()
 
         with pytest.raises(
-            qml.DeviceError,
+            qml.exceptions.DeviceError,
             match=f"The operation StatePrep is only supported at the beginning of a circuit.",
         ):
             simulator_device_1_wire.apply([qml.PauliX(0), qml.StatePrep(np.array([0, 1]), wires=[0])])
@@ -469,7 +469,7 @@ class TestStatePreparationErrorsNonAnalytic:
         simulator_device_1_wire.reset()
 
         with pytest.raises(
-            qml.DeviceError,
+            qml.exceptions.DeviceError,
             match="The operation BasisState is only supported in analytic mode.",
         ):
             simulator_device_1_wire.apply([qml.BasisState(np.array([0]), wires=[0])])
@@ -481,7 +481,7 @@ class TestStatePreparationErrorsNonAnalytic:
         simulator_device_1_wire.reset()
 
         with pytest.raises(
-            qml.DeviceError,
+            qml.exceptions.DeviceError,
             match="The operator StatePrep is only supported in analytic mode.",
         ):
             simulator_device_1_wire.apply([qml.StatePrep(np.array([0, 1]), wires=[0])])
