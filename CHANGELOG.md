@@ -9,6 +9,7 @@
  ### Deprecations 👋
 
  ### Internal changes ⚙️
+ - Bumped `.readthedocs.yml` up to Ubuntu-24.04
  
  ### Documentation 📝
  
@@ -18,6 +19,7 @@
  
  This release contains contributions from (in alphabetical order):
  
+ Runor Agbaire
  ---
 # Release 0.41.0
 
