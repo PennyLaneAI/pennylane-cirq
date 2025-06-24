@@ -52,35 +52,35 @@ Check out these demos to see the PennyLane-Cirq plugin in action:
 .. title-card::
     :name: Optimizing noisy circuits with Cirq
     :description: <img src="https://pennylane.ai/_static/demonstration_assets/noisy_circuit_optimization/noisy_circuit_optimization_thumbnail.png" width="100%" />
-    :link: https://pennylane.ai/qml/demos/tutorial_noisy_circuit_optimization.html
+    :link: https://pennylane.ai/qml/demos/tutorial_noisy_circuit_optimization
 
 .. title-card::
     :name: Quantum Generative Adversarial Networks with Cirq + TensorFlow
     :description: <img src="https://pennylane.ai/_static/demonstration_assets/QGAN/qgan3.png" width="100%" />
-    :link:  https://pennylane.ai/qml/demos/tutorial_QGAN.html
+    :link:  https://pennylane.ai/qml/demos/tutorial_QGAN
 
 .. title-card::
     :name: Quantum computation with neutral atoms
     :description: <img src="https://pennylane.ai/_static/demonstration_assets/pasqal/pasqal_thumbnail.png" width="100%" />
-    :link: https://pennylane.ai/qml/demos/tutorial_pasqal.html
+    :link: https://pennylane.ai/qml/demos/tutorial_pasqal
 
 .. title-card::
     :name: Variationally optimizing measurement protocols
     :description: <img src="https://pennylane.ai/_static/demonstration_assets/quantum_metrology/illustration.png" width="100%" />
-    :link: https://pennylane.ai/qml/demos/tutorial_quantum_metrology.html
+    :link: https://pennylane.ai/qml/demos/tutorial_quantum_metrology
 
 .. title-card::
     :name: Beyond classical computing with qsim
     :description: <img src="https://pennylane.ai/_static/demonstration_assets/qsim_beyond_classical/sycamore.png" width="100%" />
-    :link:  https://pennylane.ai/qml/demos/qsim_beyond_classical.html
+    :link:  https://pennylane.ai/qml/demos/qsim_beyond_classical
 
 .. raw:: html
 
     </div></div><div style='clear:both'> <br/>
 
 You can also try it out using any of the qubit based `demos from the PennyLane documentation
-<https://pennylane.ai/qml/demonstrations.html>`_, for example the tutorial on
-`qubit rotation <https://pennylane.ai/qml/demos/tutorial_qubit_rotation.html>`_.
+<https://pennylane.ai/qml/demonstrations>`_, for example the tutorial on
+`qubit rotation <https://pennylane.ai/qml/demos/tutorial_qubit_rotation>`_.
 Simply replace ``'default.qubit'`` with the ``'cirq.simulator'`` device
 
 
