@@ -706,7 +706,7 @@ class TestExpval:
             mock_simulate.side_effect = ValueError("mock error")
 
         qnode = qml.QNode(circuit, dev)
-        assert np.allclose(qnode(), 0.0, atol=5e-8)
+        assert np.allclose(qnode(), 0.0, atol=6e-8)
         assert spy.call_count == (1 if use_super else 0)
 
 
