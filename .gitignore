@@ -1,5 +1,6 @@
 *~
 *.pyc
+*.venv
 doc/_build
 build
 dist
