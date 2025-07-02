@@ -239,13 +239,17 @@ class MixedStateSimulatorDevice(SimulatorDevice):
 
     def expval(self, observable, shot_range=None, bin_size=None):
         # The simulate_expectation_values from Cirq for mixed states involves
-        # a density matrix check, which does not always pass because the tolerance
-        # is too low. If the error is raised we use the PennyLane function for
+        # a density matrix positive semi definite tolerance check,
+        # which does not always pass because the tolerance is too low.
+        # If the error is raised we use the PennyLane function for
         # expectation value.
         try:
             return super().expval(observable, shot_range, bin_size)
-        except ValueError:
-            return qml.devices.QubitDevice.expval(self, observable, shot_range, bin_size)
+        except ValueError as e:
+            if "not positive semidefinite" in str(e):
+                # Fallback to PennyLane's expval method
+                return qml.devices.QubitDevice.expval(self, observable, shot_range, bin_size)
+            raise e
 
     def _apply_basis_state(self, basis_state_operation):
         super()._apply_basis_state(basis_state_operation)
