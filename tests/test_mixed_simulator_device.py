@@ -670,7 +670,7 @@ class TestExpval:
 
         if use_super:
             mock_simulate = mocker.patch("cirq.DensityMatrixSimulator.simulate_expectation_values")
-            mock_simulate.side_effect = ValueError("not positive semidefinite")
+            mock_simulate.side_effect = ValueError("density matrix is not")
 
         qnode = qml.QNode(circuit, dev)
         assert np.allclose(qnode(), -1.0, atol=6e-8)
