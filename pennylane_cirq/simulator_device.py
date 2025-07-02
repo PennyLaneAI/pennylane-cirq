@@ -239,7 +239,7 @@ class MixedStateSimulatorDevice(SimulatorDevice):
 
     def expval(self, observable, shot_range=None, bin_size=None):
         # The simulate_expectation_values from Cirq for mixed states involves
-        # a density matrix positive semi definite tolerance check,
+        # a density matrix tolerance check,
         # which does not always pass because the tolerance is too low.
         # If the error is raised we use the PennyLane function for
         # expectation value.
