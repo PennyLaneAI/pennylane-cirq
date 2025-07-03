@@ -1,3 +1,2 @@
 cirq-core
 cirq-pasqal
-qsimcirq
