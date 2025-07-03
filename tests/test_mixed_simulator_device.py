@@ -677,7 +677,6 @@ class TestExpval:
         assert spy.call_count == (1 if use_super else 0)
 
 
-
 @pytest.mark.parametrize("shots", [None])
 class TestVar:
     """Tests that variances are properly calculated."""
