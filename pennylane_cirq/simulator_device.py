@@ -245,10 +245,8 @@ class MixedStateSimulatorDevice(SimulatorDevice):
         # expectation value.
         try:
             return super().expval(observable, shot_range, bin_size)
-        except ValueError as e:
-            if "density matrix is not" in str(e):
+        except ValueError:
                 return qml.devices.QubitDevice.expval(self, observable, shot_range, bin_size)
-            raise e
 
     def _apply_basis_state(self, basis_state_operation):
         super()._apply_basis_state(basis_state_operation)
