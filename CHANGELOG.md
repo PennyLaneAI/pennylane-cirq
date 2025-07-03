@@ -20,8 +20,8 @@
  
  This release contains contributions from (in alphabetical order):
  
- Runor Agbaire
- Andrija Paurevic
+Runor Agbaire,
+Andrija Paurevic
 
  ---
 # Release 0.41.0
