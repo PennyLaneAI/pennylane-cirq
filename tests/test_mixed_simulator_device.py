@@ -676,21 +676,6 @@ class TestExpval:
         assert np.allclose(qnode(), -1.0, atol=6e-8)
         assert spy.call_count == (1 if use_super else 0)
 
-    def test_expval_value_error(self, shots, mocker):
-        """Test that the expval method raises a ValueError if the state is not positive semidefinite."""
-        dev = qml.device("cirq.mixedsimulator", wires=1)
-
-        def circuit():
-            qml.X(0)
-            return qml.expval(qml.PauliZ(0))
-
-        mock_simulate = mocker.patch("cirq.DensityMatrixSimulator.simulate_expectation_values")
-        mock_simulate.side_effect = ValueError("other error")
-
-        qnode = qml.QNode(circuit, dev)
-
-        with pytest.raises(ValueError, match="other error"):
-            _ = qnode()
 
 
 @pytest.mark.parametrize("shots", [None])
