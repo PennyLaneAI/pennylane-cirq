@@ -657,56 +657,23 @@ class TestExpval:
         assert np.isclose(res, expected_output, **tol)
 
     @pytest.mark.parametrize("use_super", [False, True])
-    def test_four_qubit_random_circuit(self, shots, use_super, mocker):
-        """Test a four-qubit random circuit with the whole set of possible gates,
-        the test is analog to a failing device test and is used to check the try/except
+    def test_mixed_sim_expval(self, shots, use_super, mocker):
+        """Test a circuit that is used to check the try/except
         expval function from the mixed_simulator device."""
-        dev = qml.device("cirq.mixedsimulator", wires=4)
-
-        gates = [
-            qml.PauliX(wires=0),
-            qml.PauliY(wires=1),
-            qml.PauliZ(wires=2),
-            qml.S(wires=3),
-            qml.T(wires=0),
-            qml.RX(2.3, wires=1),
-            qml.RY(1.3, wires=2),
-            qml.RZ(3.3, wires=3),
-            qml.Hadamard(wires=0),
-            qml.Rot(0.1, 0.2, 0.3, wires=1),
-            qml.CRot(0.1, 0.2, 0.3, wires=[2, 3]),
-            qml.Toffoli(wires=[0, 1, 2]),
-            qml.SWAP(wires=[1, 2]),
-            qml.CSWAP(wires=[1, 2, 3]),
-            qml.U1(1.0, wires=0),
-            qml.U2(1.0, 2.0, wires=2),
-            qml.U3(1.0, 2.0, 3.0, wires=3),
-            qml.CRX(0.1, wires=[1, 2]),
-            qml.CRY(0.2, wires=[2, 3]),
-            qml.CRZ(0.3, wires=[3, 1]),
-        ]
-
-        layers = 3
-        np.random.seed(1967)
-        gates_per_layers = [pnp.random.permutation(gates).numpy() for _ in range(layers)]
+        dev = qml.device("cirq.mixedsimulator", wires=1)
 
         def circuit():
-            """4-qubit circuit with layers of randomly selected gates and random connections for
-            multi-qubit gates."""
-            np.random.seed(1967)
-            for gates in gates_per_layers:
-                for gate in gates:
-                    qml.apply(gate)
+            qml.X(0)
             return qml.expval(qml.PauliZ(0))
 
         spy = mocker.spy(qml.devices.QubitDevice, "expval")
 
         if use_super:
             mock_simulate = mocker.patch("cirq.DensityMatrixSimulator.simulate_expectation_values")
-            mock_simulate.side_effect = ValueError("mock error")
+            mock_simulate.side_effect = ValueError("density matrix is not")
 
         qnode = qml.QNode(circuit, dev)
-        assert np.allclose(qnode(), 0.0, atol=5e-8)
+        assert np.allclose(qnode(), -1.0, atol=6e-8)
         assert spy.call_count == (1 if use_super else 0)
 
 

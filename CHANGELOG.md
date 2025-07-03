@@ -9,7 +9,8 @@
  ### Deprecations 👋
 
  ### Internal changes ⚙️
- - Bumped `.readthedocs.yml` up to Ubuntu-24.04 [(#217)](https://github.com/PennyLaneAI/pennylane-cirq/pull/217)
+
+ * Bumped `.readthedocs.yml` up to Ubuntu-24.04 [(#217)](https://github.com/PennyLaneAI/pennylane-cirq/pull/217)
  
  ### Documentation 📝
  
@@ -19,7 +20,9 @@
  
  This release contains contributions from (in alphabetical order):
  
- Runor Agbaire
+Runor Agbaire,
+Andrija Paurevic
+
  ---
 # Release 0.41.0
 
