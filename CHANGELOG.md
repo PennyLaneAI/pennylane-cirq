@@ -10,7 +10,11 @@
 
  ### Internal changes ⚙️
 
- * Bumped `.readthedocs.yml` up to Ubuntu-24.04 [(#217)](https://github.com/PennyLaneAI/pennylane-cirq/pull/217)
+ * Bumped `.readthedocs.yml` up to Ubuntu-24.04.
+   [(#217)](https://github.com/PennyLaneAI/pennylane-cirq/pull/217)
+
+ * Use new `pennylane.exceptions` module for custom exceptions.
+   [(#214)](https://github.com/PennyLaneAI/pennylane-cirq/pull/214)
  
  ### Documentation 📝
  
