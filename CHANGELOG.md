@@ -5,16 +5,19 @@
  ### Improvements 🛠
  
  ### Breaking changes 💔
+
+* Upgrade minimum supported version of PennyLane to 0.42.0.
+  [(#221)](https://github.com/PennyLaneAI/pennylane-cirq/pull/221)
  
  ### Deprecations 👋
 
  ### Internal changes ⚙️
 
  * Bumped `.readthedocs.yml` up to Ubuntu-24.04.
-   [(#217)](https://github.com/PennyLaneAI/pennylane-cirq/pull/217)
+  [(#217)](https://github.com/PennyLaneAI/pennylane-cirq/pull/217)
 
  * Use new `pennylane.exceptions` module for custom exceptions.
-   [(#214)](https://github.com/PennyLaneAI/pennylane-cirq/pull/214)
+  [(#214)](https://github.com/PennyLaneAI/pennylane-cirq/pull/214)
  
  ### Documentation 📝
  
