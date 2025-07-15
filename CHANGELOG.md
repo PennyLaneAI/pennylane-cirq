@@ -1,4 +1,4 @@
-# Release 0.42.0-dev
+# Release 0.43.0-dev
 
 ### New features since last release
 
@@ -17,6 +17,39 @@
 This release contains contributions from (in alphabetical order):
 
 ---
+# Release 0.42.0
+ 
+ ### New features since last release
+ 
+ ### Improvements 🛠
+ 
+ ### Breaking changes 💔
+
+* Upgrade minimum supported version of PennyLane to 0.42.0.
+  [(#221)](https://github.com/PennyLaneAI/pennylane-cirq/pull/221)
+ 
+ ### Deprecations 👋
+
+ ### Internal changes ⚙️
+
+ * Bumped `.readthedocs.yml` up to Ubuntu-24.04.
+  [(#217)](https://github.com/PennyLaneAI/pennylane-cirq/pull/217)
+
+ * Use new `pennylane.exceptions` module for custom exceptions.
+  [(#214)](https://github.com/PennyLaneAI/pennylane-cirq/pull/214)
+ 
+ ### Documentation 📝
+ 
+ ### Bug fixes 🐛
+ 
+ ### Contributors ✍️
+ 
+ This release contains contributions from (in alphabetical order):
+ 
+Runor Agbaire,
+Andrija Paurevic
+
+ ---
 # Release 0.41.0
 
 ### Internal changes ⚙️
@@ -27,6 +60,8 @@ This release contains contributions from (in alphabetical order):
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
+
+Pietropaolo Frisoni
 
 ---
 # Release 0.40.0

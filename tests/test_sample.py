@@ -198,7 +198,7 @@ class TestNoShotSample:
         """Test that a device with shot=None raises an error when sampling"""
         dev = device(1)
 
-        with pytest.raises(qml.QuantumFunctionError):
+        with pytest.raises(qml.exceptions.QuantumFunctionError):
             with mimic_execution_for_sample(dev):
                 dev.apply([qml.RX(1.5708, wires=[0])])
 

@@ -68,7 +68,7 @@ class CirqDevice(QubitDevice, abc.ABC):
     """
 
     name = "Cirq Abstract PennyLane plugin base class"
-    pennylane_requires = ">=0.38.0"
+    pennylane_requires = ">=0.42.0"
     version = __version__
     author = "Xanadu Inc"
     _capabilities = {
@@ -86,7 +86,7 @@ class CirqDevice(QubitDevice, abc.ABC):
 
         if qubits:
             if num_wires != len(qubits):
-                raise qml.DeviceError(
+                raise qml.exceptions.DeviceError(
                     f"The number of given qubits and the specified number of wires have to match. Got {wires} wires and {len(qubits)} qubits."
                 )
         else:
@@ -275,7 +275,7 @@ class CirqDevice(QubitDevice, abc.ABC):
 
         for i, operation in enumerate(operations):
             if i > 0 and operation.name in {"BasisState", "StatePrep"}:
-                raise qml.DeviceError(
+                raise qml.exceptions.DeviceError(
                     f"The operation {operation.name} is only supported at the beginning of a circuit."
                 )
 

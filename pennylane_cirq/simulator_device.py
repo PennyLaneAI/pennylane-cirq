@@ -87,14 +87,18 @@ class SimulatorDevice(CirqDevice):
     def _apply_basis_state(self, basis_state_operation):
         # pylint: disable=missing-function-docstring
         if self.shots is not None:
-            raise qml.DeviceError("The operation BasisState is only supported in analytic mode.")
+            raise qml.exceptions.DeviceError(
+                "The operation BasisState is only supported in analytic mode."
+            )
 
         self._initial_state = basis_state_operation.state_vector(wire_order=self.wires).flatten()
 
     def _apply_state_prep(self, state_prep_operation):
         # pylint: disable=missing-function-docstring
         if self.shots is not None:
-            raise qml.DeviceError("The operator StatePrep is only supported in analytic mode.")
+            raise qml.exceptions.DeviceError(
+                "The operator StatePrep is only supported in analytic mode."
+            )
 
         self._initial_state = state_prep_operation.state_vector(wire_order=self.wires).flatten()
 
@@ -235,8 +239,9 @@ class MixedStateSimulatorDevice(SimulatorDevice):
 
     def expval(self, observable, shot_range=None, bin_size=None):
         # The simulate_expectation_values from Cirq for mixed states involves
-        # a density matrix check, which does not always pass because the tolerance
-        # is too low. If the error is raised we use the PennyLane function for
+        # a density matrix tolerance check,
+        # which does not always pass because the tolerance is too tight.
+        # If the error is raised we use the PennyLane function for
         # expectation value.
         try:
             return super().expval(observable, shot_range, bin_size)
