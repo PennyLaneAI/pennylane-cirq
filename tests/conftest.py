@@ -106,7 +106,7 @@ def device(request, shots):
 
 
 @pytest.fixture(params=analytic_devices + hw_devices)
-def device_none_shots(request):
+def device_analytic(request):
     """Fixture to initialize and return a PennyLane device without shots"""
     device = request.param
 

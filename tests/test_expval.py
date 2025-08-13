@@ -27,12 +27,12 @@ np.random.seed(42)
 class TestExpval:
     """Test expectation values"""
 
-    def test_identity_expectation(self, device_none_shots, shots, tol):
+    def test_identity_expectation(self, device_analytic, shots, tol):
         """Test that identity expectation value (i.e. the trace) is 1"""
         theta = 0.432
         phi = 0.123
 
-        dev = device_none_shots(2)
+        dev = device_analytic(2)
 
         @qml.set_shots(shots)
         @qml.qnode(dev)
@@ -54,12 +54,12 @@ class TestExpval:
 
         assert np.allclose(res, np.array([1, 1]), **tol)
 
-    def test_pauliz_expectation(self, device_none_shots, shots, tol):
+    def test_pauliz_expectation(self, device_analytic, shots, tol):
         """Test that PauliZ expectation value is correct"""
         theta = 0.432
         phi = 0.123
 
-        dev = device_none_shots(2)
+        dev = device_analytic(2)
 
         @qml.set_shots(shots)
         @qml.qnode(dev)
@@ -81,12 +81,12 @@ class TestExpval:
 
         assert np.allclose(res, np.array([np.cos(theta), np.cos(theta) * np.cos(phi)]), **tol)
 
-    def test_paulix_expectation(self, device_none_shots, shots, tol):
+    def test_paulix_expectation(self, device_analytic, shots, tol):
         """Test that PauliX expectation value is correct"""
         theta = 0.432
         phi = 0.123
 
-        dev = device_none_shots(2)
+        dev = device_analytic(2)
 
         @qml.set_shots(shots)
         @qml.qnode(dev)
@@ -107,12 +107,12 @@ class TestExpval:
         res = [circuit0(phi, theta), circuit1(phi, theta)]
         assert np.allclose(res, np.array([np.sin(theta) * np.sin(phi), np.sin(phi)]), **tol)
 
-    def test_pauliy_expectation(self, device_none_shots, shots, tol):
+    def test_pauliy_expectation(self, device_analytic, shots, tol):
         """Test that PauliY expectation value is correct"""
         theta = 0.432
         phi = 0.123
 
-        dev = device_none_shots(2)
+        dev = device_analytic(2)
         O = qml.PauliY
 
         @qml.set_shots(shots)
@@ -134,12 +134,12 @@ class TestExpval:
         res = [circuit0(phi, theta), circuit1(phi, theta)]
         assert np.allclose(res, np.array([0, -(np.cos(theta)) * np.sin(phi)]), **tol)
 
-    def test_hadamard_expectation(self, device_none_shots, shots, tol):
+    def test_hadamard_expectation(self, device_analytic, shots, tol):
         """Test that Hadamard expectation value is correct"""
         theta = 0.432
         phi = 0.123
 
-        dev = device_none_shots(2)
+        dev = device_analytic(2)
 
         @qml.set_shots(shots)
         @qml.qnode(dev)
@@ -166,12 +166,12 @@ class TestExpval:
         ) / np.sqrt(2)
         assert np.allclose(res, expected, **tol)
 
-    def test_hermitian_expectation(self, device_none_shots, shots, tol):
+    def test_hermitian_expectation(self, device_analytic, shots, tol):
         """Test that arbitrary Hermitian expectation values are correct"""
         theta = 0.432
         phi = 0.123
 
-        dev = device_none_shots(2)
+        dev = device_analytic(2)
 
         @qml.set_shots(shots)
         @qml.qnode(dev)
@@ -200,12 +200,12 @@ class TestExpval:
 
         assert np.allclose(res, expected, **tol)
 
-    def test_multi_mode_hermitian_expectation(self, device_none_shots, shots, tol):
+    def test_multi_mode_hermitian_expectation(self, device_analytic, shots, tol):
         """Test that arbitrary multi-mode Hermitian expectation values are correct"""
         theta = 0.432
         phi = 0.123
 
-        dev = device_none_shots(2)
+        dev = device_analytic(2)
 
         @qml.set_shots(shots)
         @qml.qnode(dev)
@@ -228,12 +228,12 @@ class TestExpval:
 
         assert np.allclose(res, expected, **tol)
 
-    def test_projector_expectation(self, device_none_shots, shots, tol):
+    def test_projector_expectation(self, device_analytic, shots, tol):
         """Test that arbitrary Projector expectation values are correct"""
         theta = 0.732
         phi = 0.523
 
-        dev = device_none_shots(2)
+        dev = device_analytic(2)
 
         @qml.set_shots(shots)
         @qml.qnode(dev)
@@ -292,13 +292,13 @@ class TestExpval:
 class TestTensorExpval:
     """Test tensor expectation values"""
 
-    def test_paulix_pauliy(self, device_none_shots, shots, tol):
+    def test_paulix_pauliy(self, device_analytic, shots, tol):
         """Test that a tensor product involving PauliX and PauliY works correctly"""
         theta = 0.432
         phi = 0.123
         varphi = -0.543
 
-        dev = device_none_shots(3)
+        dev = device_analytic(3)
 
         @qml.set_shots(shots)
         @qml.qnode(dev)
@@ -315,13 +315,13 @@ class TestTensorExpval:
 
         assert np.allclose(res, expected, **tol)
 
-    def test_pauliz_hadamard(self, device_none_shots, shots, tol):
+    def test_pauliz_hadamard(self, device_analytic, shots, tol):
         """Test that a tensor product involving PauliZ and PauliY and hadamard works correctly"""
         theta = 0.432
         phi = 0.123
         varphi = -0.543
 
-        dev = device_none_shots(3)
+        dev = device_analytic(3)
 
         @qml.set_shots(shots)
         @qml.qnode(dev)
@@ -340,13 +340,13 @@ class TestTensorExpval:
 
         assert np.allclose(res, expected, **tol)
 
-    def test_hermitian(self, device_none_shots, shots, tol):
+    def test_hermitian(self, device_analytic, shots, tol):
         """Test that a tensor product involving qml.Hermitian works correctly"""
         theta = 0.432
         phi = 0.123
         varphi = -0.543
 
-        dev = device_none_shots(3)
+        dev = device_analytic(3)
 
         A = np.array(
             [
@@ -377,13 +377,13 @@ class TestTensorExpval:
 
         assert np.allclose(res, expected, **tol)
 
-    def test_projector(self, device_none_shots, shots, tol):
+    def test_projector(self, device_analytic, shots, tol):
         """Test that a tensor product involving qml.Projector works correctly"""
         theta = 0.732
         phi = 0.523
         varphi = -0.543
 
-        dev = device_none_shots(3)
+        dev = device_analytic(3)
 
         @qml.set_shots(shots)
         @qml.qnode(dev)
