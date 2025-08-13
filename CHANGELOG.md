@@ -11,6 +11,10 @@
 
 ### Deprecations 👋
 
+### Internal changes ⚙️
+
+* `conftest.py` has a new `device_none_shots` fixture for testing qnodes using new device API.
+
 ### Documentation 📝
 
 ### Bug fixes 🐛
@@ -19,6 +23,7 @@
 
 This release contains contributions from (in alphabetical order):
 
+Yushao Chen,
 Andrija Paurevic.
 
 ---
