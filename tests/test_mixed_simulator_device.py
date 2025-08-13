@@ -813,8 +813,9 @@ class TestVarEstimate:
     def test_var_estimate(self):
         """Test that the variance is not analytically calculated"""
 
-        dev = qml.device("cirq.simulator", wires=1, shots=3)
+        dev = qml.device("cirq.simulator", wires=1)
 
+        @qml.set_shots(3)
         @qml.qnode(dev)
         def circuit():
             return qml.var(qml.PauliX(0))
