@@ -111,6 +111,7 @@ def device_analytic(request):
     device = request.param
 
     def _device(n):
-            return device(wires=n, shots=None)
+            return device(wires=n)
+
 
     return _device
