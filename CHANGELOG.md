@@ -14,6 +14,7 @@
 ### Internal changes ⚙️
 
 * `conftest.py` has a new `device_none_shots` fixture for testing qnodes using new device API.
+  [(#226)](https://github.com/PennyLaneAI/pennylane-cirq/pull/226)
 
 ### Documentation 📝
 
