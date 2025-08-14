@@ -40,8 +40,9 @@ class TestDeviceIntegration:
     def test_custom_simulator(self):
         """Test that a custom cirq simulator can be used with the cirq device."""
         sim = cirq.Simulator()
-        dev = qml.device("cirq.simulator", wires=1, shots=None, simulator=sim)
+        dev = qml.device("cirq.simulator", wires=1, simulator=sim)
 
+        @qml.set_shots(None)
         @qml.qnode(dev)
         def circuit():
             qml.PauliX(0)
@@ -817,8 +818,9 @@ class TestVarEstimate:
     def test_var_estimate(self):
         """Test that the variance is not analytically calculated"""
 
-        dev = qml.device("cirq.simulator", wires=1, shots=3)
+        dev = qml.device("cirq.simulator", wires=1)
 
+        @qml.set_shots(3)
         @qml.qnode(dev)
         def circuit():
             return qml.var(qml.PauliX(0))

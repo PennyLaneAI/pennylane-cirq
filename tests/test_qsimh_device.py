@@ -42,12 +42,13 @@ class TestDeviceIntegration:
     def test_one_qubit_circuit(self, shots, tol):
         """Test that devices provide correct result for a simple circuit"""
 
-        dev = qml.device("cirq.qsimh", wires=1, shots=shots, qsimh_options=qsimh_options)
+        dev = qml.device("cirq.qsimh", wires=1, qsimh_options=qsimh_options)
 
         a = 0.543
         b = 0.123
         c = 0.987
 
+        @qml.set_shots(shots)
         @qml.qnode(dev)
         def circuit(x, y, z):
             """Reference QNode"""
@@ -69,10 +70,11 @@ class TestDeviceIntegration:
     def test_decomposition(self, shots, op, params, mocker):
         """Test that StatePrep and BasisState are decomposed"""
 
-        dev = qml.device("cirq.qsimh", wires=1, shots=shots, qsimh_options=qsimh_options)
+        dev = qml.device("cirq.qsimh", wires=1, qsimh_options=qsimh_options)
 
         spy = mocker.spy(op, "decomposition")
 
+        @qml.set_shots(shots)
         @qml.qnode(dev)
         def circuit():
             """Reference QNode"""
@@ -389,8 +391,9 @@ class TestVarEstimate:
     def test_var_estimate(self):
         """Test that the variance is not analytically calculated"""
 
-        dev = qml.device("cirq.qsimh", wires=1, shots=3, qsimh_options=qsimh_options)
+        dev = qml.device("cirq.qsimh", wires=1, qsimh_options=qsimh_options)
 
+        @qml.set_shots(3)
         @qml.qnode(dev)
         def circuit():
             return qml.var(qml.PauliX(0))
