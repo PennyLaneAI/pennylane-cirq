@@ -3,7 +3,7 @@
 ### Breaking changes 💔
 
 * The minimum supported version of PennyLane is now v0.43.0.
-  [(#)]()
+  [(#228)](https://github.com/PennyLaneAI/pennylane-cirq/pull/228)
 
 * Remove support for Python 3.10 and add support for Python 3.13.
   [(#224)](https://github.com/PennyLaneAI/pennylane-cirq/pull/224)
