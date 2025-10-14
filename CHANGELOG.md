@@ -1,24 +1,14 @@
-# Release 0.43.0-dev
-
-### New features since last release
-
-### Improvements 🛠
+# Release 0.43.0
 
 ### Breaking changes 💔
 
 * Remove support for Python 3.10 and add support for Python 3.13.
   [(#224)](https://github.com/PennyLaneAI/pennylane-cirq/pull/224)
 
-### Deprecations 👋
-
 ### Internal changes ⚙️
 
 * `conftest.py` has a new `device_analytic` fixture for testing qnodes using new device API.
   [(#226)](https://github.com/PennyLaneAI/pennylane-cirq/pull/226)
-
-### Documentation 📝
-
-### Bug fixes 🐛
 
 ### Contributors ✍️
 
