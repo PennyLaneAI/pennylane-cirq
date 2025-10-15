@@ -25,7 +25,7 @@ with open("pennylane_cirq/_version.py") as f:
 # Avoid pinning, and use minimum version numbers
 # only where required.
 
-requirements = ["pennylane>=0.42.0", "cirq-core>=0.10", "cirq-pasqal>=0.10"]
+requirements = ["pennylane>=0.43.0", "cirq-core>=0.10", "cirq-pasqal>=0.10"]
 
 info = {
     "name": "PennyLane-Cirq",
