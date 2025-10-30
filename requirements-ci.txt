@@ -1,2 +1,3 @@
-cirq-core
-cirq-pasqal
+cirq-core>=0.10
+cirq-pasqal>=0.10
+pennylane>=0.43
