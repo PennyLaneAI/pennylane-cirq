@@ -1,0 +1,7 @@
+-r requirements-ci.txt
+
+pylint
+ruff
+black
+isort
+
