@@ -1,2 +1,16 @@
-cirq-core
-cirq-pasqal
+# Core testing tools
+
+wheel
+pytest
+pytest-cov
+pytest-mock
+
+# Project dependency
+
+qsimcirq
+cirq-core>=0.10
+cirq-pasqal>=0.10
+
+# Install latest PennyLane
+
+git+https://github.com/PennyLaneAI/pennylane.git#egg=pennylane
