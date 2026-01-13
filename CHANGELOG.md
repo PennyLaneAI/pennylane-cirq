@@ -1,8 +1,25 @@
 # Release 0.44.0
+ 
+### Improvements 🛠
+
+* Add support for Python 3.14.
+  [(#232)](https://github.com/PennyLaneAI/pennylane-cirq/pull/232)
+
+### Internal changes ⚙️
+
+* Upgraded sphinx to 8.1.
+  [(#230)](https://github.com/PennyLaneAI/pennylane-cirq/pull/230)
+
+* Updated requirements.txt, requirements-ci.txt, and requirements-dev.txt to better organize testing workflows.
+  [(#231)](https://github.com/PennyLaneAI/pennylane-cirq/pull/231)
 
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
+
+Runor Agbaire,
+Yushao Chen,
+Andrija Paurevic.
 
 ---
 # Release 0.43.0
