@@ -50,6 +50,7 @@ Operations
 Code details
 ~~~~~~~~~~~~
 """
+
 from pennylane.operation import Operation
 
 # pylint: disable=missing-function-docstring

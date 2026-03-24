@@ -15,6 +15,7 @@
 """
 This module provides the ``PasqalDevice`` from Cirq.
 """
+
 import cirq_pasqal
 
 from .simulator_device import SimulatorDevice

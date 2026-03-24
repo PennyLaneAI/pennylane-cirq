@@ -15,6 +15,7 @@
 """
 This module provides the ``QSimDevice`` and ``QSimhDevice`` from Cirq.
 """
+
 import numpy as np
 import cirq
 import pennylane as qml

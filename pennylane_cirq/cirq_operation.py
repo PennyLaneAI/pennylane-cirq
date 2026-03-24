@@ -30,6 +30,7 @@ Classes
 Code details
 ~~~~~~~~~~~~
 """
+
 from collections.abc import Sequence
 import cirq
 import pennylane as qml

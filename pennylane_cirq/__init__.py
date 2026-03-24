@@ -15,6 +15,7 @@
 Plugin overview
 ===============
 """
+
 from .simulator_device import SimulatorDevice, MixedStateSimulatorDevice
 from .pasqal_device import PasqalDevice
 
