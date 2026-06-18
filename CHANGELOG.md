@@ -4,6 +4,11 @@
 
 ### Improvements 🛠
 
+### Internal changes ⚙️
+
+* Upgrade Sphinx to 9.0.
+  [(#235)](https://github.com/PennyLaneAI/pennylane-cirq/pull/235)
+
 ### Breaking changes 💔
 
 ### Deprecations 👋
@@ -15,6 +20,8 @@
 ### Contributors ✍️
 
 This release contains contributions from (in alphabetical order):
+
+Runor Agbaire,
 
 ---
 # Release 0.44.0
