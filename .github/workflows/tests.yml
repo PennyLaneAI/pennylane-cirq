@@ -4,20 +4,18 @@ on:
     branches:
       - master
   pull_request:
-
+    
 jobs:
   tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.11', '3.12', '3.13', '3.14']
-
+        python-version: ['3.12', '3.13', '3.14']
+    concurrency:
+      group: tests-${{ github.ref }}
+      cancel-in-progress: true
+  
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.4.1
-        with:
-          access_token: ${{ github.token }}
-
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
@@ -48,13 +46,11 @@ jobs:
 
   integration-tests:
     runs-on: ubuntu-latest
-
+    concurrency:
+      group: tests-${{ github.ref }}
+      cancel-in-progress: true
+  
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.4.1
-        with:
-          access_token: ${{ github.token }}
-
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
@@ -62,7 +58,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Install dependencies
         run: |
