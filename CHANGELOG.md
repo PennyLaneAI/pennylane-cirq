@@ -6,6 +6,9 @@
 
 ### Internal changes ⚙️
 
+* Python 3.11 support is dropped.
+  [(#237)](https://github.com/PennyLaneAI/pennylane-cirq/pull/237)
+
 * Upgrade Sphinx to 9.0.
   [(#235)](https://github.com/PennyLaneAI/pennylane-cirq/pull/235)
 

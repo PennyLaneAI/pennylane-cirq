@@ -57,7 +57,7 @@ Features
 Installation
 ============
 
-This plugin requires Python version 3.11 or above, as well as PennyLane
+This plugin requires Python version 3.12 or above, as well as PennyLane
 and Cirq. Installation of this plugin, as well as all dependencies, can be done using ``pip``:
 
 .. code-block:: bash
